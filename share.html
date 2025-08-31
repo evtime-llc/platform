@@ -86,10 +86,30 @@ body.snapshot .photo{aspect-ratio:auto}
 body.snapshot .photo img{height:160px}
 </style>
 </head>
-     <div style="max-width:980px;margin:0 auto;padding:8px 12px;">
-  <img src="mainlogo.svg?v=2" alt="it's EVTime — Forum and MarketPlace"
-       style="width:100%;max-height:90px;object-fit:contain;display:block;">
+  <style>
+  /* match the logo width to the page */
+  .logo-wrap {
+    max-width: 760px;      /* make this number match your page width; change if needed */
+    margin: 0 auto;
+    padding: 8px 12px;
+    box-sizing: border-box;
+  }
+  #site-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 90px;      /* desktop/tablet height */
+    object-fit: contain;
+  }
+  @media (max-width: 600px) {
+    #site-logo { max-height: 110px; }  /* taller on phones */
+  }
+</style>
+
+<div class="logo-wrap">
+  <img id="site-logo" src="mainlogo.svg?v=3" alt="it's EVTime — Forum and MarketPlace">
 </div>
+
 
 <body>
 
