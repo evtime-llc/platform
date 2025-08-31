@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="220" viewBox="0 0 2400 220">
+  <defs>
+    <linearGradient id="gradDark" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#0f172a"/>
+  <text x="120" y="138" font-family="Inter, Segoe UI, Roboto, Arial, sans-serif" font-size="40" fill="#cbd5e1" letter-spacing="0.02em">it's</text>
+  <text x="220" y="148" font-family="Inter, Segoe UI, Roboto, Arial, sans-serif" font-weight="900" font-size="120" fill="#ffffff" letter-spacing="0.01em">E.V.Time</text>
+  <rect x="220" y="160" width="520" height="6" rx="3" fill="url(#gradDark)"/>
+  <text x="770" y="148" font-family="Inter, Segoe UI, Roboto, Arial, sans-serif" font-size="48" fill="#cbd5e1" letter-spacing="0.03em">Forum and MarketPlace</text>
+</svg>
