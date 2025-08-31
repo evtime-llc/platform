@@ -19,6 +19,8 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+
+/* Top header bar */
 header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
 .wrap{max-width:620px;margin:0 auto;padding:12px}
 .brand{display:flex;gap:10px;align-items:center}
@@ -27,6 +29,11 @@ header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid v
 h1{font-size:18px;margin:6px 0}
 .btns{display:flex;gap:8px}
 button{height:36px;padding:0 12px;border:1px solid var(--line);background:#fff;border-radius:12px;cursor:pointer}
+
+/* Logo banner (matches page width) */
+.logo-wrap{max-width:620px;margin:0 auto;padding:8px 12px}
+#site-logo{display:block;width:100%;height:auto;max-height:90px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:140px} }  /* taller on phones */
 
 /* Notice + footer */
 .notice{background:#f8fafc;border-bottom:1px solid var(--line);color:#475569}
@@ -86,33 +93,12 @@ body.snapshot .photo{aspect-ratio:auto}
 body.snapshot .photo img{height:160px}
 </style>
 </head>
-  <style>
-  /* match the logo width to the page */
-  .logo-wrap {
-    max-width: 760px;      /* make this number match your page width; change if needed */
-    margin: 0 auto;
-    padding: 8px 12px;
-    box-sizing: border-box;
-  }
-  #site-logo {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 90px;      /* desktop/tablet height */
-    object-fit: contain;
-  }
-  @media (max-width: 600px) {
-    #site-logo { max-height: 110px; }  /* taller on phones */
-  }
-</style>
-
-<div class="logo-wrap">
-  <img id="site-logo" src="mainlogo.svg?v=3" alt="it's EVTime — Forum and MarketPlace">
-</div>
-
 
 <body>
 
+<!-- Logo (same width as the page) -->
+<div class="logo-wrap">
+  <img id="site-logo" src="mainlogo.svg?v=4" alt="it's EVTime — Forum and MarketPlace">
 </div>
 
 <header>
