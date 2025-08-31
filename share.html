@@ -24,15 +24,19 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 /* Page width */
 .wrap{max-width:620px;margin:0 auto;padding:12px}
 
-/* Top bar with logo (flush to very top) */
+/* Logo bar (flush at very top; no fixed height) */
 .topbar{background:#fff;border-bottom:1px solid var(--line);margin:0;padding:0}
 .logo-wrap{max-width:620px;margin:0 auto;padding:0 12px}
 #site-logo{
-  display:block;width:100%;height:180px;        /* desktop/tablet height */
-  object-fit:contain;margin:0
+  display:block;
+  width:100%;
+  height:auto;           /* scale by width */
+  max-height:160px;      /* desktop cap */
+  object-fit:contain;
+  margin:0;
 }
 @media (max-width:600px){
-  #site-logo{height:220px}                     /* phones */
+  #site-logo{max-height:200px} /* phone cap */
 }
 
 /* Footer */
@@ -94,7 +98,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <!-- Logo (same width as the page, flush at top) -->
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=7" alt="it's EVTime — Forum and MarketPlace">
+    <img id="site-logo" src="mainlogo.svg?v=8" alt="it's EVTime — Forum and MarketPlace">
   </div>
 </div>
 
