@@ -15,7 +15,13 @@
 
 <style>
 :root{
-  --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --gap:12px;
+  /* Medium-dark page background; keep cards white for contrast */
+  --bg:#1f2937; 
+  --card:#fff; 
+  --text:#0f172a; 
+  --muted:#475569; 
+  --line:#e2e8f0; 
+  --gap:12px;
   --cta:#3b82f6; --ctaText:#fff;
 }
 *{box-sizing:border-box}
@@ -24,19 +30,19 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 /* Page width */
 .wrap{max-width:620px;margin:0 auto;padding:12px}
 
-/* Logo bar (flush at very top; no fixed height) */
+/* Top bar with logo (kept WHITE as requested) */
 .topbar{background:#fff;border-bottom:1px solid var(--line);margin:0;padding:0}
 .logo-wrap{max-width:620px;margin:0 auto;padding:0 12px}
 #site-logo{
   display:block;
   width:100%;
   height:auto;           /* scale by width */
-  max-height:160px;      /* desktop cap */
+  max-height:200px;      /* cap height; adjust if you want taller */
   object-fit:contain;
   margin:0;
 }
 @media (max-width:600px){
-  #site-logo{max-height:200px} /* phone cap */
+  #site-logo{max-height:240px} /* phone cap */
 }
 
 /* Footer */
@@ -95,10 +101,10 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 <body>
 
-<!-- Logo (same width as the page, flush at top) -->
+<!-- Logo (white bar kept, same width as page) -->
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=8" alt="it's EVTime — Forum and MarketPlace">
+    <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
   </div>
 </div>
 
