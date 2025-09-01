@@ -3,355 +3,259 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sell Your Car — VIN Scan</title>
-
-<!-- One-button scanner: ZXing (barcodes/QR/PDF417) + Tesseract (OCR) -->
-<link rel="preconnect" href="https://unpkg.com">
-<script src="https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
-<script src="https://unpkg.com/@zxing/library@latest"></script>
-<script src="https://unpkg.com/@zxing/browser@latest"></script>
+<title>Sell Your Car • EVTime</title>
+<meta name="theme-color" content="#0ea5e9"/>
 
 <style>
-:root{ --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#0ea5e9; --ok:#16a34a; --danger:#ef4444;}
+:root{
+  --bg:#1f2937;       /* matches your share.html background */
+  --card:#fff; 
+  --text:#0f172a;
+  --muted:#475569;
+  --line:#e5e7f0;
+  --cta:#3b82f6; --ctaText:#fff;
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
-.wrap{max-width:680px;margin:0 auto;padding:12px}
-h1{font-size:20px;margin:6px 0}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:12px}
-.card .hd{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafafa}
-.card .bd{padding:12px}
-label{font-size:12px;color:var(--muted)}
-input,select,button{font:inherit}
-input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
-button{height:40px;padding:0 14px;border:1px solid var(--line);background:#fff;border-radius:12px;cursor:pointer}
-button.primary{background:var(--accent);color:#fff;border-color:transparent;font-weight:700}
-.note{font-size:12px;color:#475569}
-.success{color:var(--ok)} .error{color:var(--danger)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
+.wrap{max-width:620px;margin:0 auto;padding:12px}
 
-/* Notice + footer */
-.notice{background:#f8fafc;border-bottom:1px solid var(--line);color:#475569}
-.notice .wrap{padding:8px 12px;font-size:12px}
-.legal{border-top:1px solid var(--line);color:#64748b;background:#fff}
-.legal .wrap{padding:16px 12px;font-size:12px;line-height:1.5}
-.legal a{color:#3b82f6;text-decoration:none} .legal a:hover{text-decoration:underline}
+/* white logo bar kept (same look as share.html) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:620px;margin:0 auto;padding:0 12px}
+#site-logo{display:block;width:100%;height:auto;max-height:140px;object-fit:contain}
 
-/* Scanner overlay */
-#scanOverlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;padding:12px}
-#scanOverlay.open{display:flex}
-.scanBox{width:100%;max-width:760px;background:#0b0b0b;color:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 30px rgba(0,0,0,.45)}
-.scanHd{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#111;border-bottom:1px solid rgba(255,255,255,.08)}
-.scanBody{padding:10px}
-.videoWrap{position:relative;border-radius:12px;overflow:hidden;background:#000}
-.videoWrap video{width:100%;height:auto;display:block}
-.target{position:absolute;inset:10%;border:2px dashed rgba(255,255,255,.45);border-radius:12px;pointer-events:none}
-.scanBtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.small{font-size:12px;opacity:.85}
-a.link{color:#60a5fa;text-decoration:none}
-.hidden{display:none}
+/* card */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+h1{margin:6px 0 8px;font-size:20px}
+.muted{color:#64748b;font-size:13px}
+
+/* buttons/inputs */
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.primary{background:var(--cta);color:var(--ctaText);border:1px solid transparent;font-weight:700}
+input[type="text"], input[type="number"], textarea{
+  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
+}
+label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
+
+/* camera overlay */
+#camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
+#camViewport{position:relative;width:100%;max-width:720px}
+video{width:100%;border-radius:8px}
+.scanBox{position:absolute;left:10%;right:10%;top:20%;bottom:20%;border:2px dashed rgba(255,255,255,.7);border-radius:8px}
+.camBtns{display:flex;gap:8px;margin-top:10px}
+.camBtns button{background:#fff}
+
+.success{color:#16a34a;font-weight:600}
+.error{color:#b91c1c}
+.small{font-size:12px;color:#475569}
 </style>
 </head>
 <body>
 
-<!-- small compliance + privacy line -->
-<div class="notice"><div class="wrap">
-  By appointment only. We purchase EVs for cash and connect sellers with buyers. <b>Privacy:</b> We only use your info to reply with an offer — <b>we never sell your data</b>.
-</div></div>
-
-<header>
-  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <h1>Sell Your Car</h1>
-    <div class="actions">
-      <a href="./share.html"><button>View Inventory</button></a>
-    </div>
-  </div>
-</header>
-
-<main class="wrap">
-
-  <!-- STEP 1: VIN only (single button) -->
-  <div class="card" id="step1">
-    <div class="hd"><b>Step 1 — Scan or enter your VIN</b><span class="note">17 characters (no I, O, Q)</span></div>
-    <div class="bd">
-      <label>VIN</label>
-      <input id="vin" maxlength="17" placeholder="5YJ...">
-      <div id="vinMsg" class="note" style="margin-top:6px"></div>
-      <div class="actions" style="margin-top:8px">
-        <button id="scanBtn" class="primary">Scan VIN</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 2: show after valid VIN -->
-  <div class="card" id="step2" hidden>
-    <div class="hd"><b>Step 2 — Confirm vehicle & add mileage/condition</b><span id="decodeNote" class="note"></span></div>
-    <div class="bd">
-      <div class="row">
-        <div><label>Year</label><input id="year" type="number" min="2008" max="2100" placeholder="2020"></div>
-        <div><label>Model</label>
-          <select id="model">
-            <option value="">Select…</option>
-            <option>Model 3</option><option>Model Y</option><option>Model S</option><option>Model X</option>
-            <option>Roadster</option><option>Cybertruck</option>
-          </select>
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px">
-        <div><label>Mileage</label><input id="miles" type="number" min="0" step="500" placeholder="66000"></div>
-        <div><label>Overall condition</label>
-          <select id="condition">
-            <option value="">Select…</option>
-            <option>Excellent</option><option>Good</option><option>Fair</option><option>Needs work</option>
-          </select>
-        </div>
-      </div>
-      <div class="actions" style="margin-top:12px">
-        <button id="nextContact" class="primary">Next</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- STEP 3: contact + send -->
-  <div class="card" id="step3" hidden>
-    <div class="hd"><b>Step 3 — How can we reach you?</b><span class="note">SMS is fastest</span></div>
-    <div class="bd">
-      <div class="row">
-        <div><label>Your name</label><input id="name" placeholder="First Last"></div>
-        <div><label>Your phone</label><input id="phone" placeholder="(555) 555-5555"></div>
-      </div>
-      <div style="margin-top:10px"><label>Email (optional)</label><input id="email" type="email" placeholder="you@example.com"></div>
-      <div class="actions" style="margin-top:12px">
-        <button id="sendSms" class="primary">Text this info</button>
-        <button id="copySummary">Copy summary</button>
-      </div>
-      <div id="sendMsg" class="note" style="margin-top:8px"></div>
-    </div>
-  </div>
-
-</main>
-
-<!-- Scanner overlay (single entry point) -->
-<div id="scanOverlay" role="dialog" aria-modal="true" aria-label="VIN scanner">
-  <div class="scanBox">
-    <div class="scanHd">
-      <div>Scan VIN</div>
-      <div class="small" id="scanHint">Looking for barcode…</div>
-      <button id="closeScan">Close</button>
-    </div>
-    <div class="scanBody">
-      <div class="videoWrap">
-        <video id="video" muted playsinline></video>
-        <div class="target"></div>
-      </div>
-      <div class="scanBtns">
-        <button id="torch" class="hidden">Flashlight</button>
-        <span id="zoomWrap" class="hidden small">Zoom <input id="zoom" type="range" min="1" max="1" step="0.1" /></span>
-        <button id="captureOCR">Use Photo (OCR)</button>
-        <label class="small"><input id="autoOCR" type="checkbox" checked /> Auto-try OCR if no barcode</label>
-        <input id="filePicker" type="file" accept="image/*" class="hidden">
-        <a href="#" id="uploadLink" class="link small">Upload photo</a>
-      </div>
-      <div id="scanMsg" class="small" style="margin-top:6px;opacity:.9"></div>
-    </div>
+<!-- Logo bar -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
   </div>
 </div>
 
-<footer class="legal">
-  <div class="wrap">
-    <div><strong>Disclosure:</strong> Retail transactions are completed by our licensed partner, Waltons Auto Sales. Private-party transactions are between individual buyer and seller. We are not affiliated with Tesla, Inc.</div>
-    <div style="margin-top:6px">© <span id="yr"></span> E.V. Exchange · <a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></div>
+<main class="wrap">
+  <div class="card">
+    <h1>Sell Your Car</h1>
+    <div class="muted">Quick start: scan your VIN (best from the <b>door-jamb sticker</b>). Windshield VIN is often hard to read—use strong lighting.</div>
+
+    <div class="row" style="margin-top:12px">
+      <button id="scanBtn" class="primary">Scan VIN</button>
+      <label for="vinPhoto" class="btn" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+        <input id="vinPhoto" type="file" accept="image/*" capture="environment" style="display:none">
+        Upload VIN photo
+      </label>
+    </div>
+
+    <label for="vin">VIN</label>
+    <input id="vin" type="text" placeholder="17 characters" inputmode="latin" maxlength="23" autocomplete="off" spellcheck="false">
+    <div id="vinStatus" class="small" style="margin-top:6px"></div>
+
+    <div class="row">
+      <div style="flex:1">
+        <label for="miles">Mileage</label>
+        <input id="miles" type="number" placeholder="e.g., 65200" min="0" step="1">
+      </div>
+      <div style="flex:1">
+        <label for="cond">Overall condition</label>
+        <input id="cond" type="text" placeholder="Excellent / Good / Fair">
+      </div>
+    </div>
+
+    <label for="notes">Notes (optional)</label>
+    <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
+
+    <div class="row" style="margin-top:12px">
+      <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
+      <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
+    </div>
+
+    <div class="small" style="margin-top:8px">
+      Privacy: We only use your info to evaluate your car and contact you. We do not sell personal information.
+    </div>
   </div>
-</footer>
+</main>
+
+<!-- Camera overlay -->
+<div id="camWrap">
+  <div id="camViewport">
+    <video id="video" autoplay playsinline></video>
+    <div class="scanBox"></div>
+  </div>
+  <div class="camBtns">
+    <button id="captureBtn" class="primary">Scan frame</button>
+    <button id="closeCamBtn">Close</button>
+  </div>
+  <div id="camHint" class="small" style="color:#e5e7eb;margin-top:6px;text-align:center">
+    Tip: Aim at the door-jamb sticker under bright light. Fill the dashed box with the VIN line.
+  </div>
+</div>
+
+<!-- OCR library -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
-document.getElementById('yr').textContent = new Date().getFullYear();
+/* ===== Helpers: VIN normalization & validation ===== */
+function normalizeVIN(raw){
+  if(!raw) return '';
+  let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  // Correct common OCR confusions. VIN never uses I,O,Q.
+  s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');
+  // Clip to longest plausible VIN substring
+  const m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/); // allow longer then trim
+  if(m){ s = m[0]; }
+  if(s.length > 17) s = s.substring(0,17);
+  return s;
+}
+function isVIN17(s){
+  return /^[A-HJ-NPR-Z0-9]{17}$/.test(s || '');
+}
 
-/* ---------- VIN helpers ---------- */
-const translit={A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,J:1,K:2,L:3,M:4,N:5,P:7,R:9,S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9,0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9};
-const weights=[8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
-function cleanVIN(v){return (v||'').toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g,'');}
-function vinCheckDigit(v){v=cleanVIN(v);if(v.length!==17)return false;let s=0;for(let i=0;i<17;i++){const ch=v[i];const val=translit[ch];if(val===undefined)return false;s+=val*weights[i]}const r=s%11;const c=(r===10?'X':String(r));return v[8]===c;}
-function yearFromCode(c){const m={A:2010,B:2011,C:2012,D:2013,E:2014,F:2015,G:2016,H:2017,J:2018,K:2019,L:2020,M:2021,N:2022,P:2023,R:2024,S:2025,T:2026,V:2027,W:2028,X:2029,Y:2030,1:2031,2:2032,3:2033,4:2034,5:2035,6:2036,7:2037,8:2038,9:2039};return m[c]||'';}
-function modelFromTeslaChar(c){const m={'S':'Model S','3':'Model 3','X':'Model X','Y':'Model Y','R':'Roadster','C':'Cybertruck'};return m[c]||'';}
-function isTeslaWMI(w){return ['5YJ','7SA','LRW','XP7'].includes(w);}
-function decodeVIN(v){v=cleanVIN(v);if(v.length!==17)return{};const w=v.slice(0,3),y=yearFromCode(v[9])||'',mc=v[3],model=modelFromTeslaChar(mc);const make=isTeslaWMI(w)?'Tesla':'';return {make:make,year:y,model:model};}
+/* ===== UI elements ===== */
+const vinEl = document.getElementById('vin');
+const vinStatus = document.getElementById('vinStatus');
+const scanBtn = document.getElementById('scanBtn');
+const vinPhoto = document.getElementById('vinPhoto');
+const submitBtn = document.getElementById('submitBtn');
 
-/* ---------- Step control ---------- */
-const step1=document.getElementById('step1'), step2=document.getElementById('step2'), step3=document.getElementById('step3');
-const decodeNote=document.getElementById('decodeNote');
-const vinEl=document.getElementById('vin'), vinMsg=document.getElementById('vinMsg');
-const yearEl=document.getElementById('year'), modelEl=document.getElementById('model');
-const milesEl=document.getElementById('miles'), conditionEl=document.getElementById('condition');
+const camWrap = document.getElementById('camWrap');
+const video = document.getElementById('video');
+const captureBtn = document.getElementById('captureBtn');
+const closeCamBtn = document.getElementById('closeCamBtn');
 
-vinEl.addEventListener('input',e=>{
-  const v=cleanVIN(e.target.value); e.target.value=v;
-  const ok=v.length===17 && vinCheckDigit(v);
-  vinMsg.textContent=!v?'':(ok?'VIN looks valid ✔':'VIN format/check digit mismatch.');
-  vinMsg.className='note ' + (ok?'success':'error');
-  if(ok) onValidVIN(v);
+function setStatus(msg, ok){
+  vinStatus.textContent = msg || '';
+  vinStatus.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
+}
+
+/* Live VIN typing validation */
+vinEl.addEventListener('input', ()=>{
+  let v = normalizeVIN(vinEl.value);
+  vinEl.value = v;
+  if(v.length === 17 && isVIN17(v)){ setStatus('Looks like a valid VIN.', true); }
+  else if(v.length > 0){ setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
+  else setStatus('');
 });
-function onValidVIN(v){
-  const d=decodeVIN(v);
-  if(d.year) yearEl.value=d.year;
-  if(d.make==='Tesla'){ if(d.model) modelEl.value=d.model; else { const g=modelFromTeslaChar(v[3]); if(g) modelEl.value=g; } }
-  decodeNote.textContent='Auto-filled from VIN'+(d.year?` • ${d.year}`:'')+(d.model?` • ${d.model}`:'');
-  step2.hidden=false; step2.scrollIntoView({behavior:'smooth',block:'start'});
-}
-document.getElementById('nextContact').onclick=()=>{ step3.hidden=false; step3.scrollIntoView({behavior:'smooth',block:'start'}); };
 
-/* ---------- Unified scanner ---------- */
-const scanOverlay=document.getElementById('scanOverlay');
-const scanBtn=document.getElementById('scanBtn');
-const closeScan=document.getElementById('closeScan');
-const scanHint=document.getElementById('scanHint');
-const scanMsg=document.getElementById('scanMsg');
-const video=document.getElementById('video');
-const torch=document.getElementById('torch');
-const zoomWrap=document.getElementById('zoomWrap');
-const zoom=document.getElementById('zoom');
-const captureOCR=document.getElementById('captureOCR');
-const uploadLink=document.getElementById('uploadLink');
-const filePicker=document.getElementById('filePicker');
-const autoOCR=document.getElementById('autoOCR');
-
-let codeReader=null, scanning=false, ocrBusy=false, ocrTried=false, ocrWorker=null, ocrTimer=null;
-
-scanBtn.onclick=async()=>{ openScanner(); };
-closeScan.onclick=()=>{ stopScan(); closeScanner(); };
-uploadLink.onclick=(e)=>{ e.preventDefault(); filePicker.click(); };
-filePicker.onchange=()=>{ const f=filePicker.files && filePicker.files[0]; if(f) runOCRFile(f); };
-captureOCR.onclick=()=>{ captureAndOCR(); };
-
-function openScanner(){
-  scanOverlay.classList.add('open');
-  scanHint.textContent='Looking for barcode…';
-  scanMsg.textContent='Align door-jamb/windshield sticker. If no barcode is present, tap “Use Photo (OCR)”.';
-  startBarcodeScan();
-}
-function closeScanner(){ scanOverlay.classList.remove('open'); }
-
-async function startBarcodeScan(){
-  if(scanning) return; scanning=true;
+/* ===== Camera flow (OCR on frame) ===== */
+let stream=null;
+async function openCamera(){
   try{
-    if(!codeReader){ codeReader=new ZXingBrowser.BrowserMultiFormatReader(); }
-    await codeReader.decodeFromVideoDevice(null,'video',(result)=>{
-      if(result && result.text){
-        const raw=result.text.toUpperCase();
-        const m=raw.match(/[A-HJ-NPR-Z0-9]{17}/);
-        const v=m?m[0]:'';
-        if(v){
-          vinEl.value=v; vinEl.dispatchEvent(new Event('input'));
-          stopScan(); closeScanner();
-        }
-      }
+    camWrap.style.display='flex';
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' }, audio:false
     });
-    setupTrackControls();
-    // auto-try OCR once if no barcode in 5s
-    if(autoOCR.checked){
-      if(ocrTimer) clearTimeout(ocrTimer);
-      ocrTimer=setTimeout(()=>{ if(!ocrTried) captureAndOCR(true); }, 5000);
-    }
-  }catch(e){
-    scanMsg.textContent='Camera error: '+(e && e.message || e);
+    video.srcObject = stream;
+  }catch(err){
+    camWrap.style.display='none';
+    alert('Camera not available. Try uploading a clear VIN photo instead.');
   }
 }
-function stopScan(){
-  try{ codeReader && codeReader.reset(); }catch(e){}
-  const stream=video.srcObject; if(stream){ stream.getTracks().forEach(t=>t.stop()); video.srcObject=null; }
-  scanning=false;
-  if(ocrTimer){ clearTimeout(ocrTimer); ocrTimer=null; }
+function closeCamera(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  camWrap.style.display='none';
 }
-async function setupTrackControls(){
-  try{
-    const stream=video.srcObject; if(!stream) return;
-    const track=stream.getVideoTracks()[0];
-    const caps=track.getCapabilities ? track.getCapabilities() : {};
-    if(caps.torch){ torch.classList.remove('hidden'); let on=false; torch.onclick=async()=>{ on=!on; try{ await track.applyConstraints({advanced:[{torch:on}]}); }catch(e){} torch.textContent=on?'Flashlight (ON)':'Flashlight'; }; }
-    else { torch.classList.add('hidden'); }
-    if(caps.zoom){ zoomWrap.classList.remove('hidden'); zoom.min=caps.zoom.min||1; zoom.max=caps.zoom.max||5; zoom.step=caps.zoom.step||0.1; zoom.value=caps.zoom.min||1; zoom.oninput=async()=>{ try{ await track.applyConstraints({advanced:[{zoom:+zoom.value}]}); }catch(e){} }; }
-    else { zoomWrap.classList.add('hidden'); }
-  }catch(e){}
-}
+scanBtn.addEventListener('click', openCamera);
+closeCamBtn.addEventListener('click', closeCamera);
 
-/* ---------- OCR from frame or file ---------- */
-async function getOCRWorker(){
-  if(ocrWorker) return ocrWorker;
-  ocrWorker=Tesseract.createWorker();
-  await ocrWorker.load(); await ocrWorker.loadLanguage('eng'); await ocrWorker.initialize('eng');
-  await ocrWorker.setParameters({ tessedit_char_whitelist:'ABCDEFGHJKLMNPRSTUVWXYZ0123456789' });
-  return ocrWorker;
-}
-function grabFrameDataURL(){
-  const v=video; if(!v || !v.videoWidth) return null;
-  const maxW=1600, maxH=1600;
-  const r=Math.min(maxW/v.videoWidth, maxH/v.videoHeight, 1);
-  const cw=Math.round(v.videoWidth*r), ch=Math.round(v.videoHeight*r);
-  const c=document.createElement('canvas'); c.width=cw; c.height=ch;
-  const ctx=c.getContext('2d'); ctx.drawImage(v,0,0,cw,ch);
-  return c.toDataURL('image/jpeg',0.92);
-}
-async function captureAndOCR(auto=false){
-  if(ocrBusy) return; ocrBusy=true; ocrTried=true;
-  scanHint.textContent='Reading printed VIN…';
+captureBtn.addEventListener('click', async ()=>{
+  if(!video.videoWidth){ alert('Camera not ready. Try again in a second.'); return; }
+  // Grab a frame inside the dashed scan box
+  const vw = video.videoWidth, vh = video.videoHeight;
+  const cropX = vw*0.10, cropY = vh*0.20, cw = vw*0.80, ch = vh*0.60;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, cw, ch);
+
+  setStatus('Reading VIN from camera…');
   try{
-    const dataUrl=grabFrameDataURL();
-    if(!dataUrl){ scanMsg.textContent='No camera frame yet. Try again in a moment or Upload photo.'; ocrBusy=false; return; }
-    const worker=await getOCRWorker();
-    const { data }=await worker.recognize(dataUrl);
-    const text=(data && data.text || '').toUpperCase();
-    const candidates=(text.match(/[A-HJ-NPR-Z0-9]{17}/g)||[]).filter(vinCheckDigit);
-    const v=candidates[0] || ((text.match(/[A-HJ-NPR-Z0-9]{17}/)||[])[0]||'');
-    if(v){
-      vinEl.value=v; vinEl.dispatchEvent(new Event('input'));
-      stopScan(); closeScanner();
+    const { data } = await Tesseract.recognize(canvas, 'eng', {
+      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
+    });
+    const text = (data && data.text) ? data.text : '';
+    let v = normalizeVIN(text);
+    if(isVIN17(v)){
+      vinEl.value = v;
+      setStatus('VIN captured from camera ✔', true);
+      closeCamera();
     }else{
-      scanMsg.textContent = auto ? 'No barcode found; first OCR attempt didn’t see a full VIN. Try moving closer and press “Use Photo (OCR)” or Upload.' :
-                                   'Couldn’t read a full VIN. Move closer, center the VIN, then tap again.';
+      setStatus('Couldn’t read a clear 17-char VIN. Try again closer, steadier, and brighter—or upload a photo.');
     }
   }catch(e){
-    scanMsg.textContent='OCR error. Try Upload photo.';
-  }finally{ ocrBusy=false; }
-}
-function downscaleToDataURL(imgSrc,maxW=1600,maxH=1600){
-  return new Promise(res=>{ const img=new Image(); img.onload=()=>{ const r=Math.min(maxW/img.width,maxH/img.height,1); const w=Math.round(img.width*r), h=Math.round(img.height*r); const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); res(c.toDataURL('image/jpeg',0.92)); }; img.src=imgSrc; });
-}
-async function runOCRFile(file){
-  scanHint.textContent='Reading printed VIN…';
-  const rd=new FileReader(); rd.onload=async()=>{
-    try{
-      const dataUrl=await downscaleToDataURL(rd.result);
-      const worker=await getOCRWorker();
-      const { data }=await worker.recognize(dataUrl);
-      const text=(data && data.text || '').toUpperCase();
-      const candidates=(text.match(/[A-HJ-NPR-Z0-9]{17}/g)||[]).filter(vinCheckDigit);
-      const v=candidates[0] || ((text.match(/[A-HJ-NPR-Z0-9]{17}/)||[])[0]||'');
-      if(v){ vinEl.value=v; vinEl.dispatchEvent(new Event('input')); stopScan(); closeScanner(); }
-      else { scanMsg.textContent='Couldn’t find a full VIN in this photo. Try another angle with better light.'; }
-    }catch(e){ scanMsg.textContent='OCR error on file.'; }
-  }; rd.readAsDataURL(file);
-}
+    setStatus('Scanner error. Try again or upload a photo.');
+  }
+});
 
-/* ---------- Summary + send (Step 3) ---------- */
-function fmt(n){ try{return new Intl.NumberFormat('en-US').format(+n||0);}catch{return String(n||'');} }
-function buildSummary(){
-  const v=vinEl.value.trim().toUpperCase(), y=yearEl.value.trim(), m=modelEl.value.trim(), mi=milesEl.value.trim(), c=conditionEl.value.trim();
-  const name=(document.getElementById('name').value||'').trim();
-  const phone=(document.getElementById('phone').value||'').trim();
-  const email=(document.getElementById('email').value||'').trim();
-  const valid= v && v.length===17 && vinCheckDigit(v);
-  return [
-    `SELL lead${valid?' (VIN ✔)':''}`,
-    `VIN: ${v||'-'}`,
-    `Year/Model: ${[y,m].filter(Boolean).join(' ')||'-'}`,
-    `Mileage: ${mi?fmt(mi)+' mi':'-'} | Condition: ${c||'-'}`,
-    `Name: ${name||'-'} | Phone: ${phone||'-'}${email?(' | Email: '+email):''}`
-  ].join('\n');
-}
-async function copyText(t){ try{ await navigator.clipboard.writeText(t); }catch{ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); } }
-document.getElementById('sendSms').onclick=()=>{ const msg=buildSummary(); const dest="+14244256211"; copyText(msg); location.href=`sms:${dest.replace(/[^0-9+]/g,'')}?&body=${encodeURIComponent(msg)}`; };
-document.getElementById('copySummary').onclick=async()=>{ await copyText(buildSummary()); const s=document.getElementById('sendMsg'); s.textContent='Summary copied.'; setTimeout(()=>s.textContent='',1500); };
+/* ===== Photo upload flow (OCR on image) ===== */
+vinPhoto.addEventListener('change', async (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  setStatus('Reading VIN from photo…');
+  const img = new Image();
+  img.onload = async ()=>{
+    try{
+      const { data } = await Tesseract.recognize(img, 'eng', {
+        tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
+      });
+      const text = (data && data.text) ? data.text : '';
+      const v = normalizeVIN(text);
+      if(isVIN17(v)){
+        vinEl.value = v;
+        setStatus('VIN captured from photo ✔', true);
+      }else{
+        setStatus('No clear VIN found in this photo. Try retaking: fill the frame with the VIN line, good light.');
+      }
+    }catch(err){
+      setStatus('Couldn’t process the photo. Please try a clearer shot.');
+    }
+  };
+  img.onerror = ()=> setStatus('Bad image file. Try another photo.');
+  img.src = URL.createObjectURL(f);
+});
+
+/* ===== Submit (placeholder) ===== */
+/* Right now, we just validate and compose a text message to you.
+   Later we can POST to a backend or GitHub issues/form. */
+submitBtn.addEventListener('click', ()=>{
+  const v = vinEl.value.trim().toUpperCase();
+  if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
+  const miles = (document.getElementById('miles').value || '').trim();
+  const cond  = (document.getElementById('cond').value || '').trim();
+  const notes = (document.getElementById('notes').value || '').trim();
+
+  const msg = `VIN: ${v}\nMileage: ${miles || '(n/a)'}\nCondition: ${cond || '(n/a)'}\nNotes: ${notes || '(n/a)'}`;
+  const sms = `Hello, I'm submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
+  // Your number (same as buyers page)
+  location.href = `sms:+14244256211?&body=${sms}`;
+});
 </script>
 </body>
 </html>
