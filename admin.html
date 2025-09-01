@@ -3,321 +3,420 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Inventory Admin</title>
+<title>Inventory Admin • EVTime</title>
+<meta name="theme-color" content="#0ea5e9"/>
+
 <style>
-:root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#475569;--line:#e2e8f0;--accent:#0ea5e9;--danger:#ef4444}
+:root{ --bg:#1f2937; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --cta:#0ea5e9 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
-.wrap{max-width:860px;margin:0 auto;padding:12px}
-h1{font-size:20px;margin:6px 0}
-.grid{display:grid;grid-template-columns:1fr;gap:12px}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.card .hd{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafafa}
-.card .bd{padding:12px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-label{font-size:12px;color:var(--muted)}
-input,select,textarea,button{font:inherit}
-input,select,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff}
-textarea{min-height:72px;resize:vertical}
-.actions{display:flex;flex-wrap:wrap;gap:8px}
-button{height:36px;padding:0 12px;border:1px solid var(--line);background:#fff;border-radius:12px;cursor:pointer}
-button.primary{background:var(--accent);color:#fff;border-color:transparent}
-button.warn{border-color:var(--danger);color:#ef4444}
-small.muted{color:var(--muted)}
-.list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.item{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
-.item .ph{aspect-ratio:4/3;background:#e5e7eb}
-.item img{width:100%;height:100%;object-fit:cover;display:block}
-.item .info{padding:10px 12px}
-.item .top{display:flex;justify-content:space-between;gap:10px}
-.item .title{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item .muted{color:#475569;font-size:12px}
-.item .price{font-weight:700}
-.item .btns{display:flex;gap:8px;margin-top:8px}
-.drop{border:2px dashed var(--line);border-radius:12px;padding:12px;text-align:center;color:var(--muted)}
-.drop.drag{border-color:var(--accent);color:#0ea5e9}
-.preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.preview img{width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.wrap{max-width:820px;margin:0 auto;padding:12px}
+
+/* Top logo bar (white) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:820px;margin:0 auto;padding:0 12px}
+#site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+h1,h2{margin:6px 0 8px}
+.small{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.col{flex:1;min-width:220px}
+label{display:block;font-size:12px;color:#334155;margin:8px 0 4px}
+input[type="text"],input[type="number"],textarea{
+  width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
+}
+textarea{height:auto;min-height:80px;padding:10px 12px}
+input::placeholder,textarea::placeholder{color:#94a3b8}
+button{height:42px;padding:0 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;cursor:pointer}
+button.primary{background:var(--cta);color:#fff;border-color:var(--cta);font-weight:700}
+button.warn{background:#fee2e2;border-color:#fecaca}
+button.icon{width:42px}
+
+hr.sep{border:0;border-top:1px dashed #e2e8f0;margin:10px 0}
+
+/* inventory list */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:10px;border:1px dashed #e2e8f0;border-radius:12px;padding:8px;background:#fafafa}
+.item img{width:92px;height:69px;object-fit:cover;border-radius:10px;background:#e5e7eb}
+.meta{flex:1;min-width:0}
+.title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:12px;color:#475569}
+.btns{display:flex;gap:6px}
+.kv{font-variant-numeric:tabular-nums}
+
+.notice{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin:8px 0}
+.ok{color:#16a34a}.err{color:#b91c1c}
+.hidden{display:none}
+
+input[type="file"]{display:none}
+.file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed #cbd5e1;border-radius:12px;padding:0 12px;height:42px;background:#fff;cursor:pointer}
+
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media (max-width:720px){ .grid3{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <h1>Inventory Admin</h1>
-    <div class="actions">
-      <button id="shareSite">Share link</button>
-      <button id="openBuyer">Open buyer page</button>
-    </div>
+
+<!-- Logo -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
   </div>
-</header>
+</div>
 
-<main class="wrap">
-  <div class="grid">
+<div class="wrap">
 
-    <!-- SETTINGS -->
-    <div class="card">
-      <div class="hd"><b>GitHub Settings</b><small class="muted">Stored locally only</small></div>
-      <div class="bd row3">
-        <div><label>Username</label><input id="u" placeholder="vahehr-dotcom" value="vahehr-dotcom"></div>
-        <div><label>Repo</label><input id="r" placeholder="Tesla_Inventory" value="Tesla_Inventory"></div>
-        <div><label>Branch</label><input id="b" value="main"></div>
-        <div style="grid-column:1 / -1"><label>Personal access token</label><input id="t" type="password" placeholder="ghp_..." autocomplete="off"></div>
-        <div class="actions" style="grid-column:1 / -1">
-          <button id="saveCfg" class="primary">Save settings</button>
-          <button id="clearCfg" class="warn">Forget settings</button>
-          <div id="cfgMsg" class="muted"></div>
-        </div>
+  <!-- Add / Edit -->
+  <div class="card">
+    <h1 id="formTitle">Add Vehicle</h1>
+    <div class="small">Fast add: drop photos, fill a few fields, save. Photos are auto-resized for web.</div>
+
+    <div class="row">
+      <div class="col">
+        <label for="year">Year *</label>
+        <input id="year" type="number" placeholder="2020" min="1995" max="2035" required>
+      </div>
+      <div class="col">
+        <label for="model">Model *</label>
+        <input id="model" type="text" placeholder="Model 3 / Y / S / X" required>
+      </div>
+      <div class="col">
+        <label for="trim">Trim *</label>
+        <input id="trim" type="text" placeholder="Standard Plus / Long Range / Performance" required>
       </div>
     </div>
 
-    <!-- ADD / EDIT -->
-    <div class="card">
-      <div class="hd"><b>Add / Edit Car</b><small class="muted">Year, Model, Trim, Mileage, Price required</small></div>
-      <div class="bd">
-        <div class="row">
-          <div><label>Year</label><input id="year" type="number" min="2008" max="2100" required></div>
-          <div><label>Model</label>
-            <select id="model">
-              <option value="">Select…</option>
-              <option>Model 3</option><option>Model Y</option><option>Model S</option><option>Model X</option>
-            </select>
-          </div>
-        </div>
-        <div class="row">
-          <div><label>Trim</label><input id="trim" placeholder="Standard Plus / Long Range / Plaid…" required></div>
-          <div><label>Mileage</label><input id="miles" type="number" min="0" step="1000" placeholder="66000" required></div>
-        </div>
-        <div class="row">
-          <div><label>Price (USD)</label><input id="price" type="number" min="0" step="100" placeholder="19000" required></div>
-          <div><label>Date (auto)</label><input id="added" type="date"></div>
-        </div>
-        <div><label>Notes</label><textarea id="notes" placeholder="Color, condition, options, FSD, warranty, one-owner…"></textarea></div>
-
-        <div class="drop" id="drop">Drag & drop photos here or
-          <label style="color:#0ea5e9;cursor:pointer"> click to select
-            <input id="photos" type="file" accept="image/*" multiple style="display:none">
-          </label>
-          <div><small class="muted">We auto-resize to max 1400px (quality ~80%).</small></div>
-          <div id="prev" class="preview"></div>
-        </div>
-
-        <div class="actions" style="margin-top:10px">
-          <button id="saveCar" class="primary">Save car</button>
-          <button id="resetForm" type="button">Reset form</button>
-          <div id="formMsg" class="muted"></div>
-        </div>
+    <div class="row">
+      <div class="col">
+        <label for="mileage">Mileage *</label>
+        <input id="mileage" type="number" placeholder="66000" min="0" required>
+      </div>
+      <div class="col">
+        <label for="price">Price (USD) *</label>
+        <input id="price" type="number" placeholder="19000" min="0" step="100" required>
+      </div>
+      <div class="col">
+        <label for="notes">Notes</label>
+        <input id="notes" type="text" placeholder="1-owner, FSD, new tires…">
       </div>
     </div>
 
-    <!-- INVENTORY -->
-    <div class="card">
-      <div class="hd"><b>Inventory</b><small class="muted" id="count"></small></div>
-      <div class="bd">
-        <div class="actions" style="margin-bottom:8px">
-          <button id="loadRemote">Load from GitHub</button>
-          <button id="downloadLocal">Download JSON</button>
-          <button id="clearLocal" class="warn">Clear local list</button>
-          <button id="publish" class="primary">Publish to GitHub</button>
-          <div id="pubMsg" class="muted"></div>
-        </div>
-        <div id="list" class="list"></div>
-      </div>
+    <div class="row" style="align-items:center">
+      <label for="photos" class="file-label">📷 Add photos (you can select multiple)</label>
+      <input id="photos" type="file" accept="image/*" multiple>
+      <div id="photoStatus" class="small"></div>
     </div>
 
+    <div class="row" style="margin-top:8px">
+      <button id="saveBtn" class="primary">Save vehicle</button>
+      <button id="resetBtn">Reset form</button>
+      <button id="deleteBtn" class="warn hidden">Delete this vehicle</button>
+    </div>
+    <div id="formMsg" class="small"></div>
   </div>
-</main>
+
+  <!-- Inventory + Reorder -->
+  <div class="card">
+    <h2>Inventory & Reorder</h2>
+    <div class="small">Use ↑ ↓ to move cars. Order is saved and used by the buyers page.</div>
+    <div id="status" class="notice">Loading inventory…</div>
+    <div id="list" class="list hidden"></div>
+  </div>
+
+  <!-- Save / Publish -->
+  <div class="card">
+    <h2>Save / Publish</h2>
+    <div class="small">Option A: Download JSON and upload manually in GitHub. Option B: Publish directly (token saved locally on this device).</div>
+
+    <div class="grid3" style="margin-top:6px">
+      <button id="downloadBtn" class="primary">Download inventory.json</button>
+      <button id="publishBtn">Publish to GitHub</button>
+      <button id="buyersBtn">Open buyers page</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="copyLinkBtn">Copy buyers link</button>
+      <button id="shareLinkBtn">Share buyers link</button>
+      <button id="reloadBtn">Reload admin</button>
+    </div>
+
+    <hr class="sep">
+
+    <div class="small">GitHub settings (remembered locally):</div>
+    <div class="grid3">
+      <input id="ghUser" placeholder="GitHub username (e.g., vahehr-dotcom)"/>
+      <input id="ghRepo" placeholder="Repo (e.g., Tesla_Inventory)"/>
+      <input id="ghToken" placeholder="Personal access token (classic: repo scope)"/>
+    </div>
+    <div id="msg" class="small" style="margin-top:8px"></div>
+  </div>
+
+</div>
 
 <script>
-/* -------- Helpers -------- */
-const byId = id=>document.getElementById(id);
-const fmtPrice = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(+n||0);
-const fmtMiles = n => new Intl.NumberFormat('en-US').format(+n||0)+' mi';
-const todayISO = () => new Date().toISOString().slice(0,10);
-const uid = () => Math.random().toString(36).slice(2,10);
-const placeholder = ()=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='800' height='600' fill='#e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#94a3b8' font-family='system-ui' font-size='28'>Photo</text></svg>");
+/* ====== State ====== */
+let CARS = [];
+let EDIT_ID = null;
+let shaCurrent = null; // sha for inventory.json for PUT
+const buyersURL = (location.origin + location.pathname).replace(/admin\.html.*/,'') + 'share.html';
 
-/* -------- Config (local only) -------- */
-const cfg = {
-  get user(){return localStorage.getItem('gh_user')||'vahehr-dotcom'},
-  set user(v){localStorage.setItem('gh_user',v||'')},
-  get repo(){return localStorage.getItem('gh_repo')||'Tesla_Inventory'},
-  set repo(v){localStorage.setItem('gh_repo',v||'')},
-  get branch(){return localStorage.getItem('gh_branch')||'main'},
-  set branch(v){localStorage.setItem('gh_branch',v||'main')},
-  get token(){return localStorage.getItem('gh_token')||''},
-  set token(v){localStorage.setItem('gh_token',v||'')}
-};
-function loadCfgUI(){byId('u').value=cfg.user;byId('r').value=cfg.repo;byId('b').value=cfg.branch;byId('t').value=cfg.token}
-loadCfgUI();
-byId('saveCfg').onclick=()=>{cfg.user=byId('u').value.trim();cfg.repo=byId('r').value.trim();cfg.branch=byId('b').value.trim()||'main';cfg.token=byId('t').value.trim();byId('cfgMsg').textContent='Saved.'};
-byId('clearCfg').onclick=()=>{['gh_user','gh_repo','gh_branch','gh_token'].forEach(k=>localStorage.removeItem(k));loadCfgUI();byId('cfgMsg').textContent='Cleared.'};
+/* ====== Elements ====== */
+const statusEl = document.getElementById('status');
+const listEl = document.getElementById('list');
+const msgEl = document.getElementById('msg');
+const formMsg = document.getElementById('formMsg');
+const formTitle = document.getElementById('formTitle');
 
-/* -------- Local inventory (quota-safe) -------- */
-let __MEM = []; // fallback memory copy if localStorage fills up
-function getInv(){
-  try{ const s = localStorage.getItem('inventory'); return s ? JSON.parse(s) : (__MEM||[]); }
-  catch{ return __MEM||[]; }
+const yearEl = document.getElementById('year');
+const modelEl = document.getElementById('model');
+const trimEl = document.getElementById('trim');
+const mileageEl = document.getElementById('mileage');
+const priceEl = document.getElementById('price');
+const notesEl = document.getElementById('notes');
+const photosEl = document.getElementById('photos');
+const photoStatus = document.getElementById('photoStatus');
+
+const saveBtn = document.getElementById('saveBtn');
+const resetBtn = document.getElementById('resetBtn');
+const deleteBtn = document.getElementById('deleteBtn');
+
+const downloadBtn = document.getElementById('downloadBtn');
+const publishBtn = document.getElementById('publishBtn');
+const buyersBtn = document.getElementById('buyersBtn');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+const shareLinkBtn = document.getElementById('shareLinkBtn');
+const reloadBtn = document.getElementById('reloadBtn');
+
+/* ====== GitHub creds (localStorage) ====== */
+const ghUser = document.getElementById('ghUser');
+const ghRepo = document.getElementById('ghRepo');
+const ghToken = document.getElementById('ghToken');
+ghUser.value  = localStorage.getItem('ghUser')  || 'vahehr-dotcom';
+ghRepo.value  = localStorage.getItem('ghRepo')  || 'Tesla_Inventory';
+ghToken.value = localStorage.getItem('ghToken') || '';
+[ghUser, ghRepo, ghToken].forEach(i => i.addEventListener('input', ()=> localStorage.setItem(i.id, i.value.trim())));
+
+/* ====== Utils ====== */
+function uid(){ return (Math.random().toString(36).slice(2,8)+Math.random().toString(36).slice(2,8)); }
+function titleOf(c){ return `${c.year||''} ${c.model||''} ${c.trim||''}`.replace(/\s+/g,' ').trim(); }
+function priceOf(c){ try{return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(c.price||0)}catch{return'$'+(c.price||0)} }
+function ensureOrder(){ CARS.forEach((c,i)=>{ if(typeof c.order!=='number') c.order = i; }); }
+function sortForDisplay(){ CARS.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0)); }
+
+/* Image compression */
+async function compressFiles(fileList){
+  photoStatus.textContent = 'Processing photos…';
+  const files = Array.from(fileList||[]);
+  const out = [];
+  for(let i=0;i<files.length;i++){
+    const f = files[i];
+    const dataURL = await fileToDataURL(f);
+    const resized = await resizeDataURL(dataURL, 1600, 1200, 0.85);
+    out.push(resized);
+    photoStatus.textContent = `Processed ${i+1} / ${files.length}`;
+  }
+  photoStatus.textContent = out.length ? `Ready: ${out.length} photo(s)` : '';
+  return out;
 }
-function setInv(arr){
-  __MEM = Array.isArray(arr)?arr:[];
-  try{ localStorage.setItem('inventory', JSON.stringify(__MEM)); }
-  catch(e){ console.warn('localStorage full; using in-memory store only', e); }
-  renderList();
+function fileToDataURL(file){
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
 }
-
-/* -------- Render list -------- */
-function renderList(){
-  const inv = getInv();
-  byId('count').textContent = inv.length ? `${inv.length} car${inv.length>1?'s':''}` : 'Empty';
-  const list = byId('list'); list.innerHTML='';
-  inv.sort((a,b)=>(a.addedAt||0)-(b.addedAt||0)||(a.year||0)-(b.year||0)); // oldest first
-  inv.forEach(car=>{
-    const el = document.createElement('div'); el.className='item';
-    el.innerHTML = `
-      <div class="ph"><img src="${(car.photos&&car.photos[0])||car.photo||placeholder()}" alt=""></div>
-      <div class="info">
-        <div class="top"><div class="title">${car.year||''} ${car.model||''} ${car.trim||''}</div><div class="muted">${fmtMiles(car.mileage||0)}</div></div>
-        <div class="top"><div class="price">${fmtPrice(car.price||0)}</div><div class="muted">${car.addedAt? new Date(car.addedAt).toLocaleDateString():''}</div></div>
-        <div class="btns"><button data-edit="${car.id||''}">Edit</button><button class="warn" data-del="${car.id||''}">Delete</button></div>
-      </div>`;
-    list.appendChild(el);
-  });
-  list.querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>{const id=btn.getAttribute('data-del'); setInv(getInv().filter(x=>x.id!==id));});
-  list.querySelectorAll('[data-edit]').forEach(btn=>btn.onclick=()=>{const id=btn.getAttribute('data-edit'); const car=getInv().find(x=>x.id===id); if(!car) return;
-    byId('year').value=car.year||''; byId('model').value=car.model||''; byId('trim').value=car.trim||''; byId('miles').value=car.mileage||''; byId('price').value=car.price||'';
-    byId('added').value=car.addedAt? new Date(car.addedAt).toISOString().slice(0,10) : ''; byId('notes').value=car.notes||'';
-    currentPhotos=[...(car.photos||[])]; drawPreviews(); editingId=car.id; window.scrollTo({top:0,behavior:'smooth'});
-  });
-}
-renderList();
-
-/* -------- Photos (multi + compression) -------- */
-const fileInput=byId('photos'), drop=byId('drop');
-let currentPhotos=[];
-function drawPreviews(){ const prev=byId('prev'); prev.innerHTML=''; currentPhotos.forEach(src=>{const im=document.createElement('img'); im.src=src; prev.appendChild(im);}); }
-drop.addEventListener('dragover',e=>{e.preventDefault(); drop.classList.add('drag');});
-drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
-drop.addEventListener('drop',e=>{e.preventDefault(); drop.classList.remove('drag'); handleFiles(e.dataTransfer.files);});
-drop.addEventListener('click',()=>fileInput.click());
-fileInput.onchange=()=>handleFiles(fileInput.files);
-
-function handleFiles(files){ if(!files||!files.length) return; [...files].forEach(f=>compressImageFile(f).then(url=>{ currentPhotos.push(url); drawPreviews(); })); }
-function compressImageFile(file,maxDim=1400,quality=0.8){
-  return new Promise((res,rej)=>{
-    const reader=new FileReader();
-    reader.onload=()=>{
-      const img=new Image();
-      img.onload=()=>{
-        const c=document.createElement('canvas'), ctx=c.getContext('2d');
-        let w=img.width,h=img.height;
-        if(w>h && w>maxDim){ h=Math.round(h*maxDim/w); w=maxDim; }
-        else if(h>=w && h>maxDim){ w=Math.round(w*maxDim/h); h=maxDim; }
-        c.width=w; c.height=h; ctx.drawImage(img,0,0,w,h);
-        res(c.toDataURL('image/jpeg',quality));
-      };
-      img.onerror=rej; img.src=reader.result;
+function resizeDataURL(dataURL, maxW, maxH, quality){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      let {width:w, height:h} = img;
+      const ratio = Math.min(maxW/w, maxH/h, 1);
+      const cw = Math.round(w*ratio), ch = Math.round(h*ratio);
+      const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+      const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,cw,ch);
+      resolve(c.toDataURL('image/jpeg', quality || 0.85));
     };
-    reader.onerror=rej; reader.readAsDataURL(file);
+    img.src = dataURL;
   });
 }
 
-/* -------- Form actions -------- */
-let editingId=null;
-byId('added').value = todayISO();
-
-byId('resetForm').onclick = ()=>{
-  editingId=null; currentPhotos=[]; drawPreviews();
-  ['year','model','trim','miles','price','notes'].forEach(id=>byId(id).value='');
-  byId('added').value = todayISO();
-};
-
-byId('saveCar').onclick = ()=>{
-  const year=+byId('year').value, model=byId('model').value.trim(), trim=byId('trim').value.trim(), mileage=+byId('miles').value, price=+byId('price').value;
-  if(!year||!model||!trim||!mileage||!price){ byId('formMsg').textContent='Year, Model, Trim, Mileage, and Price are required.'; return; }
-  const notes=byId('notes').value.trim();
-  const addedAt = byId('added').value ? new Date(byId('added').value+'T12:00:00').getTime() : Date.now();
-  const car = { id:editingId||uid(), year, model, trim, mileage, price, notes, addedAt, photos: currentPhotos.slice() };
-  const inv=getInv(); const i=inv.findIndex(x=>x.id===car.id);
-  if(i>=0) inv[i]=car; else inv.push(car);
-  setInv(inv); byId('formMsg').textContent='Saved.'; byId('resetForm').click();
-};
-
-/* -------- Download / Clear / Load remote -------- */
-byId('downloadLocal').onclick=()=>{ const blob=new Blob([JSON.stringify(getInv(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='inventory.json'; a.click(); URL.revokeObjectURL(a.href); };
-byId('clearLocal').onclick=()=>{ if(confirm('Clear local inventory?')) setInv([]); };
-
-byId('loadRemote').onclick=async()=>{
+/* ====== Load inventory and current sha ====== */
+async function loadInventory(){
   try{
+    statusEl.textContent = 'Loading inventory.json…';
     const r = await fetch('./inventory.json?ts='+Date.now(), {cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const data = await r.json();
-    if(!Array.isArray(data)) throw new Error('Remote file is not an array.');
-    // Auto-add IDs if missing
-    data.forEach(c=>{ if(!c.id){ c.id = uid(); } });
-    setInv(data);
-    alert('Loaded from GitHub ('+data.length+' cars). Missing IDs were added — click Publish to save.');
+    CARS = Array.isArray(data) ? data : [];
+    CARS.forEach(c=>{ if(!c.id) c.id = uid(); });
+    ensureOrder(); sortForDisplay();
+    if(!CARS.length){ statusEl.textContent='No inventory yet.'; } else { statusEl.remove(); listEl.classList.remove('hidden'); }
+    renderList();
+
+    // Fetch current sha for PUT
+    const u = `https://api.github.com/repos/${ghUser.value}/${ghRepo.value}/contents/inventory.json`;
+    const r2 = await fetch(u, { headers:{Accept:'application/vnd.github+json'} });
+    if(r2.ok){ const j = await r2.json(); shaCurrent = j.sha || null; } else { shaCurrent = null; }
   }catch(e){
-    alert('Could not load from GitHub: '+e.message);
+    statusEl.textContent = 'Error loading: '+(e.message||e);
+  }
+}
+loadInventory();
+
+/* ====== Render list with Up/Down ====== */
+function renderList(){
+  listEl.innerHTML='';
+  CARS.forEach((c,idx)=>{
+    const row=document.createElement('div'); row.className='item';
+    const img=document.createElement('img'); img.src=(c.photos&&c.photos[0])||c.photo||''; img.alt='photo'; img.onerror=()=>{ img.style.visibility='hidden'; img.style.width='0'; };
+    const meta=document.createElement('div'); meta.className='meta';
+    meta.innerHTML = `<div class="title">${titleOf(c)}</div>
+      <div class="sub">${priceOf(c)} • ${c.mileage? (Number(c.mileage).toLocaleString()+' mi') : ''}</div>`;
+
+    const btns=document.createElement('div'); btns.className='btns';
+    const up=document.createElement('button'); up.textContent='↑'; up.className='icon';
+    const down=document.createElement('button'); down.textContent='↓'; down.className='icon';
+    const edit=document.createElement('button'); edit.textContent='Edit';
+    const del=document.createElement('button'); del.textContent='Delete'; del.className='warn';
+
+    up.onclick = ()=> move(idx,-1);
+    down.onclick = ()=> move(idx,+1);
+    edit.onclick = ()=> loadIntoForm(c.id);
+    del.onclick = ()=> { if(confirm('Delete this vehicle?')) { CARS = CARS.filter(x=>x.id!==c.id); reindexOrders(); renderList(); setDirty('Deleted. Remember to publish.'); } };
+
+    btns.append(up,down,edit,del);
+    row.append(img,meta,btns);
+    listEl.appendChild(row);
+  });
+}
+function move(i, delta){
+  const j = i+delta; if(j<0 || j>=CARS.length) return;
+  // swap order fields
+  const a=CARS[i], b=CARS[j]; const tmp=a.order; a.order=b.order; b.order=tmp;
+  // swap positions for immediate UI feel
+  [CARS[i], CARS[j]] = [CARS[j], CARS[i]];
+  renderList();
+  setDirty('Order updated. Remember to publish.');
+}
+function reindexOrders(){ CARS.forEach((c,i)=> c.order=i); }
+
+/* ====== Form logic (Add / Edit) ====== */
+function resetForm(){
+  EDIT_ID = null;
+  formTitle.textContent = 'Add Vehicle';
+  [yearEl,modelEl,trimEl,mileageEl,priceEl,notesEl].forEach(el=> el.value='');
+  photosEl.value=''; photoStatus.textContent='';
+  deleteBtn.classList.add('hidden');
+  formMsg.textContent='';
+}
+resetBtn.onclick = resetForm;
+
+async function collectPhotos(){
+  if(!photosEl.files || photosEl.files.length===0) return [];
+  return await compressFiles(photosEl.files);
+}
+
+saveBtn.onclick = async ()=>{
+  // basic required checks
+  if(!yearEl.value || !modelEl.value || !trimEl.value || !mileageEl.value || !priceEl.value){
+    formMsg.textContent='Year, model, trim, mileage, and price are required.'; formMsg.className='small err'; return;
+  }
+  formMsg.textContent='Saving…'; formMsg.className='small';
+
+  const photos = await collectPhotos(); // may be empty
+  const item = {
+    id: EDIT_ID || uid(),
+    year: Number(yearEl.value),
+    model: modelEl.value.trim(),
+    trim: trimEl.value.trim(),
+    mileage: Number(mileageEl.value),
+    price: Number(priceEl.value),
+    notes: notesEl.value || '',
+  };
+
+  if(EDIT_ID){
+    const idx = CARS.findIndex(x=>x.id===EDIT_ID);
+    if(idx>=0){
+      // keep existing order/addedAt; append new photos if provided
+      item.order = CARS[idx].order ?? idx;
+      item.addedAt = CARS[idx].addedAt || Date.now();
+      const oldPhotos = (CARS[idx].photos && CARS[idx].photos.length)? CARS[idx].photos : (CARS[idx].photo?[CARS[idx].photo]:[]);
+      item.photos = photos.length ? [...oldPhotos, ...photos] : oldPhotos;
+      CARS[idx] = item;
+    }
+    formMsg.textContent='Updated. Remember to publish.'; formMsg.className='small ok';
+  } else {
+    item.addedAt = Date.now();
+    item.order = CARS.length;
+    item.photos = photos;
+    CARS.push(item);
+    formMsg.textContent='Added. Remember to publish.'; formMsg.className='small ok';
+  }
+  sortForDisplay(); renderList(); setDirty();
+  resetForm();
+};
+
+function loadIntoForm(id){
+  const c = CARS.find(x=>x.id===id); if(!c) return;
+  EDIT_ID = id;
+  formTitle.textContent = 'Edit Vehicle';
+  yearEl.value = c.year||'';
+  modelEl.value = c.model||'';
+  trimEl.value = c.trim||'';
+  mileageEl.value = c.mileage||'';
+  priceEl.value = c.price||'';
+  notesEl.value = c.notes||'';
+  photosEl.value = ''; photoStatus.textContent = c.photos && c.photos.length ? `${c.photos.length} photo(s) already attached` : '';
+  deleteBtn.classList.remove('hidden');
+}
+deleteBtn.onclick = ()=>{
+  if(!EDIT_ID) return;
+  if(confirm('Delete this vehicle?')){
+    CARS = CARS.filter(x=>x.id!==EDIT_ID);
+    reindexOrders(); renderList(); setDirty('Deleted. Remember to publish.');
+    resetForm();
   }
 };
 
-/* -------- Publish to GitHub -------- */
-byId('publish').onclick = async ()=>{
-  const user=byId('u').value.trim()||'vahehr-dotcom', repo=byId('r').value.trim()||'Tesla_Inventory', branch=byId('b').value.trim()||'main', token=byId('t').value.trim();
-  if(!user||!repo||!token){ byId('pubMsg').textContent='Fill username, repo, and token.'; return; }
-  const content = JSON.stringify(getInv(), null, 2);
-  const enc = btoa(unescape(encodeURIComponent(content)));
-  const api = `https://api.github.com/repos/${user}/${repo}/contents/inventory.json`;
-  byId('pubMsg').textContent='Publishing…';
-  let sha=null;
-  try{
-    const cur=await fetch(api+`?ref=${encodeURIComponent(branch)}`,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github+json'}});
-    if(cur.status===200){ const j=await cur.json(); sha=j.sha; }
-  }catch(e){}
-  try{
-    const r=await fetch(api,{method:'PUT',headers:{Authorization:`token ${token}`,Accept:'application/vnd.github+json'},
-      body:JSON.stringify({message:`Update inventory (${new Date().toISOString()})`,content:enc,branch,sha})});
-    if(!r.ok){ const tx=await r.text(); throw new Error(tx); }
-    byId('pubMsg').textContent='Published. GitHub Pages will refresh shortly.';
-  }catch(e){ byId('pubMsg').textContent='Publish failed: '+e.message; }
+/* ====== Save / Publish / Links ====== */
+function setDirty(msg){ msgEl.textContent = msg || 'Changes pending…'; msgEl.className='small'; }
+downloadBtn.onclick = ()=>{
+  sortForDisplay();
+  const blob = new Blob([JSON.stringify(CARS,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='inventory.json'; a.click();
+  URL.revokeObjectURL(a.href);
+  msgEl.textContent='Downloaded inventory.json.'; msgEl.className='small ok';
 };
+buyersBtn.onclick = ()=>{ location.href = buyersURL + '?v=' + Date.now(); };
+copyLinkBtn.onclick = async ()=>{
+  const url = buyersURL + '?v=' + Date.now();
+  try{ await navigator.clipboard.writeText(url); alert('Copied link:\n'+url); }catch{ alert('Link: '+url); }
+};
+shareLinkBtn.onclick = async ()=>{
+  const url = buyersURL;
+  try{ if(navigator.share){ await navigator.share({title:'EVTime Inventory', text:'Current cars', url}); }
+  else throw 0; }catch{ /* fallback is copy */ await navigator.clipboard.writeText(url); alert('Copied link:\n'+url); }
+};
+reloadBtn.onclick = ()=> location.href = location.pathname + '?v=' + Date.now();
 
-/* -------- Share / Open buyer page (force buyer, absolute URL) -------- */
-(function(){
-  // Absolute buyer URL to share.html in this repo
-  const buyerUrl = `https://vahehr-dotcom.github.io/Tesla_Inventory/share.html?v=${Date.now()}`;
-
-  const openBtn = document.getElementById('openBuyer');
-  if (openBtn) openBtn.onclick = () => window.open(buyerUrl, '_blank', 'noopener');
-
-  const shareBtn = document.getElementById('shareSite');
-  if (shareBtn) {
-    shareBtn.onclick = async () => {
-      try {
-        if (navigator.share) {
-          await navigator.share({ title:'Current Inventory', url: buyerUrl });
-        } else {
-          await (navigator.clipboard?.writeText(buyerUrl) || Promise.reject());
-          alert('Link copied:\n' + buyerUrl);
-        }
-      } catch {
-        const ta=document.createElement('textarea');
-        ta.value=buyerUrl; document.body.appendChild(ta);
-        ta.select(); document.execCommand('copy'); ta.remove();
-        alert('Link copied:\n' + buyerUrl);
-      }
-    };
+publishBtn.onclick = async ()=>{
+  const user=ghUser.value.trim(), repo=ghRepo.value.trim(), token=ghToken.value.trim();
+  if(!user || !repo || !token){ msgEl.textContent='Fill GitHub username, repo, and token.'; msgEl.className='small err'; return; }
+  try{
+    msgEl.textContent='Publishing…'; msgEl.className='small';
+    sortForDisplay();
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(CARS,null,2))));
+    const url = `https://api.github.com/repos/${user}/${repo}/contents/inventory.json`;
+    const body = { message:'Admin update (add/edit/reorder)', content, sha: shaCurrent || undefined };
+    const res = await fetch(url,{
+      method:'PUT',
+      headers:{ 'Accept':'application/vnd.github+json', 'Authorization':'token '+token },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){ throw new Error('GitHub error: '+(await res.text())); }
+    const j = await res.json();
+    shaCurrent = (j.content && j.content.sha) || shaCurrent;
+    msgEl.textContent='Published ✔ — Buyers page updates in ~10–60s.'; msgEl.className='small ok';
+  }catch(e){
+    msgEl.textContent = e.message || e; msgEl.className='small err';
   }
-})();
+};
 </script>
-  <footer style="border-top:1px solid #e2e8f0;background:#fff;color:#64748b">
-  <div style="max-width:760px;margin:0 auto;padding:12px;font:12px system-ui,Segoe UI,Roboto">
-    <strong>Disclosure:</strong> Retail transactions are completed by Waltons Auto Sales. Private-party transactions are between individual buyer and seller. Not affiliated with Tesla, Inc.
-    &nbsp;·&nbsp; <a href="./privacy.html" style="color:#3b82f6;text-decoration:none">Privacy</a> · <a href="./terms.html" style="color:#3b82f6;text-decoration:none">Terms</a>
-  </div>
-</footer>
-
 </body>
 </html>
