@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Reorder Inventory • EVTime</title>
+<meta name="theme-color" content="#0ea5e9"/>
+<style>
+:root{ --bg:#1f2937; --card:#fff; --line:#e5e7f0; --text:#0f172a; --muted:#64748b; --cta:#0ea5e9 }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.wrap{max-width:720px;margin:0 auto;padding:12px}
+.bar{background:#fff;border-bottom:1px solid var(--line)}
+.logo{max-width:720px;margin:0 auto;padding:8px 12px}
+.logo img{display:block;width:100%;height:auto;max-height:90px;object-fit:contain}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:12px 0}
+h1{margin:6px 0 10px;font-size:20px}
+.small{font-size:12px;color:var(--muted)}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.row{display:flex;gap:8px;align-items:center;border:1px dashed #e2e8f0;border-radius:12px;padding:8px;background:#fafafa}
+.row img{width:72px;height:54px;object-fit:cover;border-radius:8px;background:#e5e7eb}
+.row .meta{flex:1;min-width:0}
+.row .title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .sub{font-size:12px;color:#475569}
+.row .btns{display:flex;gap:6px}
+button{height:36px;padding:0 12px;border:1px solid #cbd5e1;background:#fff;border-radius:10px;cursor:pointer}
+button.primary{background:var(--cta);color:#fff;border-color:var(--cta);font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+input[type="text"]{height:40px;border:1px solid var(--line);border-radius:10px;padding:0 10px;width:100%}
+.notice{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin:8px 0}
+.ok{color:#16a34a}.err{color:#b91c1c}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="logo"><img src="mainlogo.svg?v=110" alt="EVTime"></div>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <h1>Reorder Inventory</h1>
+    <div class="small">Use ↑ ↓ to move cars. This writes an <code>order</code> number into <b>inventory.json</b>. The buyers page will sort by that first.</div>
+    <div id="status" class="notice">Loading inventory…</div>
+    <div id="list" class="list" hidden></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:0 0 8px">Save / Publish</h2>
+    <div class="small">Option A: Download the updated JSON and upload it manually in GitHub. Option B: Publish directly with a token (stored locally on your device).</div>
+    <div class="grid">
+      <button id="downloadBtn" class="primary">Download inventory.json</button>
+      <button id="publishBtn">Publish to GitHub</button>
+      <button id="reloadBtn">Reload from repo</button>
+    </div>
+
+    <div class="small" style="margin-top:8px">GitHub settings (remembered locally):</div>
+    <div class="grid">
+      <input id="ghUser" placeholder="GitHub username (e.g., vahehr-dotcom)"/>
+      <input id="ghRepo" placeholder="Repo (e.g., Tesla_Inventory)"/>
+      <input id="ghToken" placeholder="Personal access token (classic: repo scope)"/>
+    </div>
+    <div id="msg" class="small" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card small">
+    <b>Tip:</b> If some items show without thumbnails, that’s ok—this tool only changes order. Titles/prices/mileage are read-only here.
+  </div>
+</div>
+
+<script>
+const statusEl = document.getElementById('status');
+const listEl = document.getElementById('list');
+const msgEl = document.getElementById('msg');
+
+let CARS = [];
+let shaCurrent = null; // sha of inventory.json for publish
+
+// Load saved GitHub prefs
+const ghUser = document.getElementById('ghUser');
+const ghRepo = document.getElementById('ghRepo');
+const ghToken = document.getElementById('ghToken');
+ghUser.value  = localStorage.getItem('ghUser')  || '';
+ghRepo.value  = localStorage.getItem('ghRepo')  || '';
+ghToken.value = localStorage.getItem('ghToken') || '';
+[ghUser,ghRepo,ghToken].forEach(i=> i.addEventListener('input', ()=>{
+  localStorage.setItem(i.id, i.value.trim());
+}));
+
+function titleOf(c){
+  return `${c.year||''} ${c.model||''} ${c.trim||''}`.replace(/\s+/g,' ').trim();
+}
+function priceOf(c){
+  try{ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(c.price||0); }
+  catch{ return '$'+(c.price||0) }
+}
+function thumbOf(c){
+  return (c.photos && c.photos[0]) || c.photo || '';
+}
+function ensureOrder(){
+  CARS.forEach((c,i)=>{ if(typeof c.order!=='number') c.order = i; });
+}
+function sortByOrder(){
+  CARS.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0));
+}
+function render(){
+  listEl.innerHTML = '';
+  ensureOrder(); sortByOrder();
+  CARS.forEach((c, idx)=>{
+    const row = document.createElement('div'); row.className='row';
+    const img = document.createElement('img');
+    img.src = thumbOf(c); img.alt = 'photo'; img.onerror = ()=>{ img.style.visibility='hidden'; img.style.width='0'; };
+    const meta = document.createElement('div'); meta.className='meta';
+    meta.innerHTML = `<div class="title">${titleOf(c)}</div><div class="sub">${priceOf(c)} • ${c.mileage? (c.mileage.toLocaleString()+' mi') : ''}</div>`;
+    const btns = document.createElement('div'); btns.className='btns';
+    const up = document.createElement('button'); up.textContent='↑';
+    const down = document.createElement('button'); down.textContent='↓';
+
+    up.onclick = ()=>{ move(idx, -1); };
+    down.onclick = ()=>{ move(idx, +1); };
+
+    btns.appendChild(up); btns.appendChild(down);
+    row.appendChild(img); row.appendChild(meta); row.appendChild(btns);
+    listEl.appendChild(row);
+  });
+}
+function move(index, delta){
+  const j = index + delta;
+  if(j<0 || j>=CARS.length) return;
+  // swap order numbers
+  const a = CARS[index], b = CARS[j];
+  const tmp = a.order; a.order = b.order; b.order = tmp;
+  // also swap positions for immediate UI feel
+  [CARS[index], CARS[j]] = [CARS[j], CARS[index]];
+  render();
+  dirty('Order updated. Remember to Save / Publish.');
+}
+
+function dirty(note){
+  msgEl.textContent = note || 'Changes pending…';
+  msgEl.className = 'small';
+}
+
+// Load inventory (also grab sha via contents API for publish)
+async function loadInventory(){
+  try{
+    statusEl.textContent = 'Loading inventory.json…';
+    const res = await fetch('./inventory.json?ts='+Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    CARS = Array.isArray(data)? data : [];
+    ensureOrder(); sortByOrder();
+    if(!CARS.length){ statusEl.innerHTML='No inventory found.'; return; }
+    statusEl.remove(); listEl.hidden=false;
+    render();
+
+    // get sha so we can PUT later
+    const u = `https://api.github.com/repos/${ghUser.value||'vahehr-dotcom'}/${ghRepo.value||'Tesla_Inventory'}/contents/inventory.json`;
+    const res2 = await fetch(u, { headers: { Accept: 'application/vnd.github+json' } });
+    if(res2.ok){
+      const j = await res2.json();
+      shaCurrent = j.sha || null;
+    } else {
+      shaCurrent = null; // file may not exist yet
+    }
+  }catch(err){
+    statusEl.textContent = 'Error loading inventory: '+(err.message||err);
+  }
+}
+loadInventory();
+
+document.getElementById('reloadBtn').onclick = ()=>{ location.href = location.pathname + '?v=' + Date.now(); };
+
+// Download button (manual upload flow)
+document.getElementById('downloadBtn').onclick = ()=>{
+  const ordered = [...CARS];
+  sortByOrder();
+  const blob = new Blob([JSON.stringify(CARS,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'inventory.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  msgEl.textContent = 'Downloaded inventory.json. Upload it in GitHub to apply.';
+  msgEl.className = 'small ok';
+};
+
+// Publish via GitHub API
+document.getElementById('publishBtn').onclick = async ()=>{
+  const user = ghUser.value.trim(), repo = ghRepo.value.trim(), token = ghToken.value.trim();
+  if(!user || !repo || !token){ msgEl.textContent='Fill GitHub username, repo, and token.'; msgEl.className='small err'; return; }
+
+  try{
+    msgEl.textContent = 'Publishing…'; msgEl.className='small';
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(CARS,null,2))));
+    const url = `https://api.github.com/repos/${user}/${repo}/contents/inventory.json`;
+    const body = {
+      message: 'Reorder inventory (set order field)',
+      content,
+      sha: shaCurrent || undefined
+    };
+    const res = await fetch(url, {
+      method:'PUT',
+      headers:{
+        'Accept':'application/vnd.github+json',
+        'Authorization':'token '+token
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const t = await res.text();
+      throw new Error('GitHub error: '+t);
+    }
+    const j = await res.json();
+    shaCurrent = (j.content && j.content.sha) || shaCurrent;
+    msgEl.textContent = 'Published ✔ — Buyers page will reflect the new order in ~10–60 seconds.';
+    msgEl.className='small ok';
+  }catch(err){
+    msgEl.textContent = (err.message||err);
+    msgEl.className='small err';
+  }
+};
+</script>
+</body>
+</html>
