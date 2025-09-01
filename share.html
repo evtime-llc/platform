@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0ea5e9"/>
 
 <!-- Social preview -->
-<meta property="og:title" content="EVTime — Used Tesla Inventory" />
+<meta property="og:title" content="EV TIME — Used Tesla Inventory" />
 <meta property="og:description" content="Tap to view today’s cars — photos, price, mileage." />
 <meta property="og:image" content="https://vahehr-dotcom.github.io/Tesla_Inventory/og-card-red-diagonal-lights-v2.png?v=1" />
 <meta property="og:url" content="https://itsevtime.com/share.html" />
@@ -37,7 +37,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   display:block;
   width:100%;
   height:auto;           /* scale by width */
-  max-height:200px;      /* cap height; adjust if you want taller */
+  max-height:200px;      /* adjust if you want taller */
   object-fit:contain;
   margin:0;
 }
@@ -104,7 +104,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <!-- Logo (white bar kept, same width as page) -->
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
+    <img id="site-logo" src="mainlogo.svg?v=110" alt="it’s evtime forum and marketplace">
   </div>
 </div>
 
@@ -147,7 +147,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <footer class="legal">
   <div class="wrap">
     <div><strong>Disclosure:</strong> Retail transactions are completed by our licensed partner, Waltons Auto Sales. Private-party transactions are between individual buyer and seller. We are not affiliated with Tesla, Inc.</div>
-    <div style="margin-top:6px">© <span id="yr"></span> EVTime · <a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></div>
+    <div style="margin-top:6px">© <span id="yr"></span> EV TIME · <a href="./legal.html">Legal & Privacy</a></div>
   </div>
 </footer>
 
@@ -180,8 +180,7 @@ function render(cars){
   if(!Array.isArray(cars)||!cars.length){ statusEl.textContent='No inventory yet.'; return; }
   statusEl.hidden=true; list.hidden=false;
   // order first (if present), then addedAt, then year — oldest first
-cars.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0));
-
+  cars.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0));
 
   for(const c of cars){
     const card=document.createElement('div'); card.className='card';
