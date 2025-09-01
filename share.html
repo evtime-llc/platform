@@ -179,7 +179,9 @@ function render(cars){
   list.innerHTML='';
   if(!Array.isArray(cars)||!cars.length){ statusEl.textContent='No inventory yet.'; return; }
   statusEl.hidden=true; list.hidden=false;
-  cars.sort((a,b)=>(a.addedAt||0)-(b.addedAt||0)||(a.year||0)-(b.year||0)); // oldest first
+  // order first (if present), then addedAt, then year — oldest first
+cars.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0));
+
   for(const c of cars){
     const card=document.createElement('div'); card.className='card';
     const ph=document.createElement('div'); ph.className='photo';
