@@ -3,38 +3,26 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sell Your Car • EVTime</title>
+<title>Get a Human Offer • EV TIME</title>
 <meta name="theme-color" content="#0ea5e9"/>
 
 <style>
-:root{
-  --bg:#1f2937; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e5e7f0;
-  --cta:#3b82f6; --ctaText:#fff;
-}
+:root{ --bg:#1f2937; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e5e7f0; --cta:#3b82f6; --ctaText:#fff; }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 .wrap{max-width:620px;margin:0 auto;padding:12px}
-
-/* white logo bar kept (same look as share.html) */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap{max-width:620px;margin:0 auto;padding:0 12px}
 #site-logo{display:block;width:100%;height:auto;max-height:140px;object-fit:contain}
-
-/* card */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 h1{margin:6px 0 8px;font-size:20px}
 .muted{color:#64748b;font-size:13px}
-
-/* buttons/inputs */
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+button,.btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
 .primary{background:var(--cta);color:var(--ctaText);border:1px solid transparent;font-weight:700}
 button:disabled{opacity:.6;cursor:not-allowed}
-input[type="text"], input[type="number"], textarea{
-  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
-}
+input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px}
 label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
-
 /* camera overlay */
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
 #camViewport{position:relative;width:100%;max-width:720px}
@@ -43,7 +31,6 @@ video{width:100%;border-radius:8px;background:#000}
 .camBtns{display:flex;gap:8px;margin-top:10px}
 .camBtns button{background:#fff}
 #scanStatus{color:#e5e7eb;font-size:12px;margin-top:6px;text-align:center}
-
 .success{color:#16a34a;font-weight:600}
 .error{color:#b91c1c}
 .small{font-size:12px;color:#475569}
@@ -51,17 +38,17 @@ video{width:100%;border-radius:8px;background:#000}
 </head>
 <body>
 
-<!-- Logo bar -->
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
+    <img id="site-logo" src="mainlogo.svg?v=110" alt="it’s evtime — forum and marketplace">
   </div>
 </div>
 
 <main class="wrap">
   <div class="card">
-    <h1>Sell Your Car</h1>
-    <div class="muted">Quick start: scan your VIN. Try the <b>door-jamb sticker</b> first. If barcode fails, use “Scan frame” on the printed VIN line under bright light.</div>
+    <h1>Get a Human Offer</h1>
+    <div class="muted">No computer-generated quotes. A real specialist reviews your VIN and mileage and texts you back fast.</div>
+    <div class="muted" style="margin-top:6px">Tip: scan the <b>door-jamb sticker</b>. If the barcode doesn’t read, use “Scan frame (OCR)” on the printed VIN line under bright light.</div>
 
     <div class="row" style="margin-top:12px">
       <button id="scanBtn" class="primary">Scan VIN (camera)</button>
@@ -90,7 +77,7 @@ video{width:100%;border-radius:8px;background:#000}
     <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
 
     <div class="row" style="margin-top:12px">
-      <button id="submitBtn" class="primary" style="flex:1" disabled>Send for Offer (via text)</button>
+      <button id="submitBtn" class="primary" style="flex:1" disabled>Text a Human for Offer</button>
       <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
     </div>
 
@@ -118,7 +105,7 @@ video{width:100%;border-radius:8px;background:#000}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
-/* ===== Helpers: VIN normalization & validation (with check digit) ===== */
+/* ===== VIN normalization & validation (with ISO 3779 check digit) ===== */
 function normalizeVIN(raw){
   if(!raw) return '';
   let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -129,236 +116,151 @@ function normalizeVIN(raw){
   return s;
 }
 function isVIN17(s){ return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||''); }
-const VIN_WEIGHTS = [8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
-const VIN_MAP = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,J:1,K:2,L:3,M:4,N:5,P:7,R:9,S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9,
-                 '0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9};
+const VIN_WEIGHTS=[8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+const VIN_MAP={A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,J:1,K:2,L:3,M:4,N:5,P:7,R:9,S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9,'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9};
 function vinCheckDigitValid(v){
   if(!isVIN17(v)) return false;
-  let sum = 0;
-  for(let i=0;i<17;i++){
-    const val = VIN_MAP[v[i]]; if(val===undefined) return false;
-    sum += val * VIN_WEIGHTS[i];
-  }
-  const rem = sum % 11;
-  const expected = rem === 10 ? 'X' : String(rem);
-  return v[8] === expected; // 9th char
+  let sum=0; for(let i=0;i<17;i++){ const val=VIN_MAP[v[i]]; if(val===undefined) return false; sum+=val*VIN_WEIGHTS[i]; }
+  const rem=sum%11; const expected= rem===10 ? 'X' : String(rem); return v[8]===expected;
 }
-function vinIsValid(v){ v=(v||'').toUpperCase(); return isVIN17(v) && vinCheckDigitValid(v); }
+function vinIsValid(v){ v=(v||'').toUpperCase(); return isVIN17(v)&&vinCheckDigitValid(v); }
 
-/* ===== UI elements ===== */
-const vinEl = document.getElementById('vin');
-const milesEl = document.getElementById('miles');
-const vinStatus = document.getElementById('vinStatus');
-const scanBtn = document.getElementById('scanBtn');
-const vinPhoto = document.getElementById('vinPhoto');
-const submitBtn = document.getElementById('submitBtn');
+/* ===== UI ===== */
+const vinEl=document.getElementById('vin');
+const milesEl=document.getElementById('miles');
+const vinStatus=document.getElementById('vinStatus');
+const scanBtn=document.getElementById('scanBtn');
+const vinPhoto=document.getElementById('vinPhoto');
+const submitBtn=document.getElementById('submitBtn');
 
-const camWrap = document.getElementById('camWrap');
-const video = document.getElementById('video');
-const captureBtn = document.getElementById('captureBtn');
-const closeCamBtn = document.getElementById('closeCamBtn');
-const scanStatus = document.getElementById('scanStatus');
+const camWrap=document.getElementById('camWrap');
+const video=document.getElementById('video');
+const captureBtn=document.getElementById('captureBtn');
+const closeCamBtn=document.getElementById('closeCamBtn');
+const scanStatus=document.getElementById('scanStatus');
 
-function setStatus(msg, ok){
-  vinStatus.textContent = msg || '';
-  vinStatus.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
-}
+function setStatus(msg, ok){ vinStatus.textContent=msg||''; vinStatus.className='small '+(ok?'success':msg?'error':''); }
 
-/* ===== SMS (iOS vs Android) + number obfuscation ===== */
+/* ===== SMS + number obfuscation ===== */
 function smsLink(number, bodyPlain){
-  const enc = encodeURIComponent(bodyPlain);
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const enc=encodeURIComponent(bodyPlain);
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
   return isIOS ? `sms:${number}&body=${enc}` : `sms:${number}?body=${enc}`;
 }
 function getBizNumber(){ return ['+1','424','425','6211'].join(''); }
 
-/* ===== Enable submit only when VIN + miles are valid ===== */
+/* Enable submit only when VIN + miles are valid */
 function updateSubmitState(){
   const vinOk = vinIsValid((vinEl.value||'').trim().toUpperCase());
   const milesOk = /^\d{1,7}$/.test((milesEl.value||'').trim());
   submitBtn.disabled = !(vinOk && milesOk);
 }
 
-/* Live VIN typing validation */
+/* Live VIN typing */
 vinEl.addEventListener('input', ()=>{
-  let v = normalizeVIN(vinEl.value);
-  vinEl.value = v;
-
-  if(v.length === 17){
+  let v=normalizeVIN(vinEl.value); vinEl.value=v;
+  if(v.length===17){
     if(vinIsValid(v)){ setStatus('Valid VIN ✓', true); }
     else if(isVIN17(v)){ setStatus('VIN format OK, but check digit failed. Please re-check.', false); }
-    else { setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
-  } else if(v.length > 0){
-    setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).');
-  } else setStatus('');
+    else setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).');
+  } else if(v.length>0){ setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
+  else setStatus('');
   updateSubmitState();
 });
 milesEl.addEventListener('input', updateSubmitState);
 
-/* ===== Camera open/close with HTTPS check ===== */
+/* ===== Camera with HTTPS check + ZXing barcode + OCR fallback ===== */
 let stream=null, zxingReader=null, zxingActive=false;
 async function openCamera(){
   try{
-    if(location.protocol !== 'https:' && location.hostname !== 'localhost'){
-      alert('Camera requires HTTPS. Visit the https:// version of this page.');
-      return;
-    }
-    camWrap.style.display='flex';
-    scanStatus.textContent = 'Opening camera…';
+    if(location.protocol!=='https:' && location.hostname!=='localhost'){ alert('Camera requires HTTPS. Use https://'); return; }
+    camWrap.style.display='flex'; scanStatus.textContent='Opening camera…';
 
-    // Pick a back camera if available
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cams = devices.filter(d=>d.kind==='videoinput');
-    let deviceId = cams.find(c=>/back|rear|environment/i.test(c.label))?.deviceId || undefined;
+    const devices=await navigator.mediaDevices.enumerateDevices();
+    const cams=devices.filter(d=>d.kind==='videoinput');
+    let deviceId=cams.find(c=>/back|rear|environment/i.test(c.label))?.deviceId;
 
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: deviceId ? {deviceId:{exact:deviceId}} : {facingMode:{ideal:'environment'}},
-      audio:false
-    });
-    video.srcObject = stream;
-    await video.play();
-
-    // Start ZXing barcode scan (Code 39 primary)
+    stream=await navigator.mediaDevices.getUserMedia({ video: deviceId?{deviceId:{exact:deviceId}}:{facingMode:{ideal:'environment'}}, audio:false });
+    video.srcObject=stream; await video.play();
     startZXing(deviceId);
-  }catch(err){
-    camWrap.style.display='none';
-    alert('Camera not available or permission denied. You can upload a VIN photo instead.');
-  }
+  }catch(_){ camWrap.style.display='none'; alert('Camera unavailable or blocked. Use the photo upload instead.'); }
 }
-function closeCamera(){
-  stopZXing();
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
-  camWrap.style.display='none';
-}
+function closeCamera(){ stopZXing(); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } camWrap.style.display='none'; }
 scanBtn.addEventListener('click', openCamera);
 closeCamBtn.addEventListener('click', closeCamera);
 
-/* ===== ZXing: continuous barcode scanning (Code 39) ===== */
 async function startZXing(deviceId){
   try{
-    const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } = ZXingBrowser;
-    const hints = new Map();
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.CODE_39, BarcodeFormat.CODE_128]);
-    zxingReader = new BrowserMultiFormatReader(hints, 500); // 500ms scan interval
-    zxingActive = true;
-    scanStatus.textContent = 'Looking for VIN barcode…';
-
-    await zxingReader.decodeFromVideoDevice(deviceId || null, video, (result, err) => {
+    const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType }=ZXingBrowser;
+    const hints=new Map(); hints.set(DecodeHintType.POSSIBLE_FORMATS,[BarcodeFormat.CODE_39,BarcodeFormat.CODE_128]);
+    zxingReader=new BrowserMultiFormatReader(hints,500); zxingActive=true; scanStatus.textContent='Looking for VIN barcode…';
+    await zxingReader.decodeFromVideoDevice(deviceId||null, video, (result,err)=>{
       if(!zxingActive) return;
       if(result){
-        const raw = result.getText();
-        const v = normalizeVIN(raw);
-        if(isVIN17(v)){
-          vinEl.value = v;
-          setStatus('VIN barcode scanned ✔', true);
-          updateSubmitState();
-          closeCamera();
-        }
-      }else if(err && !(err instanceof ZXingBrowser.NotFoundException)){
-        // non-fatal errors ignored
+        const v=normalizeVIN(result.getText());
+        if(isVIN17(v)){ vinEl.value=v; setStatus('VIN barcode scanned ✔', true); updateSubmitState(); closeCamera(); }
       }
     });
-  }catch(e){
-    scanStatus.textContent = 'Barcode scan unavailable. Use “Scan frame (OCR)” below.';
-  }
+  }catch(_){ scanStatus.textContent='Barcode scan unavailable. Use “Scan frame (OCR)”.'; }
 }
-function stopZXing(){
-  zxingActive = false;
-  if(zxingReader){
-    try{ zxingReader.reset(); }catch(_){}
-    zxingReader = null;
-  }
-}
+function stopZXing(){ zxingActive=false; if(zxingReader){ try{zxingReader.reset();}catch(_){ } zxingReader=null; } }
 
-/* ===== OCR fallback: capture frame and read printed VIN ===== */
+/* OCR fallback */
 captureBtn.addEventListener('click', async ()=>{
-  if(!video.videoWidth){ alert('Camera not ready yet. Try again.'); return; }
-
-  const vw = video.videoWidth, vh = video.videoHeight;
-  const cropX = vw*0.10, cropY = vh*0.20, cw = vw*0.80, ch = vh*0.60;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = cw; canvas.height = ch;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, cw, ch);
-
-  scanStatus.textContent = 'Reading VIN from frame…';
+  if(!video.videoWidth){ alert('Camera not ready yet.'); return; }
+  const vw=video.videoWidth, vh=video.videoHeight, cropX=vw*0.10, cropY=vh*0.20, cw=vw*0.80, ch=vh*0.60;
+  const canvas=document.createElement('canvas'); canvas.width=cw; canvas.height=ch;
+  const ctx=canvas.getContext('2d'); ctx.drawImage(video,cropX,cropY,cw,ch,0,0,cw,ch);
+  scanStatus.textContent='Reading VIN from frame…';
   try{
-    const { data } = await Tesseract.recognize(canvas, 'eng', {
-      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
-    });
-    const v = normalizeVIN(data?.text || '');
-    if(isVIN17(v)){
-      vinEl.value = v;
-      setStatus('VIN captured from camera ✔', true);
-      updateSubmitState();
-      closeCamera();
-    }else{
-      scanStatus.textContent = 'No clear VIN. Move closer, brighter, and aim at the printed VIN line.';
-    }
-  }catch(e){
-    scanStatus.textContent = 'OCR error. Try again or upload a photo.';
-  }
+    const {data}=await Tesseract.recognize(canvas,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'});
+    const v=normalizeVIN(data?.text||'');
+    if(isVIN17(v)){ vinEl.value=v; setStatus('VIN captured from camera ✔', true); updateSubmitState(); closeCamera(); }
+    else scanStatus.textContent='No clear VIN. Move closer, brighter, and aim at the printed VIN line.';
+  }catch(_){ scanStatus.textContent='OCR error. Try again or upload a photo.'; }
 });
 
-/* ===== Photo upload flow (OCR on image) ===== */
+/* Photo upload OCR */
 vinPhoto.addEventListener('change', async (e)=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
   setStatus('Reading VIN from photo…');
-  const img = new Image();
-  img.onload = async ()=>{
+  const img=new Image();
+  img.onload=async ()=>{
     try{
-      const { data } = await Tesseract.recognize(img, 'eng', {
-        tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
-      });
-      const v = normalizeVIN(data?.text || '');
-      if(isVIN17(v)){
-        vinEl.value = v;
-        setStatus('VIN captured from photo ✔', true);
-        updateSubmitState();
-      }else{
-        setStatus('No clear VIN found in this photo. Retake closer with good light.');
-      }
-    }catch(err){
-      setStatus('Couldn’t process the photo. Please try a clearer shot.');
-    }
+      const {data}=await Tesseract.recognize(img,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'});
+      const v=normalizeVIN(data?.text||'');
+      if(isVIN17(v)){ vinEl.value=v; setStatus('VIN captured from photo ✔', true); updateSubmitState(); }
+      else setStatus('No clear VIN found. Retake closer with good light.');
+    }catch(_){ setStatus('Couldn’t process the photo. Try another.'); }
   };
-  img.onerror = ()=> setStatus('Bad image file. Try another photo.');
-  img.src = URL.createObjectURL(f);
+  img.onerror=()=> setStatus('Bad image file. Try another.');
+  img.src=URL.createObjectURL(f);
 });
 
-/* ===== Submit: open SMS after validation ===== */
-document.getElementById('submitBtn').addEventListener('click', ()=>{
-  const v = (vinEl.value || '').trim().toUpperCase();
-  const miles = (milesEl.value || '').trim();
-  if(!vinIsValid(v) || !/^\d{1,7}$/.test(miles)){
-    alert('Please enter a valid VIN and mileage.');
-    return;
-  }
-  const cond  = (document.getElementById('cond').value || '').trim();
-  const notes = (document.getElementById('notes').value || '').trim();
+/* Submit → SMS to human */
+submitBtn.addEventListener('click', ()=>{
+  const v=(vinEl.value||'').trim().toUpperCase();
+  const miles=(milesEl.value||'').trim();
+  if(!vinIsValid(v)||!/^\d{1,7}$/.test(miles)){ alert('Please enter a valid VIN and mileage.'); return; }
+  const cond=(document.getElementById('cond').value||'').trim();
+  const notes=(document.getElementById('notes').value||'').trim();
 
-  const body = [
-    "Hello, I'm submitting my car for an offer.",
+  const body=[
+    "Hi, I’m requesting a HUMAN offer.",
     "",
     `VIN: ${v}`,
     `Mileage: ${miles}`,
     `Condition: ${cond || '(n/a)'}`,
     `Notes: ${notes || '(n/a)'}`
-  ].join('\\n');
+  ].join('\n');
 
-  const num = getBizNumber();
-  const link = smsLink(num, body);
-
-  try { location.href = link; }
-  catch {
-    navigator.clipboard?.writeText(body);
-    alert("SMS not supported on this device. The message was copied—paste it into a text to " + num + ".");
-  }
+  const num=getBizNumber();
+  const link=smsLink(num, body);
+  try{ location.href=link; }
+  catch{ navigator.clipboard?.writeText(body); alert("SMS not supported. Message copied—paste into a text to "+num+"."); }
 });
 
-/* init state */
+/* init */
 updateSubmitState();
 </script>
 </body>
