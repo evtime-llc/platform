@@ -93,6 +93,7 @@ video{width:100%;border-radius:8px}
 
     <div class="row" style="margin-top:12px">
       <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
+      <a class="btn" href="tel:+14244256211" style="display:inline-flex;align-items:center">Call Us</a>
       <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
     </div>
 
@@ -152,6 +153,14 @@ const closeCamBtn = document.getElementById('closeCamBtn');
 function setStatus(msg, ok){
   vinStatus.textContent = msg || '';
   vinStatus.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
+}
+
+/* ===== NEW: SMS link builder (iOS vs Android) ===== */
+function smsLink(number, bodyPlain){
+  const enc = encodeURIComponent(bodyPlain);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  // iOS expects &body= when a recipient is present; Android prefers ?body=
+  return isIOS ? `sms:${number}&body=${enc}` : `sms:${number}?body=${enc}`;
 }
 
 /* Live VIN typing validation */
@@ -241,9 +250,7 @@ vinPhoto.addEventListener('change', async (e)=>{
   img.src = URL.createObjectURL(f);
 });
 
-/* ===== Submit (placeholder) ===== */
-/* Right now, we just validate and compose a text message to you.
-   Later we can POST to a backend or GitHub issues/form. */
+/* ===== Submit: open SMS with full, encoded body (iOS/Android) ===== */
 submitBtn.addEventListener('click', ()=>{
   const v = vinEl.value.trim().toUpperCase();
   if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
@@ -251,10 +258,25 @@ submitBtn.addEventListener('click', ()=>{
   const cond  = (document.getElementById('cond').value || '').trim();
   const notes = (document.getElementById('notes').value || '').trim();
 
-  const msg = `VIN: ${v}\nMileage: ${miles || '(n/a)'}\nCondition: ${cond || '(n/a)'}\nNotes: ${notes || '(n/a)'}`;
-  const sms = `Hello, I'm submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
-  // Your number (same as buyers page)
-  location.href = `sms:+14244256211?&body=${sms}`;
+  const body = [
+    "Hello, I'm submitting my car for an offer.",
+    "",
+    `VIN: ${v}`,
+    `Mileage: ${miles || '(n/a)'}`,
+    `Condition: ${cond || '(n/a)'}`,
+    `Notes: ${notes || '(n/a)'}`
+  ].join('\n');
+
+  const num = "+14244256211"; // your number
+  const link = smsLink(num, body);
+
+  try {
+    location.href = link;
+  } catch {
+    // Desktop fallback: copy the message so user can paste into a text
+    if (navigator.clipboard) navigator.clipboard.writeText(body);
+    alert("SMS not supported on this device. The message was copied—paste it into a text to " + num + ".");
+  }
 });
 </script>
 </body>
