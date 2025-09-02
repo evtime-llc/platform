@@ -33,6 +33,7 @@ h1{margin:6px 0 8px;font-size:20px}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
 .primary{background:var(--cta);color:var(--ctaText);border:1px solid transparent;font-weight:700}
+button:disabled{opacity:.6;cursor:not-allowed}
 input[type="text"], input[type="number"], textarea{
   width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
 }
@@ -92,8 +93,7 @@ video{width:100%;border-radius:8px}
     <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
 
     <div class="row" style="margin-top:12px">
-      <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
-      <a class="btn" href="tel:+14244256211" style="display:inline-flex;align-items:center">Call Us</a>
+      <button id="submitBtn" class="primary" style="flex:1" disabled>Send for Offer (via text)</button>
       <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
     </div>
 
@@ -140,6 +140,7 @@ function isVIN17(s){
 
 /* ===== UI elements ===== */
 const vinEl = document.getElementById('vin');
+const milesEl = document.getElementById('miles');
 const vinStatus = document.getElementById('vinStatus');
 const scanBtn = document.getElementById('scanBtn');
 const vinPhoto = document.getElementById('vinPhoto');
@@ -159,18 +160,30 @@ function setStatus(msg, ok){
 function smsLink(number, bodyPlain){
   const enc = encodeURIComponent(bodyPlain);
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  // iOS expects &body= when a recipient is present; Android prefers ?body=
   return isIOS ? `sms:${number}&body=${enc}` : `sms:${number}?body=${enc}`;
 }
 
-/* Live VIN typing validation */
+/* Light obfuscation of your number to deter scrapers */
+function getBizNumber(){
+  const parts = ['+1','424','425','6211'];
+  return parts.join('');
+}
+
+/* Enable submit only when VIN + miles look good */
+function updateSubmitState(){
+  const vinOk = isVIN17((vinEl.value || '').trim().toUpperCase());
+  const milesOk = /^\d{1,7}$/.test((milesEl.value || '').trim());
+  submitBtn.disabled = !(vinOk && milesOk);
+}
 vinEl.addEventListener('input', ()=>{
   let v = normalizeVIN(vinEl.value);
   vinEl.value = v;
   if(v.length === 17 && isVIN17(v)){ setStatus('Looks like a valid VIN.', true); }
   else if(v.length > 0){ setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
   else setStatus('');
+  updateSubmitState();
 });
+milesEl.addEventListener('input', updateSubmitState);
 
 /* ===== Camera flow (OCR on frame) ===== */
 let stream=null;
@@ -215,6 +228,7 @@ captureBtn.addEventListener('click', async ()=>{
       vinEl.value = v;
       setStatus('VIN captured from camera ✔', true);
       closeCamera();
+      updateSubmitState();
     }else{
       setStatus('Couldn’t read a clear 17-char VIN. Try again closer, steadier, and brighter—or upload a photo.');
     }
@@ -239,6 +253,7 @@ vinPhoto.addEventListener('change', async (e)=>{
       if(isVIN17(v)){
         vinEl.value = v;
         setStatus('VIN captured from photo ✔', true);
+        updateSubmitState();
       }else{
         setStatus('No clear VIN found in this photo. Try retaking: fill the frame with the VIN line, good light.');
       }
@@ -252,9 +267,10 @@ vinPhoto.addEventListener('change', async (e)=>{
 
 /* ===== Submit: open SMS with full, encoded body (iOS/Android) ===== */
 submitBtn.addEventListener('click', ()=>{
-  const v = vinEl.value.trim().toUpperCase();
-  if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
-  const miles = (document.getElementById('miles').value || '').trim();
+  const v = (vinEl.value || '').trim().toUpperCase();
+  const miles = (milesEl.value || '').trim();
+  if(!isVIN17(v) || !/^\d{1,7}$/.test(miles)){ alert('Please enter a valid VIN and mileage.'); return; }
+
   const cond  = (document.getElementById('cond').value || '').trim();
   const notes = (document.getElementById('notes').value || '').trim();
 
@@ -262,22 +278,24 @@ submitBtn.addEventListener('click', ()=>{
     "Hello, I'm submitting my car for an offer.",
     "",
     `VIN: ${v}`,
-    `Mileage: ${miles || '(n/a)'}`,
+    `Mileage: ${miles}`,
     `Condition: ${cond || '(n/a)'}`,
     `Notes: ${notes || '(n/a)'}`
-  ].join('\n');
+  ].join('\\n');
 
-  const num = "+14244256211"; // your number
+  const num = getBizNumber(); // obfuscated business number
   const link = smsLink(num, body);
 
   try {
     location.href = link;
   } catch {
-    // Desktop fallback: copy the message so user can paste into a text
     if (navigator.clipboard) navigator.clipboard.writeText(body);
     alert("SMS not supported on this device. The message was copied—paste it into a text to " + num + ".");
   }
 });
+
+/* init state */
+updateSubmitState();
 </script>
 </body>
 </html>
