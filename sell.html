@@ -122,20 +122,39 @@ video{width:100%;border-radius:8px}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
-/* ===== Helpers: VIN normalization & validation ===== */
+/* ===== Helpers: VIN normalization & validation (with check digit) ===== */
 function normalizeVIN(raw){
   if(!raw) return '';
   let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  // Correct common OCR confusions. VIN never uses I,O,Q.
+  // OCR fixes (VIN never uses I,O,Q)
   s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');
-  // Clip to longest plausible VIN substring
-  const m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/); // allow longer then trim
+  const m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/);
   if(m){ s = m[0]; }
   if(s.length > 17) s = s.substring(0,17);
   return s;
 }
-function isVIN17(s){
-  return /^[A-HJ-NPR-Z0-9]{17}$/.test(s || '');
+function isVIN17(s){ return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||''); }
+
+// ISO 3779 check digit
+const VIN_WEIGHTS = [8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+const VIN_MAP = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,J:1,K:2,L:3,M:4,N:5,P:7,R:9,S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9,
+                 '0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9};
+
+function vinCheckDigitValid(v){
+  if(!isVIN17(v)) return false;
+  let sum = 0;
+  for(let i=0;i<17;i++){
+    const val = VIN_MAP[v[i]];
+    if(val === undefined) return false;
+    sum += val * VIN_WEIGHTS[i];
+  }
+  const rem = sum % 11;
+  const expected = rem === 10 ? 'X' : String(rem);
+  return v[8] === expected; // 9th char is check digit
+}
+function vinIsValid(v){
+  v = (v||'').toUpperCase();
+  return isVIN17(v) && vinCheckDigitValid(v);
 }
 
 /* ===== UI elements ===== */
@@ -156,7 +175,7 @@ function setStatus(msg, ok){
   vinStatus.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
 }
 
-/* ===== NEW: SMS link builder (iOS vs Android) ===== */
+/* ===== SMS link builder (iOS vs Android) ===== */
 function smsLink(number, bodyPlain){
   const enc = encodeURIComponent(bodyPlain);
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -171,16 +190,25 @@ function getBizNumber(){
 
 /* Enable submit only when VIN + miles look good */
 function updateSubmitState(){
-  const vinOk = isVIN17((vinEl.value || '').trim().toUpperCase());
+  const vinOk = vinIsValid((vinEl.value || '').trim().toUpperCase());
   const milesOk = /^\d{1,7}$/.test((milesEl.value || '').trim());
   submitBtn.disabled = !(vinOk && milesOk);
 }
+
+/* Live VIN typing validation */
 vinEl.addEventListener('input', ()=>{
   let v = normalizeVIN(vinEl.value);
   vinEl.value = v;
-  if(v.length === 17 && isVIN17(v)){ setStatus('Looks like a valid VIN.', true); }
-  else if(v.length > 0){ setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
-  else setStatus('');
+
+  if(v.length === 17){
+    if(vinIsValid(v)){ setStatus('Valid VIN ✓', true); }
+    else if(isVIN17(v)){ setStatus('VIN format OK, but check digit failed. Please re-check.', false); }
+    else { setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
+  } else if(v.length > 0){
+    setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).');
+  } else {
+    setStatus('');
+  }
   updateSubmitState();
 });
 milesEl.addEventListener('input', updateSubmitState);
@@ -269,7 +297,7 @@ vinPhoto.addEventListener('change', async (e)=>{
 submitBtn.addEventListener('click', ()=>{
   const v = (vinEl.value || '').trim().toUpperCase();
   const miles = (milesEl.value || '').trim();
-  if(!isVIN17(v) || !/^\d{1,7}$/.test(miles)){ alert('Please enter a valid VIN and mileage.'); return; }
+  if(!vinIsValid(v) || !/^\d{1,7}$/.test(miles)){ alert('Please enter a valid VIN and mileage.'); return; }
 
   const cond  = (document.getElementById('cond').value || '').trim();
   const notes = (document.getElementById('notes').value || '').trim();
@@ -281,7 +309,7 @@ submitBtn.addEventListener('click', ()=>{
     `Mileage: ${miles}`,
     `Condition: ${cond || '(n/a)'}`,
     `Notes: ${notes || '(n/a)'}`
-  ].join('\\n');
+  ].join('\n');
 
   const num = getBizNumber(); // obfuscated business number
   const link = smsLink(num, body);
