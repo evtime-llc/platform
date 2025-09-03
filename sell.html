@@ -23,7 +23,9 @@ button,.btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(-
 button:disabled{opacity:.6;cursor:not-allowed}
 input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px}
 label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
-/* camera overlay */
+.sep{height:1px;background:var(--line);margin:10px 0}
+
+/* Camera overlay */
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
 #camViewport{position:relative;width:100%;max-width:720px}
 video{width:100%;border-radius:8px;background:#000}
@@ -31,10 +33,10 @@ video{width:100%;border-radius:8px;background:#000}
 .camBtns{display:flex;gap:8px;margin-top:10px}
 .camBtns button{background:#fff}
 #scanStatus{color:#e5e7eb;font-size:12px;margin-top:6px;text-align:center}
+
 .success{color:#16a34a;font-weight:600}
 .error{color:#b91c1c}
 .small{font-size:12px;color:#475569}
-.sep{height:1px;background:var(--line);margin:10px 0}
 </style>
 </head>
 <body>
@@ -127,7 +129,7 @@ function vinCheckDigitValid(v){
 }
 function vinIsValid(v){ v=(v||'').toUpperCase(); return isVIN17(v)&&vinCheckDigitValid(v); }
 
-/* ===== UI ===== */
+/* ===== UI elements ===== */
 const vinEl=document.getElementById('vin');
 const milesEl=document.getElementById('miles');
 const vinStatus=document.getElementById('vinStatus');
@@ -140,6 +142,7 @@ const video=document.getElementById('video');
 const captureBtn=document.getElementById('captureBtn');
 const closeCamBtn=document.getElementById('closeCamBtn');
 const scanStatus=document.getElementById('scanStatus');
+const scanBox=document.querySelector('.scanBox');
 
 function setStatus(msg, ok){ vinStatus.textContent=msg||''; vinStatus.className='small '+(ok?'success':msg?'error':''); }
 
@@ -171,54 +174,101 @@ vinEl.addEventListener('input', ()=>{
 });
 milesEl.addEventListener('input', updateSubmitState);
 
-/* ===== Camera with HTTPS check + ZXing barcode + OCR fallback ===== */
+/* ===== Camera with HTTPS check + HD + ZXing (TRY_HARDER) + OCR crop ===== */
 let stream=null, zxingReader=null, zxingActive=false;
+
 async function openCamera(){
   try{
     if(location.protocol!=='https:' && location.hostname!=='localhost'){ alert('Camera requires HTTPS. Use https://'); return; }
     camWrap.style.display='flex'; scanStatus.textContent='Opening camera…';
 
-    const devices=await navigator.mediaDevices.enumerateDevices();
-    const cams=devices.filter(d=>d.kind==='videoinput');
-    let deviceId=cams.find(c=>/back|rear|environment/i.test(c.label))?.deviceId;
+    const constraints = {
+      video: {
+        facingMode: { ideal: 'environment' },
+        width:  { ideal: 1920 },
+        height: { ideal: 1080 }
+      },
+      audio: false
+    };
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = stream;
+    await video.play();
 
-    stream=await navigator.mediaDevices.getUserMedia({ video: deviceId?{deviceId:{exact:deviceId}}:{facingMode:{ideal:'environment'}}, audio:false });
-    video.srcObject=stream; await video.play();
-    startZXing(deviceId);
+    startZXing();
   }catch(_){ camWrap.style.display='none'; alert('Camera unavailable or blocked. Use the photo upload instead.'); }
 }
 function closeCamera(){ stopZXing(); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } camWrap.style.display='none'; }
 scanBtn.addEventListener('click', openCamera);
 closeCamBtn.addEventListener('click', closeCamera);
 
-async function startZXing(deviceId){
+async function startZXing(){
   try{
     const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType }=ZXingBrowser;
-    const hints=new Map(); hints.set(DecodeHintType.POSSIBLE_FORMATS,[BarcodeFormat.CODE_39,BarcodeFormat.CODE_128]);
-    zxingReader=new BrowserMultiFormatReader(hints,500); zxingActive=true; scanStatus.textContent='Looking for VIN barcode…';
-    await zxingReader.decodeFromVideoDevice(deviceId||null, video, (result,err)=>{
+    const hints=new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.CODE_39, BarcodeFormat.CODE_128, BarcodeFormat.ITF, BarcodeFormat.PDF_417
+    ]);
+    hints.set(DecodeHintType.TRY_HARDER, true);
+
+    zxingReader=new BrowserMultiFormatReader(hints, 250); // ~4 scans/sec
+    zxingActive=true; scanStatus.textContent='Looking for VIN barcode…';
+
+    await zxingReader.decodeFromVideoDevice(null, video, (result,err)=>{
       if(!zxingActive) return;
       if(result){
-        const v=normalizeVIN(result.getText());
-        if(isVIN17(v)){ vinEl.value=v; setStatus('VIN barcode scanned ✔', true); updateSubmitState(); closeCamera(); }
+        const v = normalizeVIN(result.getText());
+        if(isVIN17(v)){
+          vinEl.value = v;
+          setStatus('VIN barcode scanned ✔', true);
+          updateSubmitState();
+          closeCamera();
+        } else {
+          scanStatus.textContent = 'Barcode seen… validating…';
+        }
       }
     });
   }catch(_){ scanStatus.textContent='Barcode scan unavailable. Use “Scan frame (OCR)”.'; }
 }
-function stopZXing(){ zxingActive=false; if(zxingReader){ try{zxingReader.reset();}catch(_){ } zxingReader=null; } }
+function stopZXing(){ zxingActive=false; if(zxingReader){ try{zxingReader.reset();}catch(_){} zxingReader=null; } }
 
-/* OCR fallback */
+/* OCR fallback (crop to the dashed box area for better accuracy) */
 captureBtn.addEventListener('click', async ()=>{
   if(!video.videoWidth){ alert('Camera not ready yet.'); return; }
-  const vw=video.videoWidth, vh=video.videoHeight, cropX=vw*0.10, cropY=vh*0.20, cw=vw*0.80, ch=vh*0.60;
-  const canvas=document.createElement('canvas'); canvas.width=cw; canvas.height=ch;
-  const ctx=canvas.getContext('2d'); ctx.drawImage(video,cropX,cropY,cw,ch,0,0,cw,ch);
+
+  // Map scanBox rect to the underlying video frame pixels
+  const vRect = video.getBoundingClientRect();
+  const bRect = scanBox.getBoundingClientRect();
+
+  const sx = Math.max(0, (bRect.left - vRect.left) / vRect.width);
+  const sy = Math.max(0, (bRect.top  - vRect.top ) / vRect.height);
+  const sw = Math.min(1, bRect.width  / vRect.width);
+  const sh = Math.min(1, bRect.height / vRect.height);
+
+  const vw = video.videoWidth, vh = video.videoHeight;
+  const cropX = Math.round(vw * sx);
+  const cropY = Math.round(vh * sy);
+  const cw    = Math.round(vw * sw);
+  const ch    = Math.round(vh * sh);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = cw; canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, cw, ch);
+
   scanStatus.textContent='Reading VIN from frame…';
   try{
-    const {data}=await Tesseract.recognize(canvas,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'});
-    const v=normalizeVIN(data?.text||'');
-    if(isVIN17(v)){ vinEl.value=v; setStatus('VIN captured from camera ✔', true); updateSubmitState(); closeCamera(); }
-    else scanStatus.textContent='No clear VIN. Move closer, brighter, and aim at the printed VIN line.';
+    const { data } = await Tesseract.recognize(canvas, 'eng', {
+      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ'
+    });
+    const v = normalizeVIN(data?.text || '');
+    if(isVIN17(v)){
+      vinEl.value = v;
+      setStatus('VIN captured from camera ✔', true);
+      updateSubmitState();
+      closeCamera();
+    }else{
+      scanStatus.textContent='No clear VIN. Move closer, flatter, brighter, and aim at the printed VIN line.';
+    }
   }catch(_){ scanStatus.textContent='OCR error. Try again or upload a photo.'; }
 });
 
