@@ -41,7 +41,7 @@ hr.sep{border:0;border-top:1px dashed #e2e8f0;margin:10px 0}
 .item img{width:92px;height:69px;object-fit:cover;border-radius:10px;background:#e5e7eb}
 .meta{flex:1;min-width:0}
 .title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sub{font-size:12px;color:#475569}
+.sub{font-size:12px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .btns{display:flex;gap:6px}
 .kv{font-variant-numeric:tabular-nums}
 
@@ -54,6 +54,43 @@ input[type="file"]{display:none}
 
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 @media (max-width:720px){ .grid3{grid-template-columns:1fr} }
+
+/* -------- Mobile layout fixes for Inventory & Reorder -------- */
+@media (max-width: 640px){
+  .item{
+    display:grid !important;
+    grid-template-columns:92px 1fr;
+    grid-template-areas:
+      "thumb meta"
+      "tools tools";
+    gap:10px;
+    align-items:center;
+    padding:10px;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .item img{ grid-area:thumb; width:92px; height:69px; }
+  .meta{ grid-area:meta; display:grid; gap:4px; min-width:0; }
+  .title{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sub{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .btns{
+    grid-area:tools;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-top:2px;
+  }
+  .btns button{ height:36px; padding:0 10px; border-radius:10px; font-size:14px; }
+  .btns .icon{ width:36px; }
+  /* Make Delete a normal outline button on mobile (less bulky) */
+  .btns .warn{ background:#fff; color:#b91c1c; border-color:#fecaca; }
+}
+/* Keep price/miles on one line on desktop too */
+@media (min-width: 641px){
+  .sub{ white-space:nowrap; }
+}
 </style>
 </head>
 <body>
