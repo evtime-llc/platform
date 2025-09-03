@@ -152,7 +152,7 @@ function smsLink(number, bodyPlain){
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
   return isIOS ? `sms:${number}&body=${enc}` : `sms:${number}?body=${enc}`;
 }
-function getBizNumber(){ return ['+1','424','425','6211'].join(''); }
+function getBizNumber(){ return ['+1','424','866','0109'].join(''); }
 
 /* Enable submit only when VIN + miles are valid */
 function updateSubmitState(){
@@ -237,7 +237,7 @@ captureBtn.addEventListener('click', async ()=>{
 
   // Map scanBox rect to the underlying video frame pixels
   const vRect = video.getBoundingClientRect();
-  const bRect = scanBox.getBoundingClientRect();
+  const bRect = document.querySelector('.scanBox').getBoundingClientRect();
 
   const sx = Math.max(0, (bRect.left - vRect.left) / vRect.width);
   const sy = Math.max(0, (bRect.top  - vRect.top ) / vRect.height);
