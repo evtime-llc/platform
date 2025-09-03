@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0ea5e9"/>
 
 <!-- Social preview -->
-<meta property="og:title" content="EV TIME — Used Tesla Inventory" />
+<meta property="og:title" content="EVTime — Used Tesla Inventory" />
 <meta property="og:description" content="Tap to view today’s cars — photos, price, mileage." />
 <meta property="og:image" content="https://vahehr-dotcom.github.io/Tesla_Inventory/og-card-red-diagonal-lights-v2.png?v=1" />
 <meta property="og:url" content="https://itsevtime.com/share.html" />
@@ -37,7 +37,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   display:block;
   width:100%;
   height:auto;           /* scale by width */
-  max-height:200px;      /* adjust if you want taller */
+  max-height:200px;      /* cap height; adjust if you want taller */
   object-fit:contain;
   margin:0;
 }
@@ -104,7 +104,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <!-- Logo (white bar kept, same width as page) -->
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=110" alt="it’s evtime forum and marketplace">
+    <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
   </div>
 </div>
 
@@ -147,7 +147,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <footer class="legal">
   <div class="wrap">
     <div><strong>Disclosure:</strong> Retail transactions are completed by our licensed partner, Waltons Auto Sales. Private-party transactions are between individual buyer and seller. We are not affiliated with Tesla, Inc.</div>
-    <div style="margin-top:6px">© <span id="yr"></span> EV TIME · <a href="./legal.html">Legal & Privacy</a></div>
+    <div style="margin-top:6px">© <span id="yr"></span> EVTime · <a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · <a href="./legal.html">Legal</a></div>
   </div>
 </footer>
 
@@ -163,6 +163,14 @@ const mClose=document.getElementById('mClose');
 const fmtPrice=n=>{try{return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n)}catch{return'$'+(n||0)}};
 const fmtMiles=n=>{try{return new Intl.NumberFormat('en-US').format(n)+' mi'}catch{return(n||0)+' mi'}};
 const placeholder=()=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='800' height='600' fill='#e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#94a3b8' font-family='system-ui' font-size='28'>Photo</text></svg>");
+
+/* New: SMS helper + obfuscated business number */
+function smsLink(number, bodyPlain){
+  const enc=encodeURIComponent(bodyPlain||'');
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+  return isIOS ? `sms:${number}&body=${enc}` : `sms:${number}?body=${enc}`;
+}
+function getBizNumber(){ return ['+1','424','866','0109'].join(''); }
 
 let DATA=[], current=null, idx=0;
 
@@ -233,14 +241,14 @@ shareCar.addEventListener('click', async ()=>{ if(!current) return; const url=ca
   try{ if(navigator.share){ await navigator.share({title, text, url}); } else throw 0; }catch{ await copyText(url); alert('Link copied:\n'+url); }});
 copyLink.addEventListener('click', async ()=>{ if(!current) return; const url=carLink(current.id); await copyText(url); alert('Link copied:\n'+url); });
 
-document.getElementById('smsBtn').addEventListener('click', ()=>{
+/* Updated: SMS handler uses new number + iOS/Android-safe link */
+smsBtn.addEventListener('click', ()=>{
   if(!current) return;
   const model = current.model || 'your vehicle';
   const price = fmtPrice(current.price||0);
   const msg = `Hello, I'm interested in your ${model} for ${price} please contact me.`;
-  const body = encodeURIComponent(msg);
-  const num = "+14244256211".replace(/[^0-9+]/g,'');
-  location.href = `sms:${num}?&body=${body}`;
+  const num = getBizNumber().replace(/[^0-9+]/g,'');
+  location.href = smsLink(num, msg);
 });
 
 async function copyText(t){ if(navigator.clipboard && window.isSecureContext){ return navigator.clipboard.writeText(t) }
