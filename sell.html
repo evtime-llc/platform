@@ -43,7 +43,7 @@ video{width:100%;border-radius:8px;background:#000}
 
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=110" alt="it’s evtime — forum and marketplace">
+    <img id="site-logo" src="mainlogo.svg?v=111" alt="it’s evtime — forum and marketplace">
   </div>
 </div>
 
@@ -104,7 +104,7 @@ video{width:100%;border-radius:8px;background:#000}
   <div id="scanStatus">Camera loading…</div>
 </div>
 
-<!-- OCR library -->
+<!-- OCR library (kept) -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
@@ -171,7 +171,107 @@ vinEl.addEventListener('input', ()=>{
 });
 milesEl.addEventListener('input', updateSubmitState);
 
-/* ========= Robust ZXing loader (fixes “scanner library not loaded”) ========= */
+/* ====== Camera / Scanning ====== */
+let stream=null, rafId=null, detector=null, usingNative=false, zxingReader=null, zxingActive=false;
+
+function haveHttps(){ return location.protocol==='https:' || location.hostname==='localhost'; }
+
+async function openCamera(){
+  if(!haveHttps()){ alert('Camera requires HTTPS. Use https://'); return; }
+  camWrap.style.display='flex';
+  scanStatus.textContent='Opening camera…';
+
+  // Prefer built-in BarcodeDetector (fast, no CDN)
+  const ok = await startNativeDetector();
+  if(ok) return;
+
+  // Fallback: load ZXing from CDN (may be blocked)
+  const z = await ensureZXing();
+  if(z){ startZXing(z); return; }
+
+  // Last resort: tell user to use OCR
+  scanStatus.textContent='Barcode scan unavailable (library couldn’t load). Use “Scan frame (OCR)”.';
+}
+function closeCamera(){
+  stopNativeDetector();
+  stopZXing();
+  camWrap.style.display='none';
+}
+scanBtn.addEventListener('click', openCamera);
+closeCamBtn.addEventListener('click', closeCamera);
+
+/* ---------- Native BarcodeDetector (Chrome/Android) ---------- */
+async function startNativeDetector(){
+  if(!('BarcodeDetector' in window)) return false;
+
+  // Which formats are supported on this device?
+  let supported=[];
+  try{ supported = await BarcodeDetector.getSupportedFormats(); }catch(_){}
+  const needed=['code_39','code_128','itf','pdf417'];
+  const formats = needed.filter(f=>supported.includes(f));
+  if(formats.length===0) return false;
+
+  try{
+    detector = new BarcodeDetector({ formats });
+    stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false });
+    video.srcObject = stream;
+    await video.play();
+    usingNative = true;
+    scanStatus.textContent='Scanning (native)… keep the barcode inside the dashed box.';
+    nativeLoop();
+    return true;
+  }catch(_){ return false; }
+}
+
+function nativeLoop(){
+  if(!usingNative) return;
+  rafId = requestAnimationFrame(nativeLoop);
+
+  const vw = video.videoWidth, vh = video.videoHeight;
+  if(!vw || !vh) return;
+
+  // Crop to dashed box area for speed/accuracy
+  const vRect = video.getBoundingClientRect();
+  const bRect = scanBox.getBoundingClientRect();
+
+  const sx = Math.max(0, (bRect.left - vRect.left) / vRect.width);
+  const sy = Math.max(0, (bRect.top  - vRect.top ) / vRect.height);
+  const sw = Math.min(1, bRect.width  / vRect.width);
+  const sh = Math.min(1, bRect.height / vRect.height);
+
+  const cropX = Math.round(vw * sx);
+  const cropY = Math.round(vh * sy);
+  const cw    = Math.round(vw * sw);
+  const ch    = Math.round(vh * sh);
+
+  // Draw to small canvas to feed detector
+  const canvas = nativeLoop._c || (nativeLoop._c=document.createElement('canvas'));
+  canvas.width = 640; // scale down for speed
+  canvas.height = Math.max(120, Math.round(640 * (ch/cw)));
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, canvas.width, canvas.height);
+
+  detector.detect(canvas).then(codes=>{
+    if(!codes || !codes.length) return;
+    const raw = (codes[0].rawValue||'').toString();
+    const v = normalizeVIN(raw);
+    if(isVIN17(v)){
+      vinEl.value = v;
+      setStatus('VIN barcode scanned ✔', true);
+      updateSubmitState();
+      closeCamera();
+    }
+  }).catch(()=>{ /* ignore frame errors */ });
+}
+
+function stopNativeDetector(){
+  usingNative=false;
+  if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+  if(stream){ try{ stream.getTracks().forEach(t=>t.stop()); }catch(_){} stream=null; }
+  detector=null;
+}
+
+/* ---------- ZXing (fallback if native unavailable AND CDN works) ---------- */
 function loadScript(src, timeout=8000){
   return new Promise((resolve, reject)=>{
     const s=document.createElement('script');
@@ -184,42 +284,12 @@ function loadScript(src, timeout=8000){
 }
 async function ensureZXing(){
   if(window.ZXingBrowser) return window.ZXingBrowser;
-  // Try unpkg first, then jsDelivr
-  try{
-    await loadScript('https://unpkg.com/@zxing/browser@1.3.3/umd/index.min.js');
-  }catch(_){}
+  try{ await loadScript('https://unpkg.com/@zxing/browser@1.3.3/umd/index.min.js'); }catch(_){}
   if(window.ZXingBrowser) return window.ZXingBrowser;
-  try{
-    await loadScript('https://cdn.jsdelivr.net/npm/@zxing/browser@1.3.3/umd/index.min.js');
-  }catch(_){}
+  try{ await loadScript('https://cdn.jsdelivr.net/npm/@zxing/browser@1.3.3/umd/index.min.js'); }catch(_){}
   return window.ZXingBrowser || null;
 }
-
-/* ===== ZXing-managed camera + OCR fallback ===== */
-let reader=null, zxingActive=false;
-
-async function openCamera(){
-  if(location.protocol!=='https:' && location.hostname!=='localhost'){
-    alert('Camera requires HTTPS. Use https://'); return;
-  }
-  camWrap.style.display='flex';
-  scanStatus.textContent='Loading scanner…';
-
-  const ZX = await ensureZXing();
-  if(!ZX){
-    scanStatus.textContent='Barcode scan unavailable (library couldn’t load). Use “Scan frame (OCR)”.';
-    return;
-  }
-  startZXing(ZX);
-}
-function closeCamera(){
-  stopZXing();
-  camWrap.style.display='none';
-}
-scanBtn.addEventListener('click', openCamera);
-closeCamBtn.addEventListener('click', closeCamera);
-
-async function startZXing(ZX){
+function startZXing(ZX){
   try{
     const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } = ZX;
 
@@ -229,54 +299,42 @@ async function startZXing(ZX){
     ]);
     hints.set(DecodeHintType.TRY_HARDER, true);
 
-    reader = new BrowserMultiFormatReader(hints, 250);
+    zxingReader = new BrowserMultiFormatReader(hints, 250);
     zxingActive = true;
 
     video.setAttribute('playsinline','true');
     video.muted = true;
     video.autoplay = true;
 
-    scanStatus.textContent='Looking for VIN barcode… keep it inside the dashed box.';
+    scanStatus.textContent='Scanning (fallback)…';
 
-    await reader.decodeFromVideoDevice(
-      undefined,  // default camera
-      video,
-      (result, err) => {
-        if(!zxingActive) return;
-
-        if(result){
-          const raw = result.getText ? result.getText() : (result.text || '');
-          const v = normalizeVIN(raw);
-          if(isVIN17(v)){
-            vinEl.value = v;
-            setStatus('VIN barcode scanned ✔', true);
-            updateSubmitState();
-            closeCamera();
-          } else {
-            scanStatus.textContent = 'Barcode seen… validating…';
-          }
-        } else if(err){
-          // Frequent NotFound errors while scanning are normal; keep calm text
-          scanStatus.textContent = 'Scanning…';
+    zxingReader.decodeFromVideoDevice(undefined, video, (result, err)=>{
+      if(!zxingActive) return;
+      if(result){
+        const raw = result.getText ? result.getText() : (result.text || '');
+        const v = normalizeVIN(raw);
+        if(isVIN17(v)){
+          vinEl.value = v;
+          setStatus('VIN barcode scanned ✔', true);
+          updateSubmitState();
+          closeCamera();
         }
+      }else if(err){
+        scanStatus.textContent='Scanning…';
       }
-    );
-  }catch(e){
-    scanStatus.textContent='Barcode scan error. Use “Scan frame (OCR)” instead.';
+    });
+  }catch(_){
+    scanStatus.textContent='Barcode scan unavailable. Use “Scan frame (OCR)”.';
   }
 }
 function stopZXing(){
-  zxingActive = false;
-  if(reader){
-    try{ reader.reset(); }catch(_){}
-    reader = null;
-  }
+  zxingActive=false;
+  if(zxingReader){ try{ zxingReader.reset(); }catch(_){} zxingReader=null; }
 }
 
-/* OCR capture within the dashed box */
+/* ---------- OCR capture within dashed box ---------- */
 captureBtn.addEventListener('click', async ()=>{
-  const track = video; if(!track || !track.videoWidth){ alert('Camera not ready yet.'); return; }
-
+  if(!video.videoWidth){ alert('Camera not ready yet.'); return; }
   const vRect = video.getBoundingClientRect();
   const bRect = scanBox.getBoundingClientRect();
 
