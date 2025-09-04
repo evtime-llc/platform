@@ -104,8 +104,7 @@ video{width:100%;border-radius:8px;background:#000}
   <div id="scanStatus">Camera loading…</div>
 </div>
 
-<!-- Libraries -->
-<script src="https://unpkg.com/@zxing/browser@1.3.3/umd/index.min.js"></script>
+<!-- OCR library -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
@@ -172,7 +171,31 @@ vinEl.addEventListener('input', ()=>{
 });
 milesEl.addEventListener('input', updateSubmitState);
 
-/* ===== ZXing-managed camera (fix) + OCR fallback ===== */
+/* ========= Robust ZXing loader (fixes “scanner library not loaded”) ========= */
+function loadScript(src, timeout=8000){
+  return new Promise((resolve, reject)=>{
+    const s=document.createElement('script');
+    let done=false;
+    s.src=src; s.async=true; s.onload=()=>{ if(!done){ done=true; resolve(); } };
+    s.onerror=()=>{ if(!done){ done=true; reject(new Error('load error '+src)); } };
+    document.head.appendChild(s);
+    setTimeout(()=>{ if(!done){ done=true; reject(new Error('timeout '+src)); } }, timeout);
+  });
+}
+async function ensureZXing(){
+  if(window.ZXingBrowser) return window.ZXingBrowser;
+  // Try unpkg first, then jsDelivr
+  try{
+    await loadScript('https://unpkg.com/@zxing/browser@1.3.3/umd/index.min.js');
+  }catch(_){}
+  if(window.ZXingBrowser) return window.ZXingBrowser;
+  try{
+    await loadScript('https://cdn.jsdelivr.net/npm/@zxing/browser@1.3.3/umd/index.min.js');
+  }catch(_){}
+  return window.ZXingBrowser || null;
+}
+
+/* ===== ZXing-managed camera + OCR fallback ===== */
 let reader=null, zxingActive=false;
 
 async function openCamera(){
@@ -180,10 +203,14 @@ async function openCamera(){
     alert('Camera requires HTTPS. Use https://'); return;
   }
   camWrap.style.display='flex';
-  scanStatus.textContent='Opening camera…';
+  scanStatus.textContent='Loading scanner…';
 
-  // Let ZXing control the camera (do NOT start getUserMedia ourselves)
-  startZXing();
+  const ZX = await ensureZXing();
+  if(!ZX){
+    scanStatus.textContent='Barcode scan unavailable (library couldn’t load). Use “Scan frame (OCR)”.';
+    return;
+  }
+  startZXing(ZX);
 }
 function closeCamera(){
   stopZXing();
@@ -192,14 +219,11 @@ function closeCamera(){
 scanBtn.addEventListener('click', openCamera);
 closeCamBtn.addEventListener('click', closeCamera);
 
-async function startZXing(){
+async function startZXing(ZX){
   try{
-    const ZX = window.ZXingBrowser || window.ZXing; // handle UMD global name
-    if(!ZX){ scanStatus.textContent='Scanner library not loaded.'; return; }
-
     const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } = ZX;
+
     const hints = new Map();
-    // VIN label formats commonly used
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
       BarcodeFormat.CODE_39, BarcodeFormat.CODE_128, BarcodeFormat.ITF, BarcodeFormat.PDF_417
     ]);
@@ -208,12 +232,11 @@ async function startZXing(){
     reader = new BrowserMultiFormatReader(hints, 250);
     zxingActive = true;
 
-    // Ensure inline on iOS
     video.setAttribute('playsinline','true');
     video.muted = true;
     video.autoplay = true;
 
-    scanStatus.textContent='Looking for VIN barcode…';
+    scanStatus.textContent='Looking for VIN barcode… keep it inside the dashed box.';
 
     await reader.decodeFromVideoDevice(
       undefined,  // default camera
@@ -233,14 +256,13 @@ async function startZXing(){
             scanStatus.textContent = 'Barcode seen… validating…';
           }
         } else if(err){
-          // NotFound happens constantly while scanning; ignore to keep UI calm
-          // For other errors, just keep showing “scanning…”
-          scanStatus.textContent = 'Scanning… keep the barcode inside the box.';
+          // Frequent NotFound errors while scanning are normal; keep calm text
+          scanStatus.textContent = 'Scanning…';
         }
       }
     );
   }catch(e){
-    scanStatus.textContent='Barcode scan unavailable. Use “Scan frame (OCR)”.';
+    scanStatus.textContent='Barcode scan error. Use “Scan frame (OCR)” instead.';
   }
 }
 function stopZXing(){
