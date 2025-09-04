@@ -1,0 +1,25 @@
+<!-- EV TIME cover banner 1920×1080 with tagline -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <style>
+      .txt{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    </style>
+  </defs>
+
+  <!-- White background -->
+  <rect width="1920" height="1080" fill="#ffffff"/>
+
+  <!-- "it's" (centered, subtle) -->
+  <text class="txt" x="960" y="420" font-size="56" fill="#64748b" text-anchor="middle" letter-spacing=".5px">it’s</text>
+
+  <!-- Main wordmark in brand dark -->
+  <text class="txt" x="960" y="560" font-size="220" font-weight="800" fill="#0b1325" text-anchor="middle">E.V.Time</text>
+
+  <!-- Teal underline -->
+  <rect x="610" y="590" width="700" height="16" rx="8" fill="#38bdf8"/>
+
+  <!-- Tagline -->
+  <text class="txt" x="960" y="670" font-size="64" fill="#0b1325" text-anchor="middle" letter-spacing=".3px">
+    Forum and MarketPlace
+  </text>
+</svg>
