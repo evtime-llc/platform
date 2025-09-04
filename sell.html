@@ -94,7 +94,7 @@ video{width:100%;border-radius:8px;background:#000}
 <!-- Camera overlay -->
 <div id="camWrap">
   <div id="camViewport">
-    <video id="video" muted playsinline></video>
+    <video id="video" muted playsinline autoplay></video>
     <div class="scanBox"></div>
   </div>
   <div class="camBtns">
@@ -109,7 +109,7 @@ video{width:100%;border-radius:8px;background:#000}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
-/* ===== VIN normalization & validation (with ISO 3779 check digit) ===== */
+/* ===== VIN normalization & validation (with check digit) ===== */
 function normalizeVIN(raw){
   if(!raw) return '';
   let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -129,7 +129,7 @@ function vinCheckDigitValid(v){
 }
 function vinIsValid(v){ v=(v||'').toUpperCase(); return isVIN17(v)&&vinCheckDigitValid(v); }
 
-/* ===== UI elements ===== */
+/* ===== UI els ===== */
 const vinEl=document.getElementById('vin');
 const milesEl=document.getElementById('miles');
 const vinStatus=document.getElementById('vinStatus');
@@ -160,8 +160,6 @@ function updateSubmitState(){
   const milesOk = /^\d{1,7}$/.test((milesEl.value||'').trim());
   submitBtn.disabled = !(vinOk && milesOk);
 }
-
-/* Live VIN typing */
 vinEl.addEventListener('input', ()=>{
   let v=normalizeVIN(vinEl.value); vinEl.value=v;
   if(v.length===17){
@@ -174,70 +172,91 @@ vinEl.addEventListener('input', ()=>{
 });
 milesEl.addEventListener('input', updateSubmitState);
 
-/* ===== Camera with HTTPS check + HD + ZXing (TRY_HARDER) + OCR crop ===== */
-let stream=null, zxingReader=null, zxingActive=false;
+/* ===== ZXing-managed camera (fix) + OCR fallback ===== */
+let reader=null, zxingActive=false;
 
 async function openCamera(){
-  try{
-    if(location.protocol!=='https:' && location.hostname!=='localhost'){ alert('Camera requires HTTPS. Use https://'); return; }
-    camWrap.style.display='flex'; scanStatus.textContent='Opening camera…';
+  if(location.protocol!=='https:' && location.hostname!=='localhost'){
+    alert('Camera requires HTTPS. Use https://'); return;
+  }
+  camWrap.style.display='flex';
+  scanStatus.textContent='Opening camera…';
 
-    const constraints = {
-      video: {
-        facingMode: { ideal: 'environment' },
-        width:  { ideal: 1920 },
-        height: { ideal: 1080 }
-      },
-      audio: false
-    };
-    stream = await navigator.mediaDevices.getUserMedia(constraints);
-    video.srcObject = stream;
-    await video.play();
-
-    startZXing();
-  }catch(_){ camWrap.style.display='none'; alert('Camera unavailable or blocked. Use the photo upload instead.'); }
+  // Let ZXing control the camera (do NOT start getUserMedia ourselves)
+  startZXing();
 }
-function closeCamera(){ stopZXing(); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } camWrap.style.display='none'; }
+function closeCamera(){
+  stopZXing();
+  camWrap.style.display='none';
+}
 scanBtn.addEventListener('click', openCamera);
 closeCamBtn.addEventListener('click', closeCamera);
 
 async function startZXing(){
   try{
-    const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType }=ZXingBrowser;
-    const hints=new Map();
+    const ZX = window.ZXingBrowser || window.ZXing; // handle UMD global name
+    if(!ZX){ scanStatus.textContent='Scanner library not loaded.'; return; }
+
+    const { BrowserMultiFormatReader, BarcodeFormat, DecodeHintType } = ZX;
+    const hints = new Map();
+    // VIN label formats commonly used
     hints.set(DecodeHintType.POSSIBLE_FORMATS, [
       BarcodeFormat.CODE_39, BarcodeFormat.CODE_128, BarcodeFormat.ITF, BarcodeFormat.PDF_417
     ]);
     hints.set(DecodeHintType.TRY_HARDER, true);
 
-    zxingReader=new BrowserMultiFormatReader(hints, 250); // ~4 scans/sec
-    zxingActive=true; scanStatus.textContent='Looking for VIN barcode…';
+    reader = new BrowserMultiFormatReader(hints, 250);
+    zxingActive = true;
 
-    await zxingReader.decodeFromVideoDevice(null, video, (result,err)=>{
-      if(!zxingActive) return;
-      if(result){
-        const v = normalizeVIN(result.getText());
-        if(isVIN17(v)){
-          vinEl.value = v;
-          setStatus('VIN barcode scanned ✔', true);
-          updateSubmitState();
-          closeCamera();
-        } else {
-          scanStatus.textContent = 'Barcode seen… validating…';
+    // Ensure inline on iOS
+    video.setAttribute('playsinline','true');
+    video.muted = true;
+    video.autoplay = true;
+
+    scanStatus.textContent='Looking for VIN barcode…';
+
+    await reader.decodeFromVideoDevice(
+      undefined,  // default camera
+      video,
+      (result, err) => {
+        if(!zxingActive) return;
+
+        if(result){
+          const raw = result.getText ? result.getText() : (result.text || '');
+          const v = normalizeVIN(raw);
+          if(isVIN17(v)){
+            vinEl.value = v;
+            setStatus('VIN barcode scanned ✔', true);
+            updateSubmitState();
+            closeCamera();
+          } else {
+            scanStatus.textContent = 'Barcode seen… validating…';
+          }
+        } else if(err){
+          // NotFound happens constantly while scanning; ignore to keep UI calm
+          // For other errors, just keep showing “scanning…”
+          scanStatus.textContent = 'Scanning… keep the barcode inside the box.';
         }
       }
-    });
-  }catch(_){ scanStatus.textContent='Barcode scan unavailable. Use “Scan frame (OCR)”.'; }
+    );
+  }catch(e){
+    scanStatus.textContent='Barcode scan unavailable. Use “Scan frame (OCR)”.';
+  }
 }
-function stopZXing(){ zxingActive=false; if(zxingReader){ try{zxingReader.reset();}catch(_){} zxingReader=null; } }
+function stopZXing(){
+  zxingActive = false;
+  if(reader){
+    try{ reader.reset(); }catch(_){}
+    reader = null;
+  }
+}
 
-/* OCR fallback (crop to the dashed box area for better accuracy) */
+/* OCR capture within the dashed box */
 captureBtn.addEventListener('click', async ()=>{
-  if(!video.videoWidth){ alert('Camera not ready yet.'); return; }
+  const track = video; if(!track || !track.videoWidth){ alert('Camera not ready yet.'); return; }
 
-  // Map scanBox rect to the underlying video frame pixels
   const vRect = video.getBoundingClientRect();
-  const bRect = document.querySelector('.scanBox').getBoundingClientRect();
+  const bRect = scanBox.getBoundingClientRect();
 
   const sx = Math.max(0, (bRect.left - vRect.left) / vRect.width);
   const sy = Math.max(0, (bRect.top  - vRect.top ) / vRect.height);
