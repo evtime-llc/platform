@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Export EV TIME Logo</title>
+<button id="dl">Download 1024×1024 PNG</button>
+<script>
+const SRC = 'mainlogo-square.svg', SIZE = 1024;
+document.getElementById('dl').onclick = async () => {
+  const svgText = await (await fetch(SRC, {cache:'no-store'})).text();
+  const url = URL.createObjectURL(new Blob([svgText], {type:'image/svg+xml'}));
+  const img = new Image(); img.onload = () => {
+    const c = document.createElement('canvas'); c.width = SIZE; c.height = SIZE;
+    const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, SIZE, SIZE);
+    c.toBlob(b => {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+      a.download = 'evtime-logo-1024.png'; a.click();
+    }, 'image/png');
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+};
+</script>
