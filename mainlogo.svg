@@ -1,4 +1,4 @@
-<!-- mainlogo.svg — trimmed banner, no extra whitespace -->
+<!-- mainlogo.svg — updated sizes for "it’s" and tagline -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 220" width="1600" height="220">
   <defs>
     <style>
@@ -9,8 +9,8 @@
   <!-- Dark bar background -->
   <rect x="0" y="0" width="1600" height="220" fill="#0b1325"/>
 
-  <!-- "it's" -->
-  <text class="txt" x="36" y="126" font-size="42" fill="#cbd5e1" letter-spacing=".5px">it’s</text>
+  <!-- "it's" (slightly larger) -->
+  <text class="txt" x="36" y="126" font-size="44" fill="#cbd5e1" letter-spacing=".5px">it’s</text>
 
   <!-- Main word with dots: E.V.Time -->
   <text class="txt" x="180" y="126" font-size="96" font-weight="800" fill="#f8fafc">E.V.Time</text>
@@ -18,8 +18,8 @@
   <!-- Teal accent underline -->
   <rect x="180" y="142" width="430" height="10" rx="5" fill="#38bdf8"/>
 
-  <!-- Tagline -->
-  <text class="txt" x="640" y="128" font-size="28" fill="#cbd5e1" letter-spacing=".3px">
+  <!-- Tagline (larger) -->
+  <text class="txt" x="640" y="128" font-size="34" fill="#cbd5e1" letter-spacing=".3px">
     Forum and MarketPlace
   </text>
 </svg>
