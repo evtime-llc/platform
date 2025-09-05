@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Get a Human Offer • EV TIME</title>
+<title>Sell Your Car • EV TIME</title>
 <meta name="theme-color" content="#0ea5e9"/>
 
 <style>
@@ -43,15 +43,16 @@ video{width:100%;border-radius:8px;background:#000}
 
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=111" alt="it’s evtime — forum and marketplace">
+    <img id="site-logo" src="mainlogo.svg?v=111" alt="it’s EV TIME — Forum and MarketPlace">
   </div>
 </div>
 
 <main class="wrap">
   <div class="card">
-    <h1>Get a Human Offer</h1>
-    <div class="muted">We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer—fast.</div>
-    <div class="muted" style="margin-top:6px">Tip: scan the <b>door-jamb sticker</b>. If the barcode doesn’t read, use “Scan frame (OCR)” on the printed VIN line under bright light.</div>
+    <h1>Honest Offer from People You Can Trust</h1>
+    <div class="muted">We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div>
+    <div class="muted" style="margin-top:6px">Your details are private—used just for your offer. We don’t sell or share them.</div>
+    <div class="muted" style="margin-top:6px">Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div>
 
     <div class="row" style="margin-top:12px">
       <button id="scanBtn" class="primary">Scan VIN (camera)</button>
@@ -80,7 +81,7 @@ video{width:100%;border-radius:8px;background:#000}
     <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
 
     <div class="row" style="margin-top:12px">
-      <button id="submitBtn" class="primary" style="flex:1" disabled>Text a Human for Offer</button>
+      <button id="submitBtn" class="primary" style="flex:1" disabled>Text for Offer</button>
       <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
     </div>
 
@@ -104,7 +105,7 @@ video{width:100%;border-radius:8px;background:#000}
   <div id="scanStatus">Camera loading…</div>
 </div>
 
-<!-- OCR library (kept) -->
+<!-- OCR library -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
@@ -204,7 +205,6 @@ closeCamBtn.addEventListener('click', closeCamera);
 async function startNativeDetector(){
   if(!('BarcodeDetector' in window)) return false;
 
-  // Which formats are supported on this device?
   let supported=[];
   try{ supported = await BarcodeDetector.getSupportedFormats(); }catch(_){}
   const needed=['code_39','code_128','itf','pdf417'];
@@ -217,7 +217,7 @@ async function startNativeDetector(){
     video.srcObject = stream;
     await video.play();
     usingNative = true;
-    scanStatus.textContent='Scanning (native)… keep the barcode inside the dashed box.';
+    scanStatus.textContent='Scanning… keep the VIN barcode inside the dashed box.';
     nativeLoop();
     return true;
   }catch(_){ return false; }
@@ -230,7 +230,6 @@ function nativeLoop(){
   const vw = video.videoWidth, vh = video.videoHeight;
   if(!vw || !vh) return;
 
-  // Crop to dashed box area for speed/accuracy
   const vRect = video.getBoundingClientRect();
   const bRect = scanBox.getBoundingClientRect();
 
@@ -244,9 +243,8 @@ function nativeLoop(){
   const cw    = Math.round(vw * sw);
   const ch    = Math.round(vh * sh);
 
-  // Draw to small canvas to feed detector
   const canvas = nativeLoop._c || (nativeLoop._c=document.createElement('canvas'));
-  canvas.width = 640; // scale down for speed
+  canvas.width = 640;
   canvas.height = Math.max(120, Math.round(640 * (ch/cw)));
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, canvas.width, canvas.height);
@@ -306,7 +304,7 @@ function startZXing(ZX){
     video.muted = true;
     video.autoplay = true;
 
-    scanStatus.textContent='Scanning (fallback)…';
+    scanStatus.textContent='Scanning…';
 
     zxingReader.decodeFromVideoDevice(undefined, video, (result, err)=>{
       if(!zxingActive) return;
@@ -388,7 +386,7 @@ vinPhoto.addEventListener('change', async (e)=>{
   img.src=URL.createObjectURL(f);
 });
 
-/* Submit → SMS to human */
+/* Submit → SMS to your OpenPhone number */
 submitBtn.addEventListener('click', ()=>{
   const v=(vinEl.value||'').trim().toUpperCase();
   const miles=(milesEl.value||'').trim();
@@ -397,7 +395,7 @@ submitBtn.addEventListener('click', ()=>{
   const notes=(document.getElementById('notes').value||'').trim();
 
   const body=[
-    "Hi, I’m requesting a HUMAN offer.",
+    "Hi, I’m requesting an offer.",
     "",
     `VIN: ${v}`,
     `Mileage: ${miles}`,
