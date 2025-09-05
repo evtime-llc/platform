@@ -14,6 +14,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap{max-width:620px;margin:0 auto;padding:0 12px}
 #site-logo{display:block;width:100%;height:auto;max-height:140px;object-fit:contain}
+
+/* card + text */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 h1{margin:6px 0 8px;font-size:20px}
 .muted{color:#64748b;font-size:13px}
@@ -25,14 +27,31 @@ input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1
 label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
 .sep{height:1px;background:var(--line);margin:10px 0}
 
+/* small link buttons under intro */
+.linkbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.linkbtn{height:36px;line-height:34px;padding:0 12px;font-size:13px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.linkbtn:hover{background:#f8fafc}
+
 /* Camera overlay */
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
 #camViewport{position:relative;width:100%;max-width:720px}
 video{width:100%;border-radius:8px;background:#000}
-.scanBox{position:absolute;left:10%;right:10%;top:20%;bottom:20%;border:2px dashed rgba(255,255,255,.7);border-radius:8px}
+/* Wide rectangular scan box for barcodes/VIN lines */
+.scanBox{
+  position:absolute; left:8%; right:8%; top:35%; bottom:35%;
+  border:2px dashed rgba(255,255,255,.75); border-radius:8px;
+}
 .camBtns{display:flex;gap:8px;margin-top:10px}
 .camBtns button{background:#fff}
 #scanStatus{color:#e5e7eb;font-size:12px;margin-top:6px;text-align:center}
+
+/* Info modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:10px;z-index:30}
+.modal.open{display:flex}
+.sheet{width:100%;max-width:680px;background:#fff;border-radius:16px;overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
+.sheet header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line)}
+.sheet .body{padding:12px;overflow:auto}
+.close{border:1px solid var(--line);background:#fff;border-radius:10px;height:34px;padding:0 10px;cursor:pointer}
 
 .success{color:#16a34a;font-weight:600}
 .error{color:#b91c1c}
@@ -50,9 +69,15 @@ video{width:100%;border-radius:8px;background:#000}
 <main class="wrap">
   <div class="card">
     <h1>Honest Offer from People You Can Trust</h1>
-    <div class="muted">We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div>
-    <div class="muted" style="margin-top:6px">Your details are private—used just for your offer. We don’t sell or share them.</div>
-    <div class="muted" style="margin-top:6px">Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div>
+
+    <div class="muted">✅ We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div>
+    <div class="muted" style="margin-top:6px">✅ Your details are private—used just for your offer. We don’t sell or share them.</div>
+    <div class="muted" style="margin-top:6px">✅ Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div>
+
+    <div class="linkbar">
+      <button class="linkbtn" id="howBtn">How it works</button>
+      <button class="linkbtn" id="whyBtn">Why EV TIME</button>
+    </div>
 
     <div class="row" style="margin-top:12px">
       <button id="scanBtn" class="primary">Scan VIN (camera)</button>
@@ -105,6 +130,17 @@ video{width:100%;border-radius:8px;background:#000}
   <div id="scanStatus">Camera loading…</div>
 </div>
 
+<!-- Info modal -->
+<div id="infoModal" class="modal" role="dialog" aria-modal="true" aria-label="Information">
+  <div class="sheet">
+    <header>
+      <div id="mTitle" style="font-weight:600">Info</div>
+      <button class="close" id="mClose">Close</button>
+    </header>
+    <div class="body" id="mBody"></div>
+  </div>
+</div>
+
 <!-- OCR library -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
@@ -143,6 +179,12 @@ const captureBtn=document.getElementById('captureBtn');
 const closeCamBtn=document.getElementById('closeCamBtn');
 const scanStatus=document.getElementById('scanStatus');
 const scanBox=document.querySelector('.scanBox');
+
+/* Info modal els */
+const infoModal=document.getElementById('infoModal');
+const mTitle=document.getElementById('mTitle');
+const mBody=document.getElementById('mBody');
+const mClose=document.getElementById('mClose');
 
 function setStatus(msg, ok){ vinStatus.textContent=msg||''; vinStatus.className='small '+(ok?'success':msg?'error':''); }
 
@@ -408,6 +450,55 @@ submitBtn.addEventListener('click', ()=>{
   try{ location.href=link; }
   catch{ navigator.clipboard?.writeText(body); alert("SMS not supported. Message copied—paste into a text to "+num+"."); }
 });
+
+/* ===== Info modal content & wiring ===== */
+const HOW_HTML = `
+  <h2 style="margin:0 0 6px">How it works</h2>
+  <p class="small" style="color:#334155">Short version: text your VIN number + mileage. We review your car and text back our best offer—no pressure.</p>
+  <h3 style="margin:10px 0 4px;font-size:14px">Step 1 — Send details</h3>
+  <p class="small">Text us your <b>VIN number</b> and <b>mileage</b> (photos optional). If you have a Carvana/CarMax offer, send a screenshot—we’ll try to beat it.</p>
+  <h3 style="margin:10px 0 4px;font-size:14px">Step 2 — We review</h3>
+  <p class="small">We look at market prices, options, and condition, then text you a <b>fair number</b>. Clear, friendly, and fast.</p>
+  <h3 style="margin:10px 0 4px;font-size:14px">Step 3 — If you like it</h3>
+  <p class="small">We set a <b>by-appointment</b> meetup. Quick look, <b>ID + title</b> check, and you choose payment (cashier’s check, Zelle, or wire). Retail paperwork, when needed, is handled by our licensed partner <b>Waltons Auto Sales</b>.</p>
+  <h3 style="margin:10px 0 4px;font-size:14px">What we buy</h3>
+  <p class="small">EV specialists — <b>we buy any car</b> with a clean title.</p>
+  <h3 style="margin:10px 0 4px;font-size:14px">What affects your offer</h3>
+  <p class="small">Mileage • Options • Condition • History • Current market</p>
+  <h3 style="margin:10px 0 4px;font-size:14px">Area & timing</h3>
+  <p class="small"><b>Southern California</b> (Los Angeles + Orange County) • By appointment • Same-day replies when possible</p>
+  <div class="sep" style="margin:12px 0"></div>
+  <h3 style="margin:0 0 6px;font-size:14px">Disclosures</h3>
+  <p class="small"><b>Privacy:</b> Your details are private—used just for your offer. We don’t sell or share them.</p>
+  <p class="small"><b>Offer:</b> Your offer may change after inspection and verification (title, mileage, options, market).</p>
+  <p class="small"><b>Paperwork:</b> Retail paperwork, when required, is handled by <b>Waltons Auto Sales</b>. Private-party sales are strictly between buyer and seller.</p>
+  <p class="small"><b>No affiliation:</b> Not affiliated with Tesla, Inc. or other automakers.</p>
+`;
+
+const WHY_HTML = `
+  <h2 style="margin:0 0 6px">Why EV TIME</h2>
+  <p class="small">We started EV TIME to make selling a car <b>simple, fair, and private</b>.</p>
+  <p class="small">What you can expect:</p>
+  <ul class="small" style="margin:6px 0 0 18px;color:#334155">
+    <li>✅ <b>Honest & fair</b> — real review, real number.</li>
+    <li>✅ <b>People you can trust</b> — friendly, low-pressure conversation.</li>
+    <li>✅ <b>Privacy-first</b> — your info isn’t sold or shared.</li>
+    <li>✅ <b>By appointment</b> — we meet when it’s convenient for you.</li>
+    <li>✅ <b>EV specialists</b> — and <b>we buy any car</b>.</li>
+    <li>✅ <b>Simple paperwork</b> — handled via <b>Waltons Auto Sales</b> when needed.</li>
+  </ul>
+  <div class="sep" style="margin:12px 0"></div>
+  <p class="small">Questions? Just text us. We’re happy to help.</p>
+`;
+
+document.getElementById('howBtn').addEventListener('click', ()=>{
+  mTitle.textContent='How it works'; mBody.innerHTML=HOW_HTML; infoModal.classList.add('open'); document.body.style.overflow='hidden';
+});
+document.getElementById('whyBtn').addEventListener('click', ()=>{
+  mTitle.textContent='Why EV TIME'; mBody.innerHTML=WHY_HTML; infoModal.classList.add('open'); document.body.style.overflow='hidden';
+});
+mClose.addEventListener('click', ()=>{ infoModal.classList.remove('open'); document.body.style.overflow=''; });
+infoModal.addEventListener('click', (e)=>{ if(e.target===infoModal){ infoModal.classList.remove('open'); document.body.style.overflow=''; }});
 
 /* init */
 updateSubmitState();
