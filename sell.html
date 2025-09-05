@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sell Your Car • EV TIME</title>
+<title>Sell Your Car • E.V.Time</title>
 <meta name="theme-color" content="#0ea5e9"/>
 
 <style>
@@ -27,10 +27,14 @@ input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1
 label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
 .sep{height:1px;background:var(--line);margin:10px 0}
 
-/* small link buttons under intro */
-.linkbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-.linkbtn{height:36px;line-height:34px;padding:0 12px;font-size:13px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
-.linkbtn:hover{background:#f8fafc}
+/* single pretty info button */
+.infobar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.infoBtn{
+  height:38px; line-height:38px; padding:0 14px; font-size:13px; font-weight:700;
+  border-radius:999px; border:1px solid transparent; background:var(--cta); color:var(--ctaText);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.infoBtn:active{transform:translateY(1px)}
 
 /* Camera overlay */
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
@@ -62,7 +66,7 @@ video{width:100%;border-radius:8px;background:#000}
 
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=111" alt="it’s EV TIME — Forum and MarketPlace">
+    <img id="site-logo" src="mainlogo.svg?v=112" alt="it’s E.V.Time — Forum and MarketPlace">
   </div>
 </div>
 
@@ -74,9 +78,8 @@ video{width:100%;border-radius:8px;background:#000}
     <div class="muted" style="margin-top:6px">✅ Your details are private—used just for your offer. We don’t sell or share them.</div>
     <div class="muted" style="margin-top:6px">✅ Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div>
 
-    <div class="linkbar">
-      <button class="linkbtn" id="howBtn">How it works</button>
-      <button class="linkbtn" id="whyBtn">Why EV TIME</button>
+    <div class="infobar">
+      <button class="infoBtn" id="infoBtn">How it works • Why E.V.Time</button>
     </div>
 
     <div class="row" style="margin-top:12px">
@@ -134,7 +137,7 @@ video{width:100%;border-radius:8px;background:#000}
 <div id="infoModal" class="modal" role="dialog" aria-modal="true" aria-label="Information">
   <div class="sheet">
     <header>
-      <div id="mTitle" style="font-weight:600">Info</div>
+      <div id="mTitle" style="font-weight:600">How it works • Why E.V.Time</div>
       <button class="close" id="mClose">Close</button>
     </header>
     <div class="body" id="mBody"></div>
@@ -182,7 +185,6 @@ const scanBox=document.querySelector('.scanBox');
 
 /* Info modal els */
 const infoModal=document.getElementById('infoModal');
-const mTitle=document.getElementById('mTitle');
 const mBody=document.getElementById('mBody');
 const mClose=document.getElementById('mClose');
 
@@ -280,10 +282,11 @@ function nativeLoop(){
   const sw = Math.min(1, bRect.width  / vRect.width);
   const sh = Math.min(1, bRect.height / vRect.height);
 
-  const cropX = Math.round(vw * sx);
-  const cropY = Math.round(vh * sy);
-  const cw    = Math.round(vw * sw);
-  const ch    = Math.round(vh * sh);
+  const vw2 = video.videoWidth, vh2 = video.videoHeight;
+  const cropX = Math.round(vw2 * sx);
+  const cropY = Math.round(vh2 * sy);
+  const cw    = Math.round(vw2 * sw);
+  const ch    = Math.round(vh2 * sh);
 
   const canvas = nativeLoop._c || (nativeLoop._c=document.createElement('canvas'));
   canvas.width = 640;
@@ -451,22 +454,29 @@ submitBtn.addEventListener('click', ()=>{
   catch{ navigator.clipboard?.writeText(body); alert("SMS not supported. Message copied—paste into a text to "+num+"."); }
 });
 
-/* ===== Info modal content & wiring ===== */
-const HOW_HTML = `
-  <h2 style="margin:0 0 6px">How it works</h2>
-  <p class="small" style="color:#334155">Short version: text your VIN number + mileage. We review your car and text back our best offer—no pressure.</p>
+/* ===== Info modal content & wiring (ONE PAGE) ===== */
+const INFO_HTML = `
+  <h2 style="margin:0 0 6px">How it works • Why E.V.Time</h2>
+  <p class="small" style="color:#334155">Text your VIN number + mileage. We review your car and text back our best offer—no pressure.</p>
+
   <h3 style="margin:10px 0 4px;font-size:14px">Step 1 — Send details</h3>
   <p class="small">Text us your <b>VIN number</b> and <b>mileage</b> (photos optional). If you have a Carvana/CarMax offer, send a screenshot—we’ll try to beat it.</p>
+
   <h3 style="margin:10px 0 4px;font-size:14px">Step 2 — We review</h3>
   <p class="small">We look at market prices, options, and condition, then text you a <b>fair number</b>. Clear, friendly, and fast.</p>
+
   <h3 style="margin:10px 0 4px;font-size:14px">Step 3 — If you like it</h3>
   <p class="small">We set a <b>by-appointment</b> meetup. Quick look, <b>ID + title</b> check, and you choose payment (cashier’s check, Zelle, or wire). Retail paperwork, when needed, is handled by our licensed partner <b>Waltons Auto Sales</b>.</p>
+
   <h3 style="margin:10px 0 4px;font-size:14px">What we buy</h3>
-  <p class="small">EV specialists — <b>we buy any car</b> with a clean title.</p>
+  <p class="small">EV specialists — <b>we buy any car</b> with a clean title (Tesla S/3/X/Y welcome, and all other makes).</p>
+
   <h3 style="margin:10px 0 4px;font-size:14px">What affects your offer</h3>
   <p class="small">Mileage • Options • Condition • History • Current market</p>
+
   <h3 style="margin:10px 0 4px;font-size:14px">Area & timing</h3>
   <p class="small"><b>Southern California</b> (Los Angeles + Orange County) • By appointment • Same-day replies when possible</p>
+
   <div class="sep" style="margin:12px 0"></div>
   <h3 style="margin:0 0 6px;font-size:14px">Disclosures</h3>
   <p class="small"><b>Privacy:</b> Your details are private—used just for your offer. We don’t sell or share them.</p>
@@ -475,27 +485,10 @@ const HOW_HTML = `
   <p class="small"><b>No affiliation:</b> Not affiliated with Tesla, Inc. or other automakers.</p>
 `;
 
-const WHY_HTML = `
-  <h2 style="margin:0 0 6px">Why EV TIME</h2>
-  <p class="small">We started EV TIME to make selling a car <b>simple, fair, and private</b>.</p>
-  <p class="small">What you can expect:</p>
-  <ul class="small" style="margin:6px 0 0 18px;color:#334155">
-    <li>✅ <b>Honest & fair</b> — real review, real number.</li>
-    <li>✅ <b>People you can trust</b> — friendly, low-pressure conversation.</li>
-    <li>✅ <b>Privacy-first</b> — your info isn’t sold or shared.</li>
-    <li>✅ <b>By appointment</b> — we meet when it’s convenient for you.</li>
-    <li>✅ <b>EV specialists</b> — and <b>we buy any car</b>.</li>
-    <li>✅ <b>Simple paperwork</b> — handled via <b>Waltons Auto Sales</b> when needed.</li>
-  </ul>
-  <div class="sep" style="margin:12px 0"></div>
-  <p class="small">Questions? Just text us. We’re happy to help.</p>
-`;
-
-document.getElementById('howBtn').addEventListener('click', ()=>{
-  mTitle.textContent='How it works'; mBody.innerHTML=HOW_HTML; infoModal.classList.add('open'); document.body.style.overflow='hidden';
-});
-document.getElementById('whyBtn').addEventListener('click', ()=>{
-  mTitle.textContent='Why EV TIME'; mBody.innerHTML=WHY_HTML; infoModal.classList.add('open'); document.body.style.overflow='hidden';
+document.getElementById('infoBtn').addEventListener('click', ()=>{
+  mBody.innerHTML=INFO_HTML;
+  document.getElementById('infoModal').classList.add('open');
+  document.body.style.overflow='hidden';
 });
 mClose.addEventListener('click', ()=>{ infoModal.classList.remove('open'); document.body.style.overflow=''; });
 infoModal.addEventListener('click', (e)=>{ if(e.target===infoModal){ infoModal.classList.remove('open'); document.body.style.overflow=''; }});
