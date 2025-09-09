@@ -10,10 +10,9 @@
 :root{ --bg:#1f2937; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --cta:#0ea5e9 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.wrap{max-width:820px;margin:0 auto;padding:12px}
 
-/* page wrapper with safe-area bottom so content doesn't hug the nav bar */
-.wrap{max-width:820px;margin:0 auto;padding:12px;padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px))}
-
+/* Top logo bar (white) */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap{max-width:820px;margin:0 auto;padding:0 12px}
 #site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
@@ -53,16 +52,8 @@ hr.sep{border:0;border-top:1px dashed #e2e8f0;margin:10px 0}
 input[type="file"]{display:none}
 .file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed #cbd5e1;border-radius:12px;padding:0 12px;height:42px;background:#fff;cursor:pointer}
 
-/* grids */
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 @media (max-width:720px){ .grid3{grid-template-columns:1fr} }
-
-/* bottom action row: two-up on phones, falls to single column on very narrow */
-.btnRow2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-@media (max-width:480px){ .btnRow2{grid-template-columns:1fr} }
-
-/* space the final inputs away from card edge on small screens */
-.inputsPad{margin-top:8px}
 </style>
 </head>
 <body>
@@ -70,7 +61,9 @@ input[type="file"]{display:none}
 <!-- Logo -->
 <div class="topbar">
   <div class="logo-wrap">
-    <img id="site-logo" src="mainlogo.svg?v=111" alt="it's EVTime — Forum and MarketPlace">
+    <a href="./share.html" aria-label="Home — E.V.Time" style="display:block">
+      <img id="site-logo" src="mainlogo.svg?v=112" alt="it’s E.V.Time — Forum and MarketPlace">
+    </a>
   </div>
 </div>
 
@@ -143,9 +136,7 @@ input[type="file"]{display:none}
       <button id="publishBtn">Publish to GitHub</button>
       <button id="buyersBtn">Open buyers page</button>
     </div>
-
-    <!-- Tighter, responsive row for the small buttons -->
-    <div class="btnRow2" style="margin-top:8px">
+    <div class="row" style="margin-top:8px">
       <button id="copyLinkBtn">Copy buyers link</button>
       <button id="shareLinkBtn">Share buyers link</button>
       <button id="reloadBtn">Reload admin</button>
@@ -154,10 +145,10 @@ input[type="file"]{display:none}
     <hr class="sep">
 
     <div class="small">GitHub settings (remembered locally):</div>
-    <div class="grid3 inputsPad">
-      <input id="ghUser" placeholder="GitHub username (e.g., vahehr-dotcom)" autocapitalize="none" spellcheck="false" inputmode="latin"/>
-      <input id="ghRepo" placeholder="Repo (e.g., Tesla_Inventory)" autocapitalize="none" spellcheck="false" inputmode="latin"/>
-      <input id="ghToken" type="password" placeholder="Personal access token (classic: repo scope)" autocapitalize="none" spellcheck="false" inputmode="latin"/>
+    <div class="grid3">
+      <input id="ghUser" placeholder="GitHub username (e.g., vahehr-dotcom)"/>
+      <input id="ghRepo" placeholder="Repo (e.g., Tesla_Inventory)"/>
+      <input id="ghToken" placeholder="Personal access token (classic: repo scope)"/>
     </div>
     <div id="msg" class="small" style="margin-top:8px"></div>
   </div>
@@ -298,7 +289,9 @@ function renderList(){
 }
 function move(i, delta){
   const j = i+delta; if(j<0 || j>=CARS.length) return;
+  // swap order fields
   const a=CARS[i], b=CARS[j]; const tmp=a.order; a.order=b.order; b.order=tmp;
+  // swap positions for immediate UI feel
   [CARS[i], CARS[j]] = [CARS[j], CARS[i]];
   renderList();
   setDirty('Order updated. Remember to publish.');
@@ -322,12 +315,13 @@ async function collectPhotos(){
 }
 
 saveBtn.onclick = async ()=>{
+  // basic required checks
   if(!yearEl.value || !modelEl.value || !trimEl.value || !mileageEl.value || !priceEl.value){
     formMsg.textContent='Year, model, trim, mileage, and price are required.'; formMsg.className='small err'; return;
   }
   formMsg.textContent='Saving…'; formMsg.className='small';
 
-  const photos = await collectPhotos();
+  const photos = await collectPhotos(); // may be empty
   const item = {
     id: EDIT_ID || uid(),
     year: Number(yearEl.value),
@@ -341,6 +335,7 @@ saveBtn.onclick = async ()=>{
   if(EDIT_ID){
     const idx = CARS.findIndex(x=>x.id===EDIT_ID);
     if(idx>=0){
+      // keep existing order/addedAt; append new photos if provided
       item.order = CARS[idx].order ?? idx;
       item.addedAt = CARS[idx].addedAt || Date.now();
       const oldPhotos = (CARS[idx].photos && CARS[idx].photos.length)? CARS[idx].photos : (CARS[idx].photo?[CARS[idx].photo]:[]);
@@ -398,7 +393,7 @@ copyLinkBtn.onclick = async ()=>{
 shareLinkBtn.onclick = async ()=>{
   const url = buyersURL;
   try{ if(navigator.share){ await navigator.share({title:'EVTime Inventory', text:'Current cars', url}); }
-  else throw 0; }catch{ await navigator.clipboard.writeText(url); alert('Copied link:\n'+url); }
+  else throw 0; }catch{ /* fallback is copy */ await navigator.clipboard.writeText(url); alert('Copied link:\n'+url); }
 };
 reloadBtn.onclick = ()=> location.href = location.pathname + '?v=' + Date.now();
 
