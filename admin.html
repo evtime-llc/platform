@@ -3,54 +3,55 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Inventory Admin • EVTime</title>
-<meta name="theme-color" content="#0ea5e9"/>
+<title>Inventory Admin • E.V.Time</title>
+<meta name="theme-color" content="#C98C5B"/>
+<link rel="stylesheet" href="./theme.css?v=1"/>
 
 <style>
-:root{ --bg:#1f2937; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --cta:#0ea5e9 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-.wrap{max-width:820px;margin:0 auto;padding:12px}
+.wrap{max-width:920px;margin:0 auto;padding:12px}
 
-/* Top logo bar (white) */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:820px;margin:0 auto;padding:0 12px}
+/* Top logo bar */
+.topbar{background:transparent;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:920px;margin:0 auto;padding:12px}
 #site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
 
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
 h1,h2{margin:6px 0 8px}
 .small{font-size:12px;color:var(--muted)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .col{flex:1;min-width:220px}
-label{display:block;font-size:12px;color:#334155;margin:8px 0 4px}
+label{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
 input[type="text"],input[type="number"],textarea{
-  width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
+  width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;
+  background:#fff;color:#0f172a
 }
 textarea{height:auto;min-height:80px;padding:10px 12px}
 input::placeholder,textarea::placeholder{color:#94a3b8}
-button{height:42px;padding:0 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;cursor:pointer}
-button.primary{background:var(--cta);color:#fff;border-color:var(--cta);font-weight:700}
-button.warn{background:#fee2e2;border-color:#fecaca}
+button{height:42px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--text);cursor:pointer}
+button.primary{background:var(--cta);color:var(--ctaText);border-color:transparent;font-weight:700}
+button.warn{background:#3a0d0d;border-color:#5b1a1a;color:#ffdede}
 button.icon{width:42px}
 
-hr.sep{border:0;border-top:1px dashed #e2e8f0;margin:10px 0}
+hr.sep{border:0;border-top:1px dashed var(--line);margin:10px 0}
 
 /* inventory list */
 .list{display:flex;flex-direction:column;gap:8px}
-.item{display:flex;align-items:center;gap:10px;border:1px dashed #e2e8f0;border-radius:12px;padding:8px;background:#fafafa}
-.item img{width:92px;height:69px;object-fit:cover;border-radius:10px;background:#e5e7eb}
+.item{display:flex;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:12px;padding:8px;background:#0f141e}
+.item img{width:92px;height:69px;object-fit:cover;border-radius:10px;background:#0b0f18}
 .meta{flex:1;min-width:0}
 .title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sub{font-size:12px;color:#475569}
+.sub{font-size:12px;color:var(--muted)}
 .btns{display:flex;gap:6px}
 .kv{font-variant-numeric:tabular-nums}
 
-.notice{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin:8px 0}
-.ok{color:#16a34a}.err{color:#b91c1c}
+.notice{background:#0f141e;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0;color:var(--text)}
+.ok{color:#16a34a}.err{color:#fca5a5}
 .hidden{display:none}
 
 input[type="file"]{display:none}
-.file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed #cbd5e1;border-radius:12px;padding:0 12px;height:42px;background:#fff;cursor:pointer}
+.file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:12px;padding:0 12px;height:42px;background:transparent;color:var(--text);cursor:pointer}
 
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 @media (max-width:720px){
@@ -62,11 +63,11 @@ input[type="file"]{display:none}
 </head>
 <body>
 
-<!-- Logo (clickable to HOME) -->
+<!-- Logo (home link) -->
 <div class="topbar">
   <div class="logo-wrap">
     <a href="./index.html" aria-label="Go to home">
-      <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
+      <img id="site-logo" src="mainlogo.svg?v=111" alt="it's E.V.Time — Forum and MarketPlace">
     </a>
   </div>
 </div>
