@@ -53,16 +53,20 @@ input[type="file"]{display:none}
 .file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed #cbd5e1;border-radius:12px;padding:0 12px;height:42px;background:#fff;cursor:pointer}
 
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-@media (max-width:720px){ .grid3{grid-template-columns:1fr} }
+@media (max-width:720px){
+  .grid3{grid-template-columns:1fr}
+  .item{align-items:flex-start}
+  .btns{margin-left:auto}
+}
 </style>
 </head>
 <body>
 
-<!-- Logo -->
+<!-- Logo (clickable to HOME) -->
 <div class="topbar">
   <div class="logo-wrap">
-    <a href="./share.html" aria-label="Home — E.V.Time" style="display:block">
-      <img id="site-logo" src="mainlogo.svg?v=112" alt="it’s E.V.Time — Forum and MarketPlace">
+    <a href="./index.html" aria-label="Go to home">
+      <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
     </a>
   </div>
 </div>
@@ -156,13 +160,11 @@ input[type="file"]{display:none}
 </div>
 
 <script>
-/* ====== State ====== */
 let CARS = [];
 let EDIT_ID = null;
-let shaCurrent = null; // sha for inventory.json for PUT
+let shaCurrent = null;
 const buyersURL = (location.origin + location.pathname).replace(/admin\.html.*/,'') + 'share.html';
 
-/* ====== Elements ====== */
 const statusEl = document.getElementById('status');
 const listEl = document.getElementById('list');
 const msgEl = document.getElementById('msg');
@@ -189,7 +191,6 @@ const copyLinkBtn = document.getElementById('copyLinkBtn');
 const shareLinkBtn = document.getElementById('shareLinkBtn');
 const reloadBtn = document.getElementById('reloadBtn');
 
-/* ====== GitHub creds (localStorage) ====== */
 const ghUser = document.getElementById('ghUser');
 const ghRepo = document.getElementById('ghRepo');
 const ghToken = document.getElementById('ghToken');
@@ -198,14 +199,12 @@ ghRepo.value  = localStorage.getItem('ghRepo')  || 'Tesla_Inventory';
 ghToken.value = localStorage.getItem('ghToken') || '';
 [ghUser, ghRepo, ghToken].forEach(i => i.addEventListener('input', ()=> localStorage.setItem(i.id, i.value.trim())));
 
-/* ====== Utils ====== */
 function uid(){ return (Math.random().toString(36).slice(2,8)+Math.random().toString(36).slice(2,8)); }
 function titleOf(c){ return `${c.year||''} ${c.model||''} ${c.trim||''}`.replace(/\s+/g,' ').trim(); }
 function priceOf(c){ try{return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(c.price||0)}catch{return'$'+(c.price||0)} }
 function ensureOrder(){ CARS.forEach((c,i)=>{ if(typeof c.order!=='number') c.order = i; }); }
 function sortForDisplay(){ CARS.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0)); }
 
-/* Image compression */
 async function compressFiles(fileList){
   photoStatus.textContent = 'Processing photos…';
   const files = Array.from(fileList||[]);
@@ -238,7 +237,6 @@ function resizeDataURL(dataURL, maxW, maxH, quality){
   });
 }
 
-/* ====== Load inventory and current sha ====== */
 async function loadInventory(){
   try{
     statusEl.textContent = 'Loading inventory.json…';
@@ -251,7 +249,6 @@ async function loadInventory(){
     if(!CARS.length){ statusEl.textContent='No inventory yet.'; } else { statusEl.remove(); listEl.classList.remove('hidden'); }
     renderList();
 
-    // Fetch current sha for PUT
     const u = `https://api.github.com/repos/${ghUser.value}/${ghRepo.value}/contents/inventory.json`;
     const r2 = await fetch(u, { headers:{Accept:'application/vnd.github+json'} });
     if(r2.ok){ const j = await r2.json(); shaCurrent = j.sha || null; } else { shaCurrent = null; }
@@ -261,7 +258,6 @@ async function loadInventory(){
 }
 loadInventory();
 
-/* ====== Render list with Up/Down ====== */
 function renderList(){
   listEl.innerHTML='';
   CARS.forEach((c,idx)=>{
@@ -289,16 +285,13 @@ function renderList(){
 }
 function move(i, delta){
   const j = i+delta; if(j<0 || j>=CARS.length) return;
-  // swap order fields
   const a=CARS[i], b=CARS[j]; const tmp=a.order; a.order=b.order; b.order=tmp;
-  // swap positions for immediate UI feel
   [CARS[i], CARS[j]] = [CARS[j], CARS[i]];
   renderList();
   setDirty('Order updated. Remember to publish.');
 }
 function reindexOrders(){ CARS.forEach((c,i)=> c.order=i); }
 
-/* ====== Form logic (Add / Edit) ====== */
 function resetForm(){
   EDIT_ID = null;
   formTitle.textContent = 'Add Vehicle';
@@ -315,13 +308,12 @@ async function collectPhotos(){
 }
 
 saveBtn.onclick = async ()=>{
-  // basic required checks
   if(!yearEl.value || !modelEl.value || !trimEl.value || !mileageEl.value || !priceEl.value){
     formMsg.textContent='Year, model, trim, mileage, and price are required.'; formMsg.className='small err'; return;
   }
   formMsg.textContent='Saving…'; formMsg.className='small';
 
-  const photos = await collectPhotos(); // may be empty
+  const photos = await collectPhotos();
   const item = {
     id: EDIT_ID || uid(),
     year: Number(yearEl.value),
@@ -335,7 +327,6 @@ saveBtn.onclick = async ()=>{
   if(EDIT_ID){
     const idx = CARS.findIndex(x=>x.id===EDIT_ID);
     if(idx>=0){
-      // keep existing order/addedAt; append new photos if provided
       item.order = CARS[idx].order ?? idx;
       item.addedAt = CARS[idx].addedAt || Date.now();
       const oldPhotos = (CARS[idx].photos && CARS[idx].photos.length)? CARS[idx].photos : (CARS[idx].photo?[CARS[idx].photo]:[]);
@@ -376,7 +367,6 @@ deleteBtn.onclick = ()=>{
   }
 };
 
-/* ====== Save / Publish / Links ====== */
 function setDirty(msg){ msgEl.textContent = msg || 'Changes pending…'; msgEl.className='small'; }
 downloadBtn.onclick = ()=>{
   sortForDisplay();
@@ -393,7 +383,7 @@ copyLinkBtn.onclick = async ()=>{
 shareLinkBtn.onclick = async ()=>{
   const url = buyersURL;
   try{ if(navigator.share){ await navigator.share({title:'EVTime Inventory', text:'Current cars', url}); }
-  else throw 0; }catch{ /* fallback is copy */ await navigator.clipboard.writeText(url); alert('Copied link:\n'+url); }
+  else throw 0; }catch{ await navigator.clipboard.writeText(url); alert('Copied link:\n'+url); }
 };
 reloadBtn.onclick = ()=> location.href = location.pathname + '?v=' + Date.now();
 
