@@ -4,37 +4,34 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Sell Your Car • E.V.Time</title>
-<meta name="theme-color" content="#0ea5e9"/>
+<meta name="theme-color" content="#C98C5B"/>
+<link rel="stylesheet" href="./theme.css?v=1"/>
 
 <style>
-:root{
-  --bg:#1f2937; --card:#fff; --text:#0f172a; --muted:#475569; --line:#e2e7f0;
-  --cta:#3b82f6; --ctaText:#fff;
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 .wrap{max-width:620px;margin:0 auto;padding:12px}
 
 /* top bar */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:620px;margin:0 auto;padding:0 12px}
-#site-logo{display:block;width:100%;height:auto;max-height:140px;object-fit:contain}
+.topbar{background:transparent;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:620px;margin:0 auto;padding:12px}
+#site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
 
 /* card */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 h1{margin:6px 0 8px;font-size:20px}
-.muted{color:#64748b;font-size:13px}
-.notice{font-size:14px;line-height:1.5;margin:10px 0}
+.muted{color:var(--muted);font-size:13px}
+.notice{font-size:14px;line-height:1.5;margin:10px 0;color:var(--text)}
 .notice .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;margin-right:8px;vertical-align:middle}
 
 /* rows / inputs */
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer}
+button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
 .primary{background:var(--cta);color:var(--ctaText);border:1px solid transparent;font-weight:700}
 input[type="text"], input[type="number"], textarea{
-  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
+  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:#0f172a
 }
-label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 
 /* camera overlay */
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
@@ -42,20 +39,21 @@ label{display:block;font-size:13px;color:#334155;margin:10px 0 4px}
 video{width:100%;border-radius:8px}
 .scanBox{position:absolute;left:8%;right:8%;top:36%;bottom:36%;border:2px dashed rgba(255,255,255,.7);border-radius:8px}
 .camBtns{display:flex;gap:8px;margin-top:10px}
-.camBtns button{background:#fff}
+.camBtns button{background:#fff;color:#111}
 
+/* status */
 .success{color:#16a34a;font-weight:600}
-.error{color:#b91c1c}
-.small{font-size:12px;color:#475569}
+.error{color:#fca5a5}
+.small{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 
-<!-- logo bar (clickable to HOME) -->
+<!-- logo bar -->
 <div class="topbar">
   <div class="logo-wrap">
     <a href="./index.html" aria-label="Go to home">
-      <img id="site-logo" src="mainlogo.svg?v=110" alt="it's E.V.Time — Forum and MarketPlace">
+      <img id="site-logo" src="mainlogo.svg?v=111" alt="it's E.V.Time — Forum and MarketPlace">
     </a>
   </div>
 </div>
@@ -64,7 +62,6 @@ video{width:100%;border-radius:8px}
   <div class="card">
     <h1>Sell Your Car</h1>
 
-    <!-- Trust header + privacy line -->
     <div class="notice"><span class="dot"></span><b>Honest offers from people you can trust.</b></div>
     <div class="notice"><span class="dot" style="background:#3b82f6"></span>We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div>
     <div class="notice"><span class="dot" style="background:#94a3b8"></span>Your info stays private. We use it only to evaluate your car and contact you.</div>
@@ -94,7 +91,7 @@ video{width:100%;border-radius:8px}
     </div>
 
     <label for="notes">Notes (optional)</label>
-    <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
+    <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?" style="height:auto;min-height:80px"></textarea>
 
     <div class="row" style="margin-top:12px">
       <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
@@ -122,7 +119,7 @@ video{width:100%;border-radius:8px}
   </div>
 </div>
 
-<!-- OCR library -->
+<!-- OCR -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
 
 <script>
@@ -165,9 +162,7 @@ let stream=null;
 async function openCamera(){
   try{
     camWrap.style.display='flex';
-    stream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:'environment' }, audio:false
-    });
+    stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false });
     video.srcObject = stream;
   }catch(err){
     camWrap.style.display='none';
@@ -199,20 +194,15 @@ captureBtn.addEventListener('click', async ()=>{
     const text = (data && data.text) ? data.text : '';
     let v = normalizeVIN(text);
     if(isVIN17(v)){
-      vinEl.value = v;
-      setStatus('VIN captured ✔', true);
-      closeCamera();
+      vinEl.value = v; setStatus('VIN captured ✔', true); closeCamera();
     }else{
       setStatus('Couldn’t read a clear 17-char VIN. Try again closer, steadier, brighter—or upload a photo.');
     }
-  }catch(e){
-    setStatus('Scanner error. Try again or upload a photo.');
-  }
+  }catch(e){ setStatus('Scanner error. Try again or upload a photo.'); }
 });
 
 vinPhoto.addEventListener('change', async (e)=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
+  const f = e.target.files && e.target.files[0]; if(!f) return;
   setStatus('Reading VIN from photo…');
   const img = new Image();
   img.onload = async ()=>{
@@ -222,21 +212,14 @@ vinPhoto.addEventListener('change', async (e)=>{
       });
       const text = (data && data.text) ? data.text : '';
       const v = normalizeVIN(text);
-      if(isVIN17(v)){
-        vinEl.value = v;
-        setStatus('VIN captured ✔', true);
-      }else{
-        setStatus('No clear VIN found. Retake: fill the frame with the VIN line, good light.');
-      }
-    }catch(err){
-      setStatus('Couldn’t process the photo. Please try a clearer shot.');
-    }
+      if(isVIN17(v)){ vinEl.value=v; setStatus('VIN captured ✔', true); }
+      else{ setStatus('No clear VIN found. Retake under good light.'); }
+    }catch(err){ setStatus('Couldn’t process the photo. Try another.'); }
   };
   img.onerror = ()=> setStatus('Bad image file. Try another photo.');
   img.src = URL.createObjectURL(f);
 });
 
-/* Submit -> SMS to OpenPhone */
 submitBtn.addEventListener('click', ()=>{
   const v = (vinEl.value||'').trim().toUpperCase();
   if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
@@ -246,7 +229,7 @@ submitBtn.addEventListener('click', ()=>{
 
   const msg = `VIN: ${v}\nMileage: ${miles || '(n/a)'}\nCondition: ${cond || '(n/a)'}\nNotes: ${notes || '(n/a)'}`;
   const sms = `Hello, I'm submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
-  location.href = `sms:+14248660109?&body=${sms}`; // OpenPhone
+  location.href = `sms:+14248660109?&body=${sms}`;
 });
 </script>
 </body>
