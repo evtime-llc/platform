@@ -36,13 +36,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #site-logo{
   display:block;
   width:100%;
-  height:auto;           /* scale by width */
-  max-height:200px;      /* cap height; adjust if you want taller */
+  height:auto;
+  max-height:200px;
   object-fit:contain;
   margin:0;
 }
 @media (max-width:600px){
-  #site-logo{max-height:240px} /* phone cap */
+  #site-logo{max-height:240px}
 }
 
 /* Footer */
@@ -101,11 +101,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 <body>
 
-<!-- Logo (white bar kept, same width as page) -->
+<!-- Logo (white bar) -->
 <div class="topbar">
   <div class="logo-wrap">
-    <a href="./share.html" aria-label="Home — E.V.Time" style="display:block">
-      <img id="site-logo" src="mainlogo.svg?v=112" alt="it’s E.V.Time — Forum and MarketPlace">
+    <a href="./index.html" aria-label="Go to home">
+      <img id="site-logo" src="mainlogo.svg?v=110" alt="it's EVTime — Forum and MarketPlace">
     </a>
   </div>
 </div>
@@ -181,7 +181,6 @@ function render(cars){
   list.innerHTML='';
   if(!Array.isArray(cars)||!cars.length){ statusEl.textContent='No inventory yet.'; return; }
   statusEl.hidden=true; list.hidden=false;
-  // order first (if present), then addedAt, then year — oldest first
   cars.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0));
 
   for(const c of cars){
@@ -241,7 +240,7 @@ document.getElementById('smsBtn').addEventListener('click', ()=>{
   const price = fmtPrice(current.price||0);
   const msg = `Hello, I'm interested in your ${model} for ${price} please contact me.`;
   const body = encodeURIComponent(msg);
-  const num = "+14244256211".replace(/[^0-9+]/g,'');
+  const num = "+14248660109".replace(/[^0-9+]/g,''); // OpenPhone
   location.href = `sms:${num}?&body=${body}`;
 });
 
