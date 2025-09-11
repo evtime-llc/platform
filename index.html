@@ -1,11 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<meta charset="utf-8">
-<title>Redirecting…</title>
-<meta http-equiv="refresh" content="0; url=share.html">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>E.V.Time — Home</title>
+<meta name="theme-color" content="#C98C5B"/>
+<link rel="stylesheet" href="./theme.css?v=1"/>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+}
+a{color:var(--link); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Top bar with clickable logo */
+.topbar{background:transparent;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:920px;margin:0 auto;padding:12px}
+#site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
+
+/* Hero */
+.hero{min-height:60vh;display:grid;place-items:center}
+.wrap{max-width:920px;margin:0 auto;padding:16px}
+.ctaRow{
+  display:flex; gap:12px; flex-wrap:wrap; justify-content:center
+}
+.btn{
+  height:52px; padding:0 18px; border-radius:14px; border:1px solid var(--line);
+  background:#11182700; color:var(--text); cursor:pointer; font-weight:700;
+  text-decoration:none; display:inline-flex; align-items:center; justify-content:center;
+  letter-spacing:.2px; min-width:220px
+}
+.btn.primary{background:var(--cta); color:var(--ctaText); border-color:transparent}
+.btn.primary:active{transform:scale(.99)}
+.btn.ghost{border-color:var(--cta)}
+
+/* Footer */
+footer{border-top:1px solid var(--line); background:transparent}
+footer .wrap{padding:16px; font-size:12px; color:var(--muted); line-height:1.5}
+footer a{color:var(--text)}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+
+<body>
+
+<!-- Top bar / Clickable logo to buyers page -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <a href="./share.html" aria-label="Go to inventory">
+      <img id="site-logo" src="mainlogo.svg?v=111" alt="it's E.V.Time — Forum and MarketPlace">
+    </a>
+  </div>
+</div>
+
+<main class="hero">
+  <div class="wrap" style="text-align:center">
+    <div class="ctaRow" style="margin-top:6px">
+      <a class="btn primary" href="./sell.html">Sell your car</a>
+      <a class="btn ghost" href="./share.html">Browse inventory</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong>Disclosure:</strong> Retail transactions are completed by our licensed partner, Waltons Auto Sales. Private-party transactions are between individual buyer and seller. We are not affiliated with Tesla, Inc.</div>
+    <div style="margin-top:6px">© <span id="yr"></span> E.V.Time · <a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></div>
+  </div>
+</footer>
+
 <script>
-  // Forward root to buyer page, preserving any query/hash
-  location.replace('share.html' + (location.search||'') + (location.hash||''));
+document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
-<p>If you’re not redirected, <a href="share.html">tap here</a>.</p>
+</body>
 </html>
