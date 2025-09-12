@@ -3,72 +3,114 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>E.V.Time — Home</title>
-<meta name="theme-color" content="#C98C5B"/>
-<link rel="stylesheet" href="./theme.css?v=1"/>
+<title>it’s E.V.Time — Forum and MarketPlace</title>
+<meta name="theme-color" content="#0b1325"/>
+
+<!-- Social preview (optional; update image later if you want) -->
+<meta property="og:title" content="it’s E.V.Time — Forum and MarketPlace" />
+<meta property="og:description" content="Sell, trade, or browse cars. Simple and friendly." />
+<meta property="og:image" content="https://itsevtime.com/og-card.png" />
+<meta property="og:url" content="https://itsevtime.com/" />
+<meta name="twitter:card" content="summary_large_image" />
 
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--bg); color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+:root{
+  /* Copper Slate theme */
+  --bg:#0b1325;     /* deep slate/navy */
+  --card:#ffffff;   /* cards */
+  --text:#0f172a;   /* dark text for cards */
+  --muted:#64748b;  /* slate text */
+  --line:#e2e8f0;   /* borders */
+  --copper:#c98c5b; /* accent */
+  --indigo:#1e40af; /* frame accent */
+  --cta:#c98c5b; --ctaText:#0b1325;
 }
-a{color:var(--link); text-decoration:none}
-a:hover{text-decoration:underline}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 
-/* Top bar with clickable logo */
-.topbar{background:transparent;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:920px;margin:0 auto;padding:12px}
-#site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
+/* Centered page width */
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+
+/* Top logo bar (white) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+.logo-wrap a{display:block}
+#site-logo{
+  display:block;width:100%;height:auto;max-height:200px;object-fit:contain;
+}
+@media (max-width:600px){
+  #site-logo{max-height:220px}
+}
 
 /* Hero */
-.hero{min-height:60vh;display:grid;place-items:center}
-.wrap{max-width:920px;margin:0 auto;padding:16px}
-.ctaRow{
-  display:flex; gap:12px; flex-wrap:wrap; justify-content:center
+.hero{padding:16px 12px}
+.heroCard{
+  background:#0f172a10; /* subtle translucent slate */
+  border:1px solid #233048;
+  border-radius:18px;
+  padding:20px;
+  backdrop-filter:saturate(120%) blur(2px);
 }
+.heroTitle{
+  margin:6px 0 8px;color:#e5e7eb;font-size:28px;font-weight:800;letter-spacing:.2px
+}
+.heroSub{color:#cbd5e1;font-size:14px;margin:0 0 12px}
+
+/* CTA Buttons */
+.row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
-  height:52px; padding:0 18px; border-radius:14px; border:1px solid var(--line);
-  background:#11182700; color:var(--text); cursor:pointer; font-weight:700;
-  text-decoration:none; display:inline-flex; align-items:center; justify-content:center;
-  letter-spacing:.2px; min-width:220px
+  display:inline-flex;align-items:center;justify-content:center;
+  height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
+  background:#fff;color:var(--text);text-decoration:none;font-weight:700
 }
-.btn.primary{background:var(--cta); color:var(--ctaText); border-color:transparent}
-.btn.primary:active{transform:scale(.99)}
-.btn.ghost{border-color:var(--cta)}
+.btn.primary{
+  background:var(--cta);color:var(--ctaText);border-color:transparent;
+  box-shadow:0 2px 10px rgba(201,140,91,.25)
+}
+.btn.ghost{
+  background:#fff;color:var(--text)
+}
 
 /* Footer */
-footer{border-top:1px solid var(--line); background:transparent}
-footer .wrap{padding:16px; font-size:12px; color:var(--muted); line-height:1.5}
-footer a{color:var(--text)}
-footer a:hover{text-decoration:underline}
+.footer{border-top:1px solid var(--line);background:#fff}
+.footer .wrap{padding:16px 12px;color:#334155;font-size:13px}
+.footer a{color:#0b1325;text-decoration:none;border-bottom:1px dotted #0b1325}
+.footer a:hover{border-bottom-style:solid}
+.right{float:right}
+.clearfix::after{content:"";display:block;clear:both}
 </style>
 </head>
-
 <body>
 
-<!-- Top bar / Clickable logo to HOME (index.html) -->
+<!-- Top bar with NEW clickable logo -->
 <div class="topbar">
   <div class="logo-wrap">
-    <a href="./index.html" aria-label="Go to home">
-      <img id="site-logo" src="mainlogo.svg?v=111" alt="it's E.V.Time — Forum and MarketPlace">
+    <a href="index.html" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=301" alt="it’s E.V.Time — Forum and MarketPlace">
     </a>
   </div>
 </div>
 
-<main class="hero">
-  <div class="wrap" style="text-align:center">
-    <div class="ctaRow" style="margin-top:6px">
+<!-- Hero -->
+<div class="wrap hero">
+  <div class="heroCard">
+    <div class="heroTitle">Welcome</div>
+    <p class="heroSub">Choose an option below.</p>
+    <div class="row">
       <a class="btn primary" href="./sell.html">Sell your car</a>
       <a class="btn ghost" href="./share.html">Browse inventory</a>
+      <a class="btn" href="./sell.html#about">How it works / Why E.V.Time</a>
     </div>
   </div>
-</main>
+</div>
 
-<footer>
-  <div class="wrap">
-    <div><strong>Disclosure:</strong> Retail transactions are completed by our licensed partner, Waltons Auto Sales. Private-party transactions are between individual buyer and seller. We are not affiliated with Tesla, Inc.</div>
-    <div style="margin-top:6px">© <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal</a></div>
+<!-- (Optional) You can add featured cars or testimonials here later -->
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap clearfix">
+    <div>© <span id="yr"></span> E.V.Time</div>
+    <div class="right"><a href="./legal.html">Legal &amp; Disclosures</a></div>
   </div>
 </footer>
 
