@@ -3,71 +3,71 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Inventory Admin • E.V.Time</title>
-<meta name="theme-color" content="#C98C5B"/>
-<link rel="stylesheet" href="./theme.css?v=1"/>
+<title>Inventory Admin • it’s E.V.Time</title>
+<meta name="theme-color" content="#0b0a09"/>
 
 <style>
+:root{ --bg:#0b0a09; --card:#fff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4; --cta:#c98c5b; --ctaDark:#9e6d45 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-.wrap{max-width:920px;margin:0 auto;padding:12px}
 
-/* Top logo bar */
-.topbar{background:transparent;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:920px;margin:0 auto;padding:12px}
-#site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
+/* Standardized header */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+.logo-wrap a{display:block}
+#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:220px} }
 
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+/* Standard page width */
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
 h1,h2{margin:6px 0 8px}
 .small{font-size:12px;color:var(--muted)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .col{flex:1;min-width:220px}
-label{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
+label{display:block;font-size:12px;color:#44403c;margin:8px 0 4px}
 input[type="text"],input[type="number"],textarea{
-  width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;
-  background:#fff;color:#0f172a
+  width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px
 }
 textarea{height:auto;min-height:80px;padding:10px 12px}
-input::placeholder,textarea::placeholder{color:#94a3b8}
-button{height:42px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--text);cursor:pointer}
-button.primary{background:var(--cta);color:var(--ctaText);border-color:transparent;font-weight:700}
-button.warn{background:#3a0d0d;border-color:#5b1a1a;color:#ffdede}
+input::placeholder,textarea::placeholder{color:#9a948f}
+button{height:42px;padding:0 14px;border:1px solid #d6d3d1;border-radius:12px;background:#fff;cursor:pointer;transition:.15s}
+button.primary{background:var(--cta);color:#0b0a09;border-color:var(--cta);font-weight:800;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+button.primary:hover{background:var(--ctaDark);color:#fff}
+button.warn{background:#fee2e2;border-color:#fecaca}
 button.icon{width:42px}
 
-hr.sep{border:0;border-top:1px dashed var(--line);margin:10px 0}
+hr.sep{border:0;border-top:1px dashed #e7e5e4;margin:10px 0}
 
 /* inventory list */
 .list{display:flex;flex-direction:column;gap:8px}
-.item{display:flex;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:12px;padding:8px;background:#0f141e}
-.item img{width:92px;height:69px;object-fit:cover;border-radius:10px;background:#0b0f18}
+.item{display:flex;align-items:center;gap:10px;border:1px dashed #e7e5e4;border-radius:12px;padding:8px;background:#fafafa}
+.item img{width:92px;height:69px;object-fit:cover;border-radius:10px;background:#e5e7eb}
 .meta{flex:1;min-width:0}
 .title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sub{font-size:12px;color:var(--muted)}
+.sub{font-size:12px;color:#57534e}
 .btns{display:flex;gap:6px}
 .kv{font-variant-numeric:tabular-nums}
 
-.notice{background:#0f141e;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0;color:var(--text)}
-.ok{color:#16a34a}.err{color:#fca5a5}
+.notice{background:#f8fafc;border:1px solid #e7e5e4;border-radius:10px;padding:8px 10px;margin:8px 0}
+.ok{color:#16a34a}.err{color:#b91c1c}
 .hidden{display:none}
 
 input[type="file"]{display:none}
-.file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:12px;padding:0 12px;height:42px;background:transparent;color:var(--text);cursor:pointer}
+.file-label{display:inline-flex;align-items:center;gap:8px;border:1px dashed #d6d3d1;border-radius:12px;padding:0 12px;height:42px;background:#fff;cursor:pointer}
 
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-@media (max-width:720px){
-  .grid3{grid-template-columns:1fr}
-  .item{align-items:flex-start}
-  .btns{margin-left:auto}
-}
+@media (max-width:720px){ .grid3{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 
-<!-- Logo (home link) -->
+<!-- Header -->
 <div class="topbar">
   <div class="logo-wrap">
-    <a href="./index.html" aria-label="Go to home">
-      <img id="site-logo" src="mainlogo.svg?v=111" alt="it's E.V.Time — Forum and MarketPlace">
+    <a href="/" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
     </a>
   </div>
 </div>
@@ -161,11 +161,13 @@ input[type="file"]{display:none}
 </div>
 
 <script>
+/* ====== State ====== */
 let CARS = [];
 let EDIT_ID = null;
-let shaCurrent = null;
+let shaCurrent = null; // sha for inventory.json for PUT
 const buyersURL = (location.origin + location.pathname).replace(/admin\.html.*/,'') + 'share.html';
 
+/* ====== Elements ====== */
 const statusEl = document.getElementById('status');
 const listEl = document.getElementById('list');
 const msgEl = document.getElementById('msg');
@@ -192,6 +194,7 @@ const copyLinkBtn = document.getElementById('copyLinkBtn');
 const shareLinkBtn = document.getElementById('shareLinkBtn');
 const reloadBtn = document.getElementById('reloadBtn');
 
+/* ====== GitHub creds (localStorage) ====== */
 const ghUser = document.getElementById('ghUser');
 const ghRepo = document.getElementById('ghRepo');
 const ghToken = document.getElementById('ghToken');
@@ -200,12 +203,14 @@ ghRepo.value  = localStorage.getItem('ghRepo')  || 'Tesla_Inventory';
 ghToken.value = localStorage.getItem('ghToken') || '';
 [ghUser, ghRepo, ghToken].forEach(i => i.addEventListener('input', ()=> localStorage.setItem(i.id, i.value.trim())));
 
+/* ====== Utils ====== */
 function uid(){ return (Math.random().toString(36).slice(2,8)+Math.random().toString(36).slice(2,8)); }
 function titleOf(c){ return `${c.year||''} ${c.model||''} ${c.trim||''}`.replace(/\s+/g,' ').trim(); }
 function priceOf(c){ try{return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(c.price||0)}catch{return'$'+(c.price||0)} }
 function ensureOrder(){ CARS.forEach((c,i)=>{ if(typeof c.order!=='number') c.order = i; }); }
 function sortForDisplay(){ CARS.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0)); }
 
+/* Image compression */
 async function compressFiles(fileList){
   photoStatus.textContent = 'Processing photos…';
   const files = Array.from(fileList||[]);
@@ -238,6 +243,7 @@ function resizeDataURL(dataURL, maxW, maxH, quality){
   });
 }
 
+/* ====== Load inventory and current sha ====== */
 async function loadInventory(){
   try{
     statusEl.textContent = 'Loading inventory.json…';
@@ -250,6 +256,7 @@ async function loadInventory(){
     if(!CARS.length){ statusEl.textContent='No inventory yet.'; } else { statusEl.remove(); listEl.classList.remove('hidden'); }
     renderList();
 
+    // Fetch current sha for PUT
     const u = `https://api.github.com/repos/${ghUser.value}/${ghRepo.value}/contents/inventory.json`;
     const r2 = await fetch(u, { headers:{Accept:'application/vnd.github+json'} });
     if(r2.ok){ const j = await r2.json(); shaCurrent = j.sha || null; } else { shaCurrent = null; }
@@ -259,6 +266,7 @@ async function loadInventory(){
 }
 loadInventory();
 
+/* ====== Render list with Up/Down ====== */
 function renderList(){
   listEl.innerHTML='';
   CARS.forEach((c,idx)=>{
@@ -293,6 +301,7 @@ function move(i, delta){
 }
 function reindexOrders(){ CARS.forEach((c,i)=> c.order=i); }
 
+/* ====== Form logic ====== */
 function resetForm(){
   EDIT_ID = null;
   formTitle.textContent = 'Add Vehicle';
@@ -314,7 +323,7 @@ saveBtn.onclick = async ()=>{
   }
   formMsg.textContent='Saving…'; formMsg.className='small';
 
-  const photos = await collectPhotos();
+  const photos = await collectPhotos(); // may be empty
   const item = {
     id: EDIT_ID || uid(),
     year: Number(yearEl.value),
@@ -368,6 +377,7 @@ deleteBtn.onclick = ()=>{
   }
 };
 
+/* ====== Save / Publish / Links ====== */
 function setDirty(msg){ msgEl.textContent = msg || 'Changes pending…'; msgEl.className='small'; }
 downloadBtn.onclick = ()=>{
   sortForDisplay();
