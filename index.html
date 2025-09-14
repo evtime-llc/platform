@@ -16,13 +16,14 @@
 <style>
 :root{
   /* Copper Slate theme */
-  --bg:#0b1325;     /* deep slate/navy */
-  --card:#ffffff;   /* cards */
-  --text:#0f172a;   /* dark text for cards */
-  --muted:#64748b;  /* slate text */
-  --line:#e2e8f0;   /* borders */
-  --copper:#c98c5b; /* accent */
-  --indigo:#1e40af; /* frame accent */
+  --bg:#0b1325;      /* deep slate */
+  --card:#ffffff;    /* cards */
+  --text:#0f172a;    /* dark text for cards */
+  --muted:#64748b;   /* slate text */
+  --line:#e2e8f0;    /* borders */
+  --copper:#c98c5b;  /* primary accent */
+  --copper-dark:#996a3e; /* hover accent */
+  --copper-soft:#f7efe8; /* subtle copper tint */
   --cta:#c98c5b; --ctaText:#0b1325;
 }
 *{box-sizing:border-box}
@@ -45,36 +46,40 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 /* Hero */
 .hero{padding:16px 12px}
 .heroCard{
-  background:#0f172a10; /* subtle translucent slate */
-  border:1px solid #233048;
+  background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));
+  border:1px solid rgba(201,140,91,.55);
   border-radius:18px;
   padding:20px;
+  box-shadow:0 6px 22px rgba(201,140,91,.25);
   backdrop-filter:saturate(120%) blur(2px);
 }
 .heroTitle{
-  margin:6px 0 8px;color:#e5e7eb;font-size:28px;font-weight:800;letter-spacing:.2px
+  margin:6px 0 8px;color:#f3f4f6;font-size:28px;font-weight:800;letter-spacing:.2px
 }
-.heroSub{color:#cbd5e1;font-size:14px;margin:0 0 12px}
+.heroSub{color:#e5e7eb;font-size:14px;margin:0 0 12px}
 
 /* CTA Buttons */
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;
   height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
-  background:#fff;color:var(--text);text-decoration:none;font-weight:700
+  background:#fff;color:var(--text);text-decoration:none;font-weight:700;transition:.15s ease
 }
 .btn.primary{
   background:var(--cta);color:var(--ctaText);border-color:transparent;
-  box-shadow:0 2px 10px rgba(201,140,91,.25)
+  box-shadow:0 4px 14px rgba(201,140,91,.35)
 }
+.btn.primary:hover{background:var(--copper-dark);color:#fff}
 .btn.ghost{
-  background:#fff;color:var(--text)
+  background:transparent;border:1px solid var(--copper);color:var(--copper);
 }
+.btn.ghost:hover{background:var(--copper-soft)}
+.btn:hover{transform:translateY(-1px)}
 
 /* Footer */
 .footer{border-top:1px solid var(--line);background:#fff}
 .footer .wrap{padding:16px 12px;color:#334155;font-size:13px}
-.footer a{color:#0b1325;text-decoration:none;border-bottom:1px dotted #0b1325}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 .footer a:hover{border-bottom-style:solid}
 .right{float:right}
 .clearfix::after{content:"";display:block;clear:both}
@@ -85,7 +90,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <!-- Top bar with NEW clickable logo -->
 <div class="topbar">
   <div class="logo-wrap">
-    <a href="index.html" aria-label="Go to Home">
+    <a href="/" aria-label="Go to Home">
       <img id="site-logo" src="mainlogo.svg?v=301" alt="it’s E.V.Time — Forum and MarketPlace">
     </a>
   </div>
@@ -99,7 +104,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     <div class="row">
       <a class="btn primary" href="./sell.html">Sell your car</a>
       <a class="btn ghost" href="./share.html">Browse inventory</a>
-      <a class="btn" href="./sell.html#about">How it works / Why E.V.Time</a>
+      <a class="btn ghost" href="./sell.html#about">How it works / Why E.V.Time</a>
     </div>
   </div>
 </div>
