@@ -6,7 +6,6 @@
 <title>it’s E.V.Time — Forum and MarketPlace</title>
 <meta name="theme-color" content="#0b0a09"/>
 
-<!-- Social preview (optional) -->
 <meta property="og:title" content="it’s E.V.Time — Forum and MarketPlace" />
 <meta property="og:description" content="Sell, trade, or browse cars. Simple and friendly." />
 <meta property="og:image" content="https://itsevtime.com/og-card.png" />
@@ -15,29 +14,21 @@
 
 <style>
 :root{
-  /* Copper Slate theme (warm, no blue) */
-  --bg:#0b0a09;          /* warm near-black */
-  --card:#ffffff;        /* cards */
-  --text:#1c1917;        /* warm dark text */
-  --muted:#78716c;       /* warm gray */
-  --line:#e7e5e4;        /* neutral border */
-  --copper:#c98c5b;      /* primary accent */
-  --copper-dark:#9e6d45; /* hover/depth */
-  --copper-soft:#f5eae0; /* subtle tint */
-  --cta:#c98c5b; --ctaText:#0b0a09;
+  --bg:#0b0a09; --card:#ffffff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
+  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0; --cta:#c98c5b; --ctaText:#0b0a09;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 
-/* Top logo bar (white) */
+/* Header */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 .logo-wrap a{display:block}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Hero (warm copper tint) */
+/* Hero */
 .hero{padding:16px 12px}
 .heroCard{
   background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));
@@ -50,7 +41,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .heroTitle{margin:6px 0 8px;color:#f3f4f6;font-size:28px;font-weight:800;letter-spacing:.2px}
 .heroSub{color:#e7e5e4;font-size:14px;margin:0 0 12px}
 
-/* Buttons (all copper) */
+/* Buttons */
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;
@@ -77,16 +68,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 </head>
 <body>
 
-<!-- Top bar with NEW clickable logo -->
 <div class="topbar">
   <div class="logo-wrap">
     <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=401" alt="it’s E.V.Time — Forum and MarketPlace">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
     </a>
   </div>
 </div>
 
-<!-- Hero -->
 <div class="wrap hero">
   <div class="heroCard">
     <div class="heroTitle">Welcome</div>
@@ -94,12 +83,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     <div class="row">
       <a class="btn primary" href="./sell.html">Sell your car</a>
       <a class="btn ghost" href="./share.html">Browse inventory</a>
-      <a class="btn ghost" href="./sell.html#about">How it works / Why E.V.Time</a>
+      <a class="btn ghost" href="./about.html">How it works / Why E.V.Time</a>
     </div>
   </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer">
   <div class="wrap clearfix">
     <div>© <span id="yr"></span> E.V.Time</div>
