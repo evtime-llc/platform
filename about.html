@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>How it works / Why E.V.Time</title>
+<meta name="theme-color" content="#0b0a09"/>
+
+<style>
+:root{
+  --bg:#0b0a09; --card:#fff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
+  --copper:#c98c5b; --copperDark:#9e6d45; --copperSoft:#f5eae0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+
+/* Standard header */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+.logo-wrap a{display:block}
+#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:220px} }
+
+/* Page width */
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+
+/* Hero card */
+.hero{padding:16px 12px}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0
+}
+.hlite{
+  background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));
+  border:1px solid rgba(201,140,91,.55);
+  box-shadow:0 6px 22px rgba(201,140,91,.25);
+}
+h1{margin:6px 0 8px;font-size:24px}
+h2{margin:4px 0 8px;font-size:18px}
+p{margin:6px 0 8px}
+.muted{color:#78716c}
+
+/* Check bullets */
+.list{list-style:none;padding:0;margin:8px 0}
+.list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
+.check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
+
+/* Placeholder image blocks (no external links) */
+.ph{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px dashed #d6d3d1;background:#f8f7f6;display:flex;align-items:center;justify-content:center;color:#9a948f;font-size:14px}
+
+/* Buttons/links */
+.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800}
+.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+.btn.primary:hover{background:var(--copperDark);color:#fff}
+a.link{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+a.link:hover{border-bottom-style:solid}
+
+/* Footer */
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a:hover{border-bottom-style:solid}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <a href="/" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
+    </a>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="wrap hero">
+  <div class="card hlite">
+    <h1>How it works / Why E.V.Time</h1>
+    <p class="muted">Friendly, straightforward car selling — with real people and fair offers.</p>
+    <div class="ph">Hero photo placeholder</div>
+  </div>
+
+  <div class="card">
+    <h2>How it works</h2>
+    <ul class="list">
+      <li><span class="check"></span><div><b>Tell us about your car.</b> Scan or enter your VIN, mileage, and notes.</div></li>
+      <li><span class="check"></span><div><b>We review and text you a number.</b> A real specialist looks at your info and replies quickly.</div></li>
+      <li><span class="check"></span><div><b>Simple handoff.</b> If you like it, we schedule a quick look and complete paperwork via our licensed partner, Waltons Auto Sales.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Why E.V.Time</h2>
+    <ul class="list">
+      <li><span class="check"></span><div><b>Honest offers.</b> We don’t blast out computer guesses — we actually evaluate your car.</div></li>
+      <li><span class="check"></span><div><b>Low overhead, better numbers.</b> We keep it lean so we can be competitive.</div></li>
+      <li><span class="check"></span><div><b>Privacy first.</b> Your info is only used to evaluate and contact you — never sold or shared.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Trust & privacy</h2>
+    <p class="muted">We respect your time and your data. Read our <a class="link" href="./legal.html">Legal & Disclosures</a> for full details.</p>
+  </div>
+
+  <div class="card" style="display:flex;gap:10px;flex-wrap:wrap">
+    <a class="btn" href="./share.html">Browse inventory</a>
+    <a class="btn primary" href="./sell.html">Sell your car</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
