@@ -3,71 +3,104 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sell Your Car • E.V.Time</title>
-<meta name="theme-color" content="#C98C5B"/>
-<link rel="stylesheet" href="./theme.css?v=1"/>
+<title>Sell Your Car • it’s E.V.Time</title>
+<meta name="theme-color" content="#0b0a09"/>
 
 <style>
+:root{
+  /* Copper Slate */
+  --bg:#0b0a09;       /* warm near-black */
+  --card:#fff; 
+  --text:#1c1917;
+  --muted:#78716c;
+  --line:#e7e5e4;
+  --copper:#c98c5b; --copperDark:#9e6d45; --copperSoft:#f5eae0;
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-.wrap{max-width:620px;margin:0 auto;padding:12px}
 
-/* top bar */
-.topbar{background:transparent;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:620px;margin:0 auto;padding:12px}
-#site-logo{display:block;width:100%;height:auto;max-height:120px;object-fit:contain}
+/* Standardized header (same as share/index) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+.logo-wrap a{display:block}
+#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* card */
+/* Standard page width */
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+
+/* Card */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
-h1{margin:6px 0 8px;font-size:20px}
-.muted{color:var(--muted);font-size:13px}
-.notice{font-size:14px;line-height:1.5;margin:10px 0;color:var(--text)}
-.notice .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;margin-right:8px;vertical-align:middle}
+h1{margin:6px 0 8px;font-size:22px}
+.muted{color:#78716c;font-size:13px}
 
-/* rows / inputs */
+/* Bulleted trust lines */
+.bullets{margin:8px 0 12px;padding-left:0;list-style:none}
+.bullets li{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
+.check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
+.check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
+
+/* Buttons/inputs */
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
-.primary{background:var(--cta);color:var(--ctaText);border:1px solid transparent;font-weight:700}
+button, .btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s}
+button.primary, .primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;font-weight:800;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+button.primary:hover{background:var(--copperDark);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
+.btn.ghost:hover{background:var(--copperSoft)}
 input[type="text"], input[type="number"], textarea{
-  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:#0f172a
+  width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text)
 }
-label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+textarea{min-height:90px;padding:10px 12px}
+label{display:block;font-size:13px;color:#44403c;margin:10px 0 4px}
 
-/* camera overlay */
+/* About sheet */
+.sheet{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+
+/* Small text */
+.small{font-size:12px;color:#6b7280}
+.success{color:#16a34a;font-weight:600}
+.error{color:#b91c1c}
+
+/* Camera overlay */
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
 #camViewport{position:relative;width:100%;max-width:720px}
 video{width:100%;border-radius:8px}
-.scanBox{position:absolute;left:8%;right:8%;top:36%;bottom:36%;border:2px dashed rgba(255,255,255,.7);border-radius:8px}
+.scanBox{position:absolute;left:8%;right:8%;top:28%;bottom:36%;border:2px dashed rgba(255,255,255,.8);border-radius:10px}
 .camBtns{display:flex;gap:8px;margin-top:10px}
-.camBtns button{background:#fff;color:#111}
+.camBtns button{background:#fff}
 
-/* status */
-.success{color:#16a34a;font-weight:600}
-.error{color:#fca5a5}
-.small{font-size:12px;color:var(--muted)}
+/* Footer (legal link style) */
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a:hover{border-bottom-style:solid}
 </style>
 </head>
 <body>
 
-<!-- logo bar -->
+<!-- Standard header -->
 <div class="topbar">
   <div class="logo-wrap">
-    <a href="./index.html" aria-label="Go to home">
-      <img id="site-logo" src="mainlogo.svg?v=111" alt="it's E.V.Time — Forum and MarketPlace">
+    <a href="/" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
     </a>
   </div>
 </div>
 
 <main class="wrap">
   <div class="card">
-    <h1>Sell Your Car</h1>
+    <h1>Honest offers from people you can trust.</h1>
+    <ul class="bullets">
+      <li><span class="check"></span><div>We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div></li>
+      <li><span class="check"></span><div>We keep your information private and use it only to evaluate your car and contact you — never to sell or share.</div></li>
+      <li><span class="check"></span><div>Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div></li>
+    </ul>
 
-    <div class="notice"><span class="dot"></span><b>Honest offers from people you can trust.</b></div>
-    <div class="notice"><span class="dot" style="background:#3b82f6"></span>We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div>
-    <div class="notice"><span class="dot" style="background:#94a3b8"></span>Your info stays private. We use it only to evaluate your car and contact you.</div>
-    <div class="notice"><span class="dot" style="background:#f59e0b"></span>Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div>
+    <div class="row">
+      <a class="btn ghost" href="#about">How it works / Why E.V.Time</a>
+    </div>
 
-    <div class="row" style="margin-top:12px">
+    <div class="row" style="margin-top:4px">
       <button id="scanBtn" class="primary">Scan VIN</button>
       <label for="vinPhoto" class="btn" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
         <input id="vinPhoto" type="file" accept="image/*" capture="environment" style="display:none">
@@ -91,7 +124,7 @@ video{width:100%;border-radius:8px}
     </div>
 
     <label for="notes">Notes (optional)</label>
-    <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?" style="height:auto;min-height:80px"></textarea>
+    <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
 
     <div class="row" style="margin-top:12px">
       <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
@@ -101,6 +134,14 @@ video{width:100%;border-radius:8px}
     <div class="small" style="margin-top:8px">
       Privacy: We only use your info to evaluate your car and contact you. We do not sell personal information.
     </div>
+  </div>
+
+  <!-- About section (anchor) -->
+  <div id="about" class="sheet" style="margin-top:12px">
+    <h2 style="margin:4px 0 6px;font-size:18px">How it works / Why E.V.Time</h2>
+    <p class="small" style="font-size:13px;color:#44403c">
+      We’re a small, friendly buyer focused on fair trade-in offers with low overhead. Submit your VIN and details; a real person reviews the car and texts you a number. If you like it, we schedule a quick look and handle the paperwork through our licensed partner, Waltons Auto Sales.
+    </p>
   </div>
 </main>
 
@@ -115,41 +156,43 @@ video{width:100%;border-radius:8px}
     <button id="closeCamBtn">Close</button>
   </div>
   <div id="camHint" class="small" style="color:#e5e7eb;margin-top:6px;text-align:center">
-    Tip: Aim at the door-jamb sticker under bright light. Fill the dashed box with the VIN line.
+    Tip: Fill the dashed box with the VIN line. Avoid glare; use even light.
   </div>
 </div>
 
-<!-- OCR -->
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@v5/dist/tesseract.min.js"></script>
+<!-- OCR lib (existing) -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
+/* ===== Helpers ===== */
 function normalizeVIN(raw){
   if(!raw) return '';
   let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');
+  s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0'); // VIN never uses I,O,Q
   const m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/);
   if(m){ s = m[0]; }
   if(s.length > 17) s = s.substring(0,17);
   return s;
 }
 function isVIN17(s){ return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||''); }
-
-const vinEl = document.getElementById('vin');
-const vinStatus = document.getElementById('vinStatus');
-const scanBtn = document.getElementById('scanBtn');
-const vinPhoto = document.getElementById('vinPhoto');
-const submitBtn = document.getElementById('submitBtn');
-
-const camWrap = document.getElementById('camWrap');
-const video = document.getElementById('video');
-const captureBtn = document.getElementById('captureBtn');
-const closeCamBtn = document.getElementById('closeCamBtn');
-
 function setStatus(msg, ok){
-  vinStatus.textContent = msg || '';
-  vinStatus.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
+  const el = document.getElementById('vinStatus');
+  el.textContent = msg || '';
+  el.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
 }
 
+/* Elements */
+const vinEl=document.getElementById('vin');
+const scanBtn=document.getElementById('scanBtn');
+const vinPhoto=document.getElementById('vinPhoto');
+const submitBtn=document.getElementById('submitBtn');
+
+const camWrap=document.getElementById('camWrap');
+const video=document.getElementById('video');
+const captureBtn=document.getElementById('captureBtn');
+const closeCamBtn=document.getElementById('closeCamBtn');
+
+/* Live validation */
 vinEl.addEventListener('input', ()=>{
   let v = normalizeVIN(vinEl.value);
   vinEl.value = v;
@@ -158,6 +201,7 @@ vinEl.addEventListener('input', ()=>{
   else setStatus('');
 });
 
+/* Camera flow */
 let stream=null;
 async function openCamera(){
   try{
@@ -177,9 +221,9 @@ scanBtn.addEventListener('click', openCamera);
 closeCamBtn.addEventListener('click', closeCamera);
 
 captureBtn.addEventListener('click', async ()=>{
-  if(!video.videoWidth){ alert('Camera not ready. Try again.'); return; }
+  if(!video.videoWidth){ alert('Camera not ready. Try again in a second.'); return; }
   const vw = video.videoWidth, vh = video.videoHeight;
-  const cropX = vw*0.08, cropY = vh*0.36, cw = vw*0.84, ch = vh*0.28;
+  const cropX = vw*0.08, cropY = vh*0.28, cw = vw*0.84, ch = vh*0.36;
 
   const canvas = document.createElement('canvas');
   canvas.width = cw; canvas.height = ch;
@@ -194,15 +238,21 @@ captureBtn.addEventListener('click', async ()=>{
     const text = (data && data.text) ? data.text : '';
     let v = normalizeVIN(text);
     if(isVIN17(v)){
-      vinEl.value = v; setStatus('VIN captured ✔', true); closeCamera();
+      vinEl.value = v;
+      setStatus('VIN captured from camera ✔', true);
+      closeCamera();
     }else{
-      setStatus('Couldn’t read a clear 17-char VIN. Try again closer, steadier, brighter—or upload a photo.');
+      setStatus('Couldn’t read a clear 17-char VIN. Try again or upload a photo.');
     }
-  }catch(e){ setStatus('Scanner error. Try again or upload a photo.'); }
+  }catch(e){
+    setStatus('Scanner error. Try again or upload a photo.');
+  }
 });
 
+/* Photo upload flow */
 vinPhoto.addEventListener('change', async (e)=>{
-  const f = e.target.files && e.target.files[0]; if(!f) return;
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
   setStatus('Reading VIN from photo…');
   const img = new Image();
   img.onload = async ()=>{
@@ -212,16 +262,23 @@ vinPhoto.addEventListener('change', async (e)=>{
       });
       const text = (data && data.text) ? data.text : '';
       const v = normalizeVIN(text);
-      if(isVIN17(v)){ vinEl.value=v; setStatus('VIN captured ✔', true); }
-      else{ setStatus('No clear VIN found. Retake under good light.'); }
-    }catch(err){ setStatus('Couldn’t process the photo. Try another.'); }
+      if(isVIN17(v)){
+        vinEl.value = v;
+        setStatus('VIN captured from photo ✔', true);
+      }else{
+        setStatus('No clear VIN found in this photo. Try a closer, sharper shot.');
+      }
+    }catch(err){
+      setStatus('Couldn’t process the photo. Please try a clearer shot.');
+    }
   };
   img.onerror = ()=> setStatus('Bad image file. Try another photo.');
   img.src = URL.createObjectURL(f);
 });
 
-submitBtn.addEventListener('click', ()=>{
-  const v = (vinEl.value||'').trim().toUpperCase();
+/* Submit (texts your OpenPhone) */
+document.getElementById('submitBtn').addEventListener('click', ()=>{
+  const v = vinEl.value.trim().toUpperCase();
   if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
   const miles = (document.getElementById('miles').value || '').trim();
   const cond  = (document.getElementById('cond').value || '').trim();
@@ -232,5 +289,14 @@ submitBtn.addEventListener('click', ()=>{
   location.href = `sms:+14248660109?&body=${sms}`;
 });
 </script>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div>© <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a></div>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
 </body>
 </html>
