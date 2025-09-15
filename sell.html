@@ -8,25 +8,20 @@
 
 <style>
 :root{
-  /* Copper Slate */
-  --bg:#0b0a09;       /* warm near-black */
-  --card:#fff; 
-  --text:#1c1917;
-  --muted:#78716c;
-  --line:#e7e5e4;
+  --bg:#0b0a09; --card:#fff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
   --copper:#c98c5b; --copperDark:#9e6d45; --copperSoft:#f5eae0;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 
-/* Standardized header (same as share/index) */
+/* Header (uniform) */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 .logo-wrap a{display:block}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Standard page width */
+/* Page width */
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 
 /* Card */
@@ -34,7 +29,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 h1{margin:6px 0 8px;font-size:22px}
 .muted{color:#78716c;font-size:13px}
 
-/* Bulleted trust lines */
+/* Bullets */
 .bullets{margin:8px 0 12px;padding-left:0;list-style:none}
 .bullets li{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 .check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
@@ -53,7 +48,7 @@ input[type="text"], input[type="number"], textarea{
 textarea{min-height:90px;padding:10px 12px}
 label{display:block;font-size:13px;color:#44403c;margin:10px 0 4px}
 
-/* About sheet */
+/* About sheet (in-page) */
 .sheet{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
 
 /* Small text */
@@ -69,7 +64,7 @@ video{width:100%;border-radius:8px}
 .camBtns{display:flex;gap:8px;margin-top:10px}
 .camBtns button{background:#fff}
 
-/* Footer (legal link style) */
+/* Footer */
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
 .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
@@ -78,7 +73,7 @@ video{width:100%;border-radius:8px}
 </head>
 <body>
 
-<!-- Standard header -->
+<!-- Header -->
 <div class="topbar">
   <div class="logo-wrap">
     <a href="/" aria-label="Go to Home">
@@ -136,7 +131,7 @@ video{width:100%;border-radius:8px}
     </div>
   </div>
 
-  <!-- About section (anchor) -->
+  <!-- In-page About (kept) -->
   <div id="about" class="sheet" style="margin-top:12px">
     <h2 style="margin:4px 0 6px;font-size:18px">How it works / Why E.V.Time</h2>
     <p class="small" style="font-size:13px;color:#44403c">
@@ -160,7 +155,7 @@ video{width:100%;border-radius:8px}
   </div>
 </div>
 
-<!-- OCR lib (existing) -->
+<!-- OCR lib -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
@@ -168,7 +163,7 @@ video{width:100%;border-radius:8px}
 function normalizeVIN(raw){
   if(!raw) return '';
   let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0'); // VIN never uses I,O,Q
+  s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');
   const m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/);
   if(m){ s = m[0]; }
   if(s.length > 17) s = s.substring(0,17);
@@ -276,7 +271,7 @@ vinPhoto.addEventListener('change', async (e)=>{
   img.src = URL.createObjectURL(f);
 });
 
-/* Submit (texts your OpenPhone) */
+/* Submit — SMS to your cell */
 document.getElementById('submitBtn').addEventListener('click', ()=>{
   const v = vinEl.value.trim().toUpperCase();
   if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
@@ -286,7 +281,7 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
 
   const msg = `VIN: ${v}\nMileage: ${miles || '(n/a)'}\nCondition: ${cond || '(n/a)'}\nNotes: ${notes || '(n/a)'}`;
   const sms = `Hello, I'm submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
-  location.href = `sms:+14248660109?&body=${sms}`;
+  location.href = `sms:+14244256211?&body=${sms}`;
 });
 </script>
 
