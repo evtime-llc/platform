@@ -49,41 +49,20 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .btn.ghost:hover{background:var(--copper-soft)}
 .btn:hover{transform:translateY(-1px)}
 
-/* HERO section with overlay text (photo kept modest) */
+/* HERO image BELOW buttons */
 .hero{
   position:relative; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-  max-width:100%; margin:0 auto;
-  background:#000;
+  max-width:100%; margin:0 auto; background:#000;
 }
 .hero-img{
   width:100%;
-  max-height:40vh;
+  max-height:40vh;           /* modest height */
   object-fit:cover;
-  object-position: 50% 38%; /* ⬅️ slight upward focus so heads aren’t cropped */
+  object-position:50% 38%;   /* nudge framing so heads aren't cropped */
   display:block;
 }
 @media (max-width:600px){
   .hero-img{max-height:34vh}
-}
-
-/* Overlay headline on the photo */
-.hero-text{
-  position:absolute; left:50%; top:6%;
-  transform:translateX(-50%);
-  text-align:center; color:#fff;
-  padding:8px 12px;
-  background:rgba(0,0,0,0.32);
-  border-radius:12px;
-  line-height:1.2;
-}
-.hero-text .h1{
-  margin:0; font-weight:800;
-  font-size:clamp(18px, 2.2vw, 28px);
-}
-.hero-text .sub{
-  margin:6px 0 0 0; font-weight:700;
-  font-size:clamp(14px, 1.6vw, 18px);
-  opacity:0.95;
 }
 
 /* Footer */
@@ -106,7 +85,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- Buttons ABOVE the photo (original styling, within logo width) -->
+<!-- Buttons ABOVE the photo -->
 <div class="logo-wrap buttonbar">
   <div class="row" role="navigation" aria-label="Primary actions">
     <a class="btn primary" href="./sell.html">Sell your car</a>
@@ -115,13 +94,9 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- HERO with overlay text (photo BELOW buttons) -->
+<!-- HERO (image contains the text, so no HTML overlay) -->
 <section class="hero" aria-label="Homepage hero">
-  <img class="hero-img" src="hero_text_centered_highest.png?v=6" alt="Family with Tesla in driveway — EVTime">
-  <div class="hero-text">
-    <div class="h1">Finally, a car marketplace built on trust.</div>
-    <div class="sub">Friendly. Honest. Secure.</div>
-  </div>
+  <img class="hero-img" src="hero_text_centered_highest.png?v=7" alt="Family with Tesla in driveway — EVTime">
 </section>
 
 <footer class="footer">
