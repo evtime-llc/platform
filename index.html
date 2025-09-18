@@ -30,26 +30,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* TOP WRITING (bigger) */
-.topline{background:#fff;border-bottom:1px solid var(--line)}
-.topline .wrap{
-  padding:12px 12px;text-align:center;color:#111827
-}
-.topline .h1{
-  margin:0;font-weight:900;
-  font-size:clamp(20px, 2.2vw, 30px); /* larger */
-  line-height:1.15;
-}
-.topline .sub{
-  margin-top:6px;color:#374151;font-weight:800;
-  font-size:clamp(15px, 1.6vw, 20px);
-}
-
-/* Button bar ABOVE the photo — original look, span logo width on desktop */
-.buttonbar{padding:12px 0;background:#fff;border-bottom:1px solid var(--line)}
+/* Button bar ABOVE the photo (no full-width strip) */
+.buttonbar{padding:10px 0}          /* no background/border -> no ugly strip */
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 
-/* Buttons (original styling preserved) */
+/* Buttons (original look) */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;
   height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
@@ -64,26 +49,40 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .btn.ghost:hover{background:var(--copper-soft)}
 .btn:hover{transform:translateY(-1px)}
 
-/* On desktop: make the button group span the same width as the logo area cleanly */
-@media (min-width:900px){
-  .buttonbar .row{
-    justify-content:space-between;
-  }
-  .buttonbar .row .btn{
-    min-width:260px; /* substantial but keeps original look */
-  }
+/* HERO section with overlay text (photo kept modest) */
+.hero{
+  position:relative; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  max-width:100%; margin:0 auto;
+  background:#000; /* prevents flash around image edges */
 }
-
-/* HERO photo BELOW buttons (smaller) */
 .hero-img{
   width:100%;
-  max-height:40vh;       /* smaller than before */
+  max-height:40vh;      /* smaller, not overwhelming */
   object-fit:cover;
   display:block;
-  border-bottom:1px solid var(--line);
 }
 @media (max-width:600px){
   .hero-img{max-height:34vh}
+}
+
+/* Overlay headline on the photo (no white block above) */
+.hero-text{
+  position:absolute; left:50%; top:6%;
+  transform:translateX(-50%);
+  text-align:center; color:#fff;
+  padding:8px 12px;
+  background:rgba(0,0,0,0.32); /* subtle, just enough contrast */
+  border-radius:12px;
+  line-height:1.2;
+}
+.hero-text .h1{
+  margin:0; font-weight:800;
+  font-size:clamp(18px, 2.2vw, 28px);
+}
+.hero-text .sub{
+  margin:6px 0 0 0; font-weight:700;
+  font-size:clamp(14px, 1.6vw, 18px);
+  opacity:0.95;
 }
 
 /* Footer */
@@ -106,15 +105,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- WRITING AT TOP (bigger) -->
-<div class="topline">
-  <div class="wrap">
-    <div class="h1">Finally, a car marketplace built on trust.</div>
-    <div class="sub">Friendly. Honest. Secure.</div>
-  </div>
-</div>
-
-<!-- Buttons ABOVE the photo (original styling) -->
+<!-- Buttons ABOVE the photo (original styling, within logo width) -->
 <div class="logo-wrap buttonbar">
   <div class="row" role="navigation" aria-label="Primary actions">
     <a class="btn primary" href="./sell.html">Sell your car</a>
@@ -123,8 +114,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- HERO PHOTO (smaller) -->
-<img class="hero-img" src="hero_text_centered_highest.png?v=5" alt="Family with Tesla in driveway — EVTime">
+<!-- HERO with overlay text (photo BELOW buttons) -->
+<section class="hero" aria-label="Homepage hero">
+  <img class="hero-img" src="hero_text_centered_highest.png?v=6" alt="Family with Tesla in driveway — EVTime">
+  <div class="hero-text">
+    <div class="h1">Finally, a car marketplace built on trust.</div>
+    <div class="sub">Friendly. Honest. Secure.</div>
+  </div>
+</section>
 
 <footer class="footer">
   <div class="wrap clearfix">
