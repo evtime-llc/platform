@@ -30,7 +30,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Button bar ABOVE the photo — matches logo width */
+/* Button bar ABOVE the photo */
 .buttonbar{padding:10px 0}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .buttonbar .row{justify-content:space-between}
@@ -53,16 +53,41 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   .buttonbar .row .btn{flex:1;min-width:220px}
 }
 
-/* Hero image BELOW the buttons (tamed height) */
-.hero-img{
-  width:100%;
-  max-height:58vh;          /* keeps it classy */
-  object-fit:cover;         /* crop edges if needed, not faces */
-  display:block;
+/* HERO container with overlay text */
+.hero{
+  position:relative;
+  max-width:100%;
+  margin:0 auto;
   border-bottom:1px solid var(--line);
 }
+.hero-img{
+  width:100%;
+  max-height:44vh;        /* smaller than before */
+  object-fit:cover;       /* neat crop if needed */
+  display:block;
+}
 @media (max-width:600px){
-  .hero-img{max-height:48vh}
+  .hero-img{max-height:36vh}
+}
+
+/* Overlay headline (on top of photo) */
+.hero-text{
+  position:absolute; left:50%; top:6%;
+  transform:translateX(-50%);
+  text-align:center; color:#fff;
+  padding:10px 14px;
+  background:rgba(0,0,0,0.35); /* subtle for readability */
+  border-radius:12px;
+  line-height:1.2;
+}
+.hero-text .h1{
+  margin:0; font-weight:800;
+  font-size: clamp(18px, 2.6vw, 28px);
+}
+.hero-text .sub{
+  margin:6px 0 0 0; font-weight:700;
+  font-size: clamp(14px, 1.8vw, 20px);
+  opacity:0.95;
 }
 
 /* Footer */
@@ -94,8 +119,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- HERO PHOTO (BELOW links) -->
-<img class="hero-img" src="hero_text_centered_highest.png" alt="Finally, a car marketplace built on trust. Friendly. Honest. Secure.">
+<!-- HERO with overlay text (photo BELOW links) -->
+<section class="hero" aria-label="Homepage hero">
+  <img class="hero-img" src="hero_text_centered_highest.png?v=3" alt="Car marketplace hero">
+  <div class="hero-text">
+    <div class="h1">Finally, a car marketplace<br/>built on trust.</div>
+    <div class="sub">Friendly. Honest. Secure.</div>
+  </div>
+</section>
 
 <footer class="footer">
   <div class="wrap clearfix">
@@ -104,6 +135,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </footer>
 
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
