@@ -31,7 +31,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
 /* Button bar ABOVE the photo (no full-width strip) */
-.buttonbar{padding:10px 0}          /* no background/border -> no ugly strip */
+.buttonbar{padding:10px 0}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 
 /* Buttons (original look) */
@@ -53,25 +53,26 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .hero{
   position:relative; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
   max-width:100%; margin:0 auto;
-  background:#000; /* prevents flash around image edges */
+  background:#000;
 }
 .hero-img{
   width:100%;
-  max-height:40vh;      /* smaller, not overwhelming */
+  max-height:40vh;
   object-fit:cover;
+  object-position: 50% 38%; /* ⬅️ slight upward focus so heads aren’t cropped */
   display:block;
 }
 @media (max-width:600px){
   .hero-img{max-height:34vh}
 }
 
-/* Overlay headline on the photo (no white block above) */
+/* Overlay headline on the photo */
 .hero-text{
   position:absolute; left:50%; top:6%;
   transform:translateX(-50%);
   text-align:center; color:#fff;
   padding:8px 12px;
-  background:rgba(0,0,0,0.32); /* subtle, just enough contrast */
+  background:rgba(0,0,0,0.32);
   border-radius:12px;
   line-height:1.2;
 }
