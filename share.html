@@ -24,13 +24,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 
-/* Header / Logo (match your site) */
+/* Header / Logo (match site) */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap a{display:block}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Button bar (match your site) */
+/* Button bar (match site) */
 .buttonbar{padding:10px 0}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .btn{
@@ -119,10 +119,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 <script>
 (async () => {
-  // ====== CONFIG: REPLACE THESE WITH YOURS ======
-  const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co"; // Settings → API → Project URL
-  const SUPABASE_ANON_KEY = "YOUR-ANON-PUBLIC-KEY";            // Settings → API → anon key
-  // ==============================================
+  /* ====== PASTE YOUR SUPABASE VALUES HERE ======
+     Get them in Supabase → Project Settings (gear) → API:
+     - Project URL  → SUPABASE_URL
+     - anon public  → SUPABASE_ANON_KEY
+  */
+  const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co";   // <— PASTE HERE
+  const SUPABASE_ANON_KEY = "YOUR-ANON-PUBLIC-KEY";              // <— PASTE HERE
+  /* ============================================ */
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -135,7 +139,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     }catch{ return null; }
   }
 
-  // Escape text for safety
+  // Escape text
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   // Card HTML
@@ -195,7 +199,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   // Fetch published listings
   const { data, error } = await supabase
-    .from('listing')      // table name is singular per your setup
+    .from('listing')      // your table is singular
     .select('*')
     .eq('status', 'published');
 
@@ -214,7 +218,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   // Sort newest first
   const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
 
-  // Grouping order: Teslas → other EVs → (divider) → Hybrids + Gas
+  // ORDER: Teslas → non-Tesla EVs → (divider) → Hybrids + Gas
   const teslas = data.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byNewest);
   const otherEVs = data.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byNewest);
   const others  = data.filter(x => {
@@ -222,7 +226,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     return p === 'HYBRID' || p === 'GAS' || p === '';
   }).sort(byNewest);
 
-  // Build final HTML (no header for top sections; just render)
+  // Build HTML
   let html = '';
   html += renderSection(teslas);
   html += renderSection(otherEVs);
