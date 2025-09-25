@@ -119,15 +119,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 <script>
 (async () => {
-  /* ====== PASTE YOUR SUPABASE VALUES HERE ======
-     Get them in Supabase → Project Settings (gear) → API:
-     - Project URL  → SUPABASE_URL
-     - anon public  → SUPABASE_ANON_KEY
-  */
   const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
-  // <— PASTE HERE
-  const SUPABASE_ANON_KEY = "YOUR-ANON-PUBLIC-KEY";              // <— PASTE HERE
-  /* ============================================ */
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
