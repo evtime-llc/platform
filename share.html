@@ -3,84 +3,90 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Current Inventory • it’s E.V.Time</title>
+<title>it’s E.V.Time — Browse Inventory</title>
 <meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="it’s E.V.Time — Browse Inventory" />
+<meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles." />
+<meta property="og:image" content="https://itsevtime.com/og-card.png" />
+<meta property="og:url" content="https://itsevtime.com/share.html" />
+<meta name="twitter:card" content="summary_large_image" />
 
 <style>
 :root{
-  --bg:#0b0a09; --card:#fff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
-  --copper:#c98c5b; --ctaText:#0b0a09;
-  --gap:12px;
+  --bg:#0b0a09; --card:#ffffff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
+  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0; --cta:#c98c5b; --ctaText:#0b0a09;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 
-/* Header (uniform) */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
+/* Shared containers */
+.wrap{max-width:880px;margin:0 auto;padding:12px}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+
+/* Header / Logo (match your site) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap a{display:block}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Page width */
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-
-/* CTA */
-.ctaSell{padding:12px}
-.ctaSell .pill{
-  display:block;width:100%;text-align:center;background:var(--copper);color:var(--ctaText);
-  font-weight:800;font-size:18px;border-radius:14px;padding:14px 16px;line-height:1.2;border:0;
-  text-decoration:none; letter-spacing:.2px; -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 2px 10px rgba(201,140,91,.28);
+/* Button bar (match your site) */
+.buttonbar{padding:10px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
+  background:#fff;color:var(--text);text-decoration:none;font-weight:700;transition:.15s ease
 }
-.ctaSell .pill:active{transform:scale(0.99)}
+.btn.primary{
+  background:var(--cta);color:var(--ctaText);border-color:transparent;
+  box-shadow:0 4px 14px rgba(201,140,91,.35)
+}
+.btn.primary:hover{background:var(--copper-dark);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
+.btn.ghost:hover{background:var(--copper-soft)}
+.btn:hover{transform:translateY(-1px)}
 
-/* Inventory list */
-.list{display:grid;grid-template-columns:1fr;gap:var(--gap);padding:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer}
-.photo{width:100%;aspect-ratio:4/3;background:#e5e7eb}
-.photo img{width:100%;height:100%;object-fit:cover;display:block}
-.info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px}
-.row{display:flex;justify-content:space-between;gap:10px;white-space:nowrap;overflow:hidden}
-.title{font-weight:700;overflow:hidden;text-overflow:ellipsis}
-.muted{color:#78716c;font-size:12px}
-.price{font-weight:800}
+/* Inventory grid */
+.inv-section{padding-top:8px}
+.inv-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
 
-/* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:10px}
-.modal.open{display:flex}
-.sheet{width:100%;max-width:680px;background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
-.sheet header{position:sticky;top:0;border-bottom:1px solid var(--line);background:#fff;z-index:2}
-.sheet .hd{display:flex;align-items:center;justify-content:space-between;padding:10px 12px}
-.close{border:1px solid var(--line);background:#fff;border-radius:10px;height:34px;padding:0 10px;cursor:pointer}
+/* Card */
+.inv-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;
+}
+.inv-photo{aspect-ratio:4/3;overflow:hidden;background:#000}
+.inv-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.inv-body{padding:12px 12px 14px}
+.inv-title{font-weight:900}
+.inv-price{
+  font-weight:900;color:#0b0a09;background:var(--copper);
+  padding:2px 8px;border-radius:999px;white-space:nowrap
+}
+.inv-meta{margin-top:6px;color:#57534e;font-weight:700;font-size:13px;display:flex;justify-content:space-between;gap:10px}
+.inv-txt{margin-top:6px;font-size:13px}
+.inv-vin{margin-top:6px;font-size:12px;color:#78716c}
 
-/* Carousel */
-.carousel{position:relative;background:#000}
-.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth}
-.slide{flex:0 0 100%;scroll-snap-align:center;background:#000}
-.slide img{display:block;width:100%;height:320px;object-fit:contain;background:#000}
-.dots{display:flex;gap:6px;justify-content:center;padding:8px;background:#fff;border-top:1px solid var(--line)}
-.dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1;cursor:pointer}
-.dot.active{background:#c98c5b}
-.controls{position:absolute;top:50%;left:0;right:0;display:flex;justify-content:space-between;transform:translateY(-50%);pointer-events:none}
-.controls button{pointer-events:auto;border:1px solid var(--line);background:#fff;border-radius:999px;width:34px;height:34px;opacity:.9}
-
-/* Sheet body */
-.body{padding:12px;display:grid;gap:8px}
-.spec{display:flex;justify-content:space-between;gap:10px}
-.actions{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center}
-.actions .cta{grid-column:1 / -1;height:48px;border-radius:12px;background:#c98c5b;color:#0b0a09;border:1px solid transparent;font-weight:800;font-size:16px;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+/* Divider */
+.divider-wrap{padding-top:20px}
+.divider{
+  display:flex;align-items:center;gap:10px;color:#fff;font-weight:900
+}
+.divider .line{height:1px;background:var(--line);flex:1}
 
 /* Footer */
-.legal{border-top:1px solid var(--line);color:#64748b;background:#fff}
-.legal .wrap{padding:16px 12px;font-size:12px;line-height:1.5}
-.legal a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
-.legal a:hover{border-bottom-style:solid}
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a:hover{border-bottom-style:solid}
+.right{float:right}
+.clearfix::after{content:"";display:block;clear:both}
 </style>
 </head>
 <body>
 
-<!-- Header -->
+<!-- Topbar / Logo -->
 <div class="topbar">
   <div class="logo-wrap">
     <a href="/" aria-label="Go to Home">
@@ -89,154 +95,149 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- Big centered CTA -->
-<div class="wrap ctaSell">
-  <a class="pill" href="./sell.html">Sell Your Car — Get a personal offer</a>
-</div>
-
-<main>
-  <div class="wrap">
-    <div id="status" class="muted">Loading…</div>
-    <div id="list" class="list" hidden></div>
-  </div>
-</main>
-
-<!-- Modal -->
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Vehicle details">
-  <div class="sheet">
-    <header><div class="hd">
-      <div id="mTitle" style="font-weight:700">Car</div>
-      <button class="close" id="mClose">Close</button>
-    </div></header>
-    <div class="carousel">
-      <div class="track" id="track"></div>
-      <div class="controls"><button id="prev">‹</button><button id="next">›</button></div>
-      <div class="dots" id="dots"></div>
-    </div>
-    <div class="body">
-      <div class="spec"><div id="mMiles" class="muted"></div><div id="mPrice" class="price"></div></div>
-      <div id="mNotes" class="muted" style="white-space:pre-wrap"></div>
-      <div class="actions">
-        <button id="smsBtn" class="cta">Contact us</button>
-        <button id="shareCar">Share car</button>
-        <button id="copyLink">Copy link</button>
-      </div>
-    </div>
+<!-- Buttons -->
+<div class="logo-wrap buttonbar">
+  <div class="row" role="navigation" aria-label="Primary actions">
+    <a class="btn primary" href="./sell.html">Sell your car</a>
+    <a class="btn ghost" href="./share.html">Browse inventory</a>
+    <a class="btn ghost" href="./about.html">How it works / Why E.V.Time</a>
   </div>
 </div>
 
-<footer class="legal">
-  <div class="wrap">
-    <div><strong>Disclosure:</strong> Retail transactions are completed by our licensed partner, Waltons Auto Sales. Private-party transactions are between individual buyer and seller. We are not affiliated with Tesla, Inc.</div>
-    <div style="margin-top:6px">© <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a></div>
+<!-- Inventory mount -->
+<div class="wrap" id="inventory"></div>
+
+<footer class="footer">
+  <div class="wrap clearfix">
+    <div>© <span id="yr"></span> E.V.Time</div>
+    <div class="right"><a href="./legal.html">Legal &amp; Disclosures</a></div>
   </div>
 </footer>
 
+<!-- Supabase client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(async () => {
+  // ====== CONFIG: REPLACE THESE WITH YOURS ======
+  const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co"; // Settings → API → Project URL
+  const SUPABASE_ANON_KEY = "YOUR-ANON-PUBLIC-KEY";            // Settings → API → anon key
+  // ==============================================
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Build public URL from storage path like "images/123/IMG_0001.jpg"
+  function publicImageUrl(path){
+    if(!path) return null;
+    try{
+      const { data } = supabase.storage.from('images').getPublicUrl(path);
+      return data?.publicUrl || null;
+    }catch{ return null; }
+  }
+
+  // Escape text for safety
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // Card HTML
+  function cardHTML(item){
+    const {
+      year, make, model, trim, mileage, special_features,
+      title_status, condition, description, city, vin, price, images
+    } = item;
+
+    // "images" is TEXT in your DB: support single path or comma-separated list
+    const firstPath = (images || "").split(",")[0].trim();
+    const imgUrl = publicImageUrl(firstPath) || "og-card.png"; // fallback image
+
+    const title = [year, make, model, trim].filter(Boolean).join(" ");
+    const leftMeta = [
+      mileage ? `${Number(mileage).toLocaleString()} mi` : null,
+      title_status ? `Title: ${title_status}` : null,
+      condition ? `Cond: ${condition}` : null
+    ].filter(Boolean).join(" • ");
+
+    const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
+    const cityText = city ? esc(city) : "";
+
+    return `
+      <div class="inv-card">
+        <div class="inv-photo">
+          <img src="${esc(imgUrl)}" alt="${esc(title)}" loading="lazy">
+        </div>
+        <div class="inv-body">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
+            <div class="inv-title">${esc(title)}</div>
+            <div class="inv-price">${esc(priceText)}</div>
+          </div>
+          <div class="inv-meta">
+            <span>${esc(leftMeta)}</span>
+            <span>${esc(cityText)}</span>
+          </div>
+          ${special_features ? `<div class="inv-txt">${esc(special_features)}</div>` : ""}
+          ${description ? `<div class="inv-txt" style="color:#44403c;">${esc(description)}</div>` : ""}
+          ${vin ? `<div class="inv-vin">VIN: ${esc(vin)}</div>` : ""}
+        </div>
+      </div>
+    `;
+  }
+
+  // Render helpers
+  const renderSection = (items) => items.length ? `<div class="inv-section"><div class="inv-row">${items.map(cardHTML).join("")}</div></div>` : "";
+  const dividerHTML = (text) => `
+    <div class="divider-wrap">
+      <div class="divider">
+        <div class="line"></div>
+        <div>${esc(text)}</div>
+        <div class="line"></div>
+      </div>
+    </div>
+  `;
+
+  // Fetch published listings
+  const { data, error } = await supabase
+    .from('listing')      // table name is singular per your setup
+    .select('*')
+    .eq('status', 'published');
+
+  const mount = document.getElementById('inventory');
+
+  if (error) {
+    console.error(error);
+    mount.innerHTML = `<div style="color:#fff">Error loading inventory.</div>`;
+    return;
+  }
+  if (!data || !data.length) {
+    mount.innerHTML = `<div style="color:#fff">No vehicles available right now.</div>`;
+    return;
+  }
+
+  // Sort newest first
+  const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
+
+  // Grouping order: Teslas → other EVs → (divider) → Hybrids + Gas
+  const teslas = data.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byNewest);
+  const otherEVs = data.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byNewest);
+  const others  = data.filter(x => {
+    const p = (x.powertrain || '').toUpperCase();
+    return p === 'HYBRID' || p === 'GAS' || p === '';
+  }).sort(byNewest);
+
+  // Build final HTML (no header for top sections; just render)
+  let html = '';
+  html += renderSection(teslas);
+  html += renderSection(otherEVs);
+
+  if (others.length) {
+    html += dividerHTML('Other vehicles');
+    html += renderSection(others);
+  }
+
+  mount.innerHTML = html;
+})();
+</script>
+
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
-const statusEl=document.getElementById('status'), list=document.getElementById('list');
-
-const modal=document.getElementById('modal'), mTitle=document.getElementById('mTitle'), mMiles=document.getElementById('mMiles'), mPrice=document.getElementById('mPrice'), mNotes=document.getElementById('mNotes');
-const track=document.getElementById('track'), dots=document.getElementById('dots'), prev=document.getElementById('prev'), next=document.getElementById('next');
-const shareCar=document.getElementById('shareCar'), copyLink=document.getElementById('copyLink'), smsBtn=document.getElementById('smsBtn');
-const mClose=document.getElementById('mClose');
-
-const fmtPrice=n=>{try{return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n)}catch{return'$'+(n||0)}};
-const fmtMiles=n=>{try{return new Intl.NumberFormat('en-US').format(n)+' mi'}catch{return(n||0)+' mi'}};
-const placeholder=()=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='800' height='600' fill='#e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#94a3b8' font-family='system-ui' font-size='28'>Photo</text></svg>");
-
-let DATA=[], current=null, idx=0;
-
-function ensureIds(arr){
-  return (arr||[]).map(c=>{
-    if(!c.id){
-      c.id = (Math.random().toString(36)+Math.random().toString(36)).replace(/[^a-z0-9]/g,'').slice(2,10);
-    }
-    return c;
-  });
-}
-
-function render(cars){
-  list.innerHTML='';
-  if(!Array.isArray(cars)||!cars.length){ statusEl.textContent='No inventory yet.'; return; }
-  statusEl.hidden=true; list.hidden=false;
-  cars.sort((a,b)=> (a.order??1e9)-(b.order??1e9) || (a.addedAt||0)-(b.addedAt||0) || (a.year||0)-(b.year||0));
-
-  for(const c of cars){
-    const card=document.createElement('div'); card.className='card';
-    const ph=document.createElement('div'); ph.className='photo';
-    const img=document.createElement('img'); img.loading='lazy'; img.decoding='async';
-    img.src=(c.photos&&c.photos[0])||c.photo||placeholder(); img.alt=(c.model||'Car')+' photo'; ph.appendChild(img);
-    const info=document.createElement('div'); info.className='info';
-    const r1=document.createElement('div'); r1.className='row';
-    const t=document.createElement('div'); t.className='title'; t.textContent=`${c.year||''} ${c.model||''} ${c.trim||''}`.replace(/\s+/g,' ').trim();
-    const miles=document.createElement('div'); miles.className='muted'; miles.textContent=fmtMiles(c.mileage||0);
-    r1.appendChild(t); r1.appendChild(miles);
-    const r2=document.createElement('div'); r2.className='row';
-    r2.innerHTML=`<b class="price">${fmtPrice(c.price||0)}</b><span class="muted">${c.addedAt? new Date(c.addedAt).toLocaleDateString():''}</span>`;
-    info.appendChild(r1); info.appendChild(r2);
-    card.appendChild(ph); card.appendChild(info); list.appendChild(card);
-    card.addEventListener('click', ()=> openModal(c.id));
-  }
-}
-
-function openModal(id){
-  current = DATA.find(x=>x.id===id); if(!current) return;
-  mTitle.textContent = `${current.year||''} ${current.model||''} ${current.trim||''}`.replace(/\s+/g,' ').trim();
-  mMiles.textContent = fmtMiles(current.mileage||0);
-  mPrice.textContent = fmtPrice(current.price||0);
-  mNotes.textContent = current.notes||'';
-  const imgs = (current.photos && current.photos.length? current.photos : (current.photo?[current.photo]:[]));
-  buildCarousel(imgs.length? imgs : [placeholder()]);
-  const deep = new URL(location.href); deep.hash = 'car=' + current.id; history.replaceState(null,'',deep);
-  modal.classList.add('open'); document.body.style.overflow='hidden';
-}
-function closeModal(){ modal.classList.remove('open'); document.body.style.overflow=''; const u=new URL(location.href); u.hash=''; history.replaceState(null,'',u); }
-
-function buildCarousel(arr){
-  track.innerHTML=''; dots.innerHTML=''; idx=0;
-  arr.forEach((src,i)=>{
-    const sl=document.createElement('div'); sl.className='slide';
-    const im=document.createElement('img'); im.src=src; im.alt='photo '+(i+1); sl.appendChild(im); track.appendChild(sl);
-    const dot=document.createElement('div'); dot.className='dot'+(i===0?' active':''); dot.addEventListener('click',()=>go(i)); dots.appendChild(dot);
-  });
-  prev.onclick=()=>go(idx-1); next.onclick=()=>go(idx+1);
-  track.addEventListener('scroll', onScrollSync, {passive:true});
-}
-function go(i){ const slides=[...track.children]; if(!slides.length) return; idx=(i+slides.length)%slides.length; slides[idx].scrollIntoView({behavior:'smooth'}); syncDots(); }
-function onScrollSync(){ const slides=[...track.children]; const x=track.scrollLeft, w=track.clientWidth; const i=Math.round(x/w); if(i!==idx){ idx=i; syncDots(); } }
-function syncDots(){ [...dots.children].forEach((d,j)=> d.classList.toggle('active', j===idx)); }
-
-function carLink(id){ const u=new URL(location.href); u.hash='car='+id; return u.href; }
-shareCar.addEventListener('click', async ()=>{ if(!current) return; const url=carLink(current.id); const title=mTitle.textContent;
-  const text = `${title} — ${fmtPrice(current.price||0)}\n${fmtMiles(current.mileage||0)}\n${url}`;
-  try{ if(navigator.share){ await navigator.share({title, text, url}); } else throw 0; }catch{ await copyText(url); alert('Link copied:\n'+url); }});
-copyLink.addEventListener('click', async ()=>{ if(!current) return; const url=carLink(current.id); await copyText(url); alert('Link copied:\n'+url); });
-
-document.getElementById('smsBtn').addEventListener('click', ()=>{
-  if(!current) return;
-  const model = current.model || 'your vehicle';
-  const price = fmtPrice(current.price||0);
-  const msg = `Hello, I'm interested in your ${model} for ${price}.`;
-  const body = encodeURIComponent(msg);
-  const num = "+14244256211".replace(/[^0-9+]/g,'');
-  location.href = `sms:${num}?&body=${body}`;
-});
-
-async function copyText(t){ if(navigator.clipboard && window.isSecureContext){ return navigator.clipboard.writeText(t) }
-  const el=document.createElement('textarea'); el.value=t; document.body.appendChild(el); el.select(); document.execCommand('copy'); el.remove(); }
-
-/* Load inventory */
-fetch('./inventory.json?ts='+Date.now(), {cache:'no-store'})
-  .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-  .then(d=>{
-    DATA = ensureIds(Array.isArray(d)? d : []); render(DATA);
-    const m = new URL(location.href).hash.match(/car=([A-Za-z0-9_-]+)/); if(m){ openModal(m[1]); }
-  })
-  .catch(err=>{ statusEl.innerHTML="Viewer error. Check <code>inventory.json</code> exists.<br>"+(err.message||err) });
-
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal() });
-mClose.addEventListener('click', closeModal);
 </script>
 </body>
 </html>
