@@ -57,7 +57,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;
 }
 .inv-photo{aspect-ratio:4/3;overflow:hidden;background:#000}
-.inv-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.inv-photo img{width:100%;height:100%;object-fit:contain;display:block}
 .inv-body{padding:12px 12px 14px}
 .inv-title{font-weight:900}
 .inv-price{
@@ -124,10 +124,9 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build public URL from storage path like "test-listing/IMG_0001.jpg"
+  // Build public URL from storage path like "id/photo.jpg"
   function publicImageUrl(path){
     if(!path) return null;
-    // If someone stored "images/..." (bucket prefix), strip it so we pass a bucket-relative path
     const normalized = path.replace(/^images\//i, '').trim();
     try{
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
@@ -135,19 +134,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     }catch{ return null; }
   }
 
-  // Escape text
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Card HTML
   function cardHTML(item){
-    const {
-      year, make, model, trim, mileage, special_features,
-      title_status, condition, description, city, vin, price, images
-    } = item;
+    const { year, make, model, trim, mileage, special_features,
+            title_status, condition, description, city, vin, price, images } = item;
 
-    // "images" is TEXT in your DB: support single path or comma-separated list
     const firstPath = (images || "").split(",")[0].trim();
-    const imgUrl = publicImageUrl(firstPath) || "og-card.png"; // fallback image
+    const imgUrl = publicImageUrl(firstPath) || "og-card.png";
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
     const leftMeta = [
@@ -159,7 +153,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
     const cityText = city ? esc(city) : "";
 
-    // Make photo clickable (opens full image in new tab)
     const photoHTML = `
       <a href="${esc(imgUrl)}" target="_blank" rel="noopener" class="inv-photo">
         <img src="${esc(imgUrl)}" alt="${esc(title)}" loading="lazy">
@@ -186,7 +179,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     `;
   }
 
-  // Render helpers
   const renderSection = (items) => items.length ? `<div class="inv-section"><div class="inv-row">${items.map(cardHTML).join("")}</div></div>` : "";
   const dividerHTML = (text) => `
     <div class="divider-wrap">
@@ -198,9 +190,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     </div>
   `;
 
-  // Fetch published listings
   const { data, error } = await supabase
-    .from('listing')      // your table is singular
+    .from('listing')
     .select('*')
     .eq('status', 'published');
 
@@ -216,10 +207,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     return;
   }
 
-  // Sort newest first
   const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
 
-  // ORDER: Teslas → non-Tesla EVs → (divider) → Hybrids + Gas
   const teslas = data.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byNewest);
   const otherEVs = data.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byNewest);
   const others  = data.filter(x => {
@@ -227,7 +216,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     return p === 'HYBRID' || p === 'GAS' || p === '';
   }).sort(byNewest);
 
-  // Build HTML
   let html = '';
   html += renderSection(teslas);
   html += renderSection(otherEVs);
