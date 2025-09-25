@@ -124,11 +124,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build public URL from storage path like "images/123/IMG_0001.jpg"
+  // Build public URL from storage path like "test-listing/IMG_0001.jpg"
   function publicImageUrl(path){
     if(!path) return null;
+    // If someone stored "images/..." (bucket prefix), strip it so we pass a bucket-relative path
+    const normalized = path.replace(/^images\//i, '').trim();
     try{
-      const { data } = supabase.storage.from('images').getPublicUrl(path);
+      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
       return data?.publicUrl || null;
     }catch{ return null; }
   }
@@ -157,11 +159,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
     const cityText = city ? esc(city) : "";
 
+    // Make photo clickable (opens full image in new tab)
+    const photoHTML = `
+      <a href="${esc(imgUrl)}" target="_blank" rel="noopener" class="inv-photo">
+        <img src="${esc(imgUrl)}" alt="${esc(title)}" loading="lazy">
+      </a>
+    `;
+
     return `
       <div class="inv-card">
-        <div class="inv-photo">
-          <img src="${esc(imgUrl)}" alt="${esc(title)}" loading="lazy">
-        </div>
+        ${photoHTML}
         <div class="inv-body">
           <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
             <div class="inv-title">${esc(title)}</div>
