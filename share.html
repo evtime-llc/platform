@@ -56,8 +56,25 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
   display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;
 }
-.inv-photo{aspect-ratio:4/3;overflow:hidden;background:#000}
-.inv-photo img{width:100%;height:100%;object-fit:contain;display:block}
+.inv-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
+.inv-photo img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+
+/* Gallery controls */
+.gal-btn{
+  position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.45);
+  color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:36px;text-align:center;
+}
+.gal-btn:hover{background:rgba(0,0,0,.6)}
+.gal-prev{left:8px}
+.gal-next{right:8px}
+.gal-dots{
+  position:absolute;left:0;right:0;bottom:6px;display:flex;gap:6px;justify-content:center;align-items:center;
+}
+.gal-dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)
+}
+.gal-dot.active{background:#fff}
+
 .inv-body{padding:12px 12px 14px}
 .inv-title{font-weight:900}
 .inv-price{
@@ -136,12 +153,20 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  function cardHTML(item){
-    const { year, make, model, trim, mileage, special_features,
-            title_status, condition, description, city, vin, price, images } = item;
+  // Card HTML with simple gallery
+  function cardHTML(item, index){
+    const {
+      year, make, model, trim, mileage, special_features,
+      title_status, condition, description, city, vin, price, images
+    } = item;
 
-    const firstPath = (images || "").split(",")[0].trim();
-    const imgUrl = publicImageUrl(firstPath) || "og-card.png";
+    const paths = (images || "")
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const urls = paths.map(publicImageUrl).filter(Boolean);
+    const firstUrl = urls[0] || "og-card.png";
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
     const leftMeta = [
@@ -149,19 +174,22 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
       title_status ? `Title: ${title_status}` : null,
       condition ? `Cond: ${condition}` : null
     ].filter(Boolean).join(" • ");
-
     const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
     const cityText = city ? esc(city) : "";
 
-    const photoHTML = `
-      <a href="${esc(imgUrl)}" target="_blank" rel="noopener" class="inv-photo">
-        <img src="${esc(imgUrl)}" alt="${esc(title)}" loading="lazy">
-      </a>
-    `;
+    // dots
+    const dots = urls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
 
     return `
-      <div class="inv-card">
-        ${photoHTML}
+      <div class="inv-card" data-card="${index}" data-count="${urls.length}" data-images='${JSON.stringify(urls)}'>
+        <div class="inv-photo">
+          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="lazy">
+          ${urls.length>1 ? `
+            <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
+            <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
+            <div class="gal-dots">${dots}</div>
+          `:``}
+        </div>
         <div class="inv-body">
           <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
             <div class="inv-title">${esc(title)}</div>
@@ -226,6 +254,35 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   }
 
   mount.innerHTML = html;
+
+  // --- Simple gallery controller (event delegation) ---
+  mount.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.gal-btn');
+    const dot = e.target.closest('.gal-dot');
+    if(!btn && !dot) return;
+
+    const card = e.target.closest('.inv-card');
+    if(!card) return;
+
+    const img = card.querySelector('.inv-photo img');
+    const dots = [...card.querySelectorAll('.gal-dot')];
+    const urls = JSON.parse(card.getAttribute('data-images') || '[]');
+    if(!urls.length) return;
+
+    let idx = Number(card.getAttribute('data-idx') || 0);
+
+    if (btn){
+      const dir = btn.dataset.action === 'next' ? 1 : -1;
+      idx = (idx + dir + urls.length) % urls.length;
+    }
+    if (dot){
+      idx = Number(dot.dataset.dot);
+    }
+
+    img.src = urls[idx];
+    card.setAttribute('data-idx', String(idx));
+    dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
+  });
 })();
 </script>
 
