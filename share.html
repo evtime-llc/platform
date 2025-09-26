@@ -24,13 +24,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 
-/* Header / Logo (match site) */
+/* Header / Logo */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap a{display:block}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Button bar (match site) */
+/* Button bar */
 .buttonbar{padding:10px 0}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .btn{
@@ -141,22 +141,19 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build a fast, transformed public URL (no need to edit originals)
+  // Build plain public URL from storage path like "id/photo.jpg"
   function publicImageUrl(path){
     if(!path) return null;
     const normalized = path.replace(/^images\//i, '').trim();
     try{
-      const { data } = supabase.storage.from('images').getPublicUrl(
-        normalized,
-        { transform: { width: 1600, quality: 80, format: 'webp' } }
-      );
-      return data?.publicUrl || null;
+      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
+      return (data && data.publicUrl) ? data.publicUrl : null;
     }catch{
       return null;
     }
   }
 
-  // Simple preloader for a list of URLs (so next/prev is instant)
+  // Preload images for snappy next/prev
   function preload(urls){
     urls.forEach(u => { const im = new Image(); im.decoding = 'async'; im.loading = 'eager'; im.src = u; });
   }
@@ -174,7 +171,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const urls = paths.map(publicImageUrl).filter(Boolean);
     const firstUrl = urls[0] || "og-card.png";
 
-    // preload this card's images immediately
+    // Preload this card's images
     preload(urls);
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
@@ -263,7 +260,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   mount.innerHTML = html;
 
-  // --- Simple gallery controller (event delegation) ---
+  // Gallery controller
   mount.addEventListener('click', (e)=>{
     const btn = e.target.closest('.gal-btn');
     const dot = e.target.closest('.gal-dot');
@@ -287,7 +284,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
       idx = Number(dot.dataset.dot);
     }
 
-    // swap to already-preloaded URL
     img.src = urls[idx];
     card.setAttribute('data-idx', String(idx));
     dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
