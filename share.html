@@ -141,13 +141,17 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build plain public URL from storage path like "id/photo.jpg"
+  // Build optimized public URL from storage path like "id/photo.jpg"
   function publicImageUrl(path){
     if(!path) return null;
     const normalized = path.replace(/^images\//i, '').trim();
     try{
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
-      return (data && data.publicUrl) ? data.publicUrl : null;
+      const base = data?.publicUrl || null;
+      if(!base) return null;
+      // ask Supabase CDN to resize/compress for speed
+      const params = new URLSearchParams({ width: '1400', quality: '80', format: 'webp' });
+      return `${base}?${params.toString()}`;
     }catch{
       return null;
     }
