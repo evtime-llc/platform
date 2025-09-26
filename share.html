@@ -95,7 +95,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 /* Footer */
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted var(--copper)}
 .footer a:hover{border-bottom-style:solid}
 .right{float:right}
 .clearfix::after{content:"";display:block;clear:both}
@@ -141,32 +141,41 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build public URL from storage path like "id/photo.jpg"
+  // Build a fast, transformed public URL (no need to edit originals)
   function publicImageUrl(path){
     if(!path) return null;
     const normalized = path.replace(/^images\//i, '').trim();
     try{
-      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
+      const { data } = supabase.storage.from('images').getPublicUrl(
+        normalized,
+        { transform: { width: 1600, quality: 80, format: 'webp' } }
+      );
       return data?.publicUrl || null;
-    }catch{ return null; }
+    }catch{
+      return null;
+    }
+  }
+
+  // Simple preloader for a list of URLs (so next/prev is instant)
+  function preload(urls){
+    urls.forEach(u => { const im = new Image(); im.decoding = 'async'; im.loading = 'eager'; im.src = u; });
   }
 
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Card HTML with simple gallery
+  // Card HTML with gallery
   function cardHTML(item, index){
     const {
       year, make, model, trim, mileage, special_features,
       title_status, condition, description, city, vin, price, images
     } = item;
 
-    const paths = (images || "")
-      .split(",")
-      .map(s => s.trim())
-      .filter(Boolean);
-
+    const paths = (images || "").split(",").map(s => s.trim()).filter(Boolean);
     const urls = paths.map(publicImageUrl).filter(Boolean);
     const firstUrl = urls[0] || "og-card.png";
+
+    // preload this card's images immediately
+    preload(urls);
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
     const leftMeta = [
@@ -177,13 +186,12 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
     const cityText = city ? esc(city) : "";
 
-    // dots
     const dots = urls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
 
     return `
       <div class="inv-card" data-card="${index}" data-count="${urls.length}" data-images='${JSON.stringify(urls)}'>
         <div class="inv-photo">
-          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="lazy">
+          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="eager" decoding="async">
           ${urls.length>1 ? `
             <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
             <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
@@ -279,6 +287,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
       idx = Number(dot.dataset.dot);
     }
 
+    // swap to already-preloaded URL
     img.src = urls[idx];
     card.setAttribute('data-idx', String(idx));
     dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
