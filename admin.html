@@ -5,45 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EVTime • Admin</title>
 
-  <!-- Brand basics -->
   <style>
-    :root {
-      --copper: #C88243;
-      --text: #191919;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --bg: #0d0d0d;    /* page bg (dark) */
-      --card: #ffffff;  /* card bg (light) */
-    }
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      background: var(--bg);
-      color: var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #0d0d0d;
+      color: #191919;
     }
     .wrap { max-width: 960px; margin: 0 auto; padding: 16px; }
     .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
     .pill { padding: 8px 12px; border-radius: 999px; cursor: pointer; }
-    .btn-primary { background: var(--copper); color: #fff; border: 0; }
-    .btn-ghost   { background: #fff; border: 1px solid var(--border); }
-    .muted { color: var(--muted); }
-
-    /* Card placeholder for later admin UI */
+    .btn-primary { background: #C88243; color: #fff; border: 0; }
+    .btn-ghost   { background: #fff; border: 1px solid #e5e7eb; }
+    .muted { color: #6b7280; }
+    input[type="email"] {
+      padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 10px;
+    }
     .card {
-      background: var(--card);
+      background: #fff;
       border-radius: 14px;
       box-shadow: 0 1px 2px rgba(0,0,0,.05);
       padding: 18px 18px 24px;
       margin: 18px 0 40px;
     }
-    hr.sep { border: 0; border-top: 1px solid var(--border); margin: 10px 0 16px; }
-    input[type="email"] {
-      padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px;
-    }
   </style>
 
-  <!-- Supabase client (UMD) -->
+  <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
 <body>
@@ -52,12 +39,12 @@
     <header id="authHeader" class="bar" style="margin:16px 0 8px;">
       <div class="bar" style="gap:10px;">
         <strong>EVTime • Admin</strong>
-        <span id="authStatus" class="muted">Checking session…</span>
+        <span id="authStatus" class="muted">Loading…</span>
       </div>
 
       <!-- Signed-out view -->
       <form id="signinForm" class="bar" style="display:none;">
-        <input id="emailInput" type="email" placeholder="you@email.com" required value="vahehr@gmail.com" />
+        <input id="emailInput" type="email" required value="vahehr@gmail.com" />
         <button type="submit" class="pill btn-primary">Send login link</button>
       </form>
 
@@ -66,40 +53,32 @@
         <button id="signOutBtn" class="pill btn-ghost">Sign out</button>
       </div>
     </header>
-    <hr class="sep">
+    <hr>
 
-    <!-- PLACEHOLDER ADMIN CONTENT (we'll build this next) -->
     <section class="card">
-      <h2 style="margin:0 0 8px;">Add Vehicle</h2>
-      <p class="muted" style="margin:0;">
-        Fast add: drop photos, fill a few fields, save. Photos auto-resized for web.
-        <br>[Form UI placeholder — we’ll activate this after header works]
-      </p>
+      <h2>Add Vehicle (coming soon)</h2>
+      <p class="muted">Form placeholder. First we’re just testing login/logout.</p>
     </section>
   </div>
 
-  <!-- Auth logic -->
   <script>
-    // --- 1) Init Supabase client (read-only anon key) ---
+    // Init Supabase client
     const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    // --- 2) Elements ---
     const authStatus = document.getElementById('authStatus');
     const signinForm = document.getElementById('signinForm');
     const emailInput = document.getElementById('emailInput');
     const signedInControls = document.getElementById('signedInControls');
     const signOutBtn = document.getElementById('signOutBtn');
 
-    // --- 3) Render according to session ---
     async function renderAuthState() {
       const { data: { session } } = await client.auth.getSession();
       if (session?.user?.email) {
-        const email = session.user.email;
-        authStatus.textContent = `Signed in as ${email}`;
+        authStatus.textContent = `Signed in as ${session.user.email}`;
         signinForm.style.display = 'none';
         signedInControls.style.display = 'flex';
       } else {
@@ -109,31 +88,24 @@
       }
     }
 
-    // --- 4) Send magic link ---
     signinForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = emailInput.value.trim();
-      if (!email) return;
       const { error } = await client.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: 'https://itsevtime.com/admin.html' }
       });
-      if (error) {
-        alert('Login error: ' + error.message);
-      } else {
-        alert('Magic link sent. Check your email.');
-      }
+      if (error) alert('Login error: ' + error.message);
+      else alert('Magic link sent. Check your email.');
     });
 
-    // --- 5) Sign out ---
-    signOutBtn?.addEventListener('click', async () => {
+    signOutBtn.addEventListener('click', async () => {
       await client.auth.signOut();
-      await renderAuthState();
+      renderAuthState();
     });
 
-    // --- 6) React to auth changes & initial paint ---
     client.auth.onAuthStateChange((_event, _session) => renderAuthState());
-    renderAuthState();
+    renderAuthState(); // run immediately
   </script>
 </body>
 </html>
