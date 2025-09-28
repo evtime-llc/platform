@@ -6,9 +6,7 @@
   <title>EVTime • Admin</title>
 
   <style>
-    :root {
-      --copper:#C88243; --text:#191919; --muted:#6b7280; --border:#e5e7eb; --bg:#0d0d0d; --card:#ffffff;
-    }
+    :root { --copper:#C88243; --text:#191919; --muted:#6b7280; --border:#e5e7eb; --bg:#0d0d0d; --card:#ffffff; }
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
     .wrap{max-width:960px;margin:0 auto;padding:16px;}
     .bar{display:flex;align-items:center;gap:12px;justify-content:space-between}
@@ -23,7 +21,6 @@
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
     .hint{font-size:12px;color:var(--muted)}
-    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#f6f6f6;border:1px solid var(--border);font-size:12px;margin-right:6px}
     .progress{height:8px;background:#f3f4f6;border-radius:999px;overflow:hidden}
     .progress > span{display:block;height:100%;background:var(--copper);width:0%}
     .error{color:#b00020}
@@ -60,7 +57,7 @@
     <h2 style="margin:0 0 8px;">Add Vehicle</h2>
     <p class="muted" style="margin:0 0 12px;">Fill the fields, add 5–10 photos, then click <b>Save listing</b>. Photos will be uploaded to <code>images/&lt;id&gt;/…</code> and the row will be inserted into <code>listing</code>.</p>
 
-    <form id="listingForm">
+    <form id="listingForm" style="display:none;">
       <div class="row-3">
         <div>
           <label for="status">Status</label>
@@ -135,7 +132,7 @@
       </div>
 
       <label for="special_features">Special features (short highlights)</label>
-      <input id="special_features" placeholder="Full Self-Driving, One Owner" />
+      <input id="special_features" placeholder="One owner, FSD" />
 
       <label for="description">Description</label>
       <textarea id="description" rows="4" placeholder="Notes / options / history"></textarea>
@@ -161,12 +158,41 @@
   const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
   const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth:{ persistSession:true, autoRefreshToken:true } });
 
-  // --- Auth header elements ---
+  // --- Elements ---
   const authStatus = document.getElementById('authStatus');
   const signinForm = document.getElementById('signinForm');
   const emailInput = document.getElementById('emailInput');
   const signedInControls = document.getElementById('signedInControls');
   const signOutBtn = document.getElementById('signOutBtn');
+  const form = document.getElementById('listingForm');
+  const progBar = document.getElementById('progBar');
+  const progText = document.getElementById('progText');
+  const resultMsg = document.getElementById('resultMsg');
+
+  // --- Utility ---
+  function csv(list){ return list.join(','); }
+  function fmt(n){ return String(n||'').trim(); }
+
+  // --- Robust: handle magic-link tokens in URL fragment explicitly ---
+  async function handleMagicLinkRedirect() {
+    // Supabase normally handles this; we add a hard fallback
+    if (location.hash && location.hash.includes('access_token')) {
+      const params = new URLSearchParams(location.hash.slice(1));
+      const access_token = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+
+      if (access_token && refresh_token) {
+        try {
+          // Force-create the session
+          const { data, error } = await supa.auth.setSession({ access_token, refresh_token });
+          // Clean the URL so tokens aren't left visible
+          history.replaceState({}, document.title, location.pathname);
+        } catch(e) {
+          // no-op; header rendering will still show signed-out state
+        }
+      }
+    }
+  }
 
   async function renderAuthState() {
     const { data:{ session } } = await supa.auth.getSession();
@@ -174,15 +200,16 @@
       authStatus.textContent = `Signed in as ${session.user.email}`;
       signinForm.style.display = 'none';
       signedInControls.style.display = 'flex';
-      document.getElementById('listingForm').style.display = 'block';
+      form.style.display = 'block';
     } else {
       authStatus.textContent = 'Not signed in';
       signinForm.style.display = 'flex';
       signedInControls.style.display = 'none';
-      document.getElementById('listingForm').style.display = 'none';
+      form.style.display = 'none';
     }
   }
 
+  // --- Events ---
   signinForm.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const email = emailInput.value.trim();
@@ -199,22 +226,20 @@
     renderAuthState();
   });
 
-supa.auth.onAuthStateChange(()=>renderAuthState());
-supa.auth.getSession().then(()=>renderAuthState());
-// Fallback: render after page load + after 1s in case anything stalled
-window.addEventListener('load', renderAuthState);
-setTimeout(renderAuthState, 1000);
+  supa.auth.onAuthStateChange(()=>renderAuthState());
 
+  // --- Startup sequence (order matters) ---
+  (async () => {
+    await handleMagicLinkRedirect();        // capture tokens if present
+    const { data:{ session } } = await supa.auth.getSession(); // warm the session
+    await renderAuthState();                // paint header accordingly
+    // Fallback paints to avoid any “Loading…” hang
+    window.addEventListener('load', renderAuthState);
+    setTimeout(renderAuthState, 500);
+    setTimeout(renderAuthState, 1500);
+  })();
 
   // --- Add Vehicle form logic ---
-  const form = document.getElementById('listingForm');
-  const progBar = document.getElementById('progBar');
-  const progText = document.getElementById('progText');
-  const resultMsg = document.getElementById('resultMsg');
-
-  function csv(list){ return list.join(','); }
-  function fmt(n){ return String(n||'').trim(); }
-
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     resultMsg.textContent = '';
@@ -246,7 +271,7 @@ setTimeout(renderAuthState, 1000);
       city: fmt(document.getElementById('city').value),
       vin: fmt(document.getElementById('vin').value),
       price: Number(document.getElementById('price').value || 0),
-      images: ''  // will set after uploads
+      images: ''  // set after uploads
     };
 
     // 1) Upload photos to images/<id>/<filename>
