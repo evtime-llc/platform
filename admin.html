@@ -104,8 +104,10 @@
       renderAuthState();
     });
 
-    client.auth.onAuthStateChange((_event, _session) => renderAuthState());
-    renderAuthState(); // run immediately
+// Handle redirect from magic link (token in URL)
+client.auth.onAuthStateChange((_event, _session) => renderAuthState());
+client.auth.getSession().then(() => renderAuthState());
+
   </script>
 </body>
 </html>
