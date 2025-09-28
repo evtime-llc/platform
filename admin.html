@@ -6,108 +6,273 @@
   <title>EVTime • Admin</title>
 
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: #0d0d0d;
-      color: #191919;
+    :root {
+      --copper:#C88243; --text:#191919; --muted:#6b7280; --border:#e5e7eb; --bg:#0d0d0d; --card:#ffffff;
     }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 16px; }
-    .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .pill { padding: 8px 12px; border-radius: 999px; cursor: pointer; }
-    .btn-primary { background: #C88243; color: #fff; border: 0; }
-    .btn-ghost   { background: #fff; border: 1px solid #e5e7eb; }
-    .muted { color: #6b7280; }
-    input[type="email"] {
-      padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 10px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.05);
-      padding: 18px 18px 24px;
-      margin: 18px 0 40px;
-    }
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+    .wrap{max-width:960px;margin:0 auto;padding:16px;}
+    .bar{display:flex;align-items:center;gap:12px;justify-content:space-between}
+    .pill{padding:8px 12px;border-radius:999px;cursor:pointer}
+    .btn-primary{background:var(--copper);color:#fff;border:0}
+    .btn-ghost{background:#fff;border:1px solid var(--border)}
+    .muted{color:var(--muted)}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:18px 18px 24px;margin:18px 0 40px}
+    hr{border:0;border-top:1px solid var(--border);margin:10px 0 16px}
+    label{display:block;font-weight:600;margin:14px 0 6px}
+    input,select,textarea{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .hint{font-size:12px;color:var(--muted)}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#f6f6f6;border:1px solid var(--border);font-size:12px;margin-right:6px}
+    .progress{height:8px;background:#f3f4f6;border-radius:999px;overflow:hidden}
+    .progress > span{display:block;height:100%;background:var(--copper);width:0%}
+    .error{color:#b00020}
+    .success{color:#0b7a0b}
   </style>
 
   <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <!-- AUTH HEADER -->
-    <header id="authHeader" class="bar" style="margin:16px 0 8px;">
-      <div class="bar" style="gap:10px;">
-        <strong>EVTime • Admin</strong>
-        <span id="authStatus" class="muted">Loading…</span>
+<div class="wrap">
+  <!-- AUTH HEADER -->
+  <header class="bar" style="margin:16px 0 8px;">
+    <div class="bar" style="gap:10px;">
+      <strong>EVTime • Admin</strong>
+      <span id="authStatus" class="muted">Loading…</span>
+    </div>
+
+    <!-- Signed-out view -->
+    <form id="signinForm" class="bar" style="display:none;">
+      <input id="emailInput" type="email" required value="vahehr@gmail.com" />
+      <button type="submit" class="pill btn-primary">Send login link</button>
+    </form>
+
+    <!-- Signed-in view -->
+    <div id="signedInControls" class="bar" style="display:none;">
+      <button id="signOutBtn" class="pill btn-ghost">Sign out</button>
+    </div>
+  </header>
+  <hr>
+
+  <!-- ADD VEHICLE -->
+  <section class="card" id="addCard">
+    <h2 style="margin:0 0 8px;">Add Vehicle</h2>
+    <p class="muted" style="margin:0 0 12px;">Fill the fields, add 5–10 photos, then click <b>Save listing</b>. Photos will be uploaded to <code>images/&lt;id&gt;/…</code> and the row will be inserted into <code>listing</code>.</p>
+
+    <form id="listingForm">
+      <div class="row-3">
+        <div>
+          <label for="status">Status</label>
+          <select id="status" required>
+            <option value="draft">draft</option>
+            <option value="published">published</option>
+            <option value="hidden">hidden</option>
+            <option value="sold">sold</option>
+          </select>
+          <div class="hint">Draft won’t show on buyers page.</div>
+        </div>
+        <div>
+          <label for="powertrain">Powertrain</label>
+          <select id="powertrain" required>
+            <option value="EV">EV</option>
+            <option value="HYBRID">HYBRID</option>
+            <option value="GAS">GAS</option>
+          </select>
+        </div>
+        <div>
+          <label for="year">Year</label>
+          <input id="year" type="number" min="1990" max="2035" required />
+        </div>
       </div>
 
-      <!-- Signed-out view -->
-      <form id="signinForm" class="bar" style="display:none;">
-        <input id="emailInput" type="email" required value="vahehr@gmail.com" />
-        <button type="submit" class="pill btn-primary">Send login link</button>
-      </form>
-
-      <!-- Signed-in view -->
-      <div id="signedInControls" class="bar" style="display:none;">
-        <button id="signOutBtn" class="pill btn-ghost">Sign out</button>
+      <div class="row">
+        <div>
+          <label for="make">Make</label>
+          <input id="make" placeholder="Tesla" required />
+        </div>
+        <div>
+          <label for="model">Model</label>
+          <input id="model" placeholder="Model 3" required />
+        </div>
       </div>
-    </header>
-    <hr>
 
-    <section class="card">
-      <h2>Add Vehicle (coming soon)</h2>
-      <p class="muted">Form placeholder. First we’re just testing login/logout.</p>
-    </section>
-  </div>
+      <div class="row">
+        <div>
+          <label for="trim">Trim</label>
+          <input id="trim" placeholder="Long Range" />
+        </div>
+        <div>
+          <label for="vin">VIN</label>
+          <input id="vin" placeholder="5YJ..." />
+        </div>
+      </div>
 
-  <script>
-    // Init Supabase client
-    const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
-    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-      auth: { persistSession: true, autoRefreshToken: true }
+      <div class="row-3">
+        <div>
+          <label for="mileage">Mileage (mi)</label>
+          <input id="mileage" type="number" min="0" step="1" required />
+        </div>
+        <div>
+          <label for="price">Price (USD)</label>
+          <input id="price" type="number" min="0" step="1" required />
+        </div>
+        <div>
+          <label for="city">City</label>
+          <input id="city" placeholder="Los Angeles, CA" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="title_status">Title Status</label>
+          <input id="title_status" placeholder="Clean" />
+        </div>
+        <div>
+          <label for="condition">Condition</label>
+          <input id="condition" placeholder="Excellent" />
+        </div>
+      </div>
+
+      <label for="special_features">Special features (short highlights)</label>
+      <input id="special_features" placeholder="Full Self-Driving, One Owner" />
+
+      <label for="description">Description</label>
+      <textarea id="description" rows="4" placeholder="Notes / options / history"></textarea>
+
+      <label for="photos">Photos (5–10 images, first = cover)</label>
+      <input id="photos" type="file" accept="image/*" multiple required />
+      <div class="hint">We’ll upload to <code>images/&lt;id&gt;/filename.jpg</code> and save that list into the row’s <code>images</code> column.</div>
+
+      <div style="margin:12px 0;">
+        <div class="progress" aria-label="upload progress"><span id="progBar"></span></div>
+        <div class="hint" id="progText" style="margin-top:6px;"></div>
+      </div>
+
+      <button class="pill btn-primary" type="submit">Save listing</button>
+      <span id="resultMsg" style="margin-left:10px;"></span>
+    </form>
+  </section>
+</div>
+
+<script>
+  // --- Supabase init ---
+  const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
+  const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
+  const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth:{ persistSession:true, autoRefreshToken:true } });
+
+  // --- Auth header elements ---
+  const authStatus = document.getElementById('authStatus');
+  const signinForm = document.getElementById('signinForm');
+  const emailInput = document.getElementById('emailInput');
+  const signedInControls = document.getElementById('signedInControls');
+  const signOutBtn = document.getElementById('signOutBtn');
+
+  async function renderAuthState() {
+    const { data:{ session } } = await supa.auth.getSession();
+    if (session?.user?.email) {
+      authStatus.textContent = `Signed in as ${session.user.email}`;
+      signinForm.style.display = 'none';
+      signedInControls.style.display = 'flex';
+      document.getElementById('listingForm').style.display = 'block';
+    } else {
+      authStatus.textContent = 'Not signed in';
+      signinForm.style.display = 'flex';
+      signedInControls.style.display = 'none';
+      document.getElementById('listingForm').style.display = 'none';
+    }
+  }
+
+  signinForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const email = emailInput.value.trim();
+    const { error } = await supa.auth.signInWithOtp({
+      email,
+      options:{ emailRedirectTo: 'https://itsevtime.com/admin.html' }
     });
+    if (error) alert('Login error: '+error.message);
+    else alert('Magic link sent. Check your email.');
+  });
 
-    const authStatus = document.getElementById('authStatus');
-    const signinForm = document.getElementById('signinForm');
-    const emailInput = document.getElementById('emailInput');
-    const signedInControls = document.getElementById('signedInControls');
-    const signOutBtn = document.getElementById('signOutBtn');
+  signOutBtn.addEventListener('click', async ()=>{
+    await supa.auth.signOut();
+    renderAuthState();
+  });
 
-    async function renderAuthState() {
-      const { data: { session } } = await client.auth.getSession();
-      if (session?.user?.email) {
-        authStatus.textContent = `Signed in as ${session.user.email}`;
-        signinForm.style.display = 'none';
-        signedInControls.style.display = 'flex';
-      } else {
-        authStatus.textContent = 'Not signed in';
-        signinForm.style.display = 'flex';
-        signedInControls.style.display = 'none';
-      }
+  supa.auth.onAuthStateChange(()=>renderAuthState());
+  supa.auth.getSession().then(()=>renderAuthState());
+
+  // --- Add Vehicle form logic ---
+  const form = document.getElementById('listingForm');
+  const progBar = document.getElementById('progBar');
+  const progText = document.getElementById('progText');
+  const resultMsg = document.getElementById('resultMsg');
+
+  function csv(list){ return list.join(','); }
+  function fmt(n){ return String(n||'').trim(); }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    resultMsg.textContent = '';
+    resultMsg.className = '';
+    progBar.style.width = '0%'; progText.textContent = '';
+
+    // Ensure authenticated
+    const { data:{ session } } = await supa.auth.getSession();
+    if (!session?.user?.email) { alert('Please sign in first.'); return; }
+
+    // Build the new row payload
+    const id = crypto.randomUUID();
+    const files = Array.from(document.getElementById('photos').files || []);
+    if (files.length < 5) { alert('Please select at least 5 photos.'); return; }
+
+    const payload = {
+      id,
+      status: (document.getElementById('status').value),
+      powertrain: (document.getElementById('powertrain').value),
+      year: Number(document.getElementById('year').value),
+      make: fmt(document.getElementById('make').value),
+      model: fmt(document.getElementById('model').value),
+      trim: fmt(document.getElementById('trim').value),
+      mileage: Number(document.getElementById('mileage').value || 0),
+      special_features: fmt(document.getElementById('special_features').value),
+      title_status: fmt(document.getElementById('title_status').value),
+      condition: fmt(document.getElementById('condition').value),
+      description: fmt(document.getElementById('description').value),
+      city: fmt(document.getElementById('city').value),
+      vin: fmt(document.getElementById('vin').value),
+      price: Number(document.getElementById('price').value || 0),
+      images: ''  // will set after uploads
+    };
+
+    // 1) Upload photos to images/<id>/<filename>
+    const uploadedPaths = [];
+    for (let i=0;i<files.length;i++){
+      const f = files[i];
+      const path = `${id}/${f.name}`;
+      const { error } = await supa.storage.from('images').upload(path, f, {
+        cacheControl: '3600', upsert: true
+      });
+      if (error) { resultMsg.textContent = 'Upload error: '+error.message; resultMsg.className='error'; return; }
+      uploadedPaths.push(path);
+      const pct = Math.round(((i+1)/files.length)*100);
+      progBar.style.width = pct+'%';
+      progText.textContent = `Uploaded ${i+1}/${files.length}`;
     }
 
-    signinForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = emailInput.value.trim();
-      const { error } = await client.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: 'https://itsevtime.com/admin.html' }
-      });
-      if (error) alert('Login error: ' + error.message);
-      else alert('Magic link sent. Check your email.');
-    });
+    // 2) Save images CSV (order = selection order; first = cover)
+    payload.images = csv(uploadedPaths);
 
-    signOutBtn.addEventListener('click', async () => {
-      await client.auth.signOut();
-      renderAuthState();
-    });
+    // 3) Insert row into listing
+    const { error: insertErr } = await supa.from('listing').insert(payload);
+    if (insertErr){ resultMsg.textContent = 'Insert error: '+insertErr.message; resultMsg.className='error'; return; }
 
-// Handle redirect from magic link (token in URL)
-client.auth.onAuthStateChange((_event, _session) => renderAuthState());
-client.auth.getSession().then(() => renderAuthState());
-
-  </script>
+    // 4) Done
+    resultMsg.textContent = `Saved! Listing ID: ${id}`;
+    resultMsg.className = 'success';
+    form.reset();
+    progBar.style.width='0%'; progText.textContent='';
+  });
+</script>
 </body>
 </html>
