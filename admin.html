@@ -199,8 +199,12 @@
     renderAuthState();
   });
 
-  supa.auth.onAuthStateChange(()=>renderAuthState());
-  supa.auth.getSession().then(()=>renderAuthState());
+supa.auth.onAuthStateChange(()=>renderAuthState());
+supa.auth.getSession().then(()=>renderAuthState());
+// Fallback: render after page load + after 1s in case anything stalled
+window.addEventListener('load', renderAuthState);
+setTimeout(renderAuthState, 1000);
+
 
   // --- Add Vehicle form logic ---
   const form = document.getElementById('listingForm');
