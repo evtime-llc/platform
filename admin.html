@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EVTime • Admin (Auth Only)</title>
+  <title>EVTime • Admin (Auth Debug)</title>
   <style>
     :root { --copper:#C88243; --text:#191919; --muted:#6b7280; --border:#e5e7eb; --bg:#0d0d0d; --card:#ffffff; }
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
@@ -16,6 +16,7 @@
     .card{background:var(--card);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);padding:18px;margin:18px 0 24px}
     hr{border:0;border-top:1px solid var(--border);margin:10px 0 16px}
     input[type="email"]{padding:10px 12px;border:1px solid var(--border);border-radius:10px;min-width:260px}
+    pre{white-space:pre-wrap;background:#fafafa;border:1px solid var(--border);padding:10px;border-radius:10px;max-height:260px;overflow:auto}
   </style>
   <script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -35,68 +36,96 @@
       </div>
     </header>
     <hr>
+
     <div class="card">
-      <p class="muted" id="note">Auth-only debug page. Once this shows “Signed in as …” we’ll restore the full Admin form.</p>
+      <p class="muted">Auth-only debug page. When the header reads “Signed in as …”, we’ll restore the full Admin form.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;">Diagnostics</h3>
+      <pre id="diag">Starting…</pre>
     </div>
   </div>
 
   <script>
-    // --- Supabase init ---
+    const diagEl = document.getElementById('diag');
+    function log(...a){ diagEl.textContent += '\\n' + a.join(' '); }
+    diagEl.textContent = 'Booting…';
+
+    // 1) Check library
+    log('supabase lib type:', typeof window.supabase);
+
+    // 2) Init client
     const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
-    const supa = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth:{ persistSession:true, autoRefreshToken:true } });
+    let supa = null;
+    try {
+      supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth:{ persistSession:true, autoRefreshToken:true } });
+      log('client created:', !!supa);
+    } catch(e){
+      log('client create ERROR:', e && e.message);
+    }
 
-    // --- Elements ---
+    // Elements
     const authStatus = document.getElementById('authStatus');
     const signinForm = document.getElementById('signinForm');
     const emailInput = document.getElementById('emailInput');
     const signedInControls = document.getElementById('signedInControls');
     const signOutBtn = document.getElementById('signOutBtn');
 
-    // --- Helpers ---
-    function cleanUrl(){ history.replaceState({}, document.title, location.pathname); }
     function showSignedOut(){
       authStatus.textContent = 'Not signed in';
       signinForm.style.display = 'flex';
       signedInControls.style.display = 'none';
+      log('UI -> Not signed in');
     }
     function showSignedIn(email){
       authStatus.textContent = 'Signed in as ' + email;
       signinForm.style.display = 'none';
       signedInControls.style.display = 'flex';
+      log('UI -> Signed in as', email);
     }
 
-    // Handle tokens from URL (hash or query)
-    async function processAuthFromUrl() {
-      // Try official helper first (covers most cases)
+    async function renderAuthState(){
+      try{
+        const { data:{ session }, error } = await supa.auth.getSession();
+        if (error) log('getSession error:', error.message);
+        log('session present:', !!session);
+        if (session?.user?.email){ showSignedIn(session.user.email); }
+        else { showSignedOut(); }
+      }catch(e){
+        log('renderAuthState ERROR:', e && e.message);
+        showSignedOut();
+      }
+    }
+
+    async function processAuthFromUrl(){
+      // Try official helper
       try {
         if (location.hash || location.search) {
+          log('processing URL for tokens…');
           await supa.auth.exchangeCodeForSession(location.hash || location.search);
-          cleanUrl();
+          history.replaceState({}, document.title, location.pathname);
+          log('exchangeCodeForSession -> done');
           return;
         }
-      } catch(_) { /* ignore, fallback below */ }
-
-      // Fallback: setSession if tokens are present
+      } catch(e) {
+        log('exchangeCodeForSession ERROR:', e && e.message);
+      }
+      // Fallback: manual
       const q = new URLSearchParams(location.search || "");
       const h = new URLSearchParams((location.hash || "").replace(/^#/, ""));
       const access_token = h.get('access_token') || q.get('access_token');
       const refresh_token = h.get('refresh_token') || q.get('refresh_token');
+      log('tokens present:', !!access_token, !!refresh_token);
       if (access_token && refresh_token) {
-        try { await supa.auth.setSession({ access_token, refresh_token }); } catch(_){}
-        cleanUrl();
-      }
-    }
-
-    // Render header based on session
-    async function renderAuthState() {
-      try {
-        const { data:{ session } } = await supa.auth.getSession();
-        if (session?.user?.email) showSignedIn(session.user.email);
-        else showSignedOut();
-      } catch(_) {
-        // If anything fails, don’t hang UI:
-        showSignedOut();
+        try {
+          await supa.auth.setSession({ access_token, refresh_token });
+          history.replaceState({}, document.title, location.pathname);
+          log('setSession -> done');
+        } catch(e) {
+          log('setSession ERROR:', e && e.message);
+        }
       }
     }
 
@@ -108,27 +137,25 @@
         email,
         options:{ emailRedirectTo: 'https://itsevtime.com/admin.html' }
       });
-      if (error) alert('Login error: ' + error.message);
-      else alert('Magic link sent. Check your email.');
+      if (error) { alert('Login error: '+error.message); log('signInWithOtp ERROR:', error.message); }
+      else { alert('Magic link sent. Check your email.'); log('signInWithOtp -> sent'); }
     });
 
     signOutBtn.addEventListener('click', async ()=>{
       await supa.auth.signOut();
+      log('signOut -> done');
       renderAuthState();
     });
 
-    supa.auth.onAuthStateChange(()=>renderAuthState());
+    supa.auth.onAuthStateChange((ev)=>{ log('onAuthStateChange:', ev); renderAuthState(); });
 
-    // Startup: never leave “Loading…” hanging
-    (async () => {
-      // 1) Attempt to parse any tokens returned by the magic link
+    // Startup (strict order)
+    (async ()=>{
       await processAuthFromUrl();
-      // 2) Paint header now
       await renderAuthState();
-      // 3) Extra paints so UI never stays stuck
+      // Never leave Loading… on screen
+      setTimeout(()=>{ if(authStatus.textContent.includes('Loading')) renderAuthState(); }, 700);
       window.addEventListener('load', renderAuthState);
-      setTimeout(renderAuthState, 400);
-      setTimeout(renderAuthState, 1200);
     })();
   </script>
 </body>
