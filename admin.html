@@ -174,22 +174,26 @@
   function fmt(n){ return String(n||'').trim(); }
   function cleanUrl(){ history.replaceState({}, document.title, location.pathname); }
 
-  // --- Token capture from both hash and query (robust) ---
-  function getTokenParams() {
+  // --- MOST ROBUST: let Supabase parse & set session from URL, else fallback ---
+  async function processAuthFromUrl() {
+    try {
+      // 1) Try the official helper (covers hash or query on newer SDKs)
+      if (window.location.hash || window.location.search) {
+        await supa.auth.exchangeCodeForSession(window.location.hash || window.location.search);
+        cleanUrl();
+        return;
+      }
+    } catch (_) {
+      // ignore, we’ll try fallback below
+    }
+
+    // 2) Fallback: manually extract tokens and set session
     const searchParams = new URLSearchParams(window.location.search || "");
     const hashParams = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
-    // Prefer hash (Supabase default), fallback to query
     const access_token = hashParams.get('access_token') || searchParams.get('access_token');
     const refresh_token = hashParams.get('refresh_token') || searchParams.get('refresh_token');
-    return { access_token, refresh_token };
-  }
-
-  async function handleMagicLinkRedirect() {
-    const { access_token, refresh_token } = getTokenParams();
     if (access_token && refresh_token) {
-      try {
-        await supa.auth.setSession({ access_token, refresh_token });
-      } catch(_) { /* ignore */ }
+      try { await supa.auth.setSession({ access_token, refresh_token }); } catch(_) {}
       cleanUrl();
     }
   }
@@ -230,10 +234,10 @@
 
   // --- Startup sequence (order matters) ---
   (async () => {
-    await handleMagicLinkRedirect();             // grab tokens in hash OR query
-    await supa.auth.getSession();                // warm the session
-    await renderAuthState();                     // paint header
-    // extra paints in case the browser delayed anything
+    await processAuthFromUrl();      // parse tokens via official helper or fallback
+    await supa.auth.getSession();    // warm session
+    await renderAuthState();         // paint header
+    // extra paints in case browser delayed anything
     window.addEventListener('load', renderAuthState);
     setTimeout(renderAuthState, 400);
     setTimeout(renderAuthState, 1200);
