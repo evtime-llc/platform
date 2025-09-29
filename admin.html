@@ -28,6 +28,14 @@
     .status-dot{display:inline-block;width:8px;height:8px;border-radius:999px;background:#bbb;margin-right:6px;vertical-align:middle}
     .status-on{background:#22c55e}
     .status-off{background:#ef4444}
+    
+    /* Diagnostics panel */
+    .diagnostics { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-top: 20px; font-family: monospace; font-size: 12px; }
+    .diagnostics h4 { margin: 0 0 8px 0; color: #374151; }
+    .diagnostics-line { margin: 2px 0; }
+    .diagnostics-ok { color: #059669; }
+    .diagnostics-error { color: #dc2626; }
+    .diagnostics-warn { color: #d97706; }
   </style>
 
   <!-- Supabase client -->
@@ -42,9 +50,8 @@
       <span id="authStatus" class="muted">Loading…</span>
     </div>
 
-    <!-- Signed-out view -->
-<form id="listingForm" style="display:block;">
-
+    <!-- SIGN-IN FORM (different ID from main form) -->
+    <form id="signinForm" style="display:none;">
       <input id="emailInput" type="email" required value="vahehr@gmail.com" />
       <button type="submit" class="pill btn-primary">Send login link</button>
     </form>
@@ -57,12 +64,12 @@
   </header>
   <hr>
 
-  <!-- ADD VEHICLE -->
+  <!-- ADD VEHICLE FORM (different ID from signin form) -->
   <section class="card">
     <h2 style="margin:0 0 8px;">Add Vehicle</h2>
     <p class="muted" style="margin:0 0 12px;">Fill the fields, add 5–10 photos, then click <b>Save listing</b>. Photos upload to <code>images/&lt;id&gt;/…</code>. The row is inserted into <code>listing</code>.</p>
 
-    <form id="listingForm" style="display:none;">
+    <form id="vehicleForm" style="display:none;">
       <div class="row-3">
         <div>
           <label for="status">Status</label>
@@ -72,7 +79,7 @@
             <option value="hidden">hidden</option>
             <option value="sold">sold</option>
           </select>
-          <div class="hint">Draft won’t show on buyers page.</div>
+          <div class="hint">Draft won't show on buyers page.</div>
         </div>
         <div>
           <label for="powertrain">Powertrain</label>
@@ -144,7 +151,7 @@
 
       <label for="photos">Photos (5–10 images, first = cover)</label>
       <input id="photos" type="file" accept="image/*" multiple required />
-      <div class="hint">We’ll upload to <code>images/&lt;id&gt;/filename.jpg</code> and save that list into the row’s <code>images</code> column.</div>
+      <div class="hint">We'll upload to <code>images/&lt;id&gt;/filename.jpg</code> and save that list into the row's <code>images</code> column.</div>
 
       <div style="margin:12px 0;">
         <div class="progress" aria-label="upload progress"><span id="progBar"></span></div>
@@ -155,13 +162,39 @@
       <span id="resultMsg" style="margin-left:10px;"></span>
     </form>
   </section>
+
+  <!-- DIAGNOSTICS PANEL -->
+  <div class="diagnostics">
+    <h4>Auth Diagnostics</h4>
+    <div id="diagLog"></div>
+  </div>
 </div>
 
 <script>
+  // --- Diagnostics logging ---
+  function logDiag(message, type = '') {
+    const logEl = document.getElementById('diagLog');
+    const line = document.createElement('div');
+    line.className = `diagnostics-line ${type}`;
+    line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    logEl.appendChild(line);
+    // Keep only last 20 lines
+    while (logEl.children.length > 20) {
+      logEl.removeChild(logEl.firstChild);
+    }
+  }
+
+  logDiag('Page loading...', 'diagnostics-warn');
+
   // --- Supabase init ---
   const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
   const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
-  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth:{ persistSession:true, autoRefreshToken:true } });
+  
+  logDiag('Initializing Supabase client...');
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { 
+    auth: { persistSession:true, autoRefreshToken:true } 
+  });
+  logDiag('Supabase client created', 'diagnostics-ok');
 
   // --- Elements ---
   const authStatus = document.getElementById('authStatus');
@@ -169,7 +202,7 @@
   const emailInput = document.getElementById('emailInput');
   const signedInControls = document.getElementById('signedInControls');
   const signOutBtn = document.getElementById('signOutBtn');
-  const form = document.getElementById('listingForm');
+  const vehicleForm = document.getElementById('vehicleForm'); // CHANGED ID
   const progBar = document.getElementById('progBar');
   const progText = document.getElementById('progText');
   const resultMsg = document.getElementById('resultMsg');
@@ -183,45 +216,78 @@
   // Parse tokens using official helper, then manual fallback
   async function processAuthFromUrl() {
     try {
+      logDiag('Checking URL for auth tokens...');
       if (location.hash || location.search) {
+        logDiag('Found tokens in URL, exchanging for session...');
         await supa.auth.exchangeCodeForSession(location.hash || location.search);
         cleanUrl();
+        logDiag('URL tokens processed successfully', 'diagnostics-ok');
+      } else {
+        logDiag('No auth tokens found in URL');
       }
-    } catch(_) {
+    } catch(error) {
+      logDiag(`exchangeCodeForSession failed: ${error.message}`, 'diagnostics-error');
+      logDiag('Trying manual token parsing...');
+      
+      // Manual fallback
       const q = new URLSearchParams(location.search || "");
       const h = new URLSearchParams((location.hash || "").replace(/^#/, ""));
       const access_token = h.get('access_token') || q.get('access_token');
       const refresh_token = h.get('refresh_token') || q.get('refresh_token');
+      
       if (access_token && refresh_token) {
-        try { await supa.auth.setSession({ access_token, refresh_token }); } catch(_){}
-        cleanUrl();
+        logDiag('Found tokens manually, setting session...');
+        try { 
+          await supa.auth.setSession({ access_token, refresh_token }); 
+          cleanUrl();
+          logDiag('Manual session set successful', 'diagnostics-ok');
+        } catch(manualError) {
+          logDiag(`Manual session failed: ${manualError.message}`, 'diagnostics-error');
+        }
+      } else {
+        logDiag('No tokens found for manual processing');
       }
     }
   }
 
   async function renderAuthState() {
     try {
-      const { data:{ session } } = await supa.auth.getSession();
+      logDiag('Checking auth state...');
+      const { data: { session }, error } = await supa.auth.getSession();
+      
+      if (error) {
+        logDiag(`getSession error: ${error.message}`, 'diagnostics-error');
+        throw error;
+      }
+
       const signedIn = !!session?.user?.email;
+      logDiag(`Session found: ${signedIn}, email: ${session?.user?.email || 'none'}`);
+
       if (signedIn) {
         authStatus.textContent = `Signed in as ${session.user.email}`;
         signinForm.style.display = 'none';
         signedInControls.style.display = 'flex';
-        form.style.display = 'block';
-        sessDot.classList.remove('status-off'); sessDot.classList.add('status-on');
+        vehicleForm.style.display = 'block'; // CHANGED TO vehicleForm
+        sessDot.classList.remove('status-off'); 
+        sessDot.classList.add('status-on');
+        logDiag('UI: Signed in state rendered', 'diagnostics-ok');
       } else {
         authStatus.textContent = 'Not signed in';
         signinForm.style.display = 'flex';
         signedInControls.style.display = 'none';
-        form.style.display = 'none';
-        sessDot.classList.remove('status-on'); sessDot.classList.add('status-off');
+        vehicleForm.style.display = 'none'; // CHANGED TO vehicleForm
+        sessDot.classList.remove('status-on'); 
+        sessDot.classList.add('status-off');
+        logDiag('UI: Signed out state rendered', 'diagnostics-ok');
       }
-    } catch {
+    } catch (error) {
+      logDiag(`Render auth error: ${error.message}`, 'diagnostics-error');
       authStatus.textContent = 'Not signed in';
       signinForm.style.display = 'flex';
       signedInControls.style.display = 'none';
-      form.style.display = 'none';
-      sessDot.classList.remove('status-on'); sessDot.classList.add('status-off');
+      vehicleForm.style.display = 'none'; // CHANGED TO vehicleForm
+      sessDot.classList.remove('status-on'); 
+      sessDot.classList.add('status-off');
     }
   }
 
@@ -229,47 +295,86 @@
   signinForm.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const email = emailInput.value.trim();
+    logDiag(`Sending magic link to: ${email}`);
+    
     const { error } = await supa.auth.signInWithOtp({
       email,
-      options:{ emailRedirectTo: 'https://itsevtime.com/admin.html' }
+      options: { emailRedirectTo: 'https://itsevtime.com/admin.html' }
     });
-    if (error) alert('Login error: '+error.message);
-    else alert('Magic link sent. Check your email.');
+    
+    if (error) {
+      logDiag(`Login error: ${error.message}`, 'diagnostics-error');
+      alert('Login error: '+error.message);
+    } else {
+      logDiag('Magic link sent successfully', 'diagnostics-ok');
+      alert('Magic link sent. Check your email.');
+    }
   });
 
   signOutBtn.addEventListener('click', async ()=>{
+    logDiag('Signing out...');
     await supa.auth.signOut();
+    logDiag('Signed out', 'diagnostics-ok');
     renderAuthState();
   });
 
-  supa.auth.onAuthStateChange(()=>renderAuthState());
+  // Auth state change listener
+  supa.auth.onAuthStateChange((event, session) => {
+    logDiag(`Auth state changed: ${event}, user: ${session?.user?.email || 'none'}`);
+    renderAuthState();
+  });
 
-  // Startup (ordered)
+  // Startup sequence
   (async ()=>{
+    logDiag('Starting auth initialization...');
     await processAuthFromUrl();
-    await supa.auth.getSession();   // warm
     await renderAuthState();
-    // extra paints so UI never sticks
-    window.addEventListener('load', renderAuthState);
-    setTimeout(renderAuthState, 400);
-    setTimeout(renderAuthState, 1200);
+    
+    // Extra renders to ensure UI never sticks
+    window.addEventListener('load', () => {
+      logDiag('Window loaded, re-rendering auth...');
+      renderAuthState();
+    });
+    
+    setTimeout(() => {
+      logDiag('Delayed render (400ms)...');
+      renderAuthState();
+    }, 400);
+    
+    setTimeout(() => {
+      logDiag('Delayed render (1200ms)...');
+      renderAuthState();
+    }, 1200);
+
+    logDiag('Startup sequence complete', 'diagnostics-ok');
   })();
 
   // --- Add Vehicle form logic ---
-  form.addEventListener('submit', async (e)=>{
+  vehicleForm.addEventListener('submit', async (e)=>{ // CHANGED TO vehicleForm
     e.preventDefault();
     resultMsg.textContent = '';
     resultMsg.className = '';
-    progBar.style.width = '0%'; progText.textContent = '';
+    progBar.style.width = '0%'; 
+    progText.textContent = '';
+
+    logDiag('Starting vehicle form submission...');
 
     // Ensure authenticated
-    const { data:{ session } } = await supa.auth.getSession();
-    if (!session?.user?.email) { alert('Please sign in first.'); return; }
+    const { data: { session } } = await supa.auth.getSession();
+    if (!session?.user?.email) { 
+      logDiag('Form submit blocked: no session', 'diagnostics-error');
+      alert('Please sign in first.'); 
+      return; 
+    }
 
     // Build the new row payload
     const id = crypto.randomUUID();
     const files = Array.from(document.getElementById('photos').files || []);
-    if (files.length < 5) { alert('Please select at least 5 photos.'); return; }
+    if (files.length < 5) { 
+      logDiag('Form submit blocked: need 5+ photos', 'diagnostics-error');
+      alert('Please select at least 5 photos.'); 
+      return; 
+    }
 
     const payload = {
       id,
@@ -290,31 +395,70 @@
       images: ''  // set after uploads
     };
 
+    logDiag(`Preparing to upload ${files.length} photos for vehicle ${id}`);
+
     // 1) Upload photos to images/<id>/<filename>
     const uploaded = [];
-    for (let i=0; i<files.length; i++){
-      const f = files[i];
-      const path = `${id}/${f.name}`;
-      const { error } = await supa.storage.from('images').upload(path, f, { cacheControl: '3600', upsert: true });
-      if (error) { resultMsg.textContent = 'Upload error: ' + error.message; resultMsg.className = 'error'; return; }
-      uploaded.push(path);
-      const pct = Math.round(((i+1) / files.length) * 100);
-      progBar.style.width = pct + '%';
-      progText.textContent = `Uploaded ${i+1}/${files.length}`;
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        const path = `${id}/${f.name}`;
+        logDiag(`Uploading ${i+1}/${files.length}: ${f.name}`);
+        
+        const { error } = await supa.storage.from('images').upload(path, f, { 
+          cacheControl: '3600', 
+          upsert: true 
+        });
+        
+        if (error) { 
+          logDiag(`Upload error: ${error.message}`, 'diagnostics-error');
+          resultMsg.textContent = 'Upload error: ' + error.message; 
+          resultMsg.className = 'error'; 
+          return; 
+        }
+        
+        uploaded.push(path);
+        const pct = Math.round(((i+1) / files.length) * 100);
+        progBar.style.width = pct + '%';
+        progText.textContent = `Uploaded ${i+1}/${files.length}`;
+      }
+      logDiag('All photos uploaded successfully', 'diagnostics-ok');
+    } catch (uploadError) {
+      logDiag(`Upload failed: ${uploadError.message}`, 'diagnostics-error');
+      resultMsg.textContent = 'Upload failed: ' + uploadError.message;
+      resultMsg.className = 'error';
+      return;
     }
 
     // 2) Save images CSV (order = selection order; first = cover)
     payload.images = csv(uploaded);
+    logDiag(`Images CSV: ${payload.images}`);
 
     // 3) Insert row into listing
-    const { error: insertErr } = await supa.from('listing').insert(payload);
-    if (insertErr){ resultMsg.textContent = 'Insert error: ' + insertErr.message; resultMsg.className = 'error'; return; }
+    try {
+      logDiag('Inserting row into listing table...');
+      const { error: insertErr } = await supa.from('listing').insert(payload);
+      if (insertErr) { 
+        logDiag(`Insert error: ${insertErr.message}`, 'diagnostics-error');
+        resultMsg.textContent = 'Insert error: ' + insertErr.message; 
+        resultMsg.className = 'error'; 
+        return; 
+      }
+      logDiag('Row inserted successfully', 'diagnostics-ok');
+    } catch (insertError) {
+      logDiag(`Insert failed: ${insertError.message}`, 'diagnostics-error');
+      resultMsg.textContent = 'Insert failed: ' + insertError.message;
+      resultMsg.className = 'error';
+      return;
+    }
 
     // 4) Done
+    logDiag(`Vehicle saved successfully! ID: ${id}`, 'diagnostics-ok');
     resultMsg.textContent = `Saved! Listing ID: ${id}`;
     resultMsg.className = 'success';
-    form.reset();
-    progBar.style.width = '0%'; progText.textContent = '';
+    vehicleForm.reset(); // CHANGED TO vehicleForm
+    progBar.style.width = '0%'; 
+    progText.textContent = '';
   });
 </script>
 </body>
