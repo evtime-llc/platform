@@ -169,28 +169,28 @@
   const progText = document.getElementById('progText');
   const resultMsg = document.getElementById('resultMsg');
 
-  // --- Utility ---
+  // --- Utils ---
   function csv(list){ return list.join(','); }
   function fmt(n){ return String(n||'').trim(); }
+  function cleanUrl(){ history.replaceState({}, document.title, location.pathname); }
 
-  // --- Robust: handle magic-link tokens in URL fragment explicitly ---
+  // --- Token capture from both hash and query (robust) ---
+  function getTokenParams() {
+    const searchParams = new URLSearchParams(window.location.search || "");
+    const hashParams = new URLSearchParams((window.location.hash || "").replace(/^#/, ""));
+    // Prefer hash (Supabase default), fallback to query
+    const access_token = hashParams.get('access_token') || searchParams.get('access_token');
+    const refresh_token = hashParams.get('refresh_token') || searchParams.get('refresh_token');
+    return { access_token, refresh_token };
+  }
+
   async function handleMagicLinkRedirect() {
-    // Supabase normally handles this; we add a hard fallback
-    if (location.hash && location.hash.includes('access_token')) {
-      const params = new URLSearchParams(location.hash.slice(1));
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
-
-      if (access_token && refresh_token) {
-        try {
-          // Force-create the session
-          const { data, error } = await supa.auth.setSession({ access_token, refresh_token });
-          // Clean the URL so tokens aren't left visible
-          history.replaceState({}, document.title, location.pathname);
-        } catch(e) {
-          // no-op; header rendering will still show signed-out state
-        }
-      }
+    const { access_token, refresh_token } = getTokenParams();
+    if (access_token && refresh_token) {
+      try {
+        await supa.auth.setSession({ access_token, refresh_token });
+      } catch(_) { /* ignore */ }
+      cleanUrl();
     }
   }
 
@@ -230,13 +230,13 @@
 
   // --- Startup sequence (order matters) ---
   (async () => {
-    await handleMagicLinkRedirect();        // capture tokens if present
-    const { data:{ session } } = await supa.auth.getSession(); // warm the session
-    await renderAuthState();                // paint header accordingly
-    // Fallback paints to avoid any “Loading…” hang
+    await handleMagicLinkRedirect();             // grab tokens in hash OR query
+    await supa.auth.getSession();                // warm the session
+    await renderAuthState();                     // paint header
+    // extra paints in case the browser delayed anything
     window.addEventListener('load', renderAuthState);
-    setTimeout(renderAuthState, 500);
-    setTimeout(renderAuthState, 1500);
+    setTimeout(renderAuthState, 400);
+    setTimeout(renderAuthState, 1200);
   })();
 
   // --- Add Vehicle form logic ---
