@@ -123,13 +123,13 @@
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Load your Supabase config (you already created /config.js) -->
+  <!-- Load your Supabase config (already at /config.js) -->
   <script src="/config.js"></script>
   <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = window.SUPABASE_URL || "https://YOUR-PROJECT.supabase.co";
-    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "ANON-KEY";
+    const SUPABASE_URL = window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co";
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const $ = id => document.getElementById(id);
@@ -151,10 +151,14 @@
       }
     }
 
+    // ✅ Force magic-link to return to /admin.html
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
       $("authMsg").textContent = "Sending magic link…";
-      const { error } = await supabase.auth.signInWithOtp({ email });
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
+      });
       $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
     };
 
@@ -233,8 +237,9 @@
       diag("Testing anon read from 'listing'…");
       const { data, error } = await supabase.from("listing").select("*").limit(1);
       if (error) diag(`<span class="err">Read error: ${error.message}</span>`); else diag("Read OK.");
-      const { data: buckets } = await supabase.storage.listBuckets();
-      diag("Storage buckets: " + (buckets?.map(b => b.name).join(", ") || "none"));
+      const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
+      if (bErr) diag(`<span class="err">Storage error: ${bErr.message}</span>`);
+      else diag("Storage buckets: " + (buckets?.map(b => b.name).join(", ") || "none"));
     })();
   </script>
 </body>
