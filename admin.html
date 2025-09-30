@@ -372,7 +372,7 @@
     }
 
     // Build the new row payload
-    const id = crypto.randomUUID();
+const id = supa.storage.from('images').getId(); // This ensures proper UUID format
     const files = Array.from(document.getElementById('photos').files || []);
     
     // UPDATED: Only require 1 photo minimum
