@@ -9,7 +9,6 @@
     fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
     label { display:block; margin: 8px 0 4px; font-weight: 600; }
     input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .muted { color:#666; font-size: 12px; }
     .ok { color: #0a7; }
@@ -123,7 +122,7 @@
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Load your Supabase config (already at /config.js) -->
+  <!-- Load your Supabase config -->
   <script src="/config.js"></script>
   <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -137,7 +136,8 @@
 
     // --- Auth UI ---
     async function setSessionUI() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) diag(`<span class="err">getSession error: ${error.message}</span>`);
       if (session) {
         $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${session.user.email}</span>`;
         $("signinBox").style.display = "none";
@@ -151,7 +151,7 @@
       }
     }
 
-    // ✅ Force magic-link to return to /admin.html
+    // Force magic-link to return to /admin.html
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
       $("authMsg").textContent = "Sending magic link…";
@@ -168,7 +168,18 @@
     };
 
     supabase.auth.onAuthStateChange(() => setSessionUI());
-    setSessionUI();
+
+    // ✅ PKCE handler: exchange ?code= for a session on first load after magic-link
+    (async () => {
+      const qs = window.location.search;
+      if (qs && qs.includes("code=")) {
+        const { error } = await supabase.auth.exchangeCodeForSession(qs);
+        if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
+        // clean the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      await setSessionUI();
+    })();
 
     // --- Upload helper ---
     async function uploadPhotos(listingId, files) {
