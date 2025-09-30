@@ -186,6 +186,8 @@
     while (logEl.children.length > 20) {
       logEl.removeChild(logEl.firstChild);
     }
+    // Also log to browser console for debugging
+    console.log(message);
   }
 
   logDiag('Page loading...', 'diagnostics-warn');
@@ -206,7 +208,7 @@
   const emailInput = document.getElementById('emailInput');
   const signedInControls = document.getElementById('signedInControls');
   const signOutBtn = document.getElementById('signOutBtn');
-  const vehicleForm = document.getElementById('vehicleForm'); // CHANGED ID
+  const vehicleForm = document.getElementById('vehicleForm');
   const progBar = document.getElementById('progBar');
   const progText = document.getElementById('progText');
   const resultMsg = document.getElementById('resultMsg');
@@ -271,7 +273,7 @@
         authStatus.textContent = `Signed in as ${session.user.email}`;
         signinForm.style.display = 'none';
         signedInControls.style.display = 'flex';
-        vehicleForm.style.display = 'block'; // CHANGED TO vehicleForm
+        vehicleForm.style.display = 'block';
         sessDot.classList.remove('status-off'); 
         sessDot.classList.add('status-on');
         logDiag('UI: Signed in state rendered', 'diagnostics-ok');
@@ -279,7 +281,7 @@
         authStatus.textContent = 'Not signed in';
         signinForm.style.display = 'flex';
         signedInControls.style.display = 'none';
-        vehicleForm.style.display = 'none'; // CHANGED TO vehicleForm
+        vehicleForm.style.display = 'none';
         sessDot.classList.remove('status-on'); 
         sessDot.classList.add('status-off');
         logDiag('UI: Signed out state rendered', 'diagnostics-ok');
@@ -289,7 +291,7 @@
       authStatus.textContent = 'Not signed in';
       signinForm.style.display = 'flex';
       signedInControls.style.display = 'none';
-      vehicleForm.style.display = 'none'; // CHANGED TO vehicleForm
+      vehicleForm.style.display = 'none';
       sessDot.classList.remove('status-on'); 
       sessDot.classList.add('status-off');
     }
@@ -354,7 +356,7 @@
   })();
 
   // --- Add Vehicle form logic ---
-  vehicleForm.addEventListener('submit', async (e)=>{ // CHANGED TO vehicleForm
+  vehicleForm.addEventListener('submit', async (e)=>{
     e.preventDefault();
     resultMsg.textContent = '';
     resultMsg.className = '';
@@ -371,11 +373,13 @@
       return; 
     }
 
-    // Build the new row payload
-const id = supa.storage.from('images').getId(); // This ensures proper UUID format
+    // Build the new row payload - FIXED UUID GENERATION
+    const id = crypto.randomUUID();
+    console.log('Generated UUID:', id); // Debug logging
+    
     const files = Array.from(document.getElementById('photos').files || []);
     
-    // UPDATED: Only require 1 photo minimum
+    // Only require 1 photo minimum
     if (files.length < 1) { 
       logDiag('Form submit blocked: need at least 1 photo', 'diagnostics-error');
       alert('Please select at least 1 photo (first one will be primary/cover).'); 
@@ -462,7 +466,7 @@ const id = supa.storage.from('images').getId(); // This ensures proper UUID form
     logDiag(`Vehicle saved successfully! ID: ${id}`, 'diagnostics-ok');
     resultMsg.textContent = `Saved! Listing ID: ${id}`;
     resultMsg.className = 'success';
-    vehicleForm.reset(); // CHANGED TO vehicleForm
+    vehicleForm.reset();
     progBar.style.width = '0%'; 
     progText.textContent = '';
   });
