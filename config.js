@@ -1,2 +1,2 @@
-window.SUPABASE_URL = "https://xxxxx.supabase.co";   // replace xxxxx with your project’s actual Supabase URL
-window.SUPABASE_ANON_KEY = "eyJhbGciOi...";          // paste your actual anon key here
+window.SUPABASE_URL = "https://<your-project-ref>.supabase.co";   // from Supabase: Settings → API → Project URL
+window.SUPABASE_ANON_KEY = "<your-anon-public-key>";              // from Supabase: Settings → API → "anon public"
