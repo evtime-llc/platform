@@ -67,7 +67,7 @@
   <!-- ADD VEHICLE FORM (different ID from signin form) -->
   <section class="card">
     <h2 style="margin:0 0 8px;">Add Vehicle</h2>
-    <p class="muted" style="margin:0 0 12px;">Fill the fields, add 5–10 photos, then click <b>Save listing</b>. Photos upload to <code>images/&lt;id&gt;/…</code>. The row is inserted into <code>listing</code>.</p>
+    <p class="muted" style="margin:0 0 12px;">Fill the fields, add 1+ photos (5 recommended), then click <b>Save listing</b>. Photos upload to <code>images/&lt;id&gt;/…</code>. The row is inserted into <code>listing</code>.</p>
 
     <form id="vehicleForm" style="display:none;">
       <div class="row-3">
@@ -149,8 +149,12 @@
       <label for="description">Description</label>
       <textarea id="description" rows="4" placeholder="Notes / options / history"></textarea>
 
-      <label for="photos">Photos (5–10 images, first = cover)</label>
+      <!-- UPDATED PHOTOS SECTION -->
+      <label for="photos">Photos (1 required - 5 recommended)</label>
       <input id="photos" type="file" accept="image/*" multiple required />
+      <div class="hint" style="color: var(--copper); font-weight: 600;">
+        ⭐ First photo = Primary/Cover image (most important)
+      </div>
       <div class="hint">We'll upload to <code>images/&lt;id&gt;/filename.jpg</code> and save that list into the row's <code>images</code> column.</div>
 
       <div style="margin:12px 0;">
@@ -370,9 +374,11 @@
     // Build the new row payload
     const id = crypto.randomUUID();
     const files = Array.from(document.getElementById('photos').files || []);
-    if (files.length < 5) { 
-      logDiag('Form submit blocked: need 5+ photos', 'diagnostics-error');
-      alert('Please select at least 5 photos.'); 
+    
+    // UPDATED: Only require 1 photo minimum
+    if (files.length < 1) { 
+      logDiag('Form submit blocked: need at least 1 photo', 'diagnostics-error');
+      alert('Please select at least 1 photo (first one will be primary/cover).'); 
       return; 
     }
 
