@@ -123,9 +123,11 @@
     <div id="diag"></div>
   </fieldset>
 
+  <!-- Load your Supabase config (you already created /config.js) -->
+  <script src="/config.js"></script>
+  <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // If you keep these in config.js, include it before this <script>.
     const SUPABASE_URL = window.SUPABASE_URL || "https://YOUR-PROJECT.supabase.co";
     const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "ANON-KEY";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -133,7 +135,7 @@
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
 
-    // --- Auth ---
+    // --- Auth UI ---
     async function setSessionUI() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -184,11 +186,9 @@
     // --- Create listing ---
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
-      const photosInput = $("photos");
-      const files = Array.from(photosInput.files || []);
+      const files = Array.from(($("photos").files || []));
       if (files.length < 1) { $("createMsg").textContent = "Please add at least 1 photo."; return; }
 
-      // Pre-generate UUID so storage folder & row stay in sync
       const listingId = crypto.randomUUID();
 
       try {
@@ -219,7 +219,7 @@
         if (error) throw error;
 
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
-        photosInput.value = "";
+        $("photos").value = "";
         $("uProg").style.width = "0%";
         $("uList").innerHTML = "";
       } catch (e) {
@@ -228,7 +228,7 @@
       }
     };
 
-    // --- Basic ping tests ---
+    // --- Basic diagnostics ---
     (async () => {
       diag("Testing anon read from 'listing'…");
       const { data, error } = await supabase.from("listing").select("*").limit(1);
