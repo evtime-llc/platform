@@ -24,7 +24,7 @@
 <body>
 
   <h1>EVTime — Admin</h1>
-  <p class="muted">Sign in with your admin email to manage inventory. Images upload to <code>images/&lt;listing_id&gt;/…</code>.</p>
+  <p class="muted">Sign in with your admin email to manage inventory. Images upload to <code>&lt;listing_id&gt;/filename.jpg</code> inside the <code>images</code> bucket.</p>
 
   <fieldset id="authBox">
     <legend>Authentication</legend>
@@ -133,7 +133,6 @@
     const SUPABASE_URL = window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co";
     const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
 
-    // ✅ Persistent session + auto refresh + stable storage key
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
         persistSession: true,
@@ -147,7 +146,6 @@
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
 
-    // --- Auth UI ---
     async function setSessionUI() {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) diag(`<span class="err">getSession error: ${error.message}</span>`);
@@ -164,13 +162,11 @@
       }
     }
 
-    // Log auth events so we can see if tokens refresh or sign-outs happen
     supabase.auth.onAuthStateChange((event) => {
       diag(`Auth event: ${event}`);
       setSessionUI();
     });
 
-    // Force magic-link to return to /admin.html
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
       $("authMsg").textContent = "Sending magic link…";
@@ -186,35 +182,33 @@
       await setSessionUI();
     };
 
-    // ✅ PKCE handler: exchange ?code= for a session on first load after magic-link
     (async () => {
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
         const { error } = await supabase.auth.exchangeCodeForSession(qs);
         if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
-        // Clean the URL so refreshes don't re-exchange
         window.history.replaceState({}, document.title, window.location.pathname);
       }
-      // Show whether our local storage key exists
       const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
         || !!localStorage.getItem('evtime-auth');
       diag('Local session present: ' + hasLocal);
       await setSessionUI();
     })();
 
-    // --- Upload helper ---
+    // --- Upload helper (FIXED PATH) ---
     async function uploadPhotos(listingId, files) {
       if (!files || files.length === 0) return [];
       const uploaded = [];
       let done = 0;
       for (const file of files) {
-        const path = `images/${listingId}/${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-        const { error } = await supabase.storage.from("images").upload(path, file, { upsert: false });
+        // store RELATIVE to the bucket: "<listingId>/<filename>"
+        const relPath = `${listingId}/${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
         if (error) throw new Error(`Upload failed: ${error.message}`);
-        uploaded.push(path);
+        uploaded.push(relPath); // save the relative path in DB
         done++;
         $("uProg").style.width = `${Math.round((done/files.length)*100)}%`;
-        $("uList").innerHTML += `<code>${path}</code><br/>`;
+        $("uList").innerHTML += `<code>${relPath}</code><br/>`;
       }
       return uploaded;
     }
