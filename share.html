@@ -1,302 +1,125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>it’s E.V.Time — Browse Inventory</title>
-<meta name="theme-color" content="#0b0a09"/>
-
-<meta property="og:title" content="it’s E.V.Time — Browse Inventory" />
-<meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles." />
-<meta property="og:image" content="https://itsevtime.com/og-card.png" />
-<meta property="og:url" content="https://itsevtime.com/share.html" />
-<meta name="twitter:card" content="summary_large_image" />
-
-<style>
-:root{
-  --bg:#0b0a09; --card:#ffffff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
-  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0; --cta:#c98c5b; --ctaText:#0b0a09;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-
-/* Shared containers */
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-
-/* Header / Logo */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap a{display:block}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
-
-/* Button bar */
-.buttonbar{padding:10px 0}
-.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
-  background:#fff;color:var(--text);text-decoration:none;font-weight:700;transition:.15s ease
-}
-.btn.primary{
-  background:var(--cta);color:var(--ctaText);border-color:transparent;
-  box-shadow:0 4px 14px rgba(201,140,91,.35)
-}
-.btn.primary:hover{background:var(--copper-dark);color:#fff}
-.btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
-.btn.ghost:hover{background:var(--copper-soft)}
-.btn:hover{transform:translateY(-1px)}
-
-/* Inventory grid */
-.inv-section{padding-top:8px}
-.inv-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
-
-/* Card */
-.inv-card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;
-}
-.inv-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
-.inv-photo img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
-
-/* Gallery controls */
-.gal-btn{
-  position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.45);
-  color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:36px;text-align:center;
-}
-.gal-btn:hover{background:rgba(0,0,0,.6)}
-.gal-prev{left:8px}
-.gal-next{right:8px}
-.gal-dots{
-  position:absolute;left:0;right:0;bottom:6px;display:flex;gap:6px;justify-content:center;align-items:center;
-}
-.gal-dot{
-  width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)
-}
-.gal-dot.active{background:#fff}
-
-.inv-body{padding:12px 12px 14px}
-.inv-title{font-weight:900}
-.inv-price{
-  font-weight:900;color:#0b0a09;background:var(--copper);
-  padding:2px 8px;border-radius:999px;white-space:nowrap
-}
-.inv-meta{margin-top:6px;color:#57534e;font-weight:700;font-size:13px;display:flex;justify-content:space-between;gap:10px}
-.inv-txt{margin-top:6px;font-size:13px}
-.inv-vin{margin-top:6px;font-size:12px;color:#78716c}
-
-/* Divider */
-.divider-wrap{padding-top:20px}
-.divider{
-  display:flex;align-items:center;gap:10px;color:#fff;font-weight:900
-}
-.divider .line{height:1px;background:var(--line);flex:1}
-
-/* Footer */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted var(--copper)}
-.footer a:hover{border-bottom-style:solid}
-.right{float:right}
-.clearfix::after{content:"";display:block;clear:both}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>EVTime — Inventory</title>
+  <style>
+    :root { --card: #fff; --muted:#666; --border:#e5e5e5; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; background:#fafafa; color:#111; }
+    header { padding:16px 20px; border-bottom:1px solid var(--border); background:#fff; position:sticky; top:0; }
+    h1 { margin:0; font-size:20px; }
+    main { max-width:1100px; margin: 20px auto; padding: 0 16px; }
+    #status { color: var(--muted); font-size: 12px; margin: 8px 0 16px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+    .imgwrap { width:100%; aspect-ratio: 4/3; background:#f2f2f2; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .imgwrap img { width:100%; height:100%; object-fit:cover; display:block; }
+    .content { padding:12px; }
+    .title { font-weight:700; margin:0 0 6px; }
+    .meta { font-size:12px; color:var(--muted); margin-bottom:6px; }
+    .price { font-weight:700; }
+    .badge { font-size:11px; padding:2px 6px; border-radius:999px; background:#eef2ff; color:#3730a3; margin-left:6px; }
+    .muted { color:var(--muted); }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>EVTime — Inventory</h1>
+  </header>
+  <main>
+    <div id="status" class="muted">Loading…</div>
+    <div id="grid" class="grid"></div>
+  </main>
 
-<!-- Topbar / Logo -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
-    </a>
-  </div>
-</div>
+  <!-- Load Supabase config + client -->
+  <script src="/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    // 1) Supabase client
+    const SUPABASE_URL = window.SUPABASE_URL;
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-<!-- Buttons -->
-<div class="logo-wrap buttonbar">
-  <div class="row" role="navigation" aria-label="Primary actions">
-    <a class="btn primary" href="./sell.html">Sell your car</a>
-    <a class="btn ghost" href="./share.html">Browse inventory</a>
-    <a class="btn ghost" href="./about.html">How it works / Why E.V.Time</a>
-  </div>
-</div>
+    const $ = (id) => document.getElementById(id);
+    const fmtPrice = (n) => (n && !isNaN(n)) ? '$' + Number(n).toLocaleString() : '';
 
-<!-- Inventory mount -->
-<div class="wrap" id="inventory"></div>
-
-<footer class="footer">
-  <div class="wrap clearfix">
-    <div>© <span id="yr"></span> E.V.Time</div>
-    <div class="right"><a href="./legal.html">Legal &amp; Disclosures</a></div>
-  </div>
-</footer>
-
-<!-- Supabase client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-(async () => {
-  const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
-
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Build optimized public URL from storage path like "id/photo.jpg"
-  function publicImageUrl(path){
-    if(!path) return null;
-    const normalized = path.replace(/^images\//i, '').trim();
-    try{
-      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
-      const base = data?.publicUrl || null;
-      if(!base) return null;
-      // ask Supabase CDN to resize/compress for speed
-      const params = new URLSearchParams({ width: '1400', quality: '80', format: 'webp' });
-      return `${base}?${params.toString()}`;
-    }catch{
-      return null;
+    // 2) Build a public URL for a stored path
+    function imageUrlFromPath(path) {
+      if (!path) return null;
+      // path is stored relative to the bucket root (e.g. "63bae9.../file.jpg")
+      // Some older rows might include "images/…" prefix; both are OK.
+      const { data } = supabase.storage.from('images').getPublicUrl(path);
+      return data?.publicUrl || null;
     }
-  }
 
-  // Preload images for snappy next/prev
-  function preload(urls){
-    urls.forEach(u => { const im = new Image(); im.decoding = 'async'; im.loading = 'eager'; im.src = u; });
-  }
+    // 3) Normalize the images field (array or JSON string -> array of paths)
+    function normalizeImagesField(imagesField) {
+      if (!imagesField) return [];
+      if (Array.isArray(imagesField)) return imagesField;
+      if (typeof imagesField === 'string') {
+        try {
+          const parsed = JSON.parse(imagesField);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch { return []; }
+      }
+      return [];
+    }
 
-  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    // 4) Render cards
+    function render(rows) {
+      const grid = $('grid');
+      grid.innerHTML = '';
+      if (!rows?.length) {
+        $('status').textContent = 'No vehicles yet.';
+        return;
+      }
+      $('status').textContent = `${rows.length} vehicle${rows.length>1?'s':''}`;
 
-  // Card HTML with gallery
-  function cardHTML(item, index){
-    const {
-      year, make, model, trim, mileage, special_features,
-      title_status, condition, description, city, vin, price, images
-    } = item;
+      rows.forEach(row => {
+        const paths = normalizeImagesField(row.images);
+        const first = paths[0] || null;
+        const imgUrl = imageUrlFromPath(first);
 
-    const paths = (images || "").split(",").map(s => s.trim()).filter(Boolean);
-    const urls = paths.map(publicImageUrl).filter(Boolean);
-    const firstUrl = urls[0] || "og-card.png";
-
-    // Preload this card's images
-    preload(urls);
-
-    const title = [year, make, model, trim].filter(Boolean).join(" ");
-    const leftMeta = [
-      mileage ? `${Number(mileage).toLocaleString()} mi` : null,
-      title_status ? `Title: ${title_status}` : null,
-      condition ? `Cond: ${condition}` : null
-    ].filter(Boolean).join(" • ");
-    const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
-    const cityText = city ? esc(city) : "";
-
-    const dots = urls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
-
-    return `
-      <div class="inv-card" data-card="${index}" data-count="${urls.length}" data-images='${JSON.stringify(urls)}'>
-        <div class="inv-photo">
-          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="eager" decoding="async">
-          ${urls.length>1 ? `
-            <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
-            <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
-            <div class="gal-dots">${dots}</div>
-          `:``}
-        </div>
-        <div class="inv-body">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-            <div class="inv-title">${esc(title)}</div>
-            <div class="inv-price">${esc(priceText)}</div>
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <div class="imgwrap">
+            ${imgUrl ? `<img src="${imgUrl}" alt="${row.year||''} ${row.make||''} ${row.model||''}"/>` : `<span class="muted">No image</span>`}
           </div>
-          <div class="inv-meta">
-            <span>${esc(leftMeta)}</span>
-            <span>${esc(cityText)}</span>
+          <div class="content">
+            <div class="title">${row.year||''} ${row.make||''} ${row.model||''}${row.trim?(' ' + row.trim):''}
+              ${row.status ? `<span class="badge">${row.status}</span>` : ''}
+            </div>
+            <div class="meta">${row.powertrain||''}${row.powertrain && row.mileage ? ' • ' : ''}${row.mileage ? (Number(row.mileage).toLocaleString() + ' mi') : ''}${row.city ? ' • ' + row.city : ''}</div>
+            <div class="price">${fmtPrice(row.price)}</div>
           </div>
-          ${special_features ? `<div class="inv-txt">${esc(special_features)}</div>` : ""}
-          ${description ? `<div class="inv-txt" style="color:#44403c;">${esc(description)}</div>` : ""}
-          ${vin ? `<div class="inv-vin">VIN: ${esc(vin)}</div>` : ""}
-        </div>
-      </div>
-    `;
-  }
-
-  const renderSection = (items) => items.length ? `<div class="inv-section"><div class="inv-row">${items.map(cardHTML).join("")}</div></div>` : "";
-  const dividerHTML = (text) => `
-    <div class="divider-wrap">
-      <div class="divider">
-        <div class="line"></div>
-        <div>${esc(text)}</div>
-        <div class="line"></div>
-      </div>
-    </div>
-  `;
-
-  const { data, error } = await supabase
-    .from('listing')
-    .select('*')
-    .eq('status', 'published');
-
-  const mount = document.getElementById('inventory');
-
-  if (error) {
-    console.error(error);
-    mount.innerHTML = `<div style="color:#fff">Error loading inventory.</div>`;
-    return;
-  }
-  if (!data || !data.length) {
-    mount.innerHTML = `<div style="color:#fff">No vehicles available right now.</div>`;
-    return;
-  }
-
-  const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
-
-  const teslas = data.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byNewest);
-  const otherEVs = data.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byNewest);
-  const others  = data.filter(x => {
-    const p = (x.powertrain || '').toUpperCase();
-    return p === 'HYBRID' || p === 'GAS' || p === '';
-  }).sort(byNewest);
-
-  let html = '';
-  html += renderSection(teslas);
-  html += renderSection(otherEVs);
-
-  if (others.length) {
-    html += dividerHTML('Other vehicles');
-    html += renderSection(others);
-  }
-
-  mount.innerHTML = html;
-
-  // Gallery controller
-  mount.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.gal-btn');
-    const dot = e.target.closest('.gal-dot');
-    if(!btn && !dot) return;
-
-    const card = e.target.closest('.inv-card');
-    if(!card) return;
-
-    const img = card.querySelector('.inv-photo img');
-    const dots = [...card.querySelectorAll('.gal-dot')];
-    const urls = JSON.parse(card.getAttribute('data-images') || '[]');
-    if(!urls.length) return;
-
-    let idx = Number(card.getAttribute('data-idx') || 0);
-
-    if (btn){
-      const dir = btn.dataset.action === 'next' ? 1 : -1;
-      idx = (idx + dir + urls.length) % urls.length;
-    }
-    if (dot){
-      idx = Number(dot.dataset.dot);
+        `;
+        grid.appendChild(div);
+      });
     }
 
-    img.src = urls[idx];
-    card.setAttribute('data-idx', String(idx));
-    dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
-  });
-})();
-</script>
+    // 5) Fetch latest listed cars
+    (async () => {
+      try {
+        // Public read is allowed by your RLS policy; no auth required
+        const { data, error } = await supabase
+          .from('listing')
+          .select('id, year, make, model, trim, mileage, powertrain, city, price, status, images')
+          .order('created_at', { ascending: false })
+          .limit(24);
 
-<script>
-document.getElementById('yr').textContent = new Date().getFullYear();
-</script>
+        if (error) {
+          $('status').textContent = 'Error loading inventory';
+          console.error(error);
+          return;
+        }
+        render(data);
+      } catch (e) {
+        $('status').textContent = 'Error loading inventory';
+        console.error(e);
+      }
+    })();
+  </script>
 </body>
 </html>
