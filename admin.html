@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin</title>
   <style>
@@ -129,7 +132,17 @@
   <script>
     const SUPABASE_URL = window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co";
     const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ✅ Persistent session + auto refresh + stable storage key
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: 'evtime-auth'
+      }
+    });
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
@@ -151,6 +164,12 @@
       }
     }
 
+    // Log auth events so we can see if tokens refresh or sign-outs happen
+    supabase.auth.onAuthStateChange((event) => {
+      diag(`Auth event: ${event}`);
+      setSessionUI();
+    });
+
     // Force magic-link to return to /admin.html
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
@@ -167,17 +186,19 @@
       await setSessionUI();
     };
 
-    supabase.auth.onAuthStateChange(() => setSessionUI());
-
     // ✅ PKCE handler: exchange ?code= for a session on first load after magic-link
     (async () => {
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
         const { error } = await supabase.auth.exchangeCodeForSession(qs);
         if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
-        // clean the URL
+        // Clean the URL so refreshes don't re-exchange
         window.history.replaceState({}, document.title, window.location.pathname);
       }
+      // Show whether our local storage key exists
+      const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
+        || !!localStorage.getItem('evtime-auth');
+      diag('Local session present: ' + hasLocal);
       await setSessionUI();
     })();
 
