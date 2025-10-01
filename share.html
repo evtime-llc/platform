@@ -1,125 +1,245 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>EVTime — Inventory</title>
-  <style>
-    :root { --card: #fff; --muted:#666; --border:#e5e5e5; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; background:#fafafa; color:#111; }
-    header { padding:16px 20px; border-bottom:1px solid var(--border); background:#fff; position:sticky; top:0; }
-    h1 { margin:0; font-size:20px; }
-    main { max-width:1100px; margin: 20px auto; padding: 0 16px; }
-    #status { color: var(--muted); font-size: 12px; margin: 8px 0 16px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:16px; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
-    .imgwrap { width:100%; aspect-ratio: 4/3; background:#f2f2f2; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-    .imgwrap img { width:100%; height:100%; object-fit:cover; display:block; }
-    .content { padding:12px; }
-    .title { font-weight:700; margin:0 0 6px; }
-    .meta { font-size:12px; color:var(--muted); margin-bottom:6px; }
-    .price { font-weight:700; }
-    .badge { font-size:11px; padding:2px 6px; border-radius:999px; background:#eef2ff; color:#3730a3; margin-left:6px; }
-    .muted { color:var(--muted); }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>it’s E.V.Time — Browse Inventory</title>
+<meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="it’s E.V.Time — Browse Inventory" />
+<meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles." />
+<meta property="og:image" content="https://itsevtime.com/og-card.png" />
+<meta property="og:url" content="https://itsevtime.com/share.html" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<style>
+:root{
+  --bg:#0b0a09; --card:#ffffff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
+  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0; --cta:#c98c5b; --ctaText:#0b0a09;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+
+/* Shared containers */
+.wrap{max-width:880px;margin:0 auto;padding:24px}
+.head{display:flex;align-items:center;justify-content:space-between;margin:12px auto 0;padding:12px 16px;background:#fff;border:1px solid var(--line);border-radius:14px}
+h1{font-size:18px;margin:0}
+.sub{color:var(--muted);font-size:12px;margin:4px 0 0}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
+
+/* Cards */
+.inv-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.inv-photo{position:relative;width:100%;aspect-ratio:4/3;background:#f4f4f5}
+.inv-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.inv-body{padding:12px}
+.inv-title{font-weight:700}
+.inv-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.inv-price{font-weight:700}
+.inv-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:var(--muted)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--copper-soft);color:var(--copper);margin-left:6px}
+
+/* Gallery controls */
+.gal-btn{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border:1px solid var(--line);background:#fff;border-radius:999px;display:grid;place-items:center;opacity:.9}
+.gal-prev{left:8px}
+.gal-next{right:8px}
+.gal-dots{position:absolute;bottom:8px;left:0;right:0;display:flex;gap:6px;justify-content:center}
+.gal-dot{width:7px;height:7px;border-radius:999px;background:#e5e7eb;border:1px solid #d1d5db}
+.gal-dot.active{background:#6366f1;border-color:#6366f1}
+
+.divider-wrap{margin:20px 0 12px}
+.divider{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.divider .line{height:1px;background:var(--line)}
+</style>
 </head>
 <body>
-  <header>
+
+<header class="wrap head">
+  <div>
     <h1>EVTime — Inventory</h1>
-  </header>
-  <main>
-    <div id="status" class="muted">Loading…</div>
-    <div id="grid" class="grid"></div>
-  </main>
+    <div class="sub">Teslas first, then other EVs, then Other Vehicles.</div>
+  </div>
+</header>
 
-  <!-- Load Supabase config + client -->
-  <script src="/config.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    // 1) Supabase client
-    const SUPABASE_URL = window.SUPABASE_URL;
-    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<main class="wrap">
+  <div id="inventory" class="grid"></div>
+</main>
 
-    const $ = (id) => document.getElementById(id);
-    const fmtPrice = (n) => (n && !isNaN(n)) ? '$' + Number(n).toLocaleString() : '';
+<footer class="wrap" style="color:#fff;opacity:.7">
+  <div>© EVTime</div>
+</footer>
 
-    // 2) Build a public URL for a stored path
-    function imageUrlFromPath(path) {
-      if (!path) return null;
-      // path is stored relative to the bucket root (e.g. "63bae9.../file.jpg")
-      // Some older rows might include "images/…" prefix; both are OK.
-      const { data } = supabase.storage.from('images').getPublicUrl(path);
-      return data?.publicUrl || null;
+<!-- Supabase config + client -->
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+(async () => {
+  const SUPABASE_URL = window.SUPABASE_URL;
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Build optimized public URL from storage path like "id/photo.jpg" (or "images/id/photo.jpg")
+  function publicImageUrl(path){
+    if(!path) return null;
+    const normalized = String(path).replace(/^images\//i, '').trim();
+    try{
+      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
+      const base = data?.publicUrl || null;
+      if(!base) return null;
+      // ask Supabase CDN to resize/compress for speed
+      const params = new URLSearchParams({ width: '1400', quality: '80', format: 'webp' });
+      return `${base}?${params.toString()}`;
+    }catch{
+      return null;
     }
+  }
 
-    // 3) Normalize the images field (array or JSON string -> array of paths)
-    function normalizeImagesField(imagesField) {
-      if (!imagesField) return [];
-      if (Array.isArray(imagesField)) return imagesField;
-      if (typeof imagesField === 'string') {
-        try {
-          const parsed = JSON.parse(imagesField);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch { return []; }
+  // Preload images for snappy next/prev
+  function preload(urls){
+    urls.forEach(u => { const im = new Image(); im.decoding = 'async'; im.loading = 'eager'; im.src = u; });
+  }
+
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // Normalize images field to an array (supports JSON string or CSV string)
+  function toPaths(imagesField){
+    if (!imagesField) return [];
+    if (Array.isArray(imagesField)) return imagesField;
+    if (typeof imagesField === 'string') {
+      const s = imagesField.trim();
+      if (s.startsWith('[')) {
+        try { const arr = JSON.parse(s); return Array.isArray(arr) ? arr : []; } catch { return []; }
       }
-      return [];
+      return s.split(',').map(x=>x.trim()).filter(Boolean);
     }
+    return [];
+  }
 
-    // 4) Render cards
-    function render(rows) {
-      const grid = $('grid');
-      grid.innerHTML = '';
-      if (!rows?.length) {
-        $('status').textContent = 'No vehicles yet.';
-        return;
-      }
-      $('status').textContent = `${rows.length} vehicle${rows.length>1?'s':''}`;
+  // Card HTML with gallery
+  function cardHTML(item, index){
+    const {
+      year, make, model, trim, mileage, special_features,
+      title_status, condition, description, city, vin, price, images, status, powertrain
+    } = item;
 
-      rows.forEach(row => {
-        const paths = normalizeImagesField(row.images);
-        const first = paths[0] || null;
-        const imgUrl = imageUrlFromPath(first);
+    const paths = toPaths(images);
+    const urls = paths.map(publicImageUrl).filter(Boolean);
+    const firstUrl = urls[0] || "og-card.png";
 
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `
-          <div class="imgwrap">
-            ${imgUrl ? `<img src="${imgUrl}" alt="${row.year||''} ${row.make||''} ${row.model||''}"/>` : `<span class="muted">No image</span>`}
+    // Preload this card's images
+    preload(urls);
+
+    const title = [year, make, model, trim].filter(Boolean).join(" ");
+    const leftMeta = [
+      mileage ? `${Number(mileage).toLocaleString()} mi` : null,
+      title_status ? `Title: ${title_status}` : null,
+      condition ? `Cond: ${condition}` : null
+    ].filter(Boolean).join(" • ");
+    const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
+    const cityText = city ? esc(city) : "";
+
+    const dots = urls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
+
+    return `
+      <div class="inv-card" data-card="${index}" data-idx="0" data-count="${urls.length}" data-images='${JSON.stringify(urls)}'>
+        <div class="inv-photo">
+          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="eager" decoding="async">
+          ${urls.length>1 ? `
+            <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
+            <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
+            <div class="gal-dots">${dots}</div>
+          `:``}
+        </div>
+        <div class="inv-body">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
+            <div class="inv-title">${esc(title)}${status ? `<span class="badge">${esc(status)}</span>` : ''}</div>
+            <div class="inv-price">${esc(priceText)}</div>
           </div>
-          <div class="content">
-            <div class="title">${row.year||''} ${row.make||''} ${row.model||''}${row.trim?(' ' + row.trim):''}
-              ${row.status ? `<span class="badge">${row.status}</span>` : ''}
-            </div>
-            <div class="meta">${row.powertrain||''}${row.powertrain && row.mileage ? ' • ' : ''}${row.mileage ? (Number(row.mileage).toLocaleString() + ' mi') : ''}${row.city ? ' • ' + row.city : ''}</div>
-            <div class="price">${fmtPrice(row.price)}</div>
+          <div class="inv-meta">
+            <span>${esc(leftMeta)}</span>
+            <span>${cityText ? ' • ' + cityText : ''}</span>
           </div>
-        `;
-        grid.appendChild(div);
-      });
+          ${powertrain ? `<div class="inv-meta">Powertrain: ${esc(powertrain)}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // Section divider
+  const divider = (text) => `
+    <div class="divider-wrap">
+      <div class="divider">
+        <div class="line"></div>
+        <div>${esc(text)}</div>
+        <div class="line"></div>
+      </div>
+    </div>
+  `;
+
+  // Fetch rows
+  const { data, error } = await supabase
+    .from('listing')
+    .select('*')
+    .in('status', ['published', 'listed']);
+
+  const mount = document.getElementById('inventory');
+
+  if (error) {
+    console.error(error);
+    mount.innerHTML = '<div style="color:#fff">Error loading inventory</div>';
+    return;
+  }
+
+  const teslas = (data || []).filter(r => (r.make || '').toLowerCase().includes('tesla'));
+  const evs = (data || []).filter(r => !teslas.includes(r) && /tesla|rivian|ford|chevy|chevrolet|nissan|hyundai|kia|volkswagen|audi|bmw|mercedes|polestar|lucid|porsche/i.test(r.make || ''));
+  const others = (data || []).filter(r => !teslas.includes(r) && !evs.includes(r));
+
+  const parts = [];
+  if (teslas.length) {
+    parts.push(divider('Teslas'));
+    teslas.forEach((row,i)=>parts.push(cardHTML(row,i)));
+  }
+  if (evs.length) {
+    parts.push(divider('Other EVs'));
+    evs.forEach((row,i)=>parts.push(cardHTML(row,i)));
+  }
+  if (others.length) {
+    parts.push(divider('Other Vehicles'));
+    others.forEach((row,i)=>parts.push(cardHTML(row,i)));
+  }
+
+  mount.innerHTML = parts.join('');
+
+  // Gallery interaction
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.gal-btn');
+    const dot = e.target.closest('.gal-dot');
+    if (!btn && !dot) return;
+
+    const card = e.target.closest('.inv-card');
+    if (!card) return;
+
+    const urls = JSON.parse(card.getAttribute('data-images') || '[]');
+    const img = card.querySelector('img');
+    const dots = Array.from(card.querySelectorAll('.gal-dot'));
+    let idx = Number(card.getAttribute('data-idx') || 0);
+
+    if (btn){
+      const dir = btn.dataset.action === 'next' ? 1 : -1;
+      idx = (idx + dir + urls.length) % urls.length;
+    }
+    if (dot){
+      idx = Number(dot.dataset.dot);
     }
 
-    // 5) Fetch latest listed cars
-    (async () => {
-      try {
-        // Public read is allowed by your RLS policy; no auth required
-        const { data, error } = await supabase
-          .from('listing')
-          .select('id, year, make, model, trim, mileage, powertrain, city, price, status, images')
-          .order('created_at', { ascending: false })
-          .limit(24);
-
-        if (error) {
-          $('status').textContent = 'Error loading inventory';
-          console.error(error);
-          return;
-        }
-        render(data);
-      } catch (e) {
-        $('status').textContent = 'Error loading inventory';
-        console.error(e);
-      }
-    })();
-  </script>
+    img.src = urls[idx];
+    card.setAttribute('data-idx', String(idx));
+    dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
+  });
+})();
+</script>
 </body>
 </html>
