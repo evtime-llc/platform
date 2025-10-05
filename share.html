@@ -167,7 +167,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
       title_status, condition, description, city, vin, price, images
     } = item;
 
-    const paths = (images || "").split(",").map(s => s.trim()).filter(Boolean);
+  const paths = Array.isArray(images)
+  ? images
+  : (typeof images === 'string'
+      ? (images.trim().startsWith('[')
+          ? (JSON.parse(images) || [])
+          : images.split(',').map(s => s.trim()).filter(Boolean))
+      : []);
+
     const urls = paths.map(publicImageUrl).filter(Boolean);
     const firstUrl = urls[0] || "og-card.png";
 
