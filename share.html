@@ -226,7 +226,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   const { data, error } = await supabase
     .from('listing')
     .select('*')
-    .eq('status', 'published');
+.in('status', ['published','listed']);
+
 
   const mount = document.getElementById('inventory');
 
