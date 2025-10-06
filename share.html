@@ -131,21 +131,21 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </footer>
 
-<!-- Supabase client -->
+<!-- Load Supabase config + client -->
+<script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 (async () => {
-  const SUPABASE_URL = "https://tgkvhmxrftcegpryptwq.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
+  const SUPABASE_URL = window.SUPABASE_URL;
+  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build plain public URL from storage path like "id/photo.jpg"
+  // Build plain public URL from storage path like "id/photo.jpg" OR "images/id/photo.jpg"
   function publicImageUrl(path){
     if(!path) return null;
-   const normalized = String(path).trim();
-
+    const normalized = String(path).trim(); // do NOT strip "images/" prefix; both styles are supported
     try{
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
       return (data && data.publicUrl) ? data.publicUrl : null;
@@ -168,13 +168,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
       title_status, condition, description, city, vin, price, images
     } = item;
 
-  const paths = Array.isArray(images)
-  ? images
-  : (typeof images === 'string'
-      ? (images.trim().startsWith('[')
-          ? (JSON.parse(images) || [])
-          : images.split(',').map(s => s.trim()).filter(Boolean))
-      : []);
+    // images can be an array, a JSON string, or a CSV string
+    const paths = Array.isArray(images)
+      ? images
+      : (typeof images === 'string'
+          ? (images.trim().startsWith('[')
+              ? (JSON.parse(images) || [])
+              : images.split(',').map(s => s.trim()).filter(Boolean))
+          : []);
 
     const urls = paths.map(publicImageUrl).filter(Boolean);
     const firstUrl = urls[0] || "og-card.png";
@@ -234,8 +235,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   const { data, error } = await supabase
     .from('listing')
     .select('*')
-.in('status', ['published','listed']);
-
+    .in('status', ['published','listed']);
 
   const mount = document.getElementById('inventory');
 
