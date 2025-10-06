@@ -8,24 +8,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin</title>
   <style>
-    /* Logo header styles */
-    .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
-    .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
-    #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
-    @media (max-width:600px){ #site-logo { max-height:220px; } }
-    
-    /* Existing admin styles */
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 900px; margin: 0 auto; }
-    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
-    label { display:block; margin: 8px 0 4px; font-weight: 600; }
-    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-    .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .muted { color:#666; font-size: 12px; }
-    .ok { color: #0a7; }
-    .err { color: #c00; white-space: pre-wrap; }
-    .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
-    .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
-    .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
+    :root{
+      --bg:#0b0a09; --line:#e7e5e4; --card:#fff; --muted:#666; --ink:#111;
+      --brand:#c98c5b; --ok:#0a7; --err:#c00;
+    }
+
+    /* Topbar / logo (match site) */
+    .topbar{background:#fff;border-bottom:1px solid var(--line)}
+    .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+    #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+    @media (max-width:600px){ #site-logo{max-height:220px} }
+
+    /* Page layout */
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#fafafa;color:var(--ink);margin:0}
+    .wrap{max-width:1000px;margin:16px auto;padding:0 16px}
+    h1{font-size:22px;margin:12px 0}
+    fieldset{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:16px;margin:12px 0}
+    legend{padding:0 6px;font-weight:800}
+
+    label{display:block;margin:8px 0 4px;font-weight:600}
+    input, textarea, select, button{
+      width:100%; padding:8px; border:1px solid #d4d4d4; border-radius:8px; font:inherit
+    }
+    button{cursor:pointer}
+    .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media (max-width:800px){ .row3{grid-template-columns:1fr} }
+
+    .muted{color:var(--muted);font-size:12px}
+    .ok{color:var(--ok)} .err{color:var(--err);white-space:pre-wrap}
+    .pill{display:inline-block;background:#f4f4f4;padding:4px 8px;border-radius:999px;margin-right:6px;font-size:12px}
+
+    .bar{height:6px;background:#eee;border-radius:999px;overflow:hidden;margin-top:6px}
+    .bar>div{height:100%;width:0;background:#4a8;transition:width .2s}
+
+    /* Manage Inventory */
+    .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .toolbar input{flex:1}
+    .table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .tr{display:grid;grid-template-columns: 76px 1.2fr .7fr .6fr .9fr .9fr .5fr; gap:10px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px}
+    .th{font-size:12px;color:#555;margin:2px 10px}
+    .thumb{width:76px;height:54px;background:#f2f2f2;border-radius:8px;overflow:hidden;display:grid;place-items:center}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .title{font-weight:800}
+    .price{font-weight:800}
+    .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#f5eae0;color:#9e6d45;margin-left:6px}
+    .actions{display:flex;gap:6px;justify-content:flex-end}
+    .btn{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+    .btn.primary{background:var(--brand);color:#0b0a09;border-color:transparent;font-weight:800}
+    .btn.danger{border-color:#fca5a5;color:#b91c1c}
+    .btn.ghost{background:#fff}
+    .center{display:flex;justify-content:center;align-items:center}
   </style>
 </head>
 <body>
@@ -39,149 +71,194 @@
     </div>
   </div>
 
-  <h1>EVTime — Admin</h1>
-  <p class="muted">Sign in with your admin email to manage inventory. Images upload to <code>&lt;listing_id&gt;/filename.jpg</code> inside the <code>images</code> bucket.</p>
+  <div class="wrap">
+    <h1>EVTime — Admin</h1>
+    <p class="muted">Signed-in admins can add vehicles and manage the inventory. Photos upload to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.</p>
 
-  <fieldset id="authBox">
-    <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session…</div>
-    <div id="signinBox">
-      <label>Email for magic link</label>
-      <input id="email" type="email" placeholder="you@domain.com"/>
-      <button id="sendLink">Send Magic Link</button>
-      <div id="authMsg" class="muted"></div>
-    </div>
-    <button id="signout" style="display:none">Sign out</button>
-  </fieldset>
+    <!-- Authentication -->
+    <fieldset id="authBox">
+      <legend>Authentication</legend>
+      <div id="sessionInfo" class="muted">Checking session…</div>
+      <div id="signinBox">
+        <label>Email for magic link</label>
+        <input id="email" type="email" placeholder="you@domain.com"/>
+        <button id="sendLink" class="btn primary" style="width:auto">Send Magic Link</button>
+        <div id="authMsg" class="muted"></div>
+      </div>
+      <button id="signout" class="btn" style="display:none;width:auto">Sign out</button>
+    </fieldset>
 
-  <fieldset id="createBox" style="display:none">
-    <legend>Create Listing</legend>
+    <!-- Manage Inventory (NEW) -->
+    <fieldset id="manageBox" style="display:none">
+      <legend>Manage Inventory</legend>
 
-    <div class="row3">
-      <div>
-        <label>Status</label>
-        <select id="status">
+      <div class="toolbar">
+        <input id="q" placeholder="Search (make, model, city, VIN)…"/>
+        <select id="statusFilter">
+          <option value="">Status: all</option>
+          <option value="listed">listed</option>
+          <option value="published">published</option>
           <option value="draft">draft</option>
-          <option value="listed" selected>listed</option>
           <option value="sold">sold</option>
         </select>
+        <button id="refresh" class="btn">Refresh</button>
       </div>
-      <div>
-        <label>Year</label>
-        <input id="year" type="number" min="1990" max="2100" required />
-      </div>
-      <div>
-        <label>Make</label>
-        <input id="make" placeholder="Tesla"/>
-      </div>
-    </div>
 
-    <div class="row3">
-      <div>
-        <label>Model</label>
-        <input id="model" placeholder="Model 3"/>
+      <div class="th">
+        <div class="tr" style="background:transparent;border:0;padding:0">
+          <div>Photo</div>
+          <div>Title</div>
+          <div>Price</div>
+          <div>Status</div>
+          <div>Created</div>
+          <div>Updated</div>
+          <div class="center">Actions</div>
+        </div>
       </div>
-      <div>
-        <label>Trim</label>
-        <input id="trim" placeholder="Long Range"/>
-      </div>
-      <div>
-        <label>Powertrain</label>
-        <input id="powertrain" placeholder="RWD / AWD / Dual Motor"/>
-      </div>
-    </div>
 
-    <div class="row3">
-      <div>
-        <label>Mileage</label>
-        <input id="mileage" type="number" min="0"/>
+      <div id="list" class="table" aria-live="polite"></div>
+      <div id="listMsg" class="muted"></div>
+    </fieldset>
+
+    <!-- Create Listing (existing) -->
+    <fieldset id="createBox" style="display:none">
+      <legend>Create Listing</legend>
+
+      <div class="row3">
+        <div>
+          <label>Status</label>
+          <select id="status">
+            <option value="draft">draft</option>
+            <option value="listed" selected>listed</option>
+            <option value="sold">sold</option>
+          </select>
+        </div>
+        <div>
+          <label>Year</label>
+          <input id="year" type="number" min="1990" max="2100" required />
+        </div>
+        <div>
+          <label>Make</label>
+          <input id="make" placeholder="Tesla"/>
+        </div>
       </div>
-      <div>
-        <label>Price (USD)</label>
-        <input id="price" type="number" min="0" step="100"/>
+
+      <div class="row3">
+        <div>
+          <label>Model</label>
+          <input id="model" placeholder="Model 3"/>
+        </div>
+        <div>
+          <label>Trim</label>
+          <input id="trim" placeholder="Long Range"/>
+        </div>
+        <div>
+          <label>Powertrain</label>
+          <input id="powertrain" placeholder="EV / RWD / AWD / Dual Motor"/>
+        </div>
       </div>
-      <div>
-        <label>City</label>
-        <input id="city" placeholder="Torrance, CA"/>
+
+      <div class="row3">
+        <div>
+          <label>Mileage</label>
+          <input id="mileage" type="number" min="0"/>
+        </div>
+        <div>
+          <label>Price (USD)</label>
+          <input id="price" type="number" min="0" step="100"/>
+        </div>
+        <div>
+          <label>City</label>
+          <input id="city" placeholder="Torrance, CA"/>
+        </div>
       </div>
-    </div>
 
-    <div class="row3">
-      <div>
-        <label>Title Status</label>
-        <input id="title_status" placeholder="clean / salvage / etc"/>
+      <div class="row3">
+        <div>
+          <label>Title Status</label>
+          <input id="title_status" placeholder="clean / salvage / etc"/>
+        </div>
+        <div>
+          <label>Condition</label>
+          <input id="condition" placeholder="excellent / good / fair"/>
+        </div>
+        <div>
+          <label>VIN</label>
+          <input id="vin" maxlength="17" placeholder="5YJ…"/>
+        </div>
       </div>
-      <div>
-        <label>Condition</label>
-        <input id="condition" placeholder="excellent / good / fair"/>
-      </div>
-      <div>
-        <label>VIN</label>
-        <input id="vin" maxlength="17" placeholder="5YJ…"/>
-      </div>
-    </div>
 
-    <label>Special Features (comma-separated)</label>
-    <input id="special_features" placeholder="FSD, Acceleration Boost, Tow Hitch"/>
+      <label>Special Features (comma-separated)</label>
+      <input id="special_features" placeholder="FSD, Acceleration Boost, Tow Hitch"/>
 
-    <label>Description</label>
-    <textarea id="description" rows="5" placeholder="Clean SoCal car, one owner…"></textarea>
+      <label>Description</label>
+      <textarea id="description" rows="5" placeholder="Clean SoCal car, one owner…"></textarea>
 
-    <label>Photos (1+)</label>
-    <input id="photos" type="file" accept="image/*" multiple />
-    <div class="bar"><div id="uProg"></div></div>
-    <div id="uList" class="muted" style="margin-top:6px;"></div>
+      <label>Photos (1+)</label>
+      <input id="photos" type="file" accept="image/*" multiple />
+      <div class="bar"><div id="uProg"></div></div>
+      <div id="uList" class="muted" style="margin-top:6px;"></div>
 
-    <button id="create">Create Listing</button>
-    <div id="createMsg" class="muted"></div>
-  </fieldset>
+      <button id="create" class="btn primary" style="width:auto">Create Listing</button>
+      <div id="createMsg" class="muted"></div>
+    </fieldset>
 
-  <fieldset>
-    <legend>Diagnostics</legend>
-    <div id="diag"></div>
-  </fieldset>
+    <!-- Diagnostics -->
+    <fieldset>
+      <legend>Diagnostics</legend>
+      <div id="diag"></div>
+    </fieldset>
+  </div>
 
-  <!-- Load your Supabase config -->
+  <!-- Supabase config + client -->
   <script src="/config.js"></script>
-  <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
+    // Init
     const SUPABASE_URL = window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co";
     const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRna3ZobXhyZnRjZWdwcnlwdHdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MDg3MDYsImV4cCI6MjA3NDA4NDcwNn0.3ahUcRJjrd3WoMsKDoaYXjcbM2UoltAZbQz7nVSqliQ";
-
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storageKey: 'evtime-auth'
-      }
+      auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:'pkce', storageKey:'evtime-auth' }
     });
 
+    // Helpers
     const $ = id => document.getElementById(id);
-    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
+    const diag = (m) => { $("diag").innerHTML += `<div>${m}</div>`; };
+    const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+    function parseImages(x){
+      if (!x) return [];
+      if (Array.isArray(x)) return x;
+      if (typeof x === 'string'){ const s = x.trim(); if (s.startsWith('[')){ try{ return JSON.parse(s)||[] }catch{ return [] } } return s.split(',').map(v=>v.trim()).filter(Boolean); }
+      return [];
+    }
+    function publicImageUrl(path){
+      if(!path) return null;
+      const normalized = String(path).trim(); // support both "id/..." and "images/id/..."
+      try{ const { data } = supabase.storage.from('images').getPublicUrl(normalized); return data?.publicUrl || null; }catch{ return null; }
+    }
 
+    // --- Auth UI ---
     async function setSessionUI() {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data:{ session }, error } = await supabase.auth.getSession();
       if (error) diag(`<span class="err">getSession error: ${error.message}</span>`);
-      if (session) {
+      const signedIn = !!session;
+      if (signedIn) {
         $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${session.user.email}</span>`;
         $("signinBox").style.display = "none";
         $("signout").style.display = "inline-block";
         $("createBox").style.display = "block";
+        $("manageBox").style.display = "block";
+        await loadList(); // auto-load the table
       } else {
         $("sessionInfo").textContent = "Not signed in.";
         $("signinBox").style.display = "block";
         $("signout").style.display = "none";
         $("createBox").style.display = "none";
+        $("manageBox").style.display = "none";
       }
     }
 
-    supabase.auth.onAuthStateChange((event) => {
-      diag(`Auth event: ${event}`);
-      setSessionUI();
-    });
+    supabase.auth.onAuthStateChange((event)=>{ diag(\`Auth event: \${event}\`); setSessionUI(); });
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
@@ -190,57 +267,46 @@
         email,
         options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
       });
-      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
+      $("authMsg").textContent = error ? \`Error: \${error.message}\` : "Check your email.";
     };
-
-    $("signout").onclick = async () => {
-      await supabase.auth.signOut();
-      await setSessionUI();
-    };
+    $("signout").onclick = async () => { await supabase.auth.signOut(); await setSessionUI(); };
 
     (async () => {
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
         const { error } = await supabase.auth.exchangeCodeForSession(qs);
-        if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
+        if (error) diag(\`<span class="err">Auth exchange error: \${error.message}</span>\`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
-      const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
-        || !!localStorage.getItem('evtime-auth');
+      const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token') || !!localStorage.getItem('evtime-auth');
       diag('Local session present: ' + hasLocal);
       await setSessionUI();
     })();
 
-    // --- Upload helper (FIXED PATH) ---
+    // --- Upload helper (keeps your fixed relative paths) ---
     async function uploadPhotos(listingId, files) {
       if (!files || files.length === 0) return [];
-      const uploaded = [];
-      let done = 0;
+      const uploaded = []; let done = 0;
       for (const file of files) {
-        // store RELATIVE to the bucket: "<listingId>/<filename>"
-        const relPath = `${listingId}/${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
+        const relPath = `${listingId}/${Date.now()}_${file.name.replace(/\s+/g,"_")}`;
+        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert:false });
         if (error) throw new Error(`Upload failed: ${error.message}`);
-        uploaded.push(relPath); // save the relative path in DB
-        done++;
-        $("uProg").style.width = `${Math.round((done/files.length)*100)}%`;
+        uploaded.push(relPath);
+        done++; $("uProg").style.width = `${Math.round((done/files.length)*100)}%`;
         $("uList").innerHTML += `<code>${relPath}</code><br/>`;
       }
       return uploaded;
     }
 
-    // --- Create listing ---
+    // --- Create listing (unchanged behavior) ---
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
       const files = Array.from(($("photos").files || []));
       if (files.length < 1) { $("createMsg").textContent = "Please add at least 1 photo."; return; }
-
       const listingId = crypto.randomUUID();
-
       try {
         diag("Uploading photos…");
         const imagePaths = await uploadPhotos(listingId, files);
-
         const payload = {
           id: listingId,
           status: $("status").value || "listed",
@@ -259,25 +325,77 @@
           powertrain: $("powertrain").value.trim(),
           images: imagePaths
         };
-
         diag("Inserting row…");
         const { error } = await supabase.from("listing").insert(payload);
         if (error) throw error;
-
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
-        $("photos").value = "";
-        $("uProg").style.width = "0%";
-        $("uList").innerHTML = "";
+        $("photos").value = ""; $("uProg").style.width = "0%"; $("uList").innerHTML = "";
+        await loadList(); // reflect new row in table
       } catch (e) {
         $("createMsg").innerHTML = `<span class="err">${e.message}</span>`;
         diag(`<span class="err">${e.stack || e}</span>`);
       }
     };
 
+    // --- Manage Inventory (read-only for now) ---
+    $("refresh").onclick = () => loadList();
+    $("q").addEventListener("input", () => renderList(window.__rows||[]));
+    $("statusFilter").addEventListener("change", () => renderList(window.__rows||[]));
+
+    async function loadList(){
+      $("listMsg").textContent = "Loading…";
+      const { data, error } = await supabase
+        .from("listing")
+        .select("id,year,make,model,trim,price,status,images,created_at,updated_at")
+        .order("created_at", { ascending:false })
+        .limit(200);
+      if (error){ $("listMsg").textContent = "Error loading inventory"; console.error(error); return; }
+      window.__rows = data || [];
+      $("listMsg").textContent = `${window.__rows.length} rows`;
+      renderList(window.__rows);
+    }
+
+    function renderList(rows){
+      const q = $("q").value.trim().toLowerCase();
+      const sf = $("statusFilter").value;
+      const list = $("list");
+      list.innerHTML = "";
+
+      const filtered = rows.filter(r=>{
+        const hay = [r.make,r.model,r.city,r.vin].filter(Boolean).join(" ").toLowerCase();
+        const okQ = q ? hay.includes(q) : true;
+        const okS = sf ? (String(r.status||"")===sf) : true;
+        return okQ && okS;
+      });
+
+      filtered.forEach(r=>{
+        const paths = parseImages(r.images);
+        const first = paths[0] || null;
+        const url = first ? publicImageUrl(first) : null;
+        const d = document.createElement("div");
+        d.className = "tr";
+        d.innerHTML = `
+          <div class="thumb">${url ? `<img src="${esc(url)}" alt="thumb">` : `<div class="muted center">no photo</div>`}</div>
+          <div class="title">${esc([r.year,r.make,r.model,r.trim].filter(Boolean).join(" "))}</div>
+          <div class="price">${r.price ? `$${Number(r.price).toLocaleString()}` : ""}</div>
+          <div>${esc(r.status||"")}${r.status ? `<span class="badge">${esc(r.status)}</span>`:""}</div>
+          <div>${r.created_at ? new Date(r.created_at).toLocaleString() : ""}</div>
+          <div>${r.updated_at ? new Date(r.updated_at).toLocaleString() : ""}</div>
+          <div class="actions">
+            <button class="btn ghost" disabled title="Edit coming next">Edit</button>
+            <button class="btn danger" disabled title="Delete coming next">Delete</button>
+          </div>
+        `;
+        list.appendChild(d);
+      });
+
+      $("listMsg").textContent = `${filtered.length} shown`;
+    }
+
     // --- Basic diagnostics ---
     (async () => {
       diag("Testing anon read from 'listing'…");
-      const { data, error } = await supabase.from("listing").select("*").limit(1);
+      const { error } = await supabase.from("listing").select("*").limit(1);
       if (error) diag(`<span class="err">Read error: ${error.message}</span>`); else diag("Read OK.");
       const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
       if (bErr) diag(`<span class="err">Storage error: ${bErr.message}</span>`);
