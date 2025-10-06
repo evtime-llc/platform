@@ -144,7 +144,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   // Build plain public URL from storage path like "id/photo.jpg"
   function publicImageUrl(path){
     if(!path) return null;
-    const normalized = path.replace(/^images\//i, '').trim();
+   const normalized = String(path).trim();
+
     try{
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
       return (data && data.publicUrl) ? data.publicUrl : null;
