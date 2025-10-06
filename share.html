@@ -59,6 +59,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .inv-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
 .inv-photo img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
 
+/* SOLD badge */
+.sold-flag{
+  position:absolute;top:8px;left:8px;
+  background:var(--copper-dark);color:#fff;font-weight:900;font-size:12px;
+  padding:4px 8px;border-radius:999px;letter-spacing:.5px
+}
+
 /* Gallery controls */
 .gal-btn{
   position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.45);
@@ -142,10 +149,10 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build plain public URL from storage path like "id/photo.jpg" OR "images/id/photo.jpg"
+  // Build public URL from a storage path like "id/photo.jpg" OR "images/id/photo.jpg"
   function publicImageUrl(path){
     if(!path) return null;
-    const normalized = String(path).trim(); // do NOT strip "images/" prefix; both styles are supported
+    const normalized = String(path).trim(); // do NOT strip "images/" – both styles must work
     try{
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
       return (data && data.publicUrl) ? data.publicUrl : null;
@@ -161,11 +168,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Card HTML with gallery
+  // Card HTML with gallery (+ SOLD badge if needed)
   function cardHTML(item, index){
     const {
       year, make, model, trim, mileage, special_features,
-      title_status, condition, description, city, vin, price, images
+      title_status, condition, description, city, vin, price, images, status
     } = item;
 
     // images can be an array, a JSON string, or a CSV string
@@ -193,11 +200,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const cityText = city ? esc(city) : "";
 
     const dots = urls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
+    const isSold = String(status||'').toLowerCase() === 'sold';
 
     return `
       <div class="inv-card" data-card="${index}" data-count="${urls.length}" data-images='${JSON.stringify(urls)}'>
         <div class="inv-photo">
           <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="eager" decoding="async">
+          ${isSold ? `<div class="sold-flag">SOLD</div>` : ``}
           ${urls.length>1 ? `
             <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
             <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
@@ -232,10 +241,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     </div>
   `;
 
+  // Fetch both live and sold
   const { data, error } = await supabase
     .from('listing')
     .select('*')
-    .in('status', ['published','listed']);
+    .in('status', ['listed','published','sold']);
 
   const mount = document.getElementById('inventory');
 
@@ -250,13 +260,19 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   }
 
   const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
+  const isLive = (s) => ['listed','published'].includes(String(s||'').toLowerCase());
+  const isSold = (s) => String(s||'').toLowerCase() === 'sold';
 
-  const teslas = data.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byNewest);
-  const otherEVs = data.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byNewest);
-  const others  = data.filter(x => {
+  const live = data.filter(x => isLive(x.status)).sort(byNewest);
+  const sold = data.filter(x => isSold(x.status)).sort(byNewest);
+
+  // Live sections (as before)
+  const teslas = live.filter(x => (x.make || '').toLowerCase() === 'tesla');
+  const otherEVs = live.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla');
+  const others  = live.filter(x => {
     const p = (x.powertrain || '').toUpperCase();
     return p === 'HYBRID' || p === 'GAS' || p === '';
-  }).sort(byNewest);
+  });
 
   let html = '';
   html += renderSection(teslas);
@@ -265,6 +281,12 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   if (others.length) {
     html += dividerHTML('Other vehicles');
     html += renderSection(others);
+  }
+
+  // Sold at the very bottom with a divider
+  if (sold.length) {
+    html += dividerHTML('Sold');
+    html += renderSection(sold);
   }
 
   mount.innerHTML = html;
