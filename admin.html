@@ -258,7 +258,7 @@
       }
     }
 
-    supabase.auth.onAuthStateChange((event)=>{ diag(\`Auth event: \${event}\`); setSessionUI(); });
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${event}`); setSessionUI(); });
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
@@ -267,7 +267,7 @@
         email,
         options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
       });
-      $("authMsg").textContent = error ? \`Error: \${error.message}\` : "Check your email.";
+      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
     };
     $("signout").onclick = async () => { await supabase.auth.signOut(); await setSessionUI(); };
 
@@ -275,7 +275,7 @@
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
         const { error } = await supabase.auth.exchangeCodeForSession(qs);
-        if (error) diag(\`<span class="err">Auth exchange error: \${error.message}</span>\`);
+        if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token') || !!localStorage.getItem('evtime-auth');
