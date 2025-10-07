@@ -146,19 +146,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 (async () => {
   const SUPABASE_URL = window.SUPABASE_URL;
   const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
-
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build public URL from a storage path like "id/photo.jpg" OR "images/id/photo.jpg"
+  // Build public URL from "id/file.jpg" OR "images/id/file.jpg"
   function publicImageUrl(path){
     if(!path) return null;
-    const normalized = String(path).trim(); // do NOT strip "images/" – both styles must work
+    const normalized = String(path).trim().replace(/^images\//i,''); // canonicalize
     try{
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
-      return (data && data.publicUrl) ? data.publicUrl : null;
-    }catch{
-      return null;
-    }
+      return data?.publicUrl || null;
+    }catch{ return null; }
   }
 
   // Preload images for snappy next/prev
@@ -168,14 +165,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Card HTML with gallery (+ SOLD badge if needed)
+  // Card HTML with gallery (+ SOLD badge)
   function cardHTML(item, index){
     const {
       year, make, model, trim, mileage, special_features,
       title_status, condition, description, city, vin, price, images, status
     } = item;
 
-    // images can be an array, a JSON string, or a CSV string
+    // images: array, JSON string, or CSV string
     const paths = Array.isArray(images)
       ? images
       : (typeof images === 'string'
@@ -241,12 +238,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     </div>
   `;
 
-  // Fetch both live and sold
+  // Fetch live + sold
   const { data, error } = await supabase
     .from('listing')
     .select('*')
-   .in('status', ['live','sold']);
-
+    .in('status', ['live','sold']);
 
   const mount = document.getElementById('inventory');
 
@@ -261,13 +257,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   }
 
   const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
-  const isLive = (s) => ['listed','published'].includes(String(s||'').toLowerCase());
+  const isLive = (s) => String(s||'').toLowerCase() === 'live';
   const isSold = (s) => String(s||'').toLowerCase() === 'sold';
 
   const live = data.filter(x => isLive(x.status)).sort(byNewest);
   const sold = data.filter(x => isSold(x.status)).sort(byNewest);
 
-  // Live sections (as before)
+  // Live sections (Tesla → other EVs → others)
   const teslas = live.filter(x => (x.make || '').toLowerCase() === 'tesla');
   const otherEVs = live.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla');
   const others  = live.filter(x => {
@@ -284,7 +280,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     html += renderSection(others);
   }
 
-  // Sold at the very bottom with a divider
+  // Sold at the bottom
   if (sold.length) {
     html += dividerHTML('Sold');
     html += renderSection(sold);
