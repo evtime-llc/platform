@@ -8,15 +8,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin</title>
   <style>
-    :root{
-      --line:#e7e5e4; --muted:#666; --ink:#1c1917;
-    }
+    :root{ --line:#e7e5e4; --muted:#666; --ink:#1c1917; }
     /* Header / Logo */
     .topbar { background:#fff; border-bottom:1px solid var(--line); }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
     @media (max-width:600px){ #site-logo { max-height:220px; } }
-
     /* Layout */
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; color:var(--ink); }
     h1 { margin: 16px 0 8px; }
@@ -28,24 +25,19 @@
     .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .row2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     @media (max-width:900px){ .row3{grid-template-columns:1fr} .row2{grid-template-columns:1fr} }
-
     .muted { color:var(--muted); font-size: 12px; }
     .ok { color: #0a7; }
     .err { color: #c00; white-space: pre-wrap; }
     .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
-
     .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
     .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
-
     .actions { display:flex; gap:8px; flex-wrap:wrap; }
     .btn { padding:8px 12px; border:1px solid #bbb; border-radius:8px; background:#fff; cursor:pointer; width:auto }
     .btn.small{ padding:6px 8px; font-size:12px }
     .btn.danger { border-color:#c00; color:#c00; }
-
     .table { width:100%; border-collapse: collapse; margin-top:8px; }
     .table th, .table td { border-bottom:1px solid #eee; padding:8px; text-align:left; vertical-align:top; }
     .w80 { max-width:80px }
-
     .tag { display:inline-block; padding:2px 6px; border-radius:999px; font-size:12px; background:#f1f5f9; }
     .tag.sold { background:#fee2e2; color:#991b1b; }
     .tag.live { background:#dcfce7; color:#166534; }
@@ -191,8 +183,7 @@
   <fieldset id="manageBox" style="display:none">
     <legend>Manage Inventory</legend>
     <div class="muted">Order matches the public site: Live Teslas → Live other EVs → Live other vehicles → Sold. Inside each block: newest on top.</div>
-
-    <div id="blocks"></div> <!-- we will render each block table here -->
+    <div id="blocks"></div>
   </fieldset>
 
   <!-- Diagnostics -->
@@ -213,7 +204,7 @@
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce', storageKey: 'evtime-auth' }
     });
 
-    const ADMIN_EMAIL = "vahehr@gmail.com"; // gate admin
+    const ADMIN_EMAIL = "vahehr@gmail.com";
 
     const $ = (id) => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
@@ -264,7 +255,6 @@
     };
 
     (async () => {
-      // Handle ?code=… return
       if (location.search && location.search.includes("code=")) {
         const { error } = await supabase.auth.exchangeCodeForSession(location.search);
         if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
@@ -277,7 +267,7 @@
     })();
 
     // ----- Helpers
-    const nowSec = () => Math.floor(Date.now() / 1000);
+    const nowMs = () => Date.now();
     function parseImages(images){
       if (!images) return [];
       if (Array.isArray(images)) return images;
@@ -290,12 +280,12 @@
     }
     function publicImageUrl(path){
       if (!path) return null;
-      const normalized = String(path).trim().replace(/^images\//i,'');
+      // Strip ANY leading "images/" segments (handles "images/..." and "images/images/...")
+      const normalized = String(path).trim().replace(/^(images\/)+/i,'');
       const { data } = supabase.storage.from('images').getPublicUrl(normalized);
       return data?.publicUrl || null;
     }
 
-    // Block rules (admin mirrors public site)
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
       if (status === 'sold') return 'sold';
@@ -308,7 +298,6 @@
       return 'live_other';
     }
     const BLOCK_ORDER = ['live_tesla','live_other_ev','live_other','sold'];
-
     const byPosThenDate = (a,b) => {
       const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
       if (pb !== pa) return pb - pa;
@@ -366,7 +355,7 @@
           vin: $("vin").value.trim() || null,
           price: parseInt($("price").value || "0", 10) || null,
           images: imagePaths,
-          position: nowSec()
+          position: nowMs()
         };
 
         diag("Inserting row…");
@@ -392,22 +381,20 @@
         .limit(500);
       if (error){ container.innerHTML = `<div class="err">${error.message}</div>`; return; }
 
-      // Group by block
       const groups = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
       (data||[]).forEach(r => { groups[blockKey(r)].push(r); });
-      // Sort each block
       BLOCK_ORDER.forEach(k => groups[k].sort(byPosThenDate));
 
-      // Keep an ordered flat list for Up/Down neighbor logic
-      window.__ordered = [...groups.live_tesla, ...groups.live_other_ev, ...groups.live_other, ...groups.sold];
+      // expose for move logic
+      window.__groups = groups;
 
-      // Render blocks
+      // render
       const html = [];
       if (groups.live_tesla.length) html.push(renderBlock("Live Teslas", groups.live_tesla));
       if (groups.live_other_ev.length) html.push(renderBlock("Live – Other EVs", groups.live_other_ev));
       if (groups.live_other.length) html.push(renderBlock("Other Vehicles", groups.live_other));
       if (groups.sold.length) html.push(renderBlock("Sold", groups.sold));
-      container.innerHTML = html.join("");
+      container.innerHTML = html.join("") || `<div class="muted">No rows</div>`;
     }
 
     function renderBlock(title, rows){
@@ -457,54 +444,55 @@
       `;
     }
 
-    // ----- Actions (delegated)
+    // ----- Actions
     document.addEventListener("click", async (e)=>{
       const btn = e.target.closest("button[data-act]");
       if (!btn) return;
       const tr = btn.closest("tr");
       if (!tr) return;
-
       const id = tr.getAttribute("data-id");
       const act = btn.getAttribute("data-act");
-
       if (act === "delete"){ await hardDelete(id); return; }
-      if (act === "up"){ await nudgePosition(id, -1); return; }
-      if (act === "down"){ await nudgePosition(id, +1); return; }
+      if (act === "up"){ await moveWithinBlock(id, -1); return; }
+      if (act === "down"){ await moveWithinBlock(id, +1); return; }
       if (act === "set-live"){ await setStatus(id, "live"); return; }
       if (act === "set-sold"){ await setStatus(id, "sold"); return; }
     });
 
-    // ----- Up/Down (A): safe DB swap with two UPDATEs inside the same block
-    async function nudgePosition(id, dir){
-      const ordered = window.__ordered || [];
-      const meIdx = ordered.findIndex(r => r.id === id);
-      if (meIdx === -1) return;
+    // ----- Stable reindexing move (fixes “bounce”)
+    async function moveWithinBlock(id, dir){
+      const groups = window.__groups || {};
+      // find which block contains this id
+      const blockName = BLOCK_ORDER.find(b => (groups[b]||[]).some(r => r.id === id));
+      if (!blockName) return;
+      const list = (groups[blockName]||[]).slice(); // copy
+      if (list.length < 2) return;
 
-      const myBlock = blockKey(ordered[meIdx]);
+      const idx = list.findIndex(r => r.id === id);
+      if (idx === -1) return;
 
-      // find neighbor within the same block in the chosen direction
-      let nbIdx = meIdx;
-      while (true){
-        nbIdx += (dir < 0 ? -1 : +1);
-        if (nbIdx < 0 || nbIdx >= ordered.length) return; // at edge
-        if (blockKey(ordered[nbIdx]) === myBlock) break;   // neighbor found
+      let to = idx + (dir < 0 ? -1 : +1);
+      to = Math.max(0, Math.min(list.length - 1, to));
+      if (to === idx) return;
+
+      const item = list.splice(idx, 1)[0];
+      list.splice(to, 0, item);
+
+      // fresh descending millisecond positions
+      const base = nowMs();
+      const updates = list.map((row, i) => ({ id: row.id, position: base - i }));
+
+      // write them (only position changes)
+      for (const u of updates){
+        const { error } = await supabase.from("listing").update({ position: u.position }).eq("id", u.id);
+        if (error){ alert("Position update failed: " + error.message); return; }
       }
-
-      const me = ordered[meIdx];
-      const nb = ordered[nbIdx];
-      const myPos = Number(me.position || 0);
-      const nbPos = Number(nb.position || 0);
-      const a = await supabase.from("listing").update({ position: nbPos }).eq("id", me.id);
-      if (a.error){ alert("Position update failed: " + a.error.message); return; }
-      const b = await supabase.from("listing").update({ position: myPos }).eq("id", nb.id);
-      if (b.error){ alert("Position update failed: " + b.error.message); return; }
       await loadAll();
     }
 
-    // ----- Status change (C): bump position to now so newest sits on top of its block
+    // ----- Status change: bump to top of its new block
     async function setStatus(id, newStatus){
-      const upd = { status: newStatus, position: nowSec() };
-      const { error } = await supabase.from("listing").update(upd).eq("id", id);
+      const { error } = await supabase.from("listing").update({ status: newStatus, position: nowMs() }).eq("id", id);
       if (error){ alert("Status update failed: " + error.message); return; }
       await loadAll();
     }
@@ -514,7 +502,6 @@
       if (!confirm("Delete this listing and its photos? This cannot be undone.")) return;
       const { error } = await supabase.from("listing").delete().eq("id", id);
       if (error){ alert("Delete failed: " + error.message); return; }
-
       try{
         const { data: files } = await supabase.storage.from("images").list(id, { limit: 1000 });
         if (Array.isArray(files) && files.length){
@@ -522,7 +509,6 @@
           await supabase.storage.from("images").remove(paths);
         }
       }catch(e){ /* ignore storage errors */ }
-
       await loadAll();
     }
 
