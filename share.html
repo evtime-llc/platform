@@ -238,6 +238,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     </div>
   `;
 
+  // Sorting: position DESC, then updated_at/created_at DESC
+  const byPosThenDate = (a,b) => {
+    const pa = Number(a.position ?? 0);
+    const pb = Number(b.position ?? 0);
+    if (pb !== pa) return pb - pa;
+    const ad = new Date(a.updated_at || a.created_at || 0).getTime();
+    const bd = new Date(b.updated_at || b.created_at || 0).getTime();
+    return bd - ad;
+  };
+
   // Fetch live + sold
   const { data, error } = await supabase
     .from('listing')
@@ -256,20 +266,19 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     return;
   }
 
-  const byNewest = (a,b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at);
   const isLive = (s) => String(s||'').toLowerCase() === 'live';
   const isSold = (s) => String(s||'').toLowerCase() === 'sold';
 
-  const live = data.filter(x => isLive(x.status)).sort(byNewest);
-  const sold = data.filter(x => isSold(x.status)).sort(byNewest);
+  const live = data.filter(x => isLive(x.status)).sort(byPosThenDate);
+  const sold = data.filter(x => isSold(x.status)).sort(byPosThenDate);
 
-  // Live sections (Tesla → other EVs → others)
-  const teslas = live.filter(x => (x.make || '').toLowerCase() === 'tesla');
-  const otherEVs = live.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla');
+  // Live sections (Tesla → other EVs → others), each sorted by position/date
+  const teslas = live.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byPosThenDate);
+  const otherEVs = live.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byPosThenDate);
   const others  = live.filter(x => {
     const p = (x.powertrain || '').toUpperCase();
     return p === 'HYBRID' || p === 'GAS' || p === '';
-  });
+  }).sort(byPosThenDate);
 
   let html = '';
   html += renderSection(teslas);
