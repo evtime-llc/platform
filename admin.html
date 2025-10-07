@@ -44,6 +44,7 @@
     .tag.ev { background:#dbeafe; color:#1e40af; }
     .tag.other { background:#fef3c7; color:#92400e; }
     .blockLabel{ font-weight:900; margin:18px 0 6px; }
+    .busy { opacity:.6; pointer-events:none }
   </style>
 </head>
 <body>
@@ -209,6 +210,14 @@
     const $ = (id) => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
 
+    // Busy lock to prevent race/bounce on rapid clicks
+    let __busy = false;
+    function setBusy(on){
+      __busy = !!on;
+      document.body.classList.toggle('busy', __busy);
+      document.querySelectorAll('button[data-act]').forEach(b => b.disabled = __busy);
+    }
+
     // ----- Auth UI
     async function setSessionUI() {
       const { data: { session }, error } = await supabase.auth.getSession();
@@ -278,13 +287,41 @@
       }
       return [];
     }
-    function publicImageUrl(path){
-      if (!path) return null;
-      // Strip ANY leading "images/" segments (handles "images/..." and "images/images/...")
-      const normalized = String(path).trim().replace(/^(images\/)+/i,'');
-      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
-      return data?.publicUrl || null;
+
+    // Build multiple candidate URLs to survive odd saved paths
+    function publicImageUrls(path){
+      let s = String(path||'').trim().replace(/^\/+/, '');
+      if (!s) return [];
+      const candidates = [];
+      // if double prefix, collapse to single "images/..."
+      if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+      candidates.push(s);
+      // try without leading "images/"
+      candidates.push(s.replace(/^images\//i,''));
+      // try adding a single "images/" if missing
+      if (!/^images\//i.test(s)) candidates.push('images/' + s);
+      // dedupe
+      const uniq = [...new Set(candidates)];
+      // map to actual public URLs
+      return uniq.map(p => {
+        const { data } = supabase.storage.from('images').getPublicUrl(p);
+        return data?.publicUrl || null;
+      }).filter(Boolean);
     }
+
+    // global fallback handler for <img> errors
+    window.__imgFallback = function(img){
+      try{
+        const alts = JSON.parse(img.getAttribute('data-alts') || '[]');
+        if (alts.length){
+          const next = alts.shift();
+          img.setAttribute('data-alts', JSON.stringify(alts));
+          img.src = next;
+        } else {
+          img.onerror = null;
+        }
+      }catch{ img.onerror = null; }
+    };
 
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
@@ -385,10 +422,8 @@
       (data||[]).forEach(r => { groups[blockKey(r)].push(r); });
       BLOCK_ORDER.forEach(k => groups[k].sort(byPosThenDate));
 
-      // expose for move logic
       window.__groups = groups;
 
-      // render
       const html = [];
       if (groups.live_tesla.length) html.push(renderBlock("Live Teslas", groups.live_tesla));
       if (groups.live_other_ev.length) html.push(renderBlock("Live – Other EVs", groups.live_other_ev));
@@ -400,15 +435,20 @@
     function renderBlock(title, rows){
       const body = rows.map(r=>{
         const paths = parseImages(r.images);
-        const url = paths[0] ? publicImageUrl(paths[0]) : null;
+        const urls = paths[0] ? publicImageUrls(paths[0]) : [];
+        const url = urls[0] || null;
+        const alts = urls.slice(1);
         const model = [r.year, r.make, r.model].filter(Boolean).join(" ");
         const price = r.price ? `$${Number(r.price).toLocaleString()}` : "";
         const pos = Number(r.position || 0);
         const typeTag = `<span class="tag ${r.vehicle_type || 'ev'}">${r.vehicle_type || 'ev'}</span>`;
         const statusTag = `<span class="tag ${r.status}">${r.status}</span>`;
+        const imgHTML = url
+          ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #eee">`
+          : '';
         return `
           <tr data-id="${r.id}" data-block="${blockKey(r)}" data-pos="${pos}">
-            <td class="w80">${url ? `<img src="${url}" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #eee">` : ''}</td>
+            <td class="w80">${imgHTML}</td>
             <td>${model}<div class="muted">${r.city || ''}</div></td>
             <td>${statusTag}</td>
             <td>${typeTag}</td>
@@ -448,6 +488,7 @@
     document.addEventListener("click", async (e)=>{
       const btn = e.target.closest("button[data-act]");
       if (!btn) return;
+      if (__busy) return;
       const tr = btn.closest("tr");
       if (!tr) return;
       const id = tr.getAttribute("data-id");
@@ -459,13 +500,12 @@
       if (act === "set-sold"){ await setStatus(id, "sold"); return; }
     });
 
-    // ----- Stable reindexing move (fixes “bounce”)
+    // ----- Stable reindexing move with busy lock
     async function moveWithinBlock(id, dir){
       const groups = window.__groups || {};
-      // find which block contains this id
       const blockName = BLOCK_ORDER.find(b => (groups[b]||[]).some(r => r.id === id));
       if (!blockName) return;
-      const list = (groups[blockName]||[]).slice(); // copy
+      const list = (groups[blockName]||[]).slice();
       if (list.length < 2) return;
 
       const idx = list.findIndex(r => r.id === id);
@@ -478,38 +518,56 @@
       const item = list.splice(idx, 1)[0];
       list.splice(to, 0, item);
 
-      // fresh descending millisecond positions
-      const base = nowMs();
-      const updates = list.map((row, i) => ({ id: row.id, position: base - i }));
-
-      // write them (only position changes)
-      for (const u of updates){
-        const { error } = await supabase.from("listing").update({ position: u.position }).eq("id", u.id);
-        if (error){ alert("Position update failed: " + error.message); return; }
+      setBusy(true);
+      try{
+        const base = nowMs();
+        const updates = list.map((row, i) => ({ id: row.id, position: base - i }));
+        for (const u of updates){
+          const { error } = await supabase.from("listing").update({ position: u.position }).eq("id", u.id);
+          if (error) throw error;
+        }
+        await loadAll();
+      } catch (e){
+        alert("Position update failed: " + (e?.message || e));
+      } finally {
+        setBusy(false);
       }
-      await loadAll();
     }
 
     // ----- Status change: bump to top of its new block
     async function setStatus(id, newStatus){
-      const { error } = await supabase.from("listing").update({ status: newStatus, position: nowMs() }).eq("id", id);
-      if (error){ alert("Status update failed: " + error.message); return; }
-      await loadAll();
+      setBusy(true);
+      try{
+        const { error } = await supabase.from("listing").update({ status: newStatus, position: nowMs() }).eq("id", id);
+        if (error) throw error;
+        await loadAll();
+      } catch (e){
+        alert("Status update failed: " + (e?.message || e));
+      } finally {
+        setBusy(false);
+      }
     }
 
     // ----- Hard delete row + best-effort delete folder
     async function hardDelete(id){
       if (!confirm("Delete this listing and its photos? This cannot be undone.")) return;
-      const { error } = await supabase.from("listing").delete().eq("id", id);
-      if (error){ alert("Delete failed: " + error.message); return; }
+      setBusy(true);
       try{
-        const { data: files } = await supabase.storage.from("images").list(id, { limit: 1000 });
-        if (Array.isArray(files) && files.length){
-          const paths = files.map(f => `${id}/${f.name}`);
-          await supabase.storage.from("images").remove(paths);
-        }
-      }catch(e){ /* ignore storage errors */ }
-      await loadAll();
+        const { error } = await supabase.from("listing").delete().eq("id", id);
+        if (error) throw error;
+        try{
+          const { data: files } = await supabase.storage.from("images").list(id, { limit: 1000 });
+          if (Array.isArray(files) && files.length){
+            const paths = files.map(f => `${id}/${f.name}`);
+            await supabase.storage.from("images").remove(paths);
+          }
+        }catch{}
+        await loadAll();
+      } catch (e){
+        alert("Delete failed: " + (e?.message || e));
+      } finally {
+        setBusy(false);
+      }
     }
 
     // ----- Diagnostics
