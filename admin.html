@@ -45,18 +45,19 @@
     .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
     .toolbar input{flex:1}
     .table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    .tr{display:grid;grid-template-columns: 76px 1.2fr .7fr .6fr .9fr .9fr .9fr; gap:10px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px}
+    .tr{display:grid;grid-template-columns: 76px 1.2fr .7fr .6fr .9fr .9fr 1.1fr; gap:10px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px}
     .th{font-size:12px;color:#555;margin:2px 10px}
     .thumb{width:76px;height:54px;background:#f2f2f2;border-radius:8px;overflow:hidden;display:grid;place-items:center}
     .thumb img{width:100%;height:100%;object-fit:cover;display:block}
     .title{font-weight:800}
     .price{font-weight:800}
     .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#f5eae0;color:#9e6d45;margin-left:6px}
-    .actions{display:flex;gap:6px;justify-content:flex-end}
+    .actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
     .btn{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
     .btn.primary{background:var(--brand);color:#0b0a09;border-color:transparent;font-weight:800}
     .btn.danger{border-color:#fca5a5;color:#b91c1c}
     .btn.ghost{background:#fff}
+    .small{font-size:12px}
     .center{display:flex;justify-content:center;align-items:center}
 
     /* Edit Modal */
@@ -74,7 +75,6 @@
     .thumbbox img{width:100%;height:110px;object-fit:cover;display:block;background:#000}
     .thumbtools{display:flex;gap:6px;padding:6px;justify-content:space-between}
     .pill2{display:inline-block;font-size:11px;background:#eef2ff;color:#3730a3;border-radius:999px;padding:2px 6px}
-    .small{font-size:12px}
   </style>
 </head>
 <body>
@@ -329,10 +329,7 @@
       const normalized = String(path).trim(); // support both "id/..." and "images/id/..."
       try{ const { data } = supabase.storage.from('images').getPublicUrl(normalized); return data?.publicUrl || null; }catch{ return null; }
     }
-    function uiToDbStatus(ui){
-      // Keep site working: "live" is stored as "listed"; "sold" stays "sold"
-      return ui === 'live' ? 'listed' : (ui || null);
-    }
+    function uiToDbStatus(ui){ return ui === 'live' ? 'live' : (ui || null); }
     function dbToUiStatus(db){ return db === 'listed' ? 'live' : (db || ''); }
 
     // --- Auth UI ---
@@ -396,6 +393,24 @@
       return uploaded;
     }
 
+    // --- Ordering helpers (blocks + sort) ---
+    const byPosThenDate = (a,b) => {
+      const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
+      if (pb !== pa) return pb - pa;
+      const ad = new Date(a.updated_at || a.created_at || 0).getTime();
+      const bd = new Date(b.updated_at || b.created_at || 0).getTime();
+      return bd - ad;
+    };
+    function blockKey(row){
+      const statusUI = dbToUiStatus(String(row.status||""));
+      if (statusUI === 'sold') return 'sold';
+      const make = (row.make||'').toLowerCase();
+      const p = (row.powertrain||'').toUpperCase();
+      if (make === 'tesla') return 'live_tesla';
+      if (p === 'EV' && make !== 'tesla') return 'live_other_ev';
+      return 'live_other';
+    }
+
     // --- Create listing ---
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
@@ -422,6 +437,7 @@
           price: parseInt($("price").value || "0", 10),
           powertrain: $("powertrain").value.trim(),
           images: imagePaths
+          // position uses DB default (now)
         };
         diag("Inserting row…");
         const { error } = await supabase.from("listing").insert(payload);
@@ -444,9 +460,11 @@
       $("listMsg").textContent = "Loading…";
       const { data, error } = await supabase
         .from("listing")
-        .select("id,year,make,model,trim,price,status,images,created_at,updated_at,city,powertrain,title_status,condition,vin,special_features,description")
+        .select("id,year,make,model,trim,price,status,images,position,created_at,updated_at,city,powertrain,title_status,condition,vin,special_features,description")
+        .order("position", { ascending:false })
+        .order("updated_at", { ascending:false })
         .order("created_at", { ascending:false })
-        .limit(200);
+        .limit(400);
       if (error){ $("listMsg").textContent = "Error loading inventory"; console.error(error); return; }
       window.__rows = data || [];
       $("listMsg").textContent = `${window.__rows.length} rows`;
@@ -465,24 +483,28 @@
         const okQ = q ? hay.includes(q) : true;
         const okS = sf ? (uiStatus===sf) : true;
         return okQ && okS;
-      });
+      }).sort(byPosThenDate);
 
       filtered.forEach(r=>{
         const paths = parseImages(r.images);
         const first = paths[0] || null;
         const url = first ? publicImageUrl(first) : null;
+        const title = [r.year,r.make,r.model,r.trim].filter(Boolean).join(" ");
+        const uiStatus = dbToUiStatus(r.status)||"";
         const d = document.createElement("div");
         d.className = "tr";
         d.innerHTML = `
           <div class="thumb">${url ? `<img src="${esc(url)}" alt="thumb">` : `<div class="muted center">no photo</div>`}</div>
-          <div class="title">${esc([r.year,r.make,r.model,r.trim].filter(Boolean).join(" "))}</div>
+          <div class="title">${esc(title)}</div>
           <div class="price">${r.price ? `$${Number(r.price).toLocaleString()}` : ""}</div>
-          <div>${esc(dbToUiStatus(r.status)||"")}${r.status ? `<span class="badge">${esc(dbToUiStatus(r.status))}</span>`:""}</div>
+          <div>${esc(uiStatus)}${uiStatus ? `<span class="badge">${esc(uiStatus)}</span>`:""}</div>
           <div>${r.created_at ? new Date(r.created_at).toLocaleString() : ""}</div>
           <div>${r.updated_at ? new Date(r.updated_at).toLocaleString() : ""}</div>
           <div class="actions">
-            <button class="btn ghost" data-edit="${r.id}">Edit</button>
-            <button class="btn danger" data-delete="${r.id}">Delete</button>
+            <button class="btn small" data-up="${r.id}" title="Move up">↑</button>
+            <button class="btn small" data-down="${r.id}" title="Move down">↓</button>
+            <button class="btn ghost small" data-edit="${r.id}">Edit</button>
+            <button class="btn danger small" data-delete="${r.id}">Delete</button>
           </div>
         `;
         list.appendChild(d);
@@ -492,7 +514,7 @@
     }
 
     // --- Edit Modal state ---
-    let currentEdit = null; // { row, images:[], dirty:boolean }
+    let currentEdit = null; // { row, images:[] }
 
     document.addEventListener("click", async (e)=>{
       // open edit
@@ -510,6 +532,16 @@
         const ok = confirm("Delete this listing and all its photos forever? This cannot be undone.");
         if (!ok) return;
         await hardDeleteListing(id);
+        return;
+      }
+
+      // Up / Down ordering
+      const upBtn = e.target.closest("[data-up]");
+      const downBtn = e.target.closest("[data-down]");
+      if (upBtn || downBtn){
+        const id = (upBtn||downBtn).getAttribute(upBtn ? "data-up" : "data-down");
+        const dir = upBtn ? "up" : "down";
+        await nudgePosition(id, dir);
         return;
       }
 
@@ -555,7 +587,7 @@
       }
     });
 
-    // add photos in edit
+    // Add photos in edit
     $("addPhotos").addEventListener("change", async (e)=>{
       if (!currentEdit) return;
       const files = Array.from(e.target.files||[]);
@@ -572,12 +604,7 @@
     });
 
     async function openEdit(id){
-      // fetch the latest row
-      const { data, error } = await supabase
-        .from("listing")
-        .select("*")
-        .eq("id", id)
-        .single();
+      const { data, error } = await supabase.from("listing").select("*").eq("id", id).single();
       if (error){ alert("Load failed: " + error.message); return; }
 
       currentEdit = {
@@ -585,7 +612,6 @@
         images: parseImages(data.images)
       };
 
-      // Fill fields
       $("e_status").value = dbToUiStatus(data.status) || "live";
       $("e_price").value = data.price ?? "";
       $("e_mileage").value = data.mileage ?? "";
@@ -594,8 +620,7 @@
       $("e_model").value = data.model ?? "";
       $("e_trim").value = data.trim ?? "";
       $("e_powertrain").value = data.powertrain ?? "";
-$("e_city").value = data.city ?? "";
-
+      $("e_city").value = data.city ?? "";
       $("e_title_status").value = data.title_status ?? "";
       $("e_condition").value = data.condition ?? "";
       $("e_vin").value = data.vin ?? "";
@@ -605,7 +630,6 @@ $("e_city").value = data.city ?? "";
       $("editTitle").textContent = `Edit: ${[data.year,data.make,data.model,data.trim].filter(Boolean).join(" ")}`;
       renderGallery();
 
-      // open modal
       $("backdrop").style.display = "block";
       $("modal").style.display = "block";
     }
@@ -661,7 +685,7 @@ $("e_city").value = data.city ?? "";
         vin: $("e_vin").value.trim() || null,
         special_features: $("e_special_features").value.trim() || null,
         description: $("e_description").value.trim() || null,
-        images: currentEdit.images // array (first = cover)
+        images: currentEdit.images
       };
 
       $("editMsg").textContent = "Saving…";
@@ -677,12 +701,7 @@ $("e_city").value = data.city ?? "";
     async function hardDeleteListing(id){
       try {
         diag(`Deleting ${id}…`);
-        // Get images first
-        const { data, error } = await supabase
-          .from("listing")
-          .select("images")
-          .eq("id", id)
-          .single();
+        const { data, error } = await supabase.from("listing").select("images").eq("id", id).single();
         if (error) throw error;
 
         const paths = parseImages(data?.images);
@@ -690,7 +709,6 @@ $("e_city").value = data.city ?? "";
           const { error: sErr } = await supabase.storage.from("images").remove(paths);
           if (sErr) diag(`<span class="err">Storage delete error: ${sErr.message}</span>`);
         }
-        // Delete the row
         const { error: dErr } = await supabase.from("listing").delete().eq("id", id);
         if (dErr) throw dErr;
 
@@ -699,6 +717,35 @@ $("e_city").value = data.city ?? "";
       } catch (e) {
         alert("Delete failed: " + (e?.message || e));
         diag(`<span class="err">${e?.stack || e}</span>`);
+      }
+    }
+
+    // Nudge position up/down within the same block (admin order = site order)
+    async function nudgePosition(id, dir){
+      try{
+        const rows = window.__rows || [];
+        const me = rows.find(r => r.id === id);
+        if (!me) return alert("Row not found.");
+        const myBlock = blockKey(me);
+        const peers = rows.filter(r => blockKey(r) === myBlock).sort(byPosThenDate);
+        const idx = peers.findIndex(r => r.id === id);
+        if (idx === -1) return;
+
+        const neighbor = dir === 'up' ? peers[idx-1] : peers[idx+1];
+        if (!neighbor) return; // already at top/bottom of the block
+
+        const myPos = Number(me.position ?? 0);
+        const nbPos = Number(neighbor.position ?? 0);
+
+        // Swap the two positions
+        let { error: e1 } = await supabase.from("listing").update({ position: nbPos }).eq("id", me.id);
+        if (e1) throw e1;
+        let { error: e2 } = await supabase.from("listing").update({ position: myPos }).eq("id", neighbor.id);
+        if (e2) throw e2;
+
+        await loadList();
+      }catch(err){
+        alert("Reorder failed: " + (err.message || err));
       }
     }
 
