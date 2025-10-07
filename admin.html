@@ -45,7 +45,7 @@
     .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
     .toolbar input{flex:1}
     .table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    .tr{display:grid;grid-template-columns: 76px 1.2fr .7fr .6fr .9fr .9fr .7fr; gap:10px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px}
+    .tr{display:grid;grid-template-columns: 76px 1.2fr .7fr .6fr .9fr .9fr .9fr; gap:10px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 10px}
     .th{font-size:12px;color:#555;margin:2px 10px}
     .thumb{width:76px;height:54px;background:#f2f2f2;border-radius:8px;overflow:hidden;display:grid;place-items:center}
     .thumb img{width:100%;height:100%;object-fit:cover;display:block}
@@ -297,7 +297,7 @@
 
           <div id="gallery" class="gallery" style="margin-top:8px"></div>
           <div class="bar" style="margin-top:8px"><div id="eProg"></div></div>
-          <div class="muted small" style="margin-top:6px">Tip: use the arrows to reorder. “Remove” = soft delete (DB only). “Delete file” = hard delete (DB + Storage).</div>
+          <div class="muted small" style="margin-top:6px">Use arrows to reorder. “Remove” = soft delete (DB only). “Delete file” = hard delete (DB + Storage).</div>
         </div>
       </div>
     </div>
@@ -330,12 +330,10 @@
       try{ const { data } = supabase.storage.from('images').getPublicUrl(normalized); return data?.publicUrl || null; }catch{ return null; }
     }
     function uiToDbStatus(ui){
-      // Keep site working: "live" is stored as "listed" (share.html already shows listed)
+      // Keep site working: "live" is stored as "listed"; "sold" stays "sold"
       return ui === 'live' ? 'listed' : (ui || null);
     }
-    function dbToUiStatus(db){
-      return db === 'listed' ? 'live' : (db || '');
-    }
+    function dbToUiStatus(db){ return db === 'listed' ? 'live' : (db || ''); }
 
     // --- Auth UI ---
     async function setSessionUI() {
@@ -484,6 +482,7 @@
           <div>${r.updated_at ? new Date(r.updated_at).toLocaleString() : ""}</div>
           <div class="actions">
             <button class="btn ghost" data-edit="${r.id}">Edit</button>
+            <button class="btn danger" data-delete="${r.id}">Delete</button>
           </div>
         `;
         list.appendChild(d);
@@ -504,13 +503,23 @@
         return;
       }
 
+      // DELETE listing (hard delete)
+      const delBtn = e.target.closest("[data-delete]");
+      if (delBtn){
+        const id = delBtn.getAttribute("data-delete");
+        const ok = confirm("Delete this listing and all its photos forever? This cannot be undone.");
+        if (!ok) return;
+        await hardDeleteListing(id);
+        return;
+      }
+
       // close modal
       if (e.target.id === "closeModal" || e.target.id === "cancelEdit"){
         closeModal();
         return;
       }
 
-      // photo actions
+      // photo actions in modal
       const moveL = e.target.closest("[data-move-left]");
       const moveR = e.target.closest("[data-move-right]");
       const softDel = e.target.closest("[data-soft-del]");
@@ -539,7 +548,7 @@
         }
       }
 
-      // save
+      // save in modal
       if (e.target.id === "saveEdit"){
         await saveEdit();
         return;
@@ -585,7 +594,7 @@
       $("e_model").value = data.model ?? "";
       $("e_trim").value = data.trim ?? "";
       $("e_powertrain").value = data.powertrain ?? "";
-      $("e_city").value = data.city ?? "";
+      $("e_city").value = data.city ?? ";
       $("e_title_status").value = data.title_status ?? "";
       $("e_condition").value = data.condition ?? "";
       $("e_vin").value = data.vin ?? "";
@@ -663,11 +672,41 @@
       setTimeout(()=> closeModal(), 400);
     }
 
+    // Hard delete: remove Storage files, then delete row
+    async function hardDeleteListing(id){
+      try {
+        diag(`Deleting ${id}…`);
+        // Get images first
+        const { data, error } = await supabase
+          .from("listing")
+          .select("images")
+          .eq("id", id)
+          .single();
+        if (error) throw error;
+
+        const paths = parseImages(data?.images);
+        if (paths.length){
+          const { error: sErr } = await supabase.storage.from("images").remove(paths);
+          if (sErr) diag(`<span class="err">Storage delete error: ${sErr.message}</span>`);
+        }
+        // Delete the row
+        const { error: dErr } = await supabase.from("listing").delete().eq("id", id);
+        if (dErr) throw dErr;
+
+        diag(`<span class="ok">Deleted ${id}</span>`);
+        await loadList();
+      } catch (e) {
+        alert("Delete failed: " + (e?.message || e));
+        diag(`<span class="err">${e?.stack || e}</span>`);
+      }
+    }
+
     // --- Diagnostics ---
     (async () => {
       diag("Testing anon read from 'listing'…");
       const { error } = await supabase.from("listing").select("*").limit(1);
-      if (error) diag(`<span class="err">Read error: ${error.message}</span>`); else diag("Read OK.");
+      if (error) diag(`<span class="err">Read error: ${error.message}</span>`);
+      else diag("Read OK.");
       const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
       if (bErr) diag(`<span class="err">Storage error: ${bErr.message}</span>`);
       else diag("Storage buckets: " + (buckets?.map(b => b.name).join(", ") || "none"));
