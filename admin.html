@@ -30,7 +30,7 @@
 
     /* Manage table */
     table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: top; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: middle; }
     th { text-align:left; font-size:13px; color:#555; }
     td .title { font-weight:800; }
     td .sub { font-size:12px; color:#666; }
@@ -43,6 +43,9 @@
     .badge.sold { background:#f7e6e6; color:#a00; border:1px solid #f0caca; }
     .badge.ev { background:#e8f0ff; color:#1d4ed8; border:1px solid #c7dcff; }
     .badge.other { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
+
+    /* Cover thumbnail */
+    .thumb { width: 72px; height: 54px; object-fit: cover; border-radius:8px; background:#000; display:block; }
 
     /* Modal */
     .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
@@ -170,6 +173,7 @@
       <table>
         <thead>
           <tr>
+            <th>Cover</th>
             <th>Status</th>
             <th>Vehicle</th>
             <th>City / Price</th>
@@ -220,6 +224,37 @@
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
+
+    // ---------- Image helpers (same robustness as Share)
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function parseImages(images){
+      if (!images) return [];
+      if (Array.isArray(images)) return images;
+      if (typeof images === 'string'){
+        const s = images.trim();
+        if (s.startsWith('[')) { try{ return JSON.parse(s)||[] } catch { return [] } }
+        return s.split(',').map(v=>v.trim()).filter(Boolean);
+      }
+      return [];
+    }
+    function normalize(path){
+      return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
+    }
+    function publicImageUrls(path){
+      let s = String(path||'').trim().replace(/^\/+/, '');
+      if (!s) return [];
+      const candidates = [];
+      if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+      candidates.push(s);
+      candidates.push(s.replace(/^images\//i,''));
+      if (!/^images\//i.test(s)) candidates.push('images/' + s);
+      const uniq = [...new Set(candidates)];
+      return uniq.map(p => supabase.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
+    }
+    function chooseUrl(path){
+      const urls = publicImageUrls(path);
+      return urls[0] || null;
+    }
 
     // ---- Auth UI
     async function setSessionUI() {
@@ -283,7 +318,7 @@
       await setSessionUI();
     })();
 
-    // ---- Helpers
+    // ---- Grouping & ordering (same rules as Share)
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
       if (status === 'sold') return 'sold';
@@ -295,7 +330,6 @@
       }
       return 'live_other';
     }
-
     function byPosThenDate(a,b){
       const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
       if (pb !== pa) return pb - pa;
@@ -351,7 +385,6 @@
           special_features: $("c_special_features").value.trim(),
           description: $("c_description").value.trim(),
           images: [ ...coverPaths, ...galleryPaths ],
-          // position: default high to float new to top; using ms timestamp works
           position: Date.now()
         };
 
@@ -361,7 +394,7 @@
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
         $("c_cover").value = ""; $("c_gallery").value = "";
         $("uProgCreate").style.width = "0%"; $("uListCreate").innerHTML = "";
-        await refreshListings(); // << ensure UI matches DB immediately
+        await refreshListings(); // reflect DB immediately
       } catch (e) {
         $("createMsg").innerHTML = `<span class="err">${e.message}</span>`;
         diag(`<span class="err">${e.stack || e}</span>`);
@@ -397,7 +430,6 @@
         else if (k === 'live_other_ev') live_other_ev.push(r);
         else live_other.push(r);
       }
-      // Already ordered by server, but guard:
       live_tesla.sort(byPosThenDate);
       live_other_ev.sort(byPosThenDate);
       live_other.sort(byPosThenDate);
@@ -418,8 +450,15 @@
         const badgeT = `<span class="badge ${vt}">${vt.toUpperCase()}</span>`;
         const title = `${r.year||''} ${r.make||''} ${r.model||''} ${r.trim||''}`.trim();
         const price = (r.price!=null && r.price!=='') ? `$${Number(r.price).toLocaleString()}` : '';
+
+        // Build cover thumbnail URL safely
+        const paths = parseImages(r.images).map(normalize);
+        const firstPath = paths[0] || "";
+        const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
+
         return `
           <tr data-id="${r.id}">
+            <td><img class="thumb" src="${esc(coverUrl)}" alt=""></td>
             <td>${badgeS}</td>
             <td>
               <div class="title">${title || '(no title)'}</div>
@@ -443,20 +482,17 @@
 
     // ---- Move (swap within block), then refresh
     async function moveWithinBlock(id, dir){
-      // Load current rows as rendered to find neighbors in the same block
       const { data, error } = await supabase
         .from('listing')
         .select('*')
         .limit(1000);
       if (error) throw error;
 
-      // Build blocks with same rules as rendering
       const rows = data.slice();
       const blocks = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
       rows.forEach(r => blocks[blockKey(r)].push(r));
       Object.keys(blocks).forEach(k => blocks[k].sort(byPosThenDate));
 
-      // Find id + its block and neighbor
       let blockName = null, idx = -1;
       for (const k of ['live_tesla','live_other_ev','live_other','sold']){
         const arr = blocks[k];
@@ -467,25 +503,23 @@
 
       const arr = blocks[blockName];
       const nIdx = idx + (dir === 'up' ? -1 : 1);
-      if (nIdx < 0 || nIdx >= arr.length) return; // at edge
+      if (nIdx < 0 || nIdx >= arr.length) return;
 
       const a = arr[idx], b = arr[nIdx];
       const posA = Number(a.position ?? 0), posB = Number(b.position ?? 0);
 
-      // swap positions only, do not send other columns (prevents NOT NULL errors)
       const u1 = supabase.from('listing').update({ position: posB }).eq('id', a.id);
       const u2 = supabase.from('listing').update({ position: posA }).eq('id', b.id);
       const [r1, r2] = await Promise.all([u1, u2]);
       if (r1.error || r2.error) throw (r1.error || r2.error);
 
-      await refreshListings(); // << ensure UI shows new order immediately
+      await refreshListings();
     }
 
-    // ---- Delete (hard delete): remove storage folder then row; then refresh
+    // ---- Delete (hard delete)
     async function deleteListing(id){
       if (!confirm("Delete this listing and all its photos? This cannot be undone.")) return;
       try{
-        // remove files in folder id/
         const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
         if (listErr) diag(`<span class="err">List files error: ${listErr.message}</span>`);
         if (files?.length){
@@ -498,7 +532,7 @@
       } catch(e){
         diag(`<span class="err">Delete failed: ${e.message}</span>`);
       }
-      await refreshListings(); // << reflect deletion
+      await refreshListings();
     }
 
     // ---- Edit modal
@@ -607,7 +641,6 @@
           const cover = $("e_cover").files?.[0] || null;
           const galFiles = Array.from($("e_gallery").files || []);
 
-          // Uploads first (optional)
           let newCoverPath = null;
           let newGalleryPaths = [];
           if (cover){
@@ -618,21 +651,18 @@
             newGalleryPaths = await uploadFilesTo(id, galFiles, $("uProgEdit"), $("uListEdit"));
           }
 
-          // Merge images: cover first, then existing (minus old cover if replaced), then new gallery
           let images = Array.isArray(data.images)
             ? data.images.slice()
             : (typeof data.images === 'string' && data.images.trim().startsWith('[') ? (JSON.parse(data.images)||[]) : (data.images||'').split(',').map(s=>s.trim()).filter(Boolean));
 
           if (!Array.isArray(images)) images = [];
           if (newCoverPath){
-            // put new cover at index 0
             images = [newCoverPath, ...images.filter(p => p !== newCoverPath)];
           }
           if (newGalleryPaths.length){
             images = [...images, ...newGalleryPaths];
           }
 
-          // Build patch: ONLY fields that we intend to change
           const patch = {
             status: document.querySelector('input[name="e_status"]:checked')?.value || data.status,
             vehicle_type: document.querySelector('input[name="e_vehicle_type"]:checked')?.value || data.vehicle_type,
@@ -656,7 +686,7 @@
 
           $("e_msg").innerHTML = `<span class="ok">Saved.</span>`;
           editModal.classList.remove('open');
-          await refreshListings(); // << reflect the latest DB immediately
+          await refreshListings();
         }catch(e){
           $("e_msg").innerHTML = `<span class="err">${e.message}</span>`;
           diag(`<span class="err">${e.stack || e}</span>`);
