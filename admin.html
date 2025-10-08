@@ -8,58 +8,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin</title>
   <style>
-    :root{ --line:#e7e5e4; --muted:#666; --ink:#1c1917; --bg:#ffffff; }
-    /* Header / Logo */
-    .topbar { background:#fff; border-bottom:1px solid var(--line); }
+    /* Logo header styles */
+    .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
     @media (max-width:600px){ #site-logo { max-height:220px; } }
-    /* Layout */
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1100px; margin: 0 auto; color:var(--ink); background:var(--bg); }
-    h1 { margin: 16px 0 8px; }
-    fieldset { border: 1px solid var(--line); padding: 16px; margin-bottom: 16px; border-radius: 12px; background:#fff; }
+
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
+    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
     legend { font-weight: 800; }
     label { display:block; margin: 8px 0 4px; font-weight: 600; }
-    input[type="text"], input[type="number"], input[type="email"], textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 8px; font: inherit; }
-    textarea { resize: vertical; }
+    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .row2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    @media (max-width:1000px){ .row3{grid-template-columns:1fr} .row2{grid-template-columns:1fr} }
-    .muted { color:var(--muted); font-size: 12px; }
+    .muted { color:#666; font-size: 12px; }
     .ok { color: #0a7; }
     .err { color: #c00; white-space: pre-wrap; }
     .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
     .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
     .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
+
+    /* Manage table */
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: top; }
+    th { text-align:left; font-size:13px; color:#555; }
+    td .title { font-weight:800; }
+    td .sub { font-size:12px; color:#666; }
     .actions { display:flex; gap:8px; flex-wrap:wrap; }
-    .btn { padding:8px 12px; border:1px solid #bbb; border-radius:8px; background:#fff; cursor:pointer; width:auto }
-    .btn.small{ padding:6px 8px; font-size:12px }
-    .btn.danger { border-color:#c00; color:#c00; }
-    .table { width:100%; border-collapse: collapse; margin-top:8px; }
-    .table th, .table td { border-bottom:1px solid #eee; padding:8px; text-align:left; vertical-align:top; }
-    .w80 { max-width:80px }
-    .tag { display:inline-block; padding:2px 6px; border-radius:999px; font-size:12px; background:#f1f5f9; }
-    .tag.sold { background:#fee2e2; color:#991b1b; }
-    .tag.live { background:#dcfce7; color:#166534; }
-    .tag.ev { background:#dbeafe; color:#1e40af; }
-    .tag.other { background:#fef3c7; color:#92400e; }
-    .blockLabel{ font-weight:900; margin:18px 0 6px; }
-    .busy { opacity:.6; pointer-events:none }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 10px; border:1px solid #ddd; border-radius:8px; background:#fff; cursor:pointer; }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .btn.danger { border-color:#f3c; color:#a00 }
+    .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; display:inline-block; }
+    .badge.live { background:#e6f7ef; color:#0a7; border:1px solid #bfead3; }
+    .badge.sold { background:#f7e6e6; color:#a00; border:1px solid #f0caca; }
+    .badge.ev { background:#e8f0ff; color:#1d4ed8; border:1px solid #c7dcff; }
+    .badge.other { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
 
-    /* Thumbs */
-    .thumbs { display:flex; flex-wrap:wrap; gap:8px; }
-    .thumb { position:relative; width:120px; height:90px; border:1px solid #eee; border-radius:8px; overflow:hidden; background:#f8f8f8; }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .thumb .tbar { position:absolute; inset:auto 0 0 0; background:rgba(0,0,0,.5); display:flex; gap:6px; padding:4px; justify-content:space-between; }
-    .thumb .tbar button { width:auto; padding:2px 6px; border-radius:6px; border:1px solid #ddd; background:#fff; font-size:11px; }
-    .thumb .cover { position:absolute; top:4px; left:4px; background:#10b981; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; }
+    /* Modal */
+    .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
+    .modal.open { display:flex; }
+    .modal-card { background:#fff; width: min(860px, 95vw); max-height: 90vh; overflow:auto; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .modal-title { font-weight:900; font-size:18px; }
+    .close { border:none; background:#eee; border-radius:999px; width:34px; height:34px; font-size:18px; cursor:pointer; }
 
-    /* Edit panel (slide-over) */
-    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:999; }
-    .panel { position:fixed; top:0; right:0; height:100%; width: 560px; max-width:100%; background:#fff; box-shadow:-12px 0 30px rgba(0,0,0,.2); transform:translateX(100%); transition:transform .2s ease; z-index:1000; overflow:auto; }
-    .panel.open { transform:translateX(0); }
-    .panel header { position:sticky; top:0; background:#fff; border-bottom:1px solid var(--line); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; z-index:1; }
-    .panel .content { padding:16px; }
+    .rad-group { display:flex; gap:12px; flex-wrap: wrap; }
+    .rad-group label { display:flex; align-items:center; gap:6px; font-weight:600; }
+    .rad-group input { width:auto; }
+
+    .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width:800px){ .two { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -74,321 +72,177 @@
   </div>
 
   <h1>EVTime — Admin</h1>
-  <p class="muted">
-    Create, order, edit, and delete inventory. Photos go to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.
-    First image is the <b>cover</b>. Up/Down saves order immediately. Changing <b>Status</b> in Edit moves the listing to the correct block.
-  </p>
+  <p class="muted">Sign in with your admin email to manage inventory. Images upload to <code>&lt;listing_id&gt;/filename.jpg</code> inside the <code>images</code> bucket.</p>
 
-  <!-- Authentication -->
   <fieldset id="authBox">
     <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session...</div>
+    <div id="sessionInfo" class="muted">Checking session…</div>
     <div id="signinBox">
-      <label for="email">Email for magic link</label>
-      <input id="email" type="email" placeholder="you@domain.com" />
+      <label>Email for magic link</label>
+      <input id="email" type="email" placeholder="you@domain.com"/>
       <button id="sendLink" class="btn">Send Magic Link</button>
       <div id="authMsg" class="muted"></div>
     </div>
     <button id="signout" class="btn" style="display:none">Sign out</button>
   </fieldset>
 
-  <!-- Create Listing -->
   <fieldset id="createBox" style="display:none">
     <legend>Create Listing</legend>
 
-    <!-- Radios -->
-    <div class="row2">
+    <div class="row3">
       <div>
         <label>Status</label>
-        <div role="group" aria-label="Status">
-          <label><input type="radio" name="status" value="live" checked> Live</label>
-          <label><input type="radio" name="status" value="sold"> Sold</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_status" value="live" checked> Live</label>
+          <label><input type="radio" name="c_status" value="sold"> Sold</label>
         </div>
       </div>
       <div>
         <label>Vehicle Type</label>
-        <div role="group" aria-label="Vehicle Type">
-          <label><input type="radio" name="vehicle_type" value="ev" checked> EV</label>
-          <label><input type="radio" name="vehicle_type" value="other"> Other Vehicles</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_vehicle_type" value="ev" checked> EV</label>
+          <label><input type="radio" name="c_vehicle_type" value="other"> Other</label>
         </div>
       </div>
-    </div>
-
-    <div class="row3">
-      <div>
-        <label>Year</label>
-        <input id="year" type="number" min="1990" max="2100" required />
-      </div>
-      <div>
-        <label>Make</label>
-        <input id="make" type="text" placeholder="Tesla"/>
-      </div>
-      <div>
-        <label>Model</label>
-        <input id="model" type="text" placeholder="Model 3"/>
-      </div>
-    </div>
-
-    <div class="row3">
-      <div>
-        <label>Trim</label>
-        <input id="trim" type="text" placeholder="Long Range"/>
-      </div>
-      <div>
-        <label>Powertrain (free text)</label>
-        <input id="powertrain" type="text" placeholder="EV / RWD / AWD / Dual Motor / GAS / HYBRID"/>
-      </div>
-      <div>
-        <label>Mileage</label>
-        <input id="mileage" type="number" min="0"/>
-      </div>
-    </div>
-
-    <div class="row3">
       <div>
         <label>Price (USD)</label>
-        <input id="price" type="number" min="0" step="100"/>
+        <input id="c_price" type="number" min="0" step="100"/>
       </div>
-      <div>
-        <label>City</label>
-        <input id="city" type="text" placeholder="Torrance, CA"/>
-      </div>
-      <div>
-        <label>VIN</label>
-        <input id="vin" type="text" maxlength="17" placeholder="5YJ..."/>
-      </div>
+    </div>
+
+    <div class="row3">
+      <div><label>Year</label><input id="c_year" type="number" min="1990" max="2100" /></div>
+      <div><label>Make</label><input id="c_make" placeholder="Tesla"/></div>
+      <div><label>Model</label><input id="c_model" placeholder="Model 3"/></div>
+    </div>
+
+    <div class="row3">
+      <div><label>Trim</label><input id="c_trim" placeholder="Long Range"/></div>
+      <div><label>Powertrain</label><input id="c_powertrain" placeholder="RWD / AWD / Dual Motor"/></div>
+      <div><label>Mileage</label><input id="c_mileage" type="number" min="0"/></div>
     </div>
 
     <div class="row3">
       <div>
         <label>Title Status</label>
-        <div role="group" aria-label="Title Status">
-          <label><input type="radio" name="title_status" value="clean" checked> Clean</label>
-          <label><input type="radio" name="title_status" value="other"> Other</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_title_status" value="Clean" checked> Clean</label>
+          <label><input type="radio" name="c_title_status" value="Other"> Other</label>
         </div>
       </div>
       <div>
         <label>Condition</label>
-        <div role="group" aria-label="Condition">
-          <label><input type="radio" name="condition" value="excellent" checked> Excellent</label>
-          <label><input type="radio" name="condition" value="good"> Good</label>
-          <label><input type="radio" name="condition" value="fair"> Fair</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_condition" value="Excellent" checked> Excellent</label>
+          <label><input type="radio" name="c_condition" value="Good"> Good</label>
+          <label><input type="radio" name="c_condition" value="Fair"> Fair</label>
         </div>
       </div>
-      <div>
-        <label>Special Features (comma-separated)</label>
-        <input id="special_features" type="text" placeholder="FSD, Acceleration Boost, Tow Hitch"/>
-      </div>
+      <div><label>City</label><input id="c_city" placeholder="Torrance, CA"/></div>
     </div>
 
-    <!-- Description (restored) -->
-    <label>Description</label>
-    <textarea id="description" rows="5" placeholder="Clean SoCal car, one owner..."></textarea>
+    <label>Special Features (comma-separated)</label>
+    <input id="c_special_features" placeholder="FSD, Acceleration Boost, Tow Hitch"/>
 
-    <!-- Photos: Cover + Gallery -->
-    <div class="row2" style="margin-top:8px">
+    <label>Description</label>
+    <textarea id="c_description" rows="4" placeholder="Clean SoCal car, one owner…"></textarea>
+
+    <div class="two">
       <div>
         <label>Cover Photo (required)</label>
-        <input id="cover" type="file" accept="image/*" />
-        <div class="muted">The cover displays first on Share.</div>
+        <input id="c_cover" type="file" accept="image/*"/>
       </div>
       <div>
-        <label>Gallery Photos (up to 9)</label>
-        <input id="gallery" type="file" accept="image/*" multiple />
-        <div class="muted">Optional. You can add more later in Edit.</div>
+        <label>Gallery Photos (optional, up to 9)</label>
+        <input id="c_gallery" type="file" accept="image/*" multiple/>
       </div>
     </div>
-    <div class="bar"><div id="uProg"></div></div>
-    <div id="uList" class="muted" style="margin-top:6px;"></div>
+    <div class="bar"><div id="uProgCreate"></div></div>
+    <div id="uListCreate" class="muted" style="margin-top:6px;"></div>
 
-    <div class="actions">
-      <button id="create" class="btn">Create Listing</button>
-      <div id="createMsg" class="muted" style="align-self:center"></div>
-    </div>
+    <button id="create" class="btn">Create Listing</button>
+    <div id="createMsg" class="muted"></div>
   </fieldset>
 
-  <!-- Manage Inventory -->
   <fieldset id="manageBox" style="display:none">
-    <legend>Manage Inventory</legend>
-    <div class="muted">Order matches the public site: Live Teslas → Live other EVs → Live other vehicles → Sold. Inside each block: newest on top.</div>
-    <div id="blocks"></div>
+    <legend>Inventory</legend>
+    <div id="tblWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Vehicle</th>
+            <th>City / Price</th>
+            <th>Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbl"></tbody>
+      </table>
+      <div id="emptyMsg" class="muted" style="display:none">No rows.</div>
+    </div>
   </fieldset>
 
-  <!-- Edit Panel -->
-  <div id="ov" class="overlay"></div>
-  <div id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="editTitle">
-    <header>
-      <div id="editTitle" style="font-weight:800">Edit Listing</div>
-      <div class="actions">
-        <button id="editCancel" class="btn">Cancel</button>
-        <button id="editSave" class="btn">Save</button>
-      </div>
-    </header>
-    <div class="content">
-      <input id="e_id" type="text" readonly style="opacity:.7" />
-
-      <div class="row2" style="margin-top:8px">
-        <div>
-          <label>Status</label>
-          <div>
-            <label><input type="radio" name="e_status" value="live"> Live</label>
-            <label><input type="radio" name="e_status" value="sold"> Sold</label>
-          </div>
-        </div>
-        <div>
-          <label>Vehicle Type</label>
-          <div>
-            <label><input type="radio" name="e_vehicle_type" value="ev"> EV</label>
-            <label><input type="radio" name="e_vehicle_type" value="other"> Other Vehicles</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="row3">
-        <div>
-          <label>Year</label>
-          <input id="e_year" type="number" min="1990" max="2100"/>
-        </div>
-        <div>
-          <label>Make</label>
-          <input id="e_make" type="text"/>
-        </div>
-        <div>
-          <label>Model</label>
-          <input id="e_model" type="text"/>
-        </div>
-      </div>
-
-      <div class="row3">
-        <div>
-          <label>Trim</label>
-          <input id="e_trim" type="text"/>
-        </div>
-        <div>
-          <label>Powertrain</label>
-          <input id="e_powertrain" type="text"/>
-        </div>
-        <div>
-          <label>Mileage</label>
-          <input id="e_mileage" type="number" min="0"/>
-        </div>
-      </div>
-
-      <div class="row3">
-        <div>
-          <label>Price (USD)</label>
-          <input id="e_price" type="number" min="0" step="100"/>
-        </div>
-        <div>
-          <label>City</label>
-          <input id="e_city" type="text"/>
-        </div>
-        <div>
-          <label>VIN</label>
-          <input id="e_vin" type="text" maxlength="17"/>
-        </div>
-      </div>
-
-      <div class="row3">
-        <div>
-          <label>Title Status</label>
-          <div>
-            <label><input type="radio" name="e_title_status" value="clean"> Clean</label>
-            <label><input type="radio" name="e_title_status" value="other"> Other</label>
-          </div>
-        </div>
-        <div>
-          <label>Condition</label>
-          <div>
-            <label><input type="radio" name="e_condition" value="excellent"> Excellent</label>
-            <label><input type="radio" name="e_condition" value="good"> Good</label>
-            <label><input type="radio" name="e_condition" value="fair"> Fair</label>
-          </div>
-        </div>
-        <div>
-          <label>Special Features</label>
-          <input id="e_special_features" type="text"/>
-        </div>
-      </div>
-
-      <!-- Description stays here -->
-      <label>Description</label>
-      <textarea id="e_description" rows="5"></textarea>
-
-      <!-- Cover + Gallery in Edit -->
-      <div style="margin-top:12px">
-        <label>Cover Photo</label>
-        <div id="e_coverBox" class="thumbs"></div>
-        <div class="actions" style="margin-top:8px">
-          <input id="e_coverFile" type="file" accept="image/*" />
-          <button id="e_replaceCover" class="btn">Replace Cover</button>
-        </div>
-        <div class="muted">The cover is the first image shown on Share.</div>
-      </div>
-
-      <div style="margin-top:12px">
-        <label>Gallery Photos (up to 9)</label>
-        <div id="e_gallery" class="thumbs"></div>
-        <div class="actions" style="margin-top:8px">
-          <input id="e_galleryFiles" type="file" accept="image/*" multiple />
-          <button id="e_addGallery" class="btn">Add to Gallery</button>
-        </div>
-        <div class="muted">Tip: “Make cover” moves a photo into the cover slot.</div>
-      </div>
-
-      <div id="e_msg" class="muted" style="margin-top:8px;"></div>
-    </div>
-  </div>
-
-  <!-- Diagnostics -->
   <fieldset>
     <legend>Diagnostics</legend>
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Config + Supabase -->
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Edit Listing</div>
+        <button class="close" id="editClose" aria-label="Close">✕</button>
+      </div>
+      <div id="editBody">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Config + Supabase client -->
   <script src="/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
   <script>
-    // ----- Setup
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
+
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce', storageKey: 'evtime-auth' }
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: 'evtime-auth'
+      }
     });
 
-    const ADMIN_EMAIL = "vahehr@gmail.com";
-
-    const $ = (id) => document.getElementById(id);
+    const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
 
-    // Busy lock
-    let __busy = false;
-    function setBusy(on){
-      __busy = !!on;
-      document.body.classList.toggle('busy', __busy);
-      document.querySelectorAll('button[data-act],#editSave,#e_addGallery,#e_replaceCover,#create').forEach(b => b.disabled = __busy);
-    }
-
-    // ----- Auth UI
+    // ---- Auth UI
     async function setSessionUI() {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) diag(`<span class="err">getSession error: ${error.message}</span>`);
-      const email = session?.user?.email || null;
-      if (session && email === ADMIN_EMAIL) {
+      if (session) {
+        const email = session.user?.email || "";
+        // Restrict admin access
+        if (email.toLowerCase() !== "vahehr@gmail.com") {
+          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${email}</span>`;
+          await supabase.auth.signOut();
+          $("signinBox").style.display = "block";
+          $("signout").style.display = "none";
+          $("createBox").style.display = "none";
+          $("manageBox").style.display = "none";
+          return;
+        }
         $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${email}</span>`;
         $("signinBox").style.display = "none";
         $("signout").style.display = "inline-block";
         $("createBox").style.display = "block";
         $("manageBox").style.display = "block";
-        await loadAll();
-      } else if (session) {
-        $("sessionInfo").innerHTML = `<span class="err">Signed in as ${email || 'unknown'} — not authorized for admin.</span>`;
-        $("signinBox").style.display = "none";
-        $("signout").style.display = "inline-block";
-        $("createBox").style.display = "none";
-        $("manageBox").style.display = "none";
+        await refreshListings(); // ensure table shows latest after signin
       } else {
         $("sessionInfo").textContent = "Not signed in.";
         $("signinBox").style.display = "block";
@@ -402,11 +256,10 @@
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
-      if (!email) { $("authMsg").textContent = "Enter an email."; return; }
       $("authMsg").textContent = "Sending magic link...";
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: location.origin + "/admin.html" }
+        options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
       });
       $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
     };
@@ -417,10 +270,12 @@
     };
 
     (async () => {
-      if (location.search && location.search.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(location.search);
+      // Handle PKCE return
+      const qs = window.location.search;
+      if (qs && qs.includes("code=")) {
+        const { error } = await supabase.auth.exchangeCodeForSession(qs);
         if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
-        history.replaceState({}, document.title, location.pathname);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
       const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
         || !!localStorage.getItem('evtime-auth');
@@ -428,565 +283,409 @@
       await setSessionUI();
     })();
 
-    // ----- Helpers
-    const nowMs = () => Date.now();
-    function parseImages(images){
-      if (!images) return [];
-      if (Array.isArray(images)) return images;
-      if (typeof images === 'string'){
-        const s = images.trim();
-        if (s.startsWith('[')) { try { return JSON.parse(s) || [] } catch { return [] } }
-        return s.split(',').map(v=>v.trim()).filter(Boolean);
-      }
-      return [];
-    }
-    function normalizeStoragePath(path){
-      return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
-    }
-    function publicImageUrls(path){
-      let s = String(path||'').trim().replace(/^\/+/, '');
-      if (!s) return [];
-      const candidates = [];
-      if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
-      candidates.push(s);
-      candidates.push(s.replace(/^images\//i,''));
-      if (!/^images\//i.test(s)) candidates.push('images/' + s);
-      const uniq = [...new Set(candidates)];
-      return uniq.map(p => {
-        const { data } = supabase.storage.from('images').getPublicUrl(p);
-        return data?.publicUrl || null;
-      }).filter(Boolean);
-    }
-    window.__imgFallback = function(img){
-      try{
-        const alts = JSON.parse(img.getAttribute('data-alts') || '[]');
-        if (alts.length){
-          const next = alts.shift();
-          img.setAttribute('data-alts', JSON.stringify(alts));
-          img.src = next;
-        } else { img.onerror = null; }
-      }catch{ img.onerror = null; }
-    };
-
+    // ---- Helpers
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
       if (status === 'sold') return 'sold';
       const vt = String(row.vehicle_type || 'ev').toLowerCase();
-      const make = String(row.make || '').toLowerCase();
+      const make = String(row.make || '').trim().toLowerCase();
       if (vt === 'ev'){
         if (make === 'tesla') return 'live_tesla';
         return 'live_other_ev';
       }
       return 'live_other';
     }
-    const BLOCK_ORDER = ['live_tesla','live_other_ev','live_other','sold'];
-    const byPosThenDate = (a,b) => {
+
+    function byPosThenDate(a,b){
       const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
       if (pb !== pa) return pb - pa;
       const ad = new Date(a.updated_at || a.created_at || 0).getTime();
       const bd = new Date(b.updated_at || b.created_at || 0).getTime();
       return bd - ad;
-    };
-
-    // ----- Create listing (Cover + Gallery)
-    async function uploadOne(listingId, file, label){
-      const relPath = `${listingId}/${Date.now()}_${(label?label+'_':'')}${file.name.replace(/\s+/g,"_")}`;
-      const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
-      if (error) throw new Error(`Upload failed (${label||'photo'}): ${error.message}`);
-      return relPath;
     }
 
+    // ---- Uploads
+    async function uploadFilesTo(listingId, files, progEl, listEl){
+      if (!files || files.length === 0) return [];
+      const uploaded = [];
+      let done = 0;
+      for (const file of files) {
+        const relPath = `${listingId}/${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
+        if (error) throw new Error(`Upload failed: ${error.message}`);
+        uploaded.push(relPath);
+        done++;
+        if (progEl) progEl.style.width = `${Math.round((done/files.length)*100)}%`;
+        if (listEl) listEl.innerHTML += `<code>${relPath}</code><br/>`;
+      }
+      return uploaded;
+    }
+
+    // ---- CREATE
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
-      const coverFile = $("cover").files && $("cover").files[0];
-      if (!coverFile) { $("createMsg").textContent = "Please select a Cover photo."; return; }
-      const galleryFiles = Array.from(($("gallery").files || []));
-      if (galleryFiles.length > 9) { $("createMsg").textContent = "Max 9 gallery photos."; return; }
+      const cover = $("c_cover").files?.[0];
+      if (!cover) { $("createMsg").textContent = "Please add a cover photo."; return; }
 
       const listingId = crypto.randomUUID();
-      const getRadio = (name, fallback) => (document.querySelector(`input[name="${name}"]:checked`)?.value || fallback);
-
-      try{
-        setBusy(true);
-        $("uList").textContent = "Uploading images...";
-        $("uProg").style.width = "0%";
-
-        // Upload cover first
-        let uploaded = [];
-        const coverPath = await uploadOne(listingId, coverFile, "cover");
-        uploaded.push(coverPath);
-        $("uProg").style.width = "15%";
-
-        // Upload gallery (if any)
-        let done = 0;
-        for (const f of galleryFiles){
-          const p = await uploadOne(listingId, f, "g");
-          uploaded.push(p);
-          done++;
-          const pct = 15 + Math.round((done/galleryFiles.length) * 85);
-          $("uProg").style.width = `${pct}%`;
-        }
-        $("uList").innerHTML = uploaded.map(p=>`<code>${p}</code>`).join("<br>");
+      try {
+        const coverPaths = await uploadFilesTo(listingId, [cover], $("uProgCreate"), $("uListCreate"));
+        const galleryFiles = Array.from($("c_gallery").files || []);
+        const galleryPaths = galleryFiles.length ? await uploadFilesTo(listingId, galleryFiles, $("uProgCreate"), $("uListCreate")) : [];
 
         const payload = {
           id: listingId,
-          status: getRadio('status', 'live'),
-          vehicle_type: getRadio('vehicle_type', 'ev'),
-          year: parseInt($("year").value || "0", 10) || null,
-          make: $("make").value.trim() || null,
-          model: $("model").value.trim() || null,
-          trim: $("trim").value.trim() || null,
-          powertrain: $("powertrain").value.trim() || null,
-          mileage: parseInt($("mileage").value || "0", 10) || null,
-          special_features: $("special_features").value.trim() || null,
-          title_status: (document.querySelector('input[name="title_status"]:checked')?.value) || 'clean',
-          condition: (document.querySelector('input[name="condition"]:checked')?.value) || 'excellent',
-          description: $("description").value.trim() || null,  // RESTORED
-          city: $("city").value.trim() || null,
-          vin: $("vin").value.trim() || null,
-          price: parseInt($("price").value || "0", 10) || null,
-          images: uploaded,                // [cover, ...gallery]
-          position: nowMs()
+          status: document.querySelector('input[name="c_status"]:checked')?.value || "live",
+          vehicle_type: document.querySelector('input[name="c_vehicle_type"]:checked')?.value || "ev",
+          year: parseInt($("c_year").value || "0", 10),
+          make: $("c_make").value.trim(),
+          model: $("c_model").value.trim(),
+          trim: $("c_trim").value.trim(),
+          powertrain: $("c_powertrain").value.trim(),
+          mileage: parseInt($("c_mileage").value || "0", 10),
+          title_status: document.querySelector('input[name="c_title_status"]:checked')?.value || "Clean",
+          condition: document.querySelector('input[name="c_condition"]:checked')?.value || "Excellent",
+          city: $("c_city").value.trim(),
+          vin: $("c_vin")?.value?.trim?.() || "",
+          price: parseInt($("c_price").value || "0", 10),
+          special_features: $("c_special_features").value.trim(),
+          description: $("c_description").value.trim(),
+          images: [ ...coverPaths, ...galleryPaths ],
+          // position: default high to float new to top; using ms timestamp works
+          position: Date.now()
         };
 
         const { error } = await supabase.from("listing").insert(payload);
         if (error) throw error;
 
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
-        ["cover","gallery"].forEach(id=>{ const el=$(id); if (el) el.value=""; });
-        $("uProg").style.width = "0%";
-        $("uList").innerHTML = "";
-        await loadAll();
-      }catch(e){
+        $("c_cover").value = ""; $("c_gallery").value = "";
+        $("uProgCreate").style.width = "0%"; $("uListCreate").innerHTML = "";
+        await refreshListings(); // << ensure UI matches DB immediately
+      } catch (e) {
         $("createMsg").innerHTML = `<span class="err">${e.message}</span>`;
-      }finally{
-        setBusy(false);
+        diag(`<span class="err">${e.stack || e}</span>`);
       }
     };
 
-    // ----- Load + render grouped tables
-    async function loadAll(){
-      const container = $("blocks");
-      container.innerHTML = `<div class="muted">Loading...</div>`;
-      const { data, error } = await supabase
-        .from("listing")
-        .select("id,make,model,year,status,vehicle_type,price,images,position,created_at,updated_at,powertrain,city,trim,mileage,title_status,condition,description,vin")
-        .limit(500);
-      if (error){ container.innerHTML = `<div class="err">${error.message}</div>`; return; }
-
-      const groups = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
-      (data||[]).forEach(r => { groups[blockKey(r)].push(r); });
-      BLOCK_ORDER.forEach(k => groups[k].sort(byPosThenDate));
-
-      window.__groups = groups;
-
-      const html = [];
-      if (groups.live_tesla.length) html.push(renderBlock("Live Teslas", groups.live_tesla));
-      if (groups.live_other_ev.length) html.push(renderBlock("Live – Other EVs", groups.live_other_ev));
-      if (groups.live_other.length) html.push(renderBlock("Other Vehicles", groups.live_other));
-      if (groups.sold.length) html.push(renderBlock("Sold", groups.sold));
-      container.innerHTML = html.join("") || `<div class="muted">No rows</div>`;
+    // ---- ADMIN TABLE
+    async function fetchOrdered(statusVal){
+      return supabase
+        .from('listing')
+        .select('*')
+        .eq('status', statusVal)
+        .order('position', { ascending:false, nullsFirst:false })
+        .order('updated_at', { ascending:false, nullsFirst:false })
+        .limit(1000);
     }
 
-    function renderBlock(title, rows){
-      const body = rows.map(r=>{
-        const paths = parseImages(r.images);
-        const urls = paths[0] ? publicImageUrls(paths[0]) : [];
-        const url = urls[0] || null;
-        const alts = urls.slice(1);
-        const model = [r.year, r.make, r.model].filter(Boolean).join(" ");
-        const price = r.price ? `$${Number(r.price).toLocaleString()}` : "";
-        const typeTag = `<span class="tag ${r.vehicle_type || 'ev'}">${r.vehicle_type || 'ev'}</span>`;
-        const statusTag = `<span class="tag ${r.status}">${r.status}</span>`;
-        const imgHTML = url
-          ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #eee">`
-          : '';
+    async function refreshListings(){
+      const [liveRes, soldRes] = await Promise.all([fetchOrdered('live'), fetchOrdered('sold')]);
+      if (liveRes.error || soldRes.error){
+        diag(`<span class="err">Load error: ${(liveRes.error || soldRes.error).message}</span>`);
+        $("tbl").innerHTML = "";
+        $("emptyMsg").style.display = "block";
+        return;
+      }
+      const live = liveRes.data || [];
+      const sold = soldRes.data || [];
+
+      const live_tesla = [], live_other_ev = [], live_other = [];
+      for (const r of live){
+        const k = blockKey(r);
+        if (k === 'live_tesla') live_tesla.push(r);
+        else if (k === 'live_other_ev') live_other_ev.push(r);
+        else live_other.push(r);
+      }
+      // Already ordered by server, but guard:
+      live_tesla.sort(byPosThenDate);
+      live_other_ev.sort(byPosThenDate);
+      live_other.sort(byPosThenDate);
+      sold.sort(byPosThenDate);
+
+      const rows = [...live_tesla, ...live_other_ev, ...live_other, ...sold];
+      renderTable(rows);
+    }
+
+    function renderTable(rows){
+      const tb = $("tbl");
+      if (!rows.length){ tb.innerHTML = ""; $("emptyMsg").style.display = "block"; return; }
+      $("emptyMsg").style.display = "none";
+      tb.innerHTML = rows.map(r=>{
+        const status = String(r.status||'').toLowerCase();
+        const vt = String(r.vehicle_type||'ev').toLowerCase();
+        const badgeS = `<span class="badge ${status}">${status.toUpperCase()}</span>`;
+        const badgeT = `<span class="badge ${vt}">${vt.toUpperCase()}</span>`;
+        const title = `${r.year||''} ${r.make||''} ${r.model||''} ${r.trim||''}`.trim();
+        const price = (r.price!=null && r.price!=='') ? `$${Number(r.price).toLocaleString()}` : '';
         return `
-          <tr data-id="${r.id}" data-block="${blockKey(r)}">
-            <td class="w80">${imgHTML}</td>
-            <td>${model}<div class="muted">${r.city || ''}</div></td>
-            <td>${statusTag}</td>
-            <td>${typeTag}</td>
-            <td>${price}</td>
+          <tr data-id="${r.id}">
+            <td>${badgeS}</td>
+            <td>
+              <div class="title">${title || '(no title)'}</div>
+              <div class="sub">VIN: ${r.vin||''}</div>
+            </td>
+            <td>
+              <div>${r.city||''}</div>
+              <div class="sub">${price}</div>
+            </td>
+            <td>${badgeT}</td>
             <td class="actions">
-              <button class="btn small" data-act="up">Up</button>
-              <button class="btn small" data-act="down">Down</button>
-              <button class="btn small" data-act="edit">Edit</button>
-              <button class="btn small danger" data-act="delete">Delete</button>
+              <button class="btn" data-act="up">↑ Up</button>
+              <button class="btn" data-act="down">↓ Down</button>
+              <button class="btn" data-act="edit">✎ Edit</button>
+              <button class="btn danger" data-act="delete">🗑 Delete</button>
             </td>
           </tr>
         `;
       }).join("");
-
-      return `
-        <div class="blockLabel">${title}</div>
-        <table class="table" aria-label="${title}">
-          <thead>
-            <tr>
-              <th class="w80">Cover</th>
-              <th>Model</th>
-              <th>Status</th>
-              <th>Type</th>
-              <th>Price</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>${body || `<tr><td colspan="6" class="muted">No rows</td></tr>`}</tbody>
-        </table>
-      `;
     }
 
-    // ----- Actions
-    document.addEventListener("click", async (e)=>{
-      const btn = e.target.closest("button[data-act]");
-      if (!btn) return;
-      if (__busy && btn.getAttribute('data-act')!=='edit') return;
-      const tr = btn.closest("tr");
-      const id = tr?.getAttribute("data-id");
-      const act = btn.getAttribute("data-act");
-      if (!id) return;
-
-      if (act === "delete"){ await hardDelete(id); return; }
-      if (act === "up"){ await moveWithinBlock(id, -1); return; }
-      if (act === "down"){ await moveWithinBlock(id, +1); return; }
-      if (act === "edit"){ openEdit(id); return; }
-    });
-
-    // ----- Stable reindexing move with busy lock
+    // ---- Move (swap within block), then refresh
     async function moveWithinBlock(id, dir){
-      const groups = window.__groups || {};
-      const blockName = BLOCK_ORDER.find(b => (groups[b]||[]).some(r => r.id === id));
-      if (!blockName) return;
-      const list = (groups[blockName]||[]).slice();
-      if (list.length < 2) return;
+      // Load current rows as rendered to find neighbors in the same block
+      const { data, error } = await supabase
+        .from('listing')
+        .select('*')
+        .limit(1000);
+      if (error) throw error;
 
-      const idx = list.findIndex(r => r.id === id);
-      if (idx === -1) return;
+      // Build blocks with same rules as rendering
+      const rows = data.slice();
+      const blocks = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
+      rows.forEach(r => blocks[blockKey(r)].push(r));
+      Object.keys(blocks).forEach(k => blocks[k].sort(byPosThenDate));
 
-      let to = idx + (dir < 0 ? -1 : +1);
-      to = Math.max(0, Math.min(list.length - 1, to));
-      if (to === idx) return;
+      // Find id + its block and neighbor
+      let blockName = null, idx = -1;
+      for (const k of ['live_tesla','live_other_ev','live_other','sold']){
+        const arr = blocks[k];
+        const i = arr.findIndex(x => x.id === id);
+        if (i !== -1){ blockName = k; idx = i; break; }
+      }
+      if (blockName == null) return;
 
-      const item = list.splice(idx, 1)[0];
-      list.splice(to, 0, item);
+      const arr = blocks[blockName];
+      const nIdx = idx + (dir === 'up' ? -1 : 1);
+      if (nIdx < 0 || nIdx >= arr.length) return; // at edge
 
-      setBusy(true);
+      const a = arr[idx], b = arr[nIdx];
+      const posA = Number(a.position ?? 0), posB = Number(b.position ?? 0);
+
+      // swap positions only, do not send other columns (prevents NOT NULL errors)
+      const u1 = supabase.from('listing').update({ position: posB }).eq('id', a.id);
+      const u2 = supabase.from('listing').update({ position: posA }).eq('id', b.id);
+      const [r1, r2] = await Promise.all([u1, u2]);
+      if (r1.error || r2.error) throw (r1.error || r2.error);
+
+      await refreshListings(); // << ensure UI shows new order immediately
+    }
+
+    // ---- Delete (hard delete): remove storage folder then row; then refresh
+    async function deleteListing(id){
+      if (!confirm("Delete this listing and all its photos? This cannot be undone.")) return;
       try{
-        const base = nowMs();
-        const updates = list.map((row, i) => ({ id: row.id, position: base - i }));
-        for (const u of updates){
-          const { error } = await supabase.from("listing").update({ position: u.position }).eq("id", u.id);
-          if (error) throw error;
+        // remove files in folder id/
+        const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
+        if (listErr) diag(`<span class="err">List files error: ${listErr.message}</span>`);
+        if (files?.length){
+          const paths = files.map(f => `${id}/${f.name}`);
+          const { error: delErr } = await supabase.storage.from('images').remove(paths);
+          if (delErr) diag(`<span class="err">Remove files error: ${delErr.message}</span>`);
         }
-        await loadAll();
-      } catch (e){
-        alert("Position update failed: " + (e?.message || e));
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    // ----- Hard delete row + best-effort delete folder
-    async function hardDelete(id){
-      if (!confirm("Delete this listing and its photos? This cannot be undone.")) return;
-      setBusy(true);
-      try{
-        const { error } = await supabase.from("listing").delete().eq("id", id);
+        const { error } = await supabase.from('listing').delete().eq('id', id);
         if (error) throw error;
-        try{
-          const { data: files } = await supabase.storage.from("images").list(id, { limit: 1000 });
-          if (Array.isArray(files) && files.length){
-            const paths = files.map(f => `${id}/${f.name}`);
-            await supabase.storage.from("images").remove(paths);
-          }
-        }catch{}
-        await loadAll();
-      } catch (e){
-        alert("Delete failed: " + (e?.message || e));
-      } finally {
-        setBusy(false);
+      } catch(e){
+        diag(`<span class="err">Delete failed: ${e.message}</span>`);
       }
+      await refreshListings(); // << reflect deletion
     }
 
-    // ===== Edit panel =====
-    const ov = $("ov");
-    const panel = $("panel");
-    let editRow = null;         // full row data
-    let coverPath = null;       // single string or null
-    let galleryPaths = [];      // array of strings, max 9
+    // ---- Edit modal
+    const editModal = $("editModal");
+    const editClose = $("editClose");
+    editClose.onclick = ()=> editModal.classList.remove('open');
+    window.addEventListener('keydown', (e)=>{ if (e.key==='Escape') editModal.classList.remove('open'); });
+    editModal.addEventListener('click', (e)=>{ if (e.target === editModal) editModal.classList.remove('open'); });
 
-    function openEdit(id){
-      const g = window.__groups || {};
-      const row = (BLOCK_ORDER.flatMap(b => g[b]||[])).find(r => r.id === id);
-      if (!row) return;
-
-      editRow = JSON.parse(JSON.stringify(row));
-      const imgs = parseImages(row.images || []).map(normalizeStoragePath);
-      coverPath = imgs[0] || null;
-      galleryPaths = imgs.slice(1);
-
-      // Prefill fields
-      $("e_id").value = row.id || '';
-      setRadio("e_status", String(row.status||'live').toLowerCase());
-      setRadio("e_vehicle_type", String(row.vehicle_type||'ev').toLowerCase());
-      $("e_year").value = row.year ?? '';
-      $("e_make").value = row.make ?? '';
-      $("e_model").value = row.model ?? '';
-      $("e_trim").value = row.trim ?? '';
-      $("e_powertrain").value = row.powertrain ?? '';
-      $("e_mileage").value = row.mileage ?? '';
-      $("e_price").value = row.price ?? '';
-      $("e_city").value = row.city ?? '';
-      $("e_vin").value = row.vin ?? '';
-      setRadio("e_title_status", String(row.title_status||'clean').toLowerCase());
-      setRadio("e_condition", String(row.condition||'excellent').toLowerCase());
-      $("e_special_features").value = row.special_features ?? '';
-      $("e_description").value = row.description ?? '';
-
-      renderCover();
-      renderGallery();
-
-      $("e_msg").textContent = "";
-      $("e_coverFile").value = "";
-      $("e_galleryFiles").value = "";
-
-      ov.style.display = "block";
-      requestAnimationFrame(()=> panel.classList.add("open"));
-    }
-
-    function closeEdit(){
-      panel.classList.remove("open");
-      setTimeout(()=>{ ov.style.display = "none"; }, 180);
-      editRow = null; coverPath = null; galleryPaths = [];
-      $("e_msg").textContent = "";
-    }
-
-    function setRadio(name, value){
-      const els = document.querySelectorAll(`input[name="${name}"]`);
-      let set = false; els.forEach(el => { el.checked = (el.value === value); if (el.checked) set=true; });
-      if (!set && els[0]) els[0].checked = true;
-    }
-    function getRadioVal(name, fallback){
-      const el = document.querySelector(`input[name="${name}"]:checked`);
-      return el ? el.value : fallback;
-    }
-
-    function renderCover(){
-      const box = $("e_coverBox");
-      if (!coverPath){
-        box.innerHTML = `<div class="muted">No cover selected. Pick a file below or choose "Make cover" on a gallery photo.</div>`;
-        return;
-      }
-      const urls = publicImageUrls(coverPath);
-      const url = urls[0] || "";
-      const alts = urls.slice(1);
-      box.innerHTML = `
-        <div class="thumb" data-path="${coverPath}">
-          <div class="cover">COVER</div>
-          ${url ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="">` : ''}
-          <div class="tbar">
-            <button data-cover-act="remove">Remove</button>
-          </div>
-        </div>
+    function editFormHTML(row){
+      const radio = (name, val, cur, label) => `
+        <label><input type="radio" name="${name}" value="${val}" ${String(cur).toLowerCase()===String(val).toLowerCase()?'checked':''}> ${label}</label>
       `;
-    }
-
-    function renderGallery(){
-      const box = $("e_gallery");
-      if (!galleryPaths.length){
-        box.innerHTML = `<div class="muted">No gallery photos yet.</div>`;
-        return;
-      }
-      box.innerHTML = galleryPaths.map(p=>{
-        const urls = publicImageUrls(p); const url = urls[0] || ""; const alts = urls.slice(1);
-        return `
-          <div class="thumb" data-path="${p}">
-            ${url ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="">` : ''}
-            <div class="tbar">
-              <button data-img-act="cover">Make cover</button>
-              <button data-img-act="delete">Delete</button>
+      return `
+        <div class="row3">
+          <div>
+            <label>Status</label>
+            <div class="rad-group">
+              ${radio('e_status','live',row.status,'Live')}
+              ${radio('e_status','sold',row.status,'Sold')}
             </div>
           </div>
-        `;
-      }).join("");
+          <div>
+            <label>Vehicle Type</label>
+            <div class="rad-group">
+              ${radio('e_vehicle_type','ev',row.vehicle_type||'ev','EV')}
+              ${radio('e_vehicle_type','other',row.vehicle_type,'Other')}
+            </div>
+          </div>
+          <div>
+            <label>Price (USD)</label>
+            <input id="e_price" type="number" min="0" step="100" value="${row.price ?? ''}"/>
+          </div>
+        </div>
+
+        <div class="row3">
+          <div><label>Year</label><input id="e_year" type="number" min="1990" max="2100" value="${row.year ?? ''}"/></div>
+          <div><label>Make</label><input id="e_make" value="${(row.make||'')}"/></div>
+          <div><label>Model</label><input id="e_model" value="${(row.model||'')}"/></div>
+        </div>
+
+        <div class="row3">
+          <div><label>Trim</label><input id="e_trim" value="${(row.trim||'')}"/></div>
+          <div><label>Powertrain</label><input id="e_powertrain" value="${(row.powertrain||'')}"/></div>
+          <div><label>Mileage</label><input id="e_mileage" type="number" min="0" value="${row.mileage ?? ''}"/></div>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label>Title Status</label>
+            <div class="rad-group">
+              ${radio('e_title_status','Clean',row.title_status,'Clean')}
+              ${radio('e_title_status','Other',row.title_status,'Other')}
+            </div>
+          </div>
+          <div>
+            <label>Condition</label>
+            <div class="rad-group">
+              ${radio('e_condition','Excellent',row.condition,'Excellent')}
+              ${radio('e_condition','Good',row.condition,'Good')}
+              ${radio('e_condition','Fair',row.condition,'Fair')}
+            </div>
+          </div>
+          <div><label>City</label><input id="e_city" value="${(row.city||'')}"/></div>
+        </div>
+
+        <label>Special Features (comma-separated)</label>
+        <input id="e_special_features" value="${(row.special_features||'')}"/>
+
+        <label>Description</label>
+        <textarea id="e_description" rows="4">${(row.description||'')}</textarea>
+
+        <div class="two">
+          <div>
+            <label>Replace Cover (optional)</label>
+            <input id="e_cover" type="file" accept="image/*"/>
+          </div>
+          <div>
+            <label>Add Gallery Photos (optional)</label>
+            <input id="e_gallery" type="file" accept="image/*" multiple/>
+          </div>
+        </div>
+        <div class="bar"><div id="uProgEdit"></div></div>
+        <div id="uListEdit" class="muted" style="margin-top:6px;"></div>
+
+        <div style="display:flex; gap:12px; margin-top:12px;">
+          <button id="e_save" class="btn">Save changes</button>
+          <button id="e_cancel" class="btn">Cancel</button>
+        </div>
+        <div id="e_msg" class="muted" style="margin-top:6px;"></div>
+      `;
     }
 
-    // Cover actions
-    document.getElementById("e_coverBox").addEventListener("click", async (e)=>{
-      const btn = e.target.closest("button[data-cover-act]");
-      if (!btn) return;
-      const act = btn.getAttribute("data-cover-act");
-      if (act === "remove"){
-        if (!confirm("Remove current cover? You must set a new cover before saving.")) return;
-        coverPath = null;
-        renderCover();
-      }
-    });
+    async function openEdit(id){
+      const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
+      if (error){ diag(`<span class="err">Load row error: ${error.message}</span>`); return; }
+      const body = $("editBody");
+      body.innerHTML = editFormHTML(data);
+      editModal.classList.add('open');
 
-    // Replace cover (upload new)
-    $("e_replaceCover").onclick = async ()=>{
-      if (!editRow) return;
-      const file = $("e_coverFile").files && $("e_coverFile").files[0];
-      if (!file){ $("e_msg").textContent = "Choose a file first."; return; }
-      setBusy(true);
-      try{
-        const relPath = `${editRow.id}/${Date.now()}_cover_${file.name.replace(/\s+/g,"_")}`;
-        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert:false });
-        if (error) throw error;
+      $("e_cancel").onclick = ()=> editModal.classList.remove('open');
 
-        if (coverPath){
-          const move = confirm("Move old cover to gallery? (OK = move, Cancel = delete from storage)");
-          if (move){
-            if (galleryPaths.length < 9){
-              galleryPaths.unshift(coverPath);
-            } else {
-              alert("Gallery is full (9). Old cover will be deleted.");
-              await supabase.storage.from("images").remove([normalizeStoragePath(coverPath)]);
-            }
-          } else {
-            await supabase.storage.from("images").remove([normalizeStoragePath(coverPath)]);
-          }
-        }
-
-        coverPath = relPath;
-        $("e_coverFile").value = "";
-        $("e_msg").textContent = "Cover replaced.";
-        renderCover();
-        renderGallery();
-      }catch(e){
-        $("e_msg").textContent = "Cover replace failed: " + (e?.message || e);
-      }finally{
-        setBusy(false);
-      }
-    };
-
-    // Gallery actions (make cover / delete)
-    $("e_gallery").addEventListener("click", async (e)=>{
-      const btn = e.target.closest("button[data-img-act]");
-      if (!btn) return;
-      const card = e.target.closest(".thumb");
-      const path = card?.getAttribute("data-path");
-      const act = btn.getAttribute("data-img-act");
-      if (!path) return;
-
-      if (act === "cover"){
-        if (coverPath){
-          if (galleryPaths.length >= 9){
-            const ok = confirm("Gallery is full (9). Move current cover into gallery by dropping the last photo?");
-            if (!ok) return;
-            galleryPaths.pop();
-          }
-          galleryPaths.unshift(coverPath);
-        }
-        const idx = galleryPaths.indexOf(path);
-        if (idx > -1) galleryPaths.splice(idx,1);
-        coverPath = path;
-        renderCover();
-        renderGallery();
-        return;
-      }
-
-      if (act === "delete"){
-        if (!confirm("Delete this photo from storage?")) return;
+      $("e_save").onclick = async () => {
+        $("e_msg").textContent = "Saving…";
         try{
-          const rel = normalizeStoragePath(path);
-          const { error } = await supabase.storage.from("images").remove([rel]);
-          if (error) throw error;
-          const i = galleryPaths.indexOf(path);
-          if (i > -1){ galleryPaths.splice(i,1); renderGallery(); }
-        }catch(err){
-          alert("Delete photo failed: " + (err?.message || err));
+          const cover = $("e_cover").files?.[0] || null;
+          const galFiles = Array.from($("e_gallery").files || []);
+
+          // Uploads first (optional)
+          let newCoverPath = null;
+          let newGalleryPaths = [];
+          if (cover){
+            const up = await uploadFilesTo(id, [cover], $("uProgEdit"), $("uListEdit"));
+            newCoverPath = up[0] || null;
+          }
+          if (galFiles.length){
+            newGalleryPaths = await uploadFilesTo(id, galFiles, $("uProgEdit"), $("uListEdit"));
+          }
+
+          // Merge images: cover first, then existing (minus old cover if replaced), then new gallery
+          let images = Array.isArray(data.images)
+            ? data.images.slice()
+            : (typeof data.images === 'string' && data.images.trim().startsWith('[') ? (JSON.parse(data.images)||[]) : (data.images||'').split(',').map(s=>s.trim()).filter(Boolean));
+
+          if (!Array.isArray(images)) images = [];
+          if (newCoverPath){
+            // put new cover at index 0
+            images = [newCoverPath, ...images.filter(p => p !== newCoverPath)];
+          }
+          if (newGalleryPaths.length){
+            images = [...images, ...newGalleryPaths];
+          }
+
+          // Build patch: ONLY fields that we intend to change
+          const patch = {
+            status: document.querySelector('input[name="e_status"]:checked')?.value || data.status,
+            vehicle_type: document.querySelector('input[name="e_vehicle_type"]:checked')?.value || data.vehicle_type,
+            price: Number.isFinite(parseInt($("e_price").value,10)) ? parseInt($("e_price").value,10) : data.price,
+            year: Number.isFinite(parseInt($("e_year").value,10)) ? parseInt($("e_year").value,10) : data.year,
+            make: $("e_make").value.trim() || data.make,
+            model: $("e_model").value.trim() || data.model,
+            trim: $("e_trim").value.trim() || data.trim,
+            powertrain: $("e_powertrain").value.trim() || data.powertrain,
+            mileage: Number.isFinite(parseInt($("e_mileage").value,10)) ? parseInt($("e_mileage").value,10) : data.mileage,
+            title_status: document.querySelector('input[name="e_title_status"]:checked')?.value || data.title_status,
+            condition: document.querySelector('input[name="e_condition"]:checked')?.value || data.condition,
+            city: $("e_city").value.trim() || data.city,
+            special_features: $("e_special_features").value.trim() || data.special_features,
+            description: $("e_description").value.trim() || data.description,
+            images: images
+          };
+
+          const { error: upErr } = await supabase.from('listing').update(patch).eq('id', id);
+          if (upErr) throw upErr;
+
+          $("e_msg").innerHTML = `<span class="ok">Saved.</span>`;
+          editModal.classList.remove('open');
+          await refreshListings(); // << reflect the latest DB immediately
+        }catch(e){
+          $("e_msg").innerHTML = `<span class="err">${e.message}</span>`;
+          diag(`<span class="err">${e.stack || e}</span>`);
         }
-        return;
+      };
+    }
+
+    // ---- Table actions
+    $("tbl").addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      const tr = e.target.closest('tr[data-id]');
+      if (!tr) return;
+      const id = tr.getAttribute('data-id');
+      const act = btn.getAttribute('data-act');
+      try{
+        if (act === 'up') { await moveWithinBlock(id, 'up'); }
+        else if (act === 'down') { await moveWithinBlock(id, 'down'); }
+        else if (act === 'edit') { await openEdit(id); }
+        else if (act === 'delete') { await deleteListing(id); }
+      }catch(err){
+        diag(`<span class="err">Action error: ${err.message}</span>`);
       }
     });
 
-    // Add to gallery (upload)
-    $("e_addGallery").onclick = async ()=>{
-      if (!editRow) return;
-      const files = Array.from(($("e_galleryFiles").files || []));
-      if (!files.length){ $("e_msg").textContent = "Select files first."; return; }
-
-      const free = 9 - galleryPaths.length;
-      if (free <= 0){ $("e_msg").textContent = "Gallery full (9)."; return; }
-
-      const toAdd = files.slice(0, free);
-      setBusy(true);
-      try{
-        for (const f of toAdd){
-          const relPath = `${editRow.id}/${Date.now()}_g_${f.name.replace(/\s+/g,"_")}`;
-          const { error } = await supabase.storage.from("images").upload(relPath, f, { upsert:false });
-          if (error) throw error;
-          galleryPaths.push(relPath);
-        }
-        $("e_galleryFiles").value = "";
-        $("e_msg").textContent = "Gallery updated.";
-        renderGallery();
-      }catch(e){
-        $("e_msg").textContent = "Upload failed: " + (e?.message || e);
-      }finally{
-        setBusy(false);
-      }
-    };
-
-    // Save edit
-    $("editSave").onclick = async ()=>{
-      if (!editRow) return;
-      if (!coverPath){ alert("Please set a cover photo before saving."); return; }
-      if (galleryPaths.length > 9){ alert("Max 9 gallery photos."); return; }
-
-      setBusy(true);
-      $("e_msg").textContent = "Saving...";
-
-      const prevStatus = String(editRow.status||'live');
-      const prevType = String(editRow.vehicle_type||'ev');
-
-      const payload = {
-        status: getRadioVal('e_status','live'),
-        vehicle_type: getRadioVal('e_vehicle_type','ev'),
-        year: numOrNull($("e_year").value),
-        make: strOrNull($("e_make").value),
-        model: strOrNull($("e_model").value),
-        trim: strOrNull($("e_trim").value),
-        powertrain: strOrNull($("e_powertrain").value),
-        mileage: numOrNull($("e_mileage").value),
-        price: numOrNull($("e_price").value),
-        city: strOrNull($("e_city").value),
-        vin: strOrNull($("e_vin").value),
-        title_status: getRadioVal('e_title_status','clean'),
-        condition: getRadioVal('e_condition','excellent'),
-        special_features: strOrNull($("e_special_features").value),
-        description: strOrNull($("e_description").value),   // stays
-        images: [coverPath, ...galleryPaths]
-      };
-
-      if (payload.status !== prevStatus || payload.vehicle_type !== prevType){
-        payload.position = nowMs(); // bump to top of its block
-      }
-
-      try{
-        const { error } = await supabase.from("listing").update(payload).eq("id", editRow.id);
-        if (error) throw error;
-        $("e_msg").textContent = "Saved.";
-        closeEdit();
-        await loadAll();
-      }catch(e){
-        $("e_msg").textContent = "Save failed: " + (e?.message || e);
-      }finally{
-        setBusy(false);
-      }
-    };
-
-    $("editCancel").onclick = ()=> closeEdit();
-    $("ov").onclick = ()=> closeEdit();
-
-    function numOrNull(v){ const n = parseInt(String(v||'').trim(),10); return isNaN(n)? null : n; }
-    function strOrNull(v){ const s = String(v||'').trim(); return s ? s : null; }
-
-    // ----- Diagnostics
+    // ---- Basic diagnostics
     (async () => {
-      diag("Testing anon read from 'listing'...");
-      const { data, error } = await supabase.from("listing").select("id").limit(1);
+      diag("Testing anon read from 'listing'…");
+      const { data, error } = await supabase.from("listing").select("*").limit(1);
       if (error) diag(`<span class="err">Read error: ${error.message}</span>`); else diag("Read OK.");
       const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
       if (bErr) diag(`<span class="err">Storage error: ${bErr.message}</span>`);
