@@ -76,7 +76,7 @@
   <h1>EVTime — Admin</h1>
   <p class="muted">
     Create, order, edit, and delete inventory. Photos go to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.
-    First image in <code>images</code> is the <b>cover</b>. Up/Down saves order immediately. Changing <b>Status</b> in Edit moves the listing to the correct block.
+    First image is the <b>cover</b>. Up/Down saves order immediately. Changing <b>Status</b> in Edit moves the listing to the correct block.
   </p>
 
   <!-- Authentication -->
@@ -331,7 +331,7 @@
         <div class="muted">Tip: “Make cover” moves a photo into the cover slot.</div>
       </div>
 
-      <div id="e_msg" class="muted" style="margin-top:8px"></div>
+      <div id="e_msg" class="muted" style="margin-top:8px;"></div>
     </div>
   </div>
 
@@ -591,7 +591,7 @@
         const alts = urls.slice(1);
         const model = [r.year, r.make, r.model].filter(Boolean).join(" ");
         const price = r.price ? `$${Number(r.price).toLocaleString()}` : "";
-        const pos = Number(r.position || 0);
+        const pos = Number(r.position || 0); // still tracked, just not shown
         const typeTag = `<span class="tag ${r.vehicle_type || 'ev'}">${r.vehicle_type || 'ev'}</span>`;
         const statusTag = `<span class="tag ${r.status}">${r.status}</span>`;
         const imgHTML = url
@@ -604,7 +604,6 @@
             <td>${statusTag}</td>
             <td>${typeTag}</td>
             <td>${price}</td>
-            <td>${pos}</td>
             <td class="actions">
               <button class="btn small" data-act="up">Up</button>
               <button class="btn small" data-act="down">Down</button>
@@ -625,11 +624,10 @@
               <th>Status</th>
               <th>Type</th>
               <th>Price</th>
-              <th>Position</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>${body || `<tr><td colspan="7" class="muted">No rows</td></tr>`}</tbody>
+          <tbody>${body || `<tr><td colspan="6" class="muted">No rows</td></tr>`}</tbody>
         </table>
       `;
     }
@@ -832,7 +830,6 @@
         const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert:false });
         if (error) throw error;
 
-        // Ask whether to move old cover into gallery (if present)
         if (coverPath){
           const move = confirm("Move old cover to gallery? (OK = move, Cancel = delete from storage)");
           if (move){
@@ -869,19 +866,14 @@
       if (!path) return;
 
       if (act === "cover"){
-        // Promote to cover; old cover moves to gallery (front) if space; else stays as second?
         if (coverPath){
           if (galleryPaths.length >= 9){
-            // Need to drop one to keep max 9; ask to replace first gallery or cancel
             const ok = confirm("Gallery is full (9). Move current cover into gallery by dropping the last photo?");
             if (!ok) return;
-            // delete last gallery photo from storage?
-            // Safer: just remove it from gallery list without deleting storage.
             galleryPaths.pop();
           }
           galleryPaths.unshift(coverPath);
         }
-        // Remove the chosen photo from gallery and set as cover
         const idx = galleryPaths.indexOf(path);
         if (idx > -1) galleryPaths.splice(idx,1);
         coverPath = path;
@@ -961,7 +953,7 @@
         condition: getRadioVal('e_condition','excellent'),
         special_features: strOrNull($("e_special_features").value),
         description: strOrNull($("e_description").value),
-        images: [coverPath, ...galleryPaths]   // enforce cover first
+        images: [coverPath, ...galleryPaths]
       };
 
       if (payload.status !== prevStatus || payload.vehicle_type !== prevType){
