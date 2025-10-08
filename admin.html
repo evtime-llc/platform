@@ -82,7 +82,7 @@
   <!-- Authentication -->
   <fieldset id="authBox">
     <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session…</div>
+    <div id="sessionInfo" class="muted">Checking session...</div>
     <div id="signinBox">
       <label for="email">Email for magic link</label>
       <input id="email" type="email" placeholder="you@domain.com" />
@@ -155,7 +155,7 @@
       </div>
       <div>
         <label>VIN</label>
-        <input id="vin" type="text" maxlength="17" placeholder="5YJ…"/>
+        <input id="vin" type="text" maxlength="17" placeholder="5YJ..."/>
       </div>
     </div>
 
@@ -180,6 +180,10 @@
         <input id="special_features" type="text" placeholder="FSD, Acceleration Boost, Tow Hitch"/>
       </div>
     </div>
+
+    <!-- Description (restored) -->
+    <label>Description</label>
+    <textarea id="description" rows="5" placeholder="Clean SoCal car, one owner..."></textarea>
 
     <!-- Photos: Cover + Gallery -->
     <div class="row2" style="margin-top:8px">
@@ -307,6 +311,7 @@
         </div>
       </div>
 
+      <!-- Description stays here -->
       <label>Description</label>
       <textarea id="e_description" rows="5"></textarea>
 
@@ -398,7 +403,7 @@
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
       if (!email) { $("authMsg").textContent = "Enter an email."; return; }
-      $("authMsg").textContent = "Sending magic link…";
+      $("authMsg").textContent = "Sending magic link...";
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: location.origin + "/admin.html" }
@@ -503,7 +508,7 @@
 
       try{
         setBusy(true);
-        $("uList").textContent = "Uploading images…";
+        $("uList").textContent = "Uploading images...";
         $("uProg").style.width = "0%";
 
         // Upload cover first
@@ -536,7 +541,7 @@
           special_features: $("special_features").value.trim() || null,
           title_status: (document.querySelector('input[name="title_status"]:checked')?.value) || 'clean',
           condition: (document.querySelector('input[name="condition"]:checked')?.value) || 'excellent',
-          description: $("description").value.trim() || null,
+          description: $("description").value.trim() || null,  // RESTORED
           city: $("city").value.trim() || null,
           vin: $("vin").value.trim() || null,
           price: parseInt($("price").value || "0", 10) || null,
@@ -548,7 +553,7 @@
         if (error) throw error;
 
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
-        ["cover","gallery","photos"].forEach(id=>{ const el=$(id); if (el) el.value=""; });
+        ["cover","gallery"].forEach(id=>{ const el=$(id); if (el) el.value=""; });
         $("uProg").style.width = "0%";
         $("uList").innerHTML = "";
         await loadAll();
@@ -562,7 +567,7 @@
     // ----- Load + render grouped tables
     async function loadAll(){
       const container = $("blocks");
-      container.innerHTML = `<div class="muted">Loading…</div>`;
+      container.innerHTML = `<div class="muted">Loading...</div>`;
       const { data, error } = await supabase
         .from("listing")
         .select("id,make,model,year,status,vehicle_type,price,images,position,created_at,updated_at,powertrain,city,trim,mileage,title_status,condition,description,vin")
@@ -591,14 +596,13 @@
         const alts = urls.slice(1);
         const model = [r.year, r.make, r.model].filter(Boolean).join(" ");
         const price = r.price ? `$${Number(r.price).toLocaleString()}` : "";
-        const pos = Number(r.position || 0); // still tracked, just not shown
         const typeTag = `<span class="tag ${r.vehicle_type || 'ev'}">${r.vehicle_type || 'ev'}</span>`;
         const statusTag = `<span class="tag ${r.status}">${r.status}</span>`;
         const imgHTML = url
           ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #eee">`
           : '';
         return `
-          <tr data-id="${r.id}" data-block="${blockKey(r)}" data-pos="${pos}">
+          <tr data-id="${r.id}" data-block="${blockKey(r)}">
             <td class="w80">${imgHTML}</td>
             <td>${model}<div class="muted">${r.city || ''}</div></td>
             <td>${statusTag}</td>
@@ -770,7 +774,7 @@
     function renderCover(){
       const box = $("e_coverBox");
       if (!coverPath){
-        box.innerHTML = `<div class="muted">No cover selected. Pick a file below or choose “Make cover” on a gallery photo.</div>`;
+        box.innerHTML = `<div class="muted">No cover selected. Pick a file below or choose "Make cover" on a gallery photo.</div>`;
         return;
       }
       const urls = publicImageUrls(coverPath);
@@ -932,7 +936,7 @@
       if (galleryPaths.length > 9){ alert("Max 9 gallery photos."); return; }
 
       setBusy(true);
-      $("e_msg").textContent = "Saving…";
+      $("e_msg").textContent = "Saving...";
 
       const prevStatus = String(editRow.status||'live');
       const prevType = String(editRow.vehicle_type||'ev');
@@ -952,7 +956,7 @@
         title_status: getRadioVal('e_title_status','clean'),
         condition: getRadioVal('e_condition','excellent'),
         special_features: strOrNull($("e_special_features").value),
-        description: strOrNull($("e_description").value),
+        description: strOrNull($("e_description").value),   // stays
         images: [coverPath, ...galleryPaths]
       };
 
@@ -981,7 +985,7 @@
 
     // ----- Diagnostics
     (async () => {
-      diag("Testing anon read from 'listing'…");
+      diag("Testing anon read from 'listing'...");
       const { data, error } = await supabase.from("listing").select("id").limit(1);
       if (error) diag(`<span class="err">Read error: ${error.message}</span>`); else diag("Read OK.");
       const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
