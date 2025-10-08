@@ -63,7 +63,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   padding:4px 8px;border-radius:999px;font-size:12px;letter-spacing:.03em
 }
 
-/* Gallery controls (small, still available inside card) */
+/* In-card tiny gallery (optional) */
 .gal-btn{
   position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.45);
   color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:36px;text-align:center;
@@ -218,42 +218,31 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     }catch{ img.onerror = null; }
   };
 
-  // -------- Block + sort rules (mirror admin)
+  // -------- Block + order (mirror admin)
   function blockKey(row){
     const status = String(row.status||'').toLowerCase();
     if (status === 'sold') return 'sold';
     const vt = String(row.vehicle_type || 'ev').toLowerCase();
-    const make = String(row.make || '').toLowerCase();
+    const make = String(row.make || '').trim().toLowerCase(); // trim to avoid " Tesla"
     if (vt === 'ev'){
       if (make === 'tesla') return 'live_tesla';
       return 'live_other_ev';
     }
     return 'live_other';
   }
-  const BLOCK_ORDER = ['live_tesla','live_other_ev','live_other','sold'];
-  const byPosThenDate = (a,b) => {
-    const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
-    if (pb !== pa) return pb - pa;
-    const ad = new Date(a.updated_at || a.created_at || 0).getTime();
-    const bd = new Date(b.updated_at || b.created_at || 0).getTime();
-    return bd - ad;
-  };
 
-  // -------- Card HTML (clickable whole card opens lightbox)
+  // -------- Card HTML (whole card opens lightbox)
   function cardHTML(item, index){
     const {
-      year, make, model, trim, mileage, special_features,
+      id, year, make, model, trim, mileage, special_features,
       title_status, condition, description, city, vin, price, images, status
     } = item;
 
     const paths = parseImages(images).map(normalize);
     const primaryUrls = paths.map(p => chooseUrl(p).url).filter(Boolean);
     const firstUrl = primaryUrls[0] || "og-card.png";
-
-    // also build fallback alts for the first image
     const firstAlts = paths[0] ? publicImageUrls(paths[0]).slice(1) : [];
 
-    // Preload this card's images
     preload(primaryUrls);
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
@@ -264,13 +253,11 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     ].filter(Boolean).join(" • ");
     const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
     const cityText = city ? esc(city) : "";
-
     const dots = primaryUrls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
-
     const soldBadge = String(status||'').toLowerCase()==='sold' ? `<div class="sold-badge">SOLD</div>` : '';
 
     return `
-      <div class="inv-card" data-card="${index}"
+      <div class="inv-card" data-id="${esc(id)}" data-card="${index}"
            data-paths='${JSON.stringify(paths).replace(/"/g,'&quot;')}'
            data-idx="0">
         <div class="inv-photo">
@@ -314,48 +301,59 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   const mount = document.getElementById('inventory');
 
-  // -------- Fetch + render
-  const { data, error } = await supabase
-    .from('listing')
-    .select('*')
-    .in('status', ['live','sold'])
-    .limit(1000);
+  // -------- Fetch ordered from server, then group
+  async function fetchOrdered(statusVal){
+    return supabase
+      .from('listing')
+      .select('id,year,make,model,trim,mileage,special_features,title_status,condition,description,city,vin,price,images,status,vehicle_type,position,updated_at,created_at')
+      .eq('status', statusVal)
+      .order('position', { ascending:false, nullsFirst:false })
+      .order('updated_at', { ascending:false, nullsFirst:false })
+      .limit(1000);
+  }
 
-  if (error) {
-    console.error(error);
+  const [liveRes, soldRes] = await Promise.all([fetchOrdered('live'), fetchOrdered('sold')]);
+  if (liveRes.error || soldRes.error){
+    console.error(liveRes.error || soldRes.error);
     mount.innerHTML = `<div style="color:#fff">Error loading inventory.</div>`;
     return;
   }
-  if (!data || !data.length) {
-    mount.innerHTML = `<div style="color:#fff">No vehicles available right now.</div>`;
-    return;
+  const live = liveRes.data || [];
+  const sold = soldRes.data || [];
+
+  // Now split LIVE by Tesla EV / other EV / other vehicles
+  const live_tesla = [];
+  const live_other_ev = [];
+  const live_other = [];
+  for (const r of live){
+    const k = blockKey(r);
+    if (k === 'live_tesla') live_tesla.push(r);
+    else if (k === 'live_other_ev') live_other_ev.push(r);
+    else live_other.push(r);
   }
 
-  const groups = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
-  data.forEach(r => { groups[blockKey(r)].push(r); });
-  Object.keys(groups).forEach(k => groups[k].sort(byPosThenDate));
-
+  // Build HTML in admin’s block order
   let html = '';
-  if (groups.live_tesla.length) html += renderSection(groups.live_tesla);
-  if (groups.live_other_ev.length) html += renderSection(groups.live_other_ev);
-  if (groups.live_other.length) {
+  if (live_tesla.length) html += renderSection(live_tesla);
+  if (live_other_ev.length) html += renderSection(live_other_ev);
+  if (live_other.length) {
     html += dividerHTML('Other vehicles');
-    html += renderSection(groups.live_other);
+    html += renderSection(live_other);
   }
-  if (groups.sold.length) {
+  if (sold.length) {
     html += dividerHTML('Sold');
-    html += renderSection(groups.sold);
+    html += renderSection(sold);
   }
-  mount.innerHTML = html;
+  mount.innerHTML = html || `<div style="color:#fff">No vehicles available right now.</div>`;
 
-  // -------- In-card mini gallery (prev/next) + open lightbox on whole card
+  // -------- In-card mini gallery + Lightbox
   mount.addEventListener('click', (e)=>{
     const btn = e.target.closest('.gal-btn');
     const dot = e.target.closest('.gal-dot');
     const card = e.target.closest('.inv-card');
     if (!card) return;
 
-    // handle mini gallery if arrows/dots clicked
+    // arrows / dots switching inside card
     if (btn || dot){
       const img = card.querySelector('.inv-photo img');
       const dots = [...card.querySelectorAll('.gal-dot')];
@@ -379,13 +377,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
       return;
     }
 
-    // otherwise: whole card opens lightbox
+    // whole card opens lightbox
     const paths = JSON.parse(card.getAttribute('data-paths') || '[]');
     const startIdx = Number(card.getAttribute('data-idx') || 0);
     if (paths.length) openLightbox(paths, startIdx);
   });
 
-  // -------- Lightbox logic
+  // Lightbox
   const lb = document.getElementById('lightbox');
   const lbImg = document.getElementById('lbImg');
   const lbDots = document.getElementById('lbDots');
