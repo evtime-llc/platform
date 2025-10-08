@@ -58,12 +58,9 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 }
 .inv-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
 .inv-photo img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
-
-/* SOLD badge */
-.sold-flag{
-  position:absolute;top:8px;left:8px;
-  background:var(--copper-dark);color:#fff;font-weight:900;font-size:12px;
-  padding:4px 8px;border-radius:999px;letter-spacing:.5px
+.sold-badge{
+  position:absolute;top:8px;left:8px;background:rgba(220,38,38,.9);color:#fff;
+  font-weight:900;font-size:12px;padding:4px 8px;border-radius:999px;letter-spacing:.5px
 }
 
 /* Gallery controls */
@@ -138,53 +135,61 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </footer>
 
-<!-- Load Supabase config + client -->
+<!-- Config + Supabase -->
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 (async () => {
-  const SUPABASE_URL = window.SUPABASE_URL;
-  const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY;
+  // --- Supabase client from config.js (same as Admin)
+  const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+  const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Build public URL from "id/file.jpg" OR "images/id/file.jpg"
-  function publicImageUrl(path){
-    if(!path) return null;
-    const normalized = String(path).trim().replace(/^images\//i,''); // canonicalize
-    try{
-      const { data } = supabase.storage.from('images').getPublicUrl(normalized);
-      return data?.publicUrl || null;
-    }catch{ return null; }
+  // --- Helpers
+  function parseImages(images){
+    if (!images) return [];
+    if (Array.isArray(images)) return images;
+    if (typeof images === 'string'){
+      const s = images.trim();
+      if (s.startsWith('[')) { try { return JSON.parse(s) || [] } catch { return [] } }
+      return s.split(',').map(v=>v.trim()).filter(Boolean);
+    }
+    return [];
   }
 
-  // Preload images for snappy next/prev
-  function preload(urls){
-    urls.forEach(u => { const im = new Image(); im.decoding = 'async'; im.loading = 'eager'; im.src = u; });
+  // Build resilient public URLs (handles "images/...","images/images/...", and "<id>/...")
+  function publicImageUrls(path){
+    let s = String(path||'').trim().replace(/^\/+/, '');
+    if (!s) return [];
+    const candidates = [];
+    if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+    candidates.push(s);
+    candidates.push(s.replace(/^images\//i,''));
+    if (!/^images\//i.test(s)) candidates.push('images/' + s);
+    const uniq = [...new Set(candidates)];
+    return uniq.map(p => {
+      const { data } = supabase.storage.from('images').getPublicUrl(p);
+      return data?.publicUrl || null;
+    }).filter(Boolean);
   }
+
+  // Preload images
+  function preload(urls){ urls.forEach(u => { const im = new Image(); im.decoding='async'; im.loading='eager'; im.src=u; }); }
 
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  // Card HTML with gallery (+ SOLD badge)
+  // Gallery card
   function cardHTML(item, index){
     const {
-      year, make, model, trim, mileage, special_features,
+      id, year, make, model, trim, mileage, special_features,
       title_status, condition, description, city, vin, price, images, status
     } = item;
 
-    // images: array, JSON string, or CSV string
-    const paths = Array.isArray(images)
-      ? images
-      : (typeof images === 'string'
-          ? (images.trim().startsWith('[')
-              ? (JSON.parse(images) || [])
-              : images.split(',').map(s => s.trim()).filter(Boolean))
-          : []);
-
-    const urls = paths.map(publicImageUrl).filter(Boolean);
+    const paths = parseImages(images);
+    // choose first working URL per path
+    const urls = paths.map(p => publicImageUrls(p)[0]).filter(Boolean);
     const firstUrl = urls[0] || "og-card.png";
-
-    // Preload this card's images
     preload(urls);
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
@@ -197,13 +202,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const cityText = city ? esc(city) : "";
 
     const dots = urls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
-    const isSold = String(status||'').toLowerCase() === 'sold';
+
+    const soldBadge = (String(status).toLowerCase()==='sold')
+      ? `<div class="sold-badge">SOLD</div>` : "";
 
     return `
-      <div class="inv-card" data-card="${index}" data-count="${urls.length}" data-images='${JSON.stringify(urls)}'>
+      <div class="inv-card" data-card="${index}" data-images='${JSON.stringify(urls)}'>
         <div class="inv-photo">
+          ${soldBadge}
           <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="eager" decoding="async">
-          ${isSold ? `<div class="sold-flag">SOLD</div>` : ``}
           ${urls.length>1 ? `
             <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
             <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
@@ -238,98 +245,83 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     </div>
   `;
 
-  // Sorting: position DESC, then updated_at/created_at DESC
-  const byPosThenDate = (a,b) => {
-    const pa = Number(a.position ?? 0);
-    const pb = Number(b.position ?? 0);
-    if (pb !== pa) return pb - pa;
-    const ad = new Date(a.updated_at || a.created_at || 0).getTime();
-    const bd = new Date(b.updated_at || b.created_at || 0).getTime();
-    return bd - ad;
-  };
-
-  // Fetch live + sold
-  const { data, error } = await supabase
-    .from('listing')
-    .select('*')
-    .in('status', ['live','sold']);
-
+  // Fetch & render
   const mount = document.getElementById('inventory');
+  try{
+    const { data, error } = await supabase
+      .from('listing')
+      .select('id,year,make,model,trim,mileage,special_features,title_status,condition,description,city,vin,price,powertrain,images,status,vehicle_type,position,created_at,updated_at')
+      .in('status', ['live','sold'])
+      .limit(500);
 
-  if (error) {
-    console.error(error);
+    if (error) throw error;
+    if (!data || !data.length){ mount.innerHTML = `<div style="color:#fff">No vehicles available right now.</div>`; return; }
+
+    // De-dupe by id (safety)
+    const seen = new Set(); const rows = [];
+    for (const r of data){ if (!seen.has(r.id)){ seen.add(r.id); rows.push(r); } }
+
+    const byPosThenDate = (a,b) => {
+      const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
+      if (pb !== pa) return pb - pa;
+      const ad = new Date(a.updated_at || a.created_at || 0).getTime();
+      const bd = new Date(b.updated_at || b.created_at || 0).getTime();
+      return bd - ad;
+    };
+
+    // Classification mirrors Admin
+    const live = rows.filter(x => String(x.status).toLowerCase() === 'live');
+    const sold = rows.filter(x => String(x.status).toLowerCase() === 'sold');
+
+    const teslas = live.filter(x => String(x.vehicle_type||'ev').toLowerCase()==='ev' && String(x.make||'').toLowerCase()==='tesla').sort(byPosThenDate);
+    const otherEVs = live.filter(x => String(x.vehicle_type||'ev').toLowerCase()==='ev' && String(x.make||'').toLowerCase()!=='tesla').sort(byPosThenDate);
+    const others  = live.filter(x => String(x.vehicle_type||'other').toLowerCase()!=='ev').sort(byPosThenDate);
+    const soldAll = sold.sort(byPosThenDate);
+
+    let html = '';
+    html += renderSection(teslas);
+    html += renderSection(otherEVs);
+
+    if (others.length) {
+      html += dividerHTML('Other vehicles');
+      html += renderSection(others);
+    }
+    if (soldAll.length){
+      html += dividerHTML('Sold');
+      html += renderSection(soldAll);
+    }
+
+    mount.innerHTML = html;
+
+    // Gallery controls
+    mount.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.gal-btn');
+      const dot = e.target.closest('.gal-dot');
+      if(!btn && !dot) return;
+      const card = e.target.closest('.inv-card');
+      if(!card) return;
+      const img = card.querySelector('.inv-photo img');
+      const dots = [...card.querySelectorAll('.gal-dot')];
+      const urls = JSON.parse(card.getAttribute('data-images') || '[]');
+      if(!urls.length) return;
+      let idx = Number(card.getAttribute('data-idx') || 0);
+      if (btn){
+        const dir = btn.dataset.action === 'next' ? 1 : -1;
+        idx = (idx + dir + urls.length) % urls.length;
+      }
+      if (dot){ idx = Number(dot.dataset.dot); }
+      img.src = urls[idx];
+      card.setAttribute('data-idx', String(idx));
+      dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
+    });
+
+  }catch(err){
+    console.error(err);
     mount.innerHTML = `<div style="color:#fff">Error loading inventory.</div>`;
-    return;
-  }
-  if (!data || !data.length) {
-    mount.innerHTML = `<div style="color:#fff">No vehicles available right now.</div>`;
-    return;
   }
 
-  const isLive = (s) => String(s||'').toLowerCase() === 'live';
-  const isSold = (s) => String(s||'').toLowerCase() === 'sold';
-
-  const live = data.filter(x => isLive(x.status)).sort(byPosThenDate);
-  const sold = data.filter(x => isSold(x.status)).sort(byPosThenDate);
-
-  // Live sections (Tesla → other EVs → others), each sorted by position/date
-  const teslas = live.filter(x => (x.make || '').toLowerCase() === 'tesla').sort(byPosThenDate);
-  const otherEVs = live.filter(x => (x.powertrain || '').toUpperCase() === 'EV' && (x.make || '').toLowerCase() !== 'tesla').sort(byPosThenDate);
-  const others  = live.filter(x => {
-    const p = (x.powertrain || '').toUpperCase();
-    return p === 'HYBRID' || p === 'GAS' || p === '';
-  }).sort(byPosThenDate);
-
-  let html = '';
-  html += renderSection(teslas);
-  html += renderSection(otherEVs);
-
-  if (others.length) {
-    html += dividerHTML('Other vehicles');
-    html += renderSection(others);
-  }
-
-  // Sold at the bottom
-  if (sold.length) {
-    html += dividerHTML('Sold');
-    html += renderSection(sold);
-  }
-
-  mount.innerHTML = html;
-
-  // Gallery controller
-  mount.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.gal-btn');
-    const dot = e.target.closest('.gal-dot');
-    if(!btn && !dot) return;
-
-    const card = e.target.closest('.inv-card');
-    if(!card) return;
-
-    const img = card.querySelector('.inv-photo img');
-    const dots = [...card.querySelectorAll('.gal-dot')];
-    const urls = JSON.parse(card.getAttribute('data-images') || '[]');
-    if(!urls.length) return;
-
-    let idx = Number(card.getAttribute('data-idx') || 0);
-
-    if (btn){
-      const dir = btn.dataset.action === 'next' ? 1 : -1;
-      idx = (idx + dir + urls.length) % urls.length;
-    }
-    if (dot){
-      idx = Number(dot.dataset.dot);
-    }
-
-    img.src = urls[idx];
-    card.setAttribute('data-idx', String(idx));
-    dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
-  });
+  document.getElementById('yr').textContent = new Date().getFullYear();
 })();
-</script>
-
-<script>
-document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
