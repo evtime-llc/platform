@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin</title>
   <style>
-    :root{ --line:#e7e5e4; --muted:#666; --ink:#1c1917; }
+    :root{ --line:#e7e5e4; --muted:#666; --ink:#1c1917; --bg:#ffffff; }
     /* Header / Logo */
     .topbar { background:#fff; border-bottom:1px solid var(--line); }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
     @media (max-width:600px){ #site-logo { max-height:220px; } }
     /* Layout */
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; color:var(--ink); }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1100px; margin: 0 auto; color:var(--ink); background:var(--bg); }
     h1 { margin: 16px 0 8px; }
     fieldset { border: 1px solid var(--line); padding: 16px; margin-bottom: 16px; border-radius: 12px; background:#fff; }
     legend { font-weight: 800; }
@@ -24,7 +24,7 @@
     textarea { resize: vertical; }
     .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .row2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    @media (max-width:900px){ .row3{grid-template-columns:1fr} .row2{grid-template-columns:1fr} }
+    @media (max-width:1000px){ .row3{grid-template-columns:1fr} .row2{grid-template-columns:1fr} }
     .muted { color:var(--muted); font-size: 12px; }
     .ok { color: #0a7; }
     .err { color: #c00; white-space: pre-wrap; }
@@ -45,6 +45,19 @@
     .tag.other { background:#fef3c7; color:#92400e; }
     .blockLabel{ font-weight:900; margin:18px 0 6px; }
     .busy { opacity:.6; pointer-events:none }
+
+    /* Edit panel (slide-over) */
+    .overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:999; }
+    .panel { position:fixed; top:0; right:0; height:100%; width: 560px; max-width:100%; background:#fff; box-shadow:-12px 0 30px rgba(0,0,0,.2); transform:translateX(100%); transition:transform .2s ease; z-index:1000; overflow:auto; }
+    .panel.open { transform:translateX(0); }
+    .panel header { position:sticky; top:0; background:#fff; border-bottom:1px solid var(--line); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; z-index:1; }
+    .panel .content { padding:16px; }
+    .thumbs { display:flex; flex-wrap:wrap; gap:8px; }
+    .thumb { position:relative; width:100px; height:75px; border:1px solid #eee; border-radius:8px; overflow:hidden; background:#f8f8f8; }
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .thumb .tbar { position:absolute; inset:auto 0 0 0; background:rgba(0,0,0,.5); display:flex; gap:6px; padding:4px; justify-content:space-between; }
+    .thumb .tbar button { width:auto; padding:2px 6px; border-radius:6px; border:1px solid #ddd; background:#fff; font-size:11px; }
+    .thumb .cover { position:absolute; top:4px; left:4px; background:#10b981; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; }
   </style>
 </head>
 <body>
@@ -60,8 +73,8 @@
 
   <h1>EVTime — Admin</h1>
   <p class="muted">
-    Add, order, and update inventory. Photos upload to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.
-    First image is the cover. Up/Down saves order immediately. Setting status to <b>sold</b> bumps it to top of the Sold block.
+    Add, order, update, and edit inventory. Photos go to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.
+    First image is the cover. Up/Down saves order immediately. Changing <b>Status</b> in Edit moves the listing to the correct block.
   </p>
 
   <!-- Authentication -->
@@ -187,6 +200,119 @@
     <div id="blocks"></div>
   </fieldset>
 
+  <!-- Edit Panel -->
+  <div id="ov" class="overlay"></div>
+  <div id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <header>
+      <div id="editTitle" style="font-weight:800">Edit Listing</div>
+      <div class="actions">
+        <button id="editCancel" class="btn">Cancel</button>
+        <button id="editSave" class="btn">Save</button>
+      </div>
+    </header>
+    <div class="content">
+      <input id="e_id" type="text" readonly style="opacity:.7" />
+      <div class="row2" style="margin-top:8px">
+        <div>
+          <label>Status</label>
+          <div>
+            <label><input type="radio" name="e_status" value="live"> Live</label>
+            <label><input type="radio" name="e_status" value="sold"> Sold</label>
+          </div>
+        </div>
+        <div>
+          <label>Vehicle Type</label>
+          <div>
+            <label><input type="radio" name="e_vehicle_type" value="ev"> EV</label>
+            <label><input type="radio" name="e_vehicle_type" value="other"> Other Vehicles</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div>
+          <label>Year</label>
+          <input id="e_year" type="number" min="1990" max="2100"/>
+        </div>
+        <div>
+          <label>Make</label>
+          <input id="e_make" type="text"/>
+        </div>
+        <div>
+          <label>Model</label>
+          <input id="e_model" type="text"/>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div>
+          <label>Trim</label>
+          <input id="e_trim" type="text"/>
+        </div>
+        <div>
+          <label>Powertrain</label>
+          <input id="e_powertrain" type="text"/>
+        </div>
+        <div>
+          <label>Mileage</label>
+          <input id="e_mileage" type="number" min="0"/>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div>
+          <label>Price (USD)</label>
+          <input id="e_price" type="number" min="0" step="100"/>
+        </div>
+        <div>
+          <label>City</label>
+          <input id="e_city" type="text"/>
+        </div>
+        <div>
+          <label>VIN</label>
+          <input id="e_vin" type="text" maxlength="17"/>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div>
+          <label>Title Status</label>
+          <div>
+            <label><input type="radio" name="e_title_status" value="clean"> Clean</label>
+            <label><input type="radio" name="e_title_status" value="other"> Other</label>
+          </div>
+        </div>
+        <div>
+          <label>Condition</label>
+          <div>
+            <label><input type="radio" name="e_condition" value="excellent"> Excellent</label>
+            <label><input type="radio" name="e_condition" value="good"> Good</label>
+            <label><input type="radio" name="e_condition" value="fair"> Fair</label>
+          </div>
+        </div>
+        <div>
+          <label>Special Features</label>
+          <input id="e_special_features" type="text"/>
+        </div>
+      </div>
+
+      <label>Description</label>
+      <textarea id="e_description" rows="5"></textarea>
+
+      <div style="margin-top:12px">
+        <label>Photos</label>
+        <div id="e_thumbs" class="thumbs"></div>
+        <div class="actions" style="margin-top:8px">
+          <input id="e_newPhotos" type="file" accept="image/*" multiple />
+          <button id="e_addPhotos" class="btn">Upload Selected</button>
+        </div>
+        <div class="muted">Tip: “Make cover” sets the first image.</div>
+      </div>
+
+      <div id="e_msg" class="muted" style="margin-top:8px"></div>
+    </div>
+  </div>
+
   <!-- Diagnostics -->
   <fieldset>
     <legend>Diagnostics</legend>
@@ -210,12 +336,12 @@
     const $ = (id) => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
 
-    // Busy lock to prevent race/bounce on rapid clicks
+    // Busy lock
     let __busy = false;
     function setBusy(on){
       __busy = !!on;
       document.body.classList.toggle('busy', __busy);
-      document.querySelectorAll('button[data-act]').forEach(b => b.disabled = __busy);
+      document.querySelectorAll('button[data-act],#editSave,#e_addPhotos').forEach(b => b.disabled = __busy);
     }
 
     // ----- Auth UI
@@ -287,29 +413,23 @@
       }
       return [];
     }
-
-    // Build multiple candidate URLs to survive odd saved paths
+    function normalizeStoragePath(path){
+      return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
+    }
     function publicImageUrls(path){
       let s = String(path||'').trim().replace(/^\/+/, '');
       if (!s) return [];
       const candidates = [];
-      // if double prefix, collapse to single "images/..."
       if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
       candidates.push(s);
-      // try without leading "images/"
       candidates.push(s.replace(/^images\//i,''));
-      // try adding a single "images/" if missing
       if (!/^images\//i.test(s)) candidates.push('images/' + s);
-      // dedupe
       const uniq = [...new Set(candidates)];
-      // map to actual public URLs
       return uniq.map(p => {
         const { data } = supabase.storage.from('images').getPublicUrl(p);
         return data?.publicUrl || null;
       }).filter(Boolean);
     }
-
-    // global fallback handler for <img> errors
     window.__imgFallback = function(img){
       try{
         const alts = JSON.parse(img.getAttribute('data-alts') || '[]');
@@ -317,9 +437,7 @@
           const next = alts.shift();
           img.setAttribute('data-alts', JSON.stringify(alts));
           img.src = next;
-        } else {
-          img.onerror = null;
-        }
+        } else { img.onerror = null; }
       }catch{ img.onerror = null; }
     };
 
@@ -414,7 +532,7 @@
       container.innerHTML = `<div class="muted">Loading…</div>`;
       const { data, error } = await supabase
         .from("listing")
-        .select("id,make,model,year,status,vehicle_type,price,images,position,created_at,updated_at,powertrain,city")
+        .select("id,make,model,year,status,vehicle_type,price,images,position,created_at,updated_at,powertrain,city,trim,mileage,title_status,condition,description,vin")
         .limit(500);
       if (error){ container.innerHTML = `<div class="err">${error.message}</div>`; return; }
 
@@ -457,8 +575,7 @@
             <td class="actions">
               <button class="btn small" data-act="up">Up</button>
               <button class="btn small" data-act="down">Down</button>
-              <button class="btn small" data-act="set-live">Set live</button>
-              <button class="btn small" data-act="set-sold">Set sold</button>
+              <button class="btn small" data-act="edit">Edit</button>
               <button class="btn small danger" data-act="delete">Delete</button>
             </td>
           </tr>
@@ -488,16 +605,16 @@
     document.addEventListener("click", async (e)=>{
       const btn = e.target.closest("button[data-act]");
       if (!btn) return;
-      if (__busy) return;
+      if (__busy && btn.getAttribute('data-act')!=='edit') return;
       const tr = btn.closest("tr");
-      if (!tr) return;
-      const id = tr.getAttribute("data-id");
+      const id = tr?.getAttribute("data-id");
       const act = btn.getAttribute("data-act");
+      if (!id) return;
+
       if (act === "delete"){ await hardDelete(id); return; }
       if (act === "up"){ await moveWithinBlock(id, -1); return; }
       if (act === "down"){ await moveWithinBlock(id, +1); return; }
-      if (act === "set-live"){ await setStatus(id, "live"); return; }
-      if (act === "set-sold"){ await setStatus(id, "sold"); return; }
+      if (act === "edit"){ openEdit(id); return; }
     });
 
     // ----- Stable reindexing move with busy lock
@@ -534,20 +651,6 @@
       }
     }
 
-    // ----- Status change: bump to top of its new block
-    async function setStatus(id, newStatus){
-      setBusy(true);
-      try{
-        const { error } = await supabase.from("listing").update({ status: newStatus, position: nowMs() }).eq("id", id);
-        if (error) throw error;
-        await loadAll();
-      } catch (e){
-        alert("Status update failed: " + (e?.message || e));
-      } finally {
-        setBusy(false);
-      }
-    }
-
     // ----- Hard delete row + best-effort delete folder
     async function hardDelete(id){
       if (!confirm("Delete this listing and its photos? This cannot be undone.")) return;
@@ -569,6 +672,196 @@
         setBusy(false);
       }
     }
+
+    // ===== Edit panel =====
+    const ov = $("ov");
+    const panel = $("panel");
+    let editRow = null; // current row data
+    let editImages = []; // normalized relative paths <id>/file
+
+    function openEdit(id){
+      // Find row in any block
+      const g = window.__groups || {};
+      const row = (BLOCK_ORDER.flatMap(b => g[b]||[])).find(r => r.id === id);
+      if (!row) return;
+
+      editRow = JSON.parse(JSON.stringify(row));
+      editImages = parseImages(row.images || []).map(normalizeStoragePath);
+
+      // Prefill fields
+      $("e_id").value = row.id || '';
+      setRadio("e_status", String(row.status||'live').toLowerCase());
+      setRadio("e_vehicle_type", String(row.vehicle_type||'ev').toLowerCase());
+      $("e_year").value = row.year ?? '';
+      $("e_make").value = row.make ?? '';
+      $("e_model").value = row.model ?? '';
+      $("e_trim").value = row.trim ?? '';
+      $("e_powertrain").value = row.powertrain ?? '';
+      $("e_mileage").value = row.mileage ?? '';
+      $("e_price").value = row.price ?? '';
+      $("e_city").value = row.city ?? '';
+      $("e_vin").value = row.vin ?? '';
+      setRadio("e_title_status", String(row.title_status||'clean').toLowerCase());
+      setRadio("e_condition", String(row.condition||'excellent').toLowerCase());
+      $("e_special_features").value = row.special_features ?? '';
+      $("e_description").value = row.description ?? '';
+
+      renderThumbs();
+
+      ov.style.display = "block";
+      requestAnimationFrame(()=> panel.classList.add("open"));
+    }
+
+    function closeEdit(){
+      panel.classList.remove("open");
+      setTimeout(()=>{ ov.style.display = "none"; }, 180);
+      editRow = null; editImages = [];
+      $("e_msg").textContent = "";
+      $("e_newPhotos").value = "";
+      $("e_thumbs").innerHTML = "";
+    }
+
+    function setRadio(name, value){
+      const els = document.querySelectorAll(`input[name="${name}"]`);
+      let set = false;
+      els.forEach(el => {
+        if (el.value === value){ el.checked = true; set = true; }
+        else el.checked = false;
+      });
+      if (!set && els[0]) els[0].checked = true;
+    }
+
+    function renderThumbs(){
+      const box = $("e_thumbs");
+      if (!editImages.length){ box.innerHTML = `<div class="muted">No photos yet.</div>`; return; }
+      box.innerHTML = editImages.map((p, i)=>{
+        const urls = publicImageUrls(p);
+        const url = urls[0] || '';
+        const alts = urls.slice(1);
+        const cover = (i===0) ? `<div class="cover">COVER</div>` : '';
+        return `
+          <div class="thumb" data-path="${p}">
+            ${cover}
+            ${url ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="">` : ''}
+            <div class="tbar">
+              <button data-img-act="cover" title="Make cover">Make cover</button>
+              <button data-img-act="delete" title="Delete">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Thumb actions
+    $("e_thumbs").addEventListener("click", async (e)=>{
+      const btn = e.target.closest("button[data-img-act]");
+      if (!btn) return;
+      const card = e.target.closest(".thumb");
+      if (!card) return;
+      const path = card.getAttribute("data-path");
+      const act = btn.getAttribute("data-img-act");
+      if (!path) return;
+
+      if (act === "cover"){
+        // move to front
+        const idx = editImages.indexOf(path);
+        if (idx > -1){ editImages.splice(idx,1); editImages.unshift(path); renderThumbs(); }
+        return;
+      }
+      if (act === "delete"){
+        if (!confirm("Remove this photo? (Deletes from storage)")) return;
+        const rel = normalizeStoragePath(path);
+        try{
+          const { error } = await supabase.storage.from("images").remove([rel]);
+          if (error) throw error;
+          const i = editImages.indexOf(path);
+          if (i > -1){ editImages.splice(i,1); renderThumbs(); }
+        }catch(err){
+          alert("Delete photo failed: " + (err?.message || err));
+        }
+        return;
+      }
+    });
+
+    // Upload new photos into the same folder
+    $("e_addPhotos").onclick = async ()=>{
+      const files = Array.from(($("e_newPhotos").files || []));
+      if (!files.length) { $("e_msg").textContent = "Select files first."; return; }
+      if (!editRow) return;
+
+      setBusy(true);
+      try{
+        for (const f of files){
+          const relPath = `${editRow.id}/${Date.now()}_${f.name.replace(/\s+/g,"_")}`;
+          const { error } = await supabase.storage.from("images").upload(relPath, f, { upsert: false });
+          if (error) throw error;
+          editImages.push(relPath);
+        }
+        $("e_newPhotos").value = "";
+        $("e_msg").textContent = "Photos uploaded.";
+        renderThumbs();
+      }catch(e){
+        $("e_msg").textContent = "Upload failed: " + (e?.message || e);
+      }finally{
+        setBusy(false);
+      }
+    };
+
+    // Save edit
+    $("editSave").onclick = async ()=>{
+      if (!editRow) return;
+      setBusy(true);
+      $("e_msg").textContent = "Saving…";
+
+      const prevStatus = String(editRow.status||'live');
+      const prevType = String(editRow.vehicle_type||'ev');
+
+      const payload = {
+        status: getRadioVal('e_status','live'),
+        vehicle_type: getRadioVal('e_vehicle_type','ev'),
+        year: numOrNull($("e_year").value),
+        make: strOrNull($("e_make").value),
+        model: strOrNull($("e_model").value),
+        trim: strOrNull($("e_trim").value),
+        powertrain: strOrNull($("e_powertrain").value),
+        mileage: numOrNull($("e_mileage").value),
+        price: numOrNull($("e_price").value),
+        city: strOrNull($("e_city").value),
+        vin: strOrNull($("e_vin").value),
+        title_status: getRadioVal('e_title_status','clean'),
+        condition: getRadioVal('e_condition','excellent'),
+        special_features: strOrNull($("e_special_features").value),
+        description: strOrNull($("e_description").value),
+        images: editImages.slice()
+      };
+
+      // bump to top if status/type changed
+      if (payload.status !== prevStatus || payload.vehicle_type !== prevType){
+        payload.position = nowMs();
+      }
+
+      try{
+        const { error } = await supabase.from("listing").update(payload).eq("id", editRow.id);
+        if (error) throw error;
+        $("e_msg").textContent = "Saved.";
+        closeEdit();
+        await loadAll();
+      }catch(e){
+        $("e_msg").textContent = "Save failed: " + (e?.message || e);
+      }finally{
+        setBusy(false);
+      }
+    };
+
+    $("editCancel").onclick = ()=> closeEdit();
+    $("ov").onclick = ()=> closeEdit();
+
+    function getRadioVal(name, fallback){
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : fallback;
+    }
+    function numOrNull(v){ const n = parseInt(String(v||'').trim(),10); return isNaN(n)? null : n; }
+    function strOrNull(v){ const s = String(v||'').trim(); return s ? s : null; }
 
     // ----- Diagnostics
     (async () => {
