@@ -46,18 +46,20 @@
     .blockLabel{ font-weight:900; margin:18px 0 6px; }
     .busy { opacity:.6; pointer-events:none }
 
+    /* Thumbs */
+    .thumbs { display:flex; flex-wrap:wrap; gap:8px; }
+    .thumb { position:relative; width:120px; height:90px; border:1px solid #eee; border-radius:8px; overflow:hidden; background:#f8f8f8; }
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .thumb .tbar { position:absolute; inset:auto 0 0 0; background:rgba(0,0,0,.5); display:flex; gap:6px; padding:4px; justify-content:space-between; }
+    .thumb .tbar button { width:auto; padding:2px 6px; border-radius:6px; border:1px solid #ddd; background:#fff; font-size:11px; }
+    .thumb .cover { position:absolute; top:4px; left:4px; background:#10b981; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; }
+
     /* Edit panel (slide-over) */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; z-index:999; }
     .panel { position:fixed; top:0; right:0; height:100%; width: 560px; max-width:100%; background:#fff; box-shadow:-12px 0 30px rgba(0,0,0,.2); transform:translateX(100%); transition:transform .2s ease; z-index:1000; overflow:auto; }
     .panel.open { transform:translateX(0); }
     .panel header { position:sticky; top:0; background:#fff; border-bottom:1px solid var(--line); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; z-index:1; }
     .panel .content { padding:16px; }
-    .thumbs { display:flex; flex-wrap:wrap; gap:8px; }
-    .thumb { position:relative; width:100px; height:75px; border:1px solid #eee; border-radius:8px; overflow:hidden; background:#f8f8f8; }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .thumb .tbar { position:absolute; inset:auto 0 0 0; background:rgba(0,0,0,.5); display:flex; gap:6px; padding:4px; justify-content:space-between; }
-    .thumb .tbar button { width:auto; padding:2px 6px; border-radius:6px; border:1px solid #ddd; background:#fff; font-size:11px; }
-    .thumb .cover { position:absolute; top:4px; left:4px; background:#10b981; color:#fff; font-size:10px; padding:2px 6px; border-radius:999px; }
   </style>
 </head>
 <body>
@@ -73,8 +75,8 @@
 
   <h1>EVTime — Admin</h1>
   <p class="muted">
-    Add, order, update, and edit inventory. Photos go to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.
-    First image is the cover. Up/Down saves order immediately. Changing <b>Status</b> in Edit moves the listing to the correct block.
+    Create, order, edit, and delete inventory. Photos go to the <code>images</code> bucket under <code>&lt;listing_id&gt;/filename</code>.
+    First image in <code>images</code> is the <b>cover</b>. Up/Down saves order immediately. Changing <b>Status</b> in Edit moves the listing to the correct block.
   </p>
 
   <!-- Authentication -->
@@ -179,11 +181,19 @@
       </div>
     </div>
 
-    <label>Description</label>
-    <textarea id="description" rows="5" placeholder="Clean SoCal car, one owner…"></textarea>
-
-    <label>Photos (1+)</label>
-    <input id="photos" type="file" accept="image/*" multiple />
+    <!-- Photos: Cover + Gallery -->
+    <div class="row2" style="margin-top:8px">
+      <div>
+        <label>Cover Photo (required)</label>
+        <input id="cover" type="file" accept="image/*" />
+        <div class="muted">The cover displays first on Share.</div>
+      </div>
+      <div>
+        <label>Gallery Photos (up to 9)</label>
+        <input id="gallery" type="file" accept="image/*" multiple />
+        <div class="muted">Optional. You can add more later in Edit.</div>
+      </div>
+    </div>
     <div class="bar"><div id="uProg"></div></div>
     <div id="uList" class="muted" style="margin-top:6px;"></div>
 
@@ -212,6 +222,7 @@
     </header>
     <div class="content">
       <input id="e_id" type="text" readonly style="opacity:.7" />
+
       <div class="row2" style="margin-top:8px">
         <div>
           <label>Status</label>
@@ -299,14 +310,25 @@
       <label>Description</label>
       <textarea id="e_description" rows="5"></textarea>
 
+      <!-- Cover + Gallery in Edit -->
       <div style="margin-top:12px">
-        <label>Photos</label>
-        <div id="e_thumbs" class="thumbs"></div>
+        <label>Cover Photo</label>
+        <div id="e_coverBox" class="thumbs"></div>
         <div class="actions" style="margin-top:8px">
-          <input id="e_newPhotos" type="file" accept="image/*" multiple />
-          <button id="e_addPhotos" class="btn">Upload Selected</button>
+          <input id="e_coverFile" type="file" accept="image/*" />
+          <button id="e_replaceCover" class="btn">Replace Cover</button>
         </div>
-        <div class="muted">Tip: “Make cover” sets the first image.</div>
+        <div class="muted">The cover is the first image shown on Share.</div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>Gallery Photos (up to 9)</label>
+        <div id="e_gallery" class="thumbs"></div>
+        <div class="actions" style="margin-top:8px">
+          <input id="e_galleryFiles" type="file" accept="image/*" multiple />
+          <button id="e_addGallery" class="btn">Add to Gallery</button>
+        </div>
+        <div class="muted">Tip: “Make cover” moves a photo into the cover slot.</div>
       </div>
 
       <div id="e_msg" class="muted" style="margin-top:8px"></div>
@@ -341,7 +363,7 @@
     function setBusy(on){
       __busy = !!on;
       document.body.classList.toggle('busy', __busy);
-      document.querySelectorAll('button[data-act],#editSave,#e_addPhotos').forEach(b => b.disabled = __busy);
+      document.querySelectorAll('button[data-act],#editSave,#e_addGallery,#e_replaceCover,#create').forEach(b => b.disabled = __busy);
     }
 
     // ----- Auth UI
@@ -461,36 +483,45 @@
       return bd - ad;
     };
 
-    // ----- Create listing
-    async function uploadPhotos(listingId, files) {
-      if (!files || files.length === 0) return [];
-      const uploaded = []; let done = 0;
-      for (const file of files) {
-        const relPath = `${listingId}/${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
-        if (error) throw new Error(`Upload failed: ${error.message}`);
-        uploaded.push(relPath);
-        done++; $("uProg").style.width = `${Math.round((done/files.length)*100)}%`;
-        $("uList").innerHTML += `<code>${relPath}</code><br/>`;
-      }
-      return uploaded;
+    // ----- Create listing (Cover + Gallery)
+    async function uploadOne(listingId, file, label){
+      const relPath = `${listingId}/${Date.now()}_${(label?label+'_':'')}${file.name.replace(/\s+/g,"_")}`;
+      const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
+      if (error) throw new Error(`Upload failed (${label||'photo'}): ${error.message}`);
+      return relPath;
     }
 
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
-      const files = Array.from(($("photos").files || []));
-      if (files.length < 1) { $("createMsg").textContent = "Please add at least 1 photo."; return; }
-
-      const getRadio = (name, fallback) => {
-        const el = document.querySelector(`input[name="${name}"]:checked`);
-        return (el ? el.value : fallback);
-      };
+      const coverFile = $("cover").files && $("cover").files[0];
+      if (!coverFile) { $("createMsg").textContent = "Please select a Cover photo."; return; }
+      const galleryFiles = Array.from(($("gallery").files || []));
+      if (galleryFiles.length > 9) { $("createMsg").textContent = "Max 9 gallery photos."; return; }
 
       const listingId = crypto.randomUUID();
+      const getRadio = (name, fallback) => (document.querySelector(`input[name="${name}"]:checked`)?.value || fallback);
 
-      try {
-        diag("Uploading photos…");
-        const imagePaths = await uploadPhotos(listingId, files);
+      try{
+        setBusy(true);
+        $("uList").textContent = "Uploading images…";
+        $("uProg").style.width = "0%";
+
+        // Upload cover first
+        let uploaded = [];
+        const coverPath = await uploadOne(listingId, coverFile, "cover");
+        uploaded.push(coverPath);
+        $("uProg").style.width = "15%";
+
+        // Upload gallery (if any)
+        let done = 0;
+        for (const f of galleryFiles){
+          const p = await uploadOne(listingId, f, "g");
+          uploaded.push(p);
+          done++;
+          const pct = 15 + Math.round((done/galleryFiles.length) * 85);
+          $("uProg").style.width = `${pct}%`;
+        }
+        $("uList").innerHTML = uploaded.map(p=>`<code>${p}</code>`).join("<br>");
 
         const payload = {
           id: listingId,
@@ -509,20 +540,22 @@
           city: $("city").value.trim() || null,
           vin: $("vin").value.trim() || null,
           price: parseInt($("price").value || "0", 10) || null,
-          images: imagePaths,
+          images: uploaded,                // [cover, ...gallery]
           position: nowMs()
         };
 
-        diag("Inserting row…");
         const { error } = await supabase.from("listing").insert(payload);
         if (error) throw error;
 
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
-        $("photos").value = ""; $("uProg").style.width = "0%"; $("uList").innerHTML = "";
+        ["cover","gallery","photos"].forEach(id=>{ const el=$(id); if (el) el.value=""; });
+        $("uProg").style.width = "0%";
+        $("uList").innerHTML = "";
         await loadAll();
-      } catch (e) {
+      }catch(e){
         $("createMsg").innerHTML = `<span class="err">${e.message}</span>`;
-        diag(`<span class="err">${e.stack || e}</span>`);
+      }finally{
+        setBusy(false);
       }
     };
 
@@ -676,17 +709,19 @@
     // ===== Edit panel =====
     const ov = $("ov");
     const panel = $("panel");
-    let editRow = null; // current row data
-    let editImages = []; // normalized relative paths <id>/file
+    let editRow = null;         // full row data
+    let coverPath = null;       // single string or null
+    let galleryPaths = [];      // array of strings, max 9
 
     function openEdit(id){
-      // Find row in any block
       const g = window.__groups || {};
       const row = (BLOCK_ORDER.flatMap(b => g[b]||[])).find(r => r.id === id);
       if (!row) return;
 
       editRow = JSON.parse(JSON.stringify(row));
-      editImages = parseImages(row.images || []).map(normalizeStoragePath);
+      const imgs = parseImages(row.images || []).map(normalizeStoragePath);
+      coverPath = imgs[0] || null;
+      galleryPaths = imgs.slice(1);
 
       // Prefill fields
       $("e_id").value = row.id || '';
@@ -706,7 +741,12 @@
       $("e_special_features").value = row.special_features ?? '';
       $("e_description").value = row.description ?? '';
 
-      renderThumbs();
+      renderCover();
+      renderGallery();
+
+      $("e_msg").textContent = "";
+      $("e_coverFile").value = "";
+      $("e_galleryFiles").value = "";
 
       ov.style.display = "block";
       requestAnimationFrame(()=> panel.classList.add("open"));
@@ -715,67 +755,149 @@
     function closeEdit(){
       panel.classList.remove("open");
       setTimeout(()=>{ ov.style.display = "none"; }, 180);
-      editRow = null; editImages = [];
+      editRow = null; coverPath = null; galleryPaths = [];
       $("e_msg").textContent = "";
-      $("e_newPhotos").value = "";
-      $("e_thumbs").innerHTML = "";
     }
 
     function setRadio(name, value){
       const els = document.querySelectorAll(`input[name="${name}"]`);
-      let set = false;
-      els.forEach(el => {
-        if (el.value === value){ el.checked = true; set = true; }
-        else el.checked = false;
-      });
+      let set = false; els.forEach(el => { el.checked = (el.value === value); if (el.checked) set=true; });
       if (!set && els[0]) els[0].checked = true;
     }
+    function getRadioVal(name, fallback){
+      const el = document.querySelector(`input[name="${name}"]:checked`);
+      return el ? el.value : fallback;
+    }
 
-    function renderThumbs(){
-      const box = $("e_thumbs");
-      if (!editImages.length){ box.innerHTML = `<div class="muted">No photos yet.</div>`; return; }
-      box.innerHTML = editImages.map((p, i)=>{
-        const urls = publicImageUrls(p);
-        const url = urls[0] || '';
-        const alts = urls.slice(1);
-        const cover = (i===0) ? `<div class="cover">COVER</div>` : '';
+    function renderCover(){
+      const box = $("e_coverBox");
+      if (!coverPath){
+        box.innerHTML = `<div class="muted">No cover selected. Pick a file below or choose “Make cover” on a gallery photo.</div>`;
+        return;
+      }
+      const urls = publicImageUrls(coverPath);
+      const url = urls[0] || "";
+      const alts = urls.slice(1);
+      box.innerHTML = `
+        <div class="thumb" data-path="${coverPath}">
+          <div class="cover">COVER</div>
+          ${url ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="">` : ''}
+          <div class="tbar">
+            <button data-cover-act="remove">Remove</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGallery(){
+      const box = $("e_gallery");
+      if (!galleryPaths.length){
+        box.innerHTML = `<div class="muted">No gallery photos yet.</div>`;
+        return;
+      }
+      box.innerHTML = galleryPaths.map(p=>{
+        const urls = publicImageUrls(p); const url = urls[0] || ""; const alts = urls.slice(1);
         return `
           <div class="thumb" data-path="${p}">
-            ${cover}
             ${url ? `<img src="${url}" data-alts='${JSON.stringify(alts).replace(/"/g,'&quot;')}' onerror="window.__imgFallback && window.__imgFallback(this)" alt="">` : ''}
             <div class="tbar">
-              <button data-img-act="cover" title="Make cover">Make cover</button>
-              <button data-img-act="delete" title="Delete">Delete</button>
+              <button data-img-act="cover">Make cover</button>
+              <button data-img-act="delete">Delete</button>
             </div>
           </div>
         `;
       }).join("");
     }
 
-    // Thumb actions
-    $("e_thumbs").addEventListener("click", async (e)=>{
+    // Cover actions
+    document.getElementById("e_coverBox").addEventListener("click", async (e)=>{
+      const btn = e.target.closest("button[data-cover-act]");
+      if (!btn) return;
+      const act = btn.getAttribute("data-cover-act");
+      if (act === "remove"){
+        if (!confirm("Remove current cover? You must set a new cover before saving.")) return;
+        coverPath = null;
+        renderCover();
+      }
+    });
+
+    // Replace cover (upload new)
+    $("e_replaceCover").onclick = async ()=>{
+      if (!editRow) return;
+      const file = $("e_coverFile").files && $("e_coverFile").files[0];
+      if (!file){ $("e_msg").textContent = "Choose a file first."; return; }
+      setBusy(true);
+      try{
+        const relPath = `${editRow.id}/${Date.now()}_cover_${file.name.replace(/\s+/g,"_")}`;
+        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert:false });
+        if (error) throw error;
+
+        // Ask whether to move old cover into gallery (if present)
+        if (coverPath){
+          const move = confirm("Move old cover to gallery? (OK = move, Cancel = delete from storage)");
+          if (move){
+            if (galleryPaths.length < 9){
+              galleryPaths.unshift(coverPath);
+            } else {
+              alert("Gallery is full (9). Old cover will be deleted.");
+              await supabase.storage.from("images").remove([normalizeStoragePath(coverPath)]);
+            }
+          } else {
+            await supabase.storage.from("images").remove([normalizeStoragePath(coverPath)]);
+          }
+        }
+
+        coverPath = relPath;
+        $("e_coverFile").value = "";
+        $("e_msg").textContent = "Cover replaced.";
+        renderCover();
+        renderGallery();
+      }catch(e){
+        $("e_msg").textContent = "Cover replace failed: " + (e?.message || e);
+      }finally{
+        setBusy(false);
+      }
+    };
+
+    // Gallery actions (make cover / delete)
+    $("e_gallery").addEventListener("click", async (e)=>{
       const btn = e.target.closest("button[data-img-act]");
       if (!btn) return;
       const card = e.target.closest(".thumb");
-      if (!card) return;
-      const path = card.getAttribute("data-path");
+      const path = card?.getAttribute("data-path");
       const act = btn.getAttribute("data-img-act");
       if (!path) return;
 
       if (act === "cover"){
-        // move to front
-        const idx = editImages.indexOf(path);
-        if (idx > -1){ editImages.splice(idx,1); editImages.unshift(path); renderThumbs(); }
+        // Promote to cover; old cover moves to gallery (front) if space; else stays as second?
+        if (coverPath){
+          if (galleryPaths.length >= 9){
+            // Need to drop one to keep max 9; ask to replace first gallery or cancel
+            const ok = confirm("Gallery is full (9). Move current cover into gallery by dropping the last photo?");
+            if (!ok) return;
+            // delete last gallery photo from storage?
+            // Safer: just remove it from gallery list without deleting storage.
+            galleryPaths.pop();
+          }
+          galleryPaths.unshift(coverPath);
+        }
+        // Remove the chosen photo from gallery and set as cover
+        const idx = galleryPaths.indexOf(path);
+        if (idx > -1) galleryPaths.splice(idx,1);
+        coverPath = path;
+        renderCover();
+        renderGallery();
         return;
       }
+
       if (act === "delete"){
-        if (!confirm("Remove this photo? (Deletes from storage)")) return;
-        const rel = normalizeStoragePath(path);
+        if (!confirm("Delete this photo from storage?")) return;
         try{
+          const rel = normalizeStoragePath(path);
           const { error } = await supabase.storage.from("images").remove([rel]);
           if (error) throw error;
-          const i = editImages.indexOf(path);
-          if (i > -1){ editImages.splice(i,1); renderThumbs(); }
+          const i = galleryPaths.indexOf(path);
+          if (i > -1){ galleryPaths.splice(i,1); renderGallery(); }
         }catch(err){
           alert("Delete photo failed: " + (err?.message || err));
         }
@@ -783,23 +905,27 @@
       }
     });
 
-    // Upload new photos into the same folder
-    $("e_addPhotos").onclick = async ()=>{
-      const files = Array.from(($("e_newPhotos").files || []));
-      if (!files.length) { $("e_msg").textContent = "Select files first."; return; }
+    // Add to gallery (upload)
+    $("e_addGallery").onclick = async ()=>{
       if (!editRow) return;
+      const files = Array.from(($("e_galleryFiles").files || []));
+      if (!files.length){ $("e_msg").textContent = "Select files first."; return; }
 
+      const free = 9 - galleryPaths.length;
+      if (free <= 0){ $("e_msg").textContent = "Gallery full (9)."; return; }
+
+      const toAdd = files.slice(0, free);
       setBusy(true);
       try{
-        for (const f of files){
-          const relPath = `${editRow.id}/${Date.now()}_${f.name.replace(/\s+/g,"_")}`;
-          const { error } = await supabase.storage.from("images").upload(relPath, f, { upsert: false });
+        for (const f of toAdd){
+          const relPath = `${editRow.id}/${Date.now()}_g_${f.name.replace(/\s+/g,"_")}`;
+          const { error } = await supabase.storage.from("images").upload(relPath, f, { upsert:false });
           if (error) throw error;
-          editImages.push(relPath);
+          galleryPaths.push(relPath);
         }
-        $("e_newPhotos").value = "";
-        $("e_msg").textContent = "Photos uploaded.";
-        renderThumbs();
+        $("e_galleryFiles").value = "";
+        $("e_msg").textContent = "Gallery updated.";
+        renderGallery();
       }catch(e){
         $("e_msg").textContent = "Upload failed: " + (e?.message || e);
       }finally{
@@ -810,6 +936,9 @@
     // Save edit
     $("editSave").onclick = async ()=>{
       if (!editRow) return;
+      if (!coverPath){ alert("Please set a cover photo before saving."); return; }
+      if (galleryPaths.length > 9){ alert("Max 9 gallery photos."); return; }
+
       setBusy(true);
       $("e_msg").textContent = "Saving…";
 
@@ -832,12 +961,11 @@
         condition: getRadioVal('e_condition','excellent'),
         special_features: strOrNull($("e_special_features").value),
         description: strOrNull($("e_description").value),
-        images: editImages.slice()
+        images: [coverPath, ...galleryPaths]   // enforce cover first
       };
 
-      // bump to top if status/type changed
       if (payload.status !== prevStatus || payload.vehicle_type !== prevType){
-        payload.position = nowMs();
+        payload.position = nowMs(); // bump to top of its block
       }
 
       try{
@@ -856,10 +984,6 @@
     $("editCancel").onclick = ()=> closeEdit();
     $("ov").onclick = ()=> closeEdit();
 
-    function getRadioVal(name, fallback){
-      const el = document.querySelector(`input[name="${name}"]:checked`);
-      return el ? el.value : fallback;
-    }
     function numOrNull(v){ const n = parseInt(String(v||'').trim(),10); return isNaN(n)? null : n; }
     function strOrNull(v){ const s = String(v||'').trim(); return s ? s : null; }
 
