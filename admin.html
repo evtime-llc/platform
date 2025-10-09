@@ -45,7 +45,17 @@
     .badge.other { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
 
     /* Cover thumbnail */
-    .thumb { width: 72px; height: 54px; object-fit: cover; border-radius:8px; background:#000; display:block; }
+/* Cover thumbnail */
+.thumb{
+  width: 120px;        /* bigger */
+  height: 90px;        /* keeps rows neat */
+  object-fit: contain; /* no cropping */
+  object-position: center;
+  background:#f8f8f8;  /* subtle letterbox instead of crop */
+  border-radius:8px;
+  display:block;
+}
+
 
     /* Modal */
     .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
