@@ -128,7 +128,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 <div class="topbar">
   <div class="logo-wrap">
     <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime — Browse Inventory">
     </a>
   </div>
 </div>
@@ -243,7 +243,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const firstUrl = primaryUrls[0] || "og-card.png";
     const firstAlts = paths[0] ? publicImageUrls(paths[0]).slice(1) : [];
 
-    preload(primaryUrls);
+    // preload only first couple to keep page snappy
+    preload(primaryUrls.slice(0,2));
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
     const leftMeta = [
@@ -256,13 +257,16 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const dots = primaryUrls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
     const soldBadge = String(status||'').toLowerCase()==='sold' ? `<div class="sold-badge">SOLD</div>` : '';
 
+    // smarter loading: eager for first 3 cards, lazy for rest
+    const loading = index < 3 ? 'eager' : 'lazy';
+
     return `
       <div class="inv-card" data-id="${esc(id)}" data-card="${index}"
            data-paths='${JSON.stringify(paths).replace(/"/g,'&quot;')}'
            data-idx="0">
         <div class="inv-photo">
           ${soldBadge}
-          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="eager" decoding="async"
+          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="${loading}" decoding="async"
                data-alts='${JSON.stringify(firstAlts).replace(/"/g,'&quot;')}'
                onerror="window.__imgFallback && window.__imgFallback(this)">
           ${primaryUrls.length>1 ? `
@@ -274,7 +278,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
         <div class="inv-body">
           <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
             <div class="inv-title">${esc(title)}</div>
-            <div class="inv-price">${esc(priceText)}</div>
+            ${priceText ? `<div class="inv-price">${esc(priceText)}</div>` : ``}
           </div>
           <div class="inv-meta">
             <span>${esc(leftMeta)}</span>
