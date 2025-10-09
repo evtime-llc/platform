@@ -69,7 +69,7 @@
   <div class="topbar">
     <div class="logo-wrap">
       <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
+        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin">
       </a>
     </div>
   </div>
@@ -84,7 +84,7 @@
       <label>Email for magic link</label>
       <input id="email" type="email" placeholder="you@domain.com"/>
       <button id="sendLink" class="btn">Send Magic Link</button>
-      <div id="authMsg" class="muted"></div>
+      <div id="authMsg" class="muted" aria-live="polite"></div>
     </div>
     <button id="signout" class="btn" style="display:none">Sign out</button>
   </fieldset>
@@ -144,8 +144,11 @@
       <div><label>City</label><input id="c_city" placeholder="Torrance, CA"/></div>
     </div>
 
-    <label>Special Features (comma-separated)</label>
-    <input id="c_special_features" placeholder="FSD, Acceleration Boost, Tow Hitch"/>
+    <div class="row3">
+      <div><label>VIN</label><input id="c_vin" placeholder="5YJ3E1EA..." maxlength="25"/></div>
+      <div><label>Special Features (comma-separated)</label><input id="c_special_features" placeholder="FSD, Acceleration Boost, Tow Hitch"/></div>
+      <div></div>
+    </div>
 
     <label>Description</label>
     <textarea id="c_description" rows="4" placeholder="Clean SoCal car, one owner…"></textarea>
@@ -164,7 +167,7 @@
     <div id="uListCreate" class="muted" style="margin-top:6px;"></div>
 
     <button id="create" class="btn">Create Listing</button>
-    <div id="createMsg" class="muted"></div>
+    <div id="createMsg" class="muted" aria-live="polite"></div>
   </fieldset>
 
   <fieldset id="manageBox" style="display:none">
@@ -209,6 +212,7 @@
   <script src="/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
+    // ---------- Helpers
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
@@ -224,9 +228,12 @@
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
+    const lock = (btn, on)=> { if (btn) btn.disabled = !!on; };
+
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const escAttr = esc;
 
     // ---------- Image helpers
-    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     function parseImages(images){
       if (!images) return [];
       if (Array.isArray(images)) return images;
@@ -256,14 +263,14 @@
       return urls[0] || null;
     }
 
-    // ---- Auth UI
+    // ---------- Auth UI
     async function setSessionUI() {
       const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) diag(`<span class="err">getSession error: ${error.message}</span>`);
+      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
       if (session) {
         const email = session.user?.email || "";
         if (email.toLowerCase() !== "vahehr@gmail.com") {
-          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${email}</span>`;
+          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
           await supabase.auth.signOut();
           $("signinBox").style.display = "block";
           $("signout").style.display = "none";
@@ -271,7 +278,7 @@
           $("manageBox").style.display = "none";
           return;
         }
-        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${email}</span>`;
+        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
         $("signinBox").style.display = "none";
         $("signout").style.display = "inline-block";
         $("createBox").style.display = "block";
@@ -286,7 +293,7 @@
       }
     }
 
-    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${event}`); setSessionUI(); });
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
@@ -306,8 +313,8 @@
     (async () => {
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(qs);
-        if (error) diag(`<span class="err">Auth exchange error: ${error.message}</span>`);
+        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
@@ -316,7 +323,7 @@
       await setSessionUI();
     })();
 
-    // ---- Grouping & ordering
+    // ---------- Grouping & ordering
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
       if (status === 'sold') return 'sold';
@@ -336,33 +343,36 @@
       return bd - ad;
     }
 
-    // ---- Uploads
+    // ---------- Uploads
     async function uploadFilesTo(listingId, files, progEl, listEl){
       if (!files || files.length === 0) return [];
       const uploaded = [];
       let done = 0;
       for (const file of files) {
-        const relPath = `${listingId}/${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const relPath = `${listingId}/${Date.now()}_${safeName}`;
         const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
         if (error) throw new Error(`Upload failed: ${error.message}`);
         uploaded.push(relPath);
         done++;
         if (progEl) progEl.style.width = `${Math.round((done/files.length)*100)}%`;
-        if (listEl) listEl.innerHTML += `<code>${relPath}</code><br/>`;
+        if (listEl) listEl.innerHTML += `<code>${esc(relPath)}</code><br/>`;
       }
       return uploaded;
     }
 
-    // ---- CREATE
+    // ---------- CREATE
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
-      const cover = $("c_cover").files?.[0];
-      if (!cover) { $("createMsg").textContent = "Please add a cover photo."; return; }
-
-      const listingId = crypto.randomUUID();
+      lock($("create"), true);
       try {
+        const cover = $("c_cover").files?.[0];
+        if (!cover) { $("createMsg").textContent = "Please add a cover photo."; return; }
+
+        const listingId = crypto.randomUUID();
+
         const coverPaths = await uploadFilesTo(listingId, [cover], $("uProgCreate"), $("uListCreate"));
-        const galleryFiles = Array.from($("c_gallery").files || []);
+        const galleryFiles = Array.from($("c_gallery").files || []).slice(0, 9);
         const galleryPaths = galleryFiles.length ? await uploadFilesTo(listingId, galleryFiles, $("uProgCreate"), $("uListCreate")) : [];
 
         const payload = {
@@ -389,21 +399,33 @@
         const { error } = await supabase.from("listing").insert(payload);
         if (error) throw error;
 
-        $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${listingId}</code>`;
+        $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${esc(listingId)}</code>`;
+
+        // Reset create form
+        ["c_price","c_year","c_make","c_model","c_trim","c_powertrain","c_mileage","c_city","c_special_features","c_description","c_vin"]
+          .forEach(id=>{ const el=$(id); if(el) el.value=""; });
+        document.querySelector('input[name="c_status"][value="live"]').checked = true;
+        document.querySelector('input[name="c_vehicle_type"][value="ev"]').checked = true;
+        document.querySelector('input[name="c_title_status"][value="Clean"]').checked = true;
+        document.querySelector('input[name="c_condition"][value="Excellent"]').checked = true;
         $("c_cover").value = ""; $("c_gallery").value = "";
         $("uProgCreate").style.width = "0%"; $("uListCreate").innerHTML = "";
         await refreshListings();
       } catch (e) {
-        $("createMsg").innerHTML = `<span class="err">${e.message}</span>`;
-        diag(`<span class="err">${e.stack || e}</span>`);
+        $("createMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+        diag(`<span class="err">${esc(e.stack || e)}</span>`);
+      } finally {
+        lock($("create"), false);
       }
     };
 
-    // ---- ADMIN TABLE
+    // ---------- ADMIN TABLE
+    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at';
+
     async function fetchOrdered(statusVal){
       return supabase
         .from('listing')
-        .select('*')
+        .select(baseSelect)
         .eq('status', statusVal)
         .order('position', { ascending:false, nullsFirst:false })
         .order('updated_at', { ascending:false, nullsFirst:false })
@@ -413,7 +435,7 @@
     async function refreshListings(){
       const [liveRes, soldRes] = await Promise.all([fetchOrdered('live'), fetchOrdered('sold')]);
       if (liveRes.error || soldRes.error){
-        diag(`<span class="err">Load error: ${(liveRes.error || soldRes.error).message}</span>`);
+        diag(`<span class="err">Load error: ${esc((liveRes.error || soldRes.error).message)}</span>`);
         $("tbl").innerHTML = "";
         $("emptyMsg").style.display = "block";
         return;
@@ -444,26 +466,27 @@
       tb.innerHTML = rows.map(r=>{
         const status = String(r.status||'').toLowerCase();
         const vt = String(r.vehicle_type||'ev').toLowerCase();
-        const badgeS = `<span class="badge ${status}">${status.toUpperCase()}</span>`;
-        const badgeT = `<span class="badge ${vt}">${vt.toUpperCase()}</span>`;
+        const badgeS = `<span class="badge ${esc(status)}">${esc(status.toUpperCase())}</span>`;
+        const badgeT = `<span class="badge ${esc(vt)}">${esc(vt.toUpperCase())}</span>`;
         const title = `${r.year||''} ${r.make||''} ${r.model||''} ${r.trim||''}`.trim();
         const price = (r.price!=null && r.price!=='') ? `$${Number(r.price).toLocaleString()}` : '';
+        const vinTxt = r.vin ? `VIN: ${esc(r.vin)}` : '';
 
         const paths = parseImages(r.images).map(normalize);
         const firstPath = paths[0] || "";
         const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
 
         return `
-          <tr data-id="${r.id}">
-            <td><img class="thumb" src="${esc(coverUrl)}" alt=""></td>
+          <tr data-id="${escAttr(r.id)}">
+            <td><img class="thumb" src="${esc(coverUrl)}" alt="cover photo"></td>
             <td>${badgeS}</td>
             <td>
-              <div class="title">${title || '(no title)'}</div>
-              <div class="sub">VIN: ${r.vin||''}</div>
+              <div class="title">${esc(title || '(no title)')}</div>
+              <div class="sub">${vinTxt}</div>
             </td>
             <td>
-              <div>${r.city||''}</div>
-              <div class="sub">${price}</div>
+              <div>${esc(r.city||'')}</div>
+              <div class="sub">${esc(price)}</div>
             </td>
             <td>${badgeT}</td>
             <td class="actions">
@@ -477,10 +500,10 @@
       }).join("");
     }
 
-    // ---- Move (bump the single row above/below neighbor), then refresh
+    // ---------- Move (swap positions within block)
     async function moveWithinBlock(id, dir){
       // Fetch current block view
-      const { data, error } = await supabase.from('listing').select('*').limit(1000);
+      const { data, error } = await supabase.from('listing').select(baseSelect).limit(1000);
       if (error) throw error;
 
       // Group & sort
@@ -507,37 +530,36 @@
       const posA = Number(a.position ?? 0);
       const posN = Number(neighbor.position ?? 0);
 
-      // For descending order: higher position = higher in list
-      const newPos = dir === 'up'
-        ? (posN >= posA ? posN + 1 : posN + 1)   // ensure strictly above neighbor
-        : (posN <= posA ? posN - 1 : posN - 1); // ensure strictly below neighbor
-
-      const { error: upErr } = await supabase.from('listing').update({ position: newPos }).eq('id', a.id);
+      // Swap positions (prevents ties/jitter)
+      const { error: upErr } = await supabase.from('listing').upsert([
+        { id: a.id, position: posN },
+        { id: neighbor.id, position: posA }
+      ]);
       if (upErr) throw upErr;
 
       await refreshListings();
     }
 
-    // ---- Delete (hard delete)
+    // ---------- Delete (hard delete)
     async function deleteListing(id){
       if (!confirm("Delete this listing and all its photos? This cannot be undone.")) return;
       try{
         const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
-        if (listErr) diag(`<span class="err">List files error: ${listErr.message}</span>`);
+        if (listErr) diag(`<span class="err">List files error: ${esc(listErr.message)}</span>`);
         if (files?.length){
           const paths = files.map(f => `${id}/${f.name}`);
           const { error: delErr } = await supabase.storage.from('images').remove(paths);
-          if (delErr) diag(`<span class="err">Remove files error: ${delErr.message}</span>`);
+          if (delErr) diag(`<span class="err">Remove files error: ${esc(delErr.message)}</span>`);
         }
         const { error } = await supabase.from('listing').delete().eq('id', id);
         if (error) throw error;
       } catch(e){
-        diag(`<span class="err">Delete failed: ${e.message}</span>`);
+        diag(`<span class="err">Delete failed: ${esc(e.message)}</span>`);
       }
       await refreshListings();
     }
 
-    // ---- Edit modal (unchanged)
+    // ---------- Edit modal
     const editModal = $("editModal");
     const editClose = $("editClose");
     editClose.onclick = ()=> editModal.classList.remove('open');
@@ -546,7 +568,7 @@
 
     function editFormHTML(row){
       const radio = (name, val, cur, label) => `
-        <label><input type="radio" name="${name}" value="${val}" ${String(cur).toLowerCase()===String(val).toLowerCase()?'checked':''}> ${label}</label>
+        <label><input type="radio" name="${name}" value="${escAttr(val)}" ${String(cur).toLowerCase()===String(val).toLowerCase()?'checked':''}> ${label}</label>
       `;
       return `
         <div class="row3">
@@ -566,20 +588,20 @@
           </div>
           <div>
             <label>Price (USD)</label>
-            <input id="e_price" type="number" min="0" step="100" value="${row.price ?? ''}"/>
+            <input id="e_price" type="number" min="0" step="100" value="${escAttr(row.price ?? '')}"/>
           </div>
         </div>
 
         <div class="row3">
-          <div><label>Year</label><input id="e_year" type="number" min="1990" max="2100" value="${row.year ?? ''}"/></div>
-          <div><label>Make</label><input id="e_make" value="${(row.make||'')}"/></div>
-          <div><label>Model</label><input id="e_model" value="${(row.model||'')}"/></div>
+          <div><label>Year</label><input id="e_year" type="number" min="1990" max="2100" value="${escAttr(row.year ?? '')}"/></div>
+          <div><label>Make</label><input id="e_make" value="${escAttr(row.make||'')}"/></div>
+          <div><label>Model</label><input id="e_model" value="${escAttr(row.model||'')}"/></div>
         </div>
 
         <div class="row3">
-          <div><label>Trim</label><input id="e_trim" value="${(row.trim||'')}"/></div>
-          <div><label>Powertrain</label><input id="e_powertrain" value="${(row.powertrain||'')}"/></div>
-          <div><label>Mileage</label><input id="e_mileage" type="number" min="0" value="${row.mileage ?? ''}"/></div>
+          <div><label>Trim</label><input id="e_trim" value="${escAttr(row.trim||'')}"/></div>
+          <div><label>Powertrain</label><input id="e_powertrain" value="${escAttr(row.powertrain||'')}"/></div>
+          <div><label>Mileage</label><input id="e_mileage" type="number" min="0" value="${escAttr(row.mileage ?? '')}"/></div>
         </div>
 
         <div class="row3">
@@ -598,14 +620,17 @@
               ${radio('e_condition','Fair',row.condition,'Fair')}
             </div>
           </div>
-          <div><label>City</label><input id="e_city" value="${(row.city||'')}"/></div>
+          <div><label>City</label><input id="e_city" value="${escAttr(row.city||'')}"/></div>
         </div>
 
-        <label>Special Features (comma-separated)</label>
-        <input id="e_special_features" value="${(row.special_features||'')}"/>
+        <div class="row3">
+          <div><label>VIN</label><input id="e_vin" value="${escAttr(row.vin||'')}" maxlength="25"/></div>
+          <div><label>Special Features (comma-separated)</label><input id="e_special_features" value="${escAttr(row.special_features||'')}"/></div>
+          <div></div>
+        </div>
 
         <label>Description</label>
-        <textarea id="e_description" rows="4">${(row.description||'')}</textarea>
+        <textarea id="e_description" rows="4">${esc(row.description||'')}</textarea>
 
         <div class="two">
           <div>
@@ -624,13 +649,13 @@
           <button id="e_save" class="btn">Save changes</button>
           <button id="e_cancel" class="btn">Cancel</button>
         </div>
-        <div id="e_msg" class="muted" style="margin-top:6px;"></div>
+        <div id="e_msg" class="muted" style="margin-top:6px;" aria-live="polite"></div>
       `;
     }
 
     async function openEdit(id){
       const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
-      if (error){ diag(`<span class="err">Load row error: ${error.message}</span>`); return; }
+      if (error){ diag(`<span class="err">Load row error: ${esc(error.message)}</span>`); return; }
       const body = $("editBody");
       body.innerHTML = editFormHTML(data);
       editModal.classList.add('open');
@@ -678,6 +703,7 @@
             title_status: document.querySelector('input[name="e_title_status"]:checked')?.value || data.title_status,
             condition: document.querySelector('input[name="e_condition"]:checked')?.value || data.condition,
             city: $("e_city").value.trim() || data.city,
+            vin: $("e_vin").value.trim() || data.vin,
             special_features: $("e_special_features").value.trim() || data.special_features,
             description: $("e_description").value.trim() || data.description,
             images: images
@@ -690,13 +716,13 @@
           editModal.classList.remove('open');
           await refreshListings();
         }catch(e){
-          $("e_msg").innerHTML = `<span class="err">${e.message}</span>`;
-          diag(`<span class="err">${e.stack || e}</span>`);
+          $("e_msg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+          diag(`<span class="err">${esc(e.stack || e)}</span>`);
         }
       };
     }
 
-    // ---- Table actions
+    // ---------- Table actions
     $("tbl").addEventListener('click', async (e)=>{
       const btn = e.target.closest('button[data-act]');
       if (!btn) return;
@@ -710,18 +736,15 @@
         else if (act === 'edit') { await openEdit(id); }
         else if (act === 'delete') { await deleteListing(id); }
       }catch(err){
-        diag(`<span class="err">Action error: ${err.message}</span>`);
+        diag(`<span class="err">Action error: ${esc(err.message)}</span>`);
       }
     });
 
-    // ---- Basic diagnostics
+    // ---------- Basic diagnostics (kept simple)
     (async () => {
       diag("Testing anon read from 'listing'…");
-      const { data, error } = await supabase.from("listing").select("*").limit(1);
-      if (error) diag(`<span class="err">Read error: ${error.message}</span>`); else diag("Read OK.");
-      const { data: buckets, error: bErr } = await supabase.storage.listBuckets();
-      if (bErr) diag(`<span class="err">Storage error: ${bErr.message}</span>`);
-      else diag("Storage buckets: " + (buckets?.map(b => b.name).join(", ") || "none"));
+      const { error } = await supabase.from("listing").select("id").limit(1);
+      if (error) diag(`<span class="err">Read error: ${esc(error.message)}</span>`); else diag("Read OK.");
     })();
   </script>
 </body>
