@@ -10,7 +10,14 @@
 <meta property="og:description" content="Sell, trade, or browse cars. Simple and friendly." />
 <meta property="og:image" content="https://itsevtime.com/og-card.png" />
 <meta property="og:url" content="https://itsevtime.com/" />
+<meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary_large_image" />
+
+<!-- SEO / perf additions -->
+<link rel="canonical" href="https://itsevtime.com/">
+<meta name="description" content="Sell, trade, or browse EVs. Teslas first, then other EVs. Simple and friendly.">
+<link rel="icon" href="/favicon.ico">
+<link rel="preload" as="image" href="/hero_text_centered_highest.png?v=8" fetchpriority="high">
 
 <style>
 :root{
@@ -54,26 +61,18 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   position:relative; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
   max-width:100%; margin:0 auto; background:#000;
 }
+/* Always show full image (no cropping), letterboxed if needed */
 .hero-img{
   width:100%;
-  max-height:40vh;           /* modest size on mobile */
-  object-fit:cover;
-  object-position:50% 38%;
+  height:auto;
+  max-height:60vh;            /* adjust taller/shorter if you want */
+  object-fit:contain;         /* no cropping */
+  object-position:center center;
   display:block;
+  background:#000;            /* clean letterbox fill */
 }
 @media (max-width:600px){
-  .hero-img{max-height:34vh}
-}
-
-/* === Desktop-only fix: show whole image so text isn't cropped === */
-@media (min-width:900px){
-  .hero-img{
-    max-height:60vh;        /* a little taller for desktop */
-    height:auto;
-    object-fit:contain;     /* show entire image */
-    object-position:center center;
-    background:#000;        /* letterbox fill if needed */
-  }
+  .hero-img{ max-height:40vh; }
 }
 
 /* Footer */
@@ -96,14 +95,19 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
+<!-- Hidden H1 for SEO/a11y while keeping your visual design -->
+<h1 style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+  it’s E.V.Time — Forum and MarketPlace
+</h1>
+
 <!-- Buttons ABOVE the photo -->
-<div class="logo-wrap buttonbar">
-  <div class="row" role="navigation" aria-label="Primary actions">
+<nav class="logo-wrap buttonbar" aria-label="Primary actions">
+  <div class="row">
     <a class="btn primary" href="./sell.html">Sell your car</a>
     <a class="btn ghost" href="./share.html">Browse inventory</a>
     <a class="btn ghost" href="./about.html">How it works / Why E.V.Time</a>
   </div>
-</div>
+</nav>
 
 <!-- HERO (image contains text, so no overlay) -->
 <section class="hero" aria-label="Homepage hero">
