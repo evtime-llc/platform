@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EVTime — Vehicle Details</title>
+<meta name="theme-color" content="#0b0a09"/>
+<meta property="og:title" content="EVTime — Vehicle Details"/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/listing.html"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<style>
+:root{ --bg:#0b0a09; --card:#fff; --text:#1c1917; --line:#e7e5e4; --muted:#78716c; --copper:#c98c5b; }
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text)}
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+.topbar{background:#fff;border-bottom:1px solid var(--line)} .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:220px} }
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.hero{background:#000;position:relative}
+.hero img{width:100%;height:60vh;max-height:70vh;object-fit:contain;background:#000;display:block}
+.thumbs{display:flex;gap:8px;overflow:auto;padding:8px;background:#111}
+.thumbs img{height:72px;object-fit:contain;background:#000;border-radius:8px;cursor:pointer;border:1px solid #222}
+.body{padding:14px}
+.title{font-weight:900;font-size:20px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#f8f8f8}
+.price{font-weight:900;background:var(--copper);color:#0b0a09;border-radius:999px;padding:2px 10px;display:inline-block;margin-top:6px}
+.meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
+.desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
+.ctaRow{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111}
+.btn.primary{background:var(--copper);border-color:transparent}
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
+.back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
+</style>
+</head>
+<body>
+<!-- Topbar -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <a href="/" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime">
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="back"><a href="./share.html">← Back to inventory</a></div>
+  <div id="mount"></div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">© <span id="yr"></span> E.V.Time</div>
+</footer>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+  const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const esc = (s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function parseImages(images){
+    if (!images) return [];
+    if (Array.isArray(images)) return images;
+    const s = String(images||'').trim();
+    if (s.startsWith('[')) { try{ return JSON.parse(s)||[] } catch { return [] } }
+    return s.split(',').map(v=>v.trim()).filter(Boolean);
+  }
+  function normalize(path){ return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,''); }
+  function publicImageUrls(path){
+    let s = String(path||'').trim().replace(/^\/+/, ''); if (!s) return [];
+    const candidates = [];
+    if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+    candidates.push(s, s.replace(/^images\//i,'')); if (!/^images\//i.test(s)) candidates.push('images/'+s);
+    const uniq = [...new Set(candidates)];
+    return uniq.map(p => supabase.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
+  }
+
+  const m = document.getElementById('mount');
+  const id = new URLSearchParams(location.search).get('id');
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  if (!id){
+    m.innerHTML = `<div class="card body" style="background:#fff;padding:16px">Missing listing id.</div>`;
+    return;
+  }
+
+  (async () => {
+    const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
+    if (error || !data){ m.innerHTML = `<div class="card body">Listing not found.</div>`; return; }
+
+    const title = [data.year, data.make, data.model, data.trim].filter(Boolean).join(' ');
+    document.title = `EVTime — ${title}`;
+    // hero image + thumbs
+    const paths = parseImages(data.images).map(normalize);
+    const urls = paths.map(p => publicImageUrls(p)[0] || null).filter(Boolean);
+    const hero = urls[0] || 'og-card.png';
+
+    const leftMeta = [
+      data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
+      data.title_status ? `Title: ${data.title_status}` : null,
+      data.condition ? `Cond: ${data.condition}` : null
+    ].filter(Boolean).join(" • ");
+    const priceText = (data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
+
+    const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
+
+    m.innerHTML = `
+      <div class="card">
+        <div class="hero">
+          ${sold}
+          <img id="heroImg" src="${esc(hero)}" alt="${esc(title)}" decoding="async">
+          ${urls.length>1 ? `
+            <div class="thumbs" id="thumbs">
+              ${urls.map((u,i)=>`<img src="${esc(u)}" data-i="${i}" alt="thumb ${i+1}">`).join('')}
+            </div>` : ``}
+        </div>
+        <div class="body">
+          <div class="title">${esc(title)}</div>
+          ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
+          <div class="badges">
+            ${data.vehicle_type ? `<div class="badge">${esc(String(data.vehicle_type).toUpperCase())}</div>` : ``}
+            ${data.city ? `<div class="badge">${esc(data.city)}</div>` : ``}
+            ${data.vin ? `<div class="badge">VIN: ${esc(data.vin)}</div>` : ``}
+          </div>
+          <div class="meta">${esc(leftMeta)}</div>
+          ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
+          ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
+          <div class="ctaRow">
+            <a class="btn primary" href="tel:+1-999-999-9999">Call</a>
+            <a class="btn" href="sms:+1-999-999-9999?body=${encodeURIComponent('Hi! I’m interested in the ' + title)}">Text</a>
+            <a class="btn" href="mailto:sales@itsevtime.com?subject=${encodeURIComponent('Interested in ' + title)}&body=${encodeURIComponent('Link: ' + location.href)}">Email</a>
+            <a class="btn" href="./share.html">Back to inventory</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // thumb click swaps hero
+    const thumbs = document.getElementById('thumbs');
+    if (thumbs){
+      const heroImg = document.getElementById('heroImg');
+      thumbs.addEventListener('click',(e)=>{
+        const t = e.target.closest('img[data-i]'); if(!t) return;
+        const i = Number(t.getAttribute('data-i')||0);
+        heroImg.src = urls[i] || hero;
+      });
+    }
+  })();
+})();
+</script>
+</body>
+</html>
