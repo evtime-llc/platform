@@ -355,7 +355,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   mount.innerHTML = html || `<div style="color:#fff">No vehicles available right now.</div>`;
 
   // -------- In-card mini gallery + Lightbox
-  mount.addEventListener('click', (e)=>{
+// -------- Card click: always go to details
+mount.addEventListener('click', (e)=>{
+  const card = e.target.closest('.inv-card');
+  if (!card) return;
+  const id = card.getAttribute('data-id');
+  if (!id) return;
+  window.location.href = `./listing.html?id=${encodeURIComponent(id)}`;
+});
+
     const btn = e.target.closest('.gal-btn');
     const dot = e.target.closest('.gal-dot');
     const card = e.target.closest('.inv-card');
