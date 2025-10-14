@@ -54,7 +54,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 /* Card */
 .inv-card{
   background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;cursor:pointer;
+  display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;
+  cursor:pointer; position:relative;
 }
 .inv-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
 .inv-photo img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
@@ -63,20 +64,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   padding:4px 8px;border-radius:999px;font-size:12px;letter-spacing:.03em
 }
 
-/* In-card tiny gallery */
-.gal-btn{
-  position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.45);
-  color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:36px;text-align:center;
+/* Full-card clickable overlay */
+.card-hit{
+  position:absolute; inset:0; z-index:5;
+  text-indent:-9999px; /* accessible but invisible */
 }
-.gal-btn:hover{background:rgba(0,0,0,.6)}
-.gal-prev{left:8px}
-.gal-next{right:8px}
-.gal-dots{
-  position:absolute;left:0;right:0;bottom:6px;display:flex;gap:6px;justify-content:center;align-items:center;
-}
-.gal-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
-.gal-dot.active{background:#fff}
 
+/* In-card body */
 .inv-body{padding:12px 12px 14px}
 .inv-title{font-weight:900}
 .inv-price{
@@ -101,25 +95,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .footer a:hover{border-bottom-style:solid}
 .right{float:right}
 .clearfix::after{content:"";display:block;clear:both}
-
-/* Lightbox */
-.lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:9999}
-.lb.open{display:flex}
-.lb-inner{position:relative;max-width:95vw;max-height:95vh}
-.lb-img{max-width:95vw;max-height:95vh;object-fit:contain;background:#000;display:block}
-.lb-close,.lb-prev,.lb-next{
-  position:absolute;border:none;background:rgba(255,255,255,.15);color:#fff;border-radius:999px;
-  width:40px;height:40px;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)
-}
-.lb-close{top:-48px;right:0}
-.lb-prev{left:-56px;top:50%;transform:translateY(-50%)}
-.lb-next{right:-56px;top:50%;transform:translateY(-50%)}
-@media (max-width:700px){
-  .lb-prev{left:8px}.lb-next{right:8px}.lb-close{top:8px;right:8px}
-}
-.lb-dots{position:absolute;left:0;right:0;bottom:-28px;display:flex;gap:8px;justify-content:center}
-.lb-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.35)}
-.lb-dot.active{background:#fff}
 </style>
 </head>
 <body>
@@ -152,17 +127,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </footer>
 
-<!-- Lightbox -->
-<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
-  <div class="lb-inner">
-    <img id="lbImg" class="lb-img" alt="">
-    <button id="lbPrev" class="lb-prev" aria-label="Previous image">‹</button>
-    <button id="lbNext" class="lb-next" aria-label="Next image">›</button>
-    <button id="lbClose" class="lb-close" aria-label="Close">✕</button>
-    <div id="lbDots" class="lb-dots"></div>
-  </div>
-</div>
-
 <!-- Config + Supabase client -->
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -175,7 +139,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
   // -------- Helpers
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
   function parseImages(images){
     if (!images) return [];
     if (Array.isArray(images)) return images;
@@ -204,19 +167,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const urls = publicImageUrls(path);
     return { url: urls[0] || null, alts: urls.slice(1) };
   }
-  function preload(urls){
-    urls.forEach(u => { const im = new Image(); im.decoding = 'async'; im.loading = 'eager'; im.src = u; });
-  }
-  window.__imgFallback = function(img){
-    try{
-      const alts = JSON.parse(img.getAttribute('data-alts') || '[]');
-      if (alts.length){
-        const next = alts.shift();
-        img.setAttribute('data-alts', JSON.stringify(alts));
-        img.src = next;
-      } else { img.onerror = null; }
-    }catch{ img.onerror = null; }
-  };
 
   // -------- Block + order (mirror admin)
   function blockKey(row){
@@ -231,20 +181,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     return 'live_other';
   }
 
-  // -------- Card HTML (whole card opens lightbox)
-  function cardHTML(item, index){
+  // -------- Card HTML (whole card navigates via overlay)
+  function cardHTML(item){
     const {
       id, year, make, model, trim, mileage, special_features,
       title_status, condition, description, city, vin, price, images, status
     } = item;
 
     const paths = parseImages(images).map(normalize);
-    const primaryUrls = paths.map(p => chooseUrl(p).url).filter(Boolean);
-    const firstUrl = primaryUrls[0] || "og-card.png";
-    const firstAlts = paths[0] ? publicImageUrls(paths[0]).slice(1) : [];
-
-    // preload only first couple to keep page snappy
-    preload(primaryUrls.slice(0,2));
+    const firstUrl = (paths.length ? chooseUrl(paths[0]).url : null) || "og-card.png";
 
     const title = [year, make, model, trim].filter(Boolean).join(" ");
     const leftMeta = [
@@ -254,26 +199,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     ].filter(Boolean).join(" • ");
     const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
     const cityText = city ? esc(city) : "";
-    const dots = primaryUrls.map((_,i)=>`<div class="gal-dot${i===0?' active':''}" data-dot="${i}"></div>`).join("");
     const soldBadge = String(status||'').toLowerCase()==='sold' ? `<div class="sold-badge">SOLD</div>` : '';
 
-    // smarter loading: eager for first 3 cards, lazy for rest
-    const loading = index < 3 ? 'eager' : 'lazy';
-
     return `
-      <div class="inv-card" data-id="${esc(id)}" data-card="${index}"
-           data-paths='${JSON.stringify(paths).replace(/"/g,'&quot;')}'
-           data-idx="0">
+      <div class="inv-card" data-id="${esc(id)}">
+        <a class="card-hit" href="./listing.html?id=${esc(id)}" aria-label="View details">View details</a>
         <div class="inv-photo">
           ${soldBadge}
-          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="${loading}" decoding="async"
-               data-alts='${JSON.stringify(firstAlts).replace(/"/g,'&quot;')}'
-               onerror="window.__imgFallback && window.__imgFallback(this)">
-          ${primaryUrls.length>1 ? `
-            <button class="gal-btn gal-prev" data-action="prev" aria-label="Previous photo">‹</button>
-            <button class="gal-btn gal-next" data-action="next" aria-label="Next photo">›</button>
-            <div class="gal-dots">${dots}</div>
-          `:``}
+          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="lazy" decoding="async">
         </div>
         <div class="inv-body">
           <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
@@ -329,10 +262,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   const live = liveRes.data || [];
   const sold = soldRes.data || [];
 
-  // Now split LIVE by Tesla EV / other EV / other vehicles
-  const live_tesla = [];
-  const live_other_ev = [];
-  const live_other = [];
+  // Split LIVE by Tesla EV / other EV / other vehicles
+  const live_tesla = [], live_other_ev = [], live_other = [];
   for (const r of live){
     const k = blockKey(r);
     if (k === 'live_tesla') live_tesla.push(r);
@@ -353,118 +284,6 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     html += renderSection(sold);
   }
   mount.innerHTML = html || `<div style="color:#fff">No vehicles available right now.</div>`;
-
-  // -------- In-card mini gallery + Lightbox
-// -------- Card click: always go to details
-mount.addEventListener('click', (e)=>{
-  const card = e.target.closest('.inv-card');
-  if (!card) return;
-  const id = card.getAttribute('data-id');
-  if (!id) return;
-  window.location.href = `./listing.html?id=${encodeURIComponent(id)}`;
-});
-
-    const btn = e.target.closest('.gal-btn');
-    const dot = e.target.closest('.gal-dot');
-    const card = e.target.closest('.inv-card');
-    if (!card) return;
-
-    // arrows / dots switching inside card
-    if (btn || dot){
-      const img = card.querySelector('.inv-photo img');
-      const dots = [...card.querySelectorAll('.gal-dot')];
-      const paths = JSON.parse(card.getAttribute('data-paths') || '[]');
-      if (!paths.length) return;
-      let idx = Number(card.getAttribute('data-idx') || 0);
-
-      if (btn){
-        const dir = btn.dataset.action === 'next' ? 1 : -1;
-        idx = (idx + dir + paths.length) % paths.length;
-      }
-      if (dot){
-        idx = Number(dot.dataset.dot);
-      }
-
-      const choice = chooseUrl(paths[idx]);
-      img.src = choice.url || 'og-card.png';
-      img.setAttribute('data-alts', JSON.stringify(choice.alts));
-      card.setAttribute('data-idx', String(idx));
-      dots.forEach((d,i)=>d.classList.toggle('active', i===idx));
-      return;
-    }
-
-    // whole card opens lightbox
-    const paths = JSON.parse(card.getAttribute('data-paths') || '[]');
-    const startIdx = Number(card.getAttribute('data-idx') || 0);
-    if (paths.length) openLightbox(paths, startIdx);
-  });
-
-  // Lightbox
-  const lb = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lbImg');
-  const lbDots = document.getElementById('lbDots');
-  const lbPrev = document.getElementById('lbPrev');
-  const lbNext = document.getElementById('lbNext');
-  const lbClose = document.getElementById('lbClose');
-
-  let LB_PATHS = [];
-  let LB_IDX = 0;
-
-  function renderLbDots(){
-    lbDots.innerHTML = LB_PATHS.map((_,i)=>`<div class="lb-dot${i===LB_IDX?' active':''}" data-i="${i}"></div>`).join('');
-  }
-  function showLb(idx){
-    if (!LB_PATHS.length) return;
-    LB_IDX = (idx + LB_PATHS.length) % LB_PATHS.length;
-    const choice = chooseUrl(LB_PATHS[LB_IDX]);
-    lbImg.src = choice.url || 'og-card.png';
-    lbImg.setAttribute('data-alts', JSON.stringify(choice.alts || []));
-    renderLbDots();
-    // preload neighbors
-    const n1 = chooseUrl(LB_PATHS[(LB_IDX+1)%LB_PATHS.length]).url;
-    const n2 = chooseUrl(LB_PATHS[(LB_IDX-1+LB_PATHS.length)%LB_PATHS.length]).url;
-    preload([n1,n2].filter(Boolean));
-  }
-  function openLightbox(paths, startIdx){
-    LB_PATHS = paths.slice();
-    LB_IDX = startIdx||0;
-    lb.classList.add('open');
-    showLb(LB_IDX);
-  }
-  function closeLightbox(){
-    lb.classList.remove('open');
-    LB_PATHS = []; LB_IDX = 0;
-    lbImg.removeAttribute('src');
-  }
-
-  lbPrev.onclick = ()=> showLb(LB_IDX - 1);
-  lbNext.onclick = ()=> showLb(LB_IDX + 1);
-  lbClose.onclick = ()=> closeLightbox();
-  lb.addEventListener('click', (e)=>{ if (e.target === lb) closeLightbox(); });
-  lbDots.addEventListener('click', (e)=>{
-    const dot = e.target.closest('.lb-dot');
-    if (!dot) return;
-    const i = Number(dot.getAttribute('data-i')||0);
-    showLb(i);
-  });
-  document.addEventListener('keydown', (e)=>{
-    if (!lb.classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') showLb(LB_IDX+1);
-    if (e.key === 'ArrowLeft') showLb(LB_IDX-1);
-  });
-  // swipe
-  let touchX=null,touchY=null;
-  lb.addEventListener('touchstart',(e)=>{ const t=e.touches[0]; touchX=t.clientX; touchY=t.clientY; },{passive:true});
-  lb.addEventListener('touchend',(e)=>{
-    if (touchX==null) return;
-    const dx = (e.changedTouches[0].clientX - touchX);
-    const dy = (e.changedTouches[0].clientY - touchY);
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
-      if (dx < 0) showLb(LB_IDX+1); else showLb(LB_IDX-1);
-    }
-    touchX=null; touchY=null;
-  },{passive:true});
 
   // Footer year
   document.getElementById('yr').textContent = new Date().getFullYear();
