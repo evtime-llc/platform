@@ -63,7 +63,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   padding:4px 8px;border-radius:999px;font-size:12px;letter-spacing:.03em
 }
 
-/* In-card tiny gallery (optional) */
+/* In-card tiny gallery */
 .gal-btn{
   position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(0,0,0,.45);
   color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:36px;text-align:center;
@@ -223,7 +223,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
     const status = String(row.status||'').toLowerCase();
     if (status === 'sold') return 'sold';
     const vt = String(row.vehicle_type || 'ev').toLowerCase();
-    const make = String(row.make || '').trim().toLowerCase(); // trim to avoid " Tesla"
+    const make = String(row.make || '').trim().toLowerCase();
     if (vt === 'ev'){
       if (make === 'tesla') return 'live_tesla';
       return 'live_other_ev';
@@ -287,6 +287,10 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
           ${special_features ? `<div class="inv-txt">${esc(special_features)}</div>` : ""}
           ${description ? `<div class="inv-txt" style="color:#44403c;">${esc(description)}</div>` : ""}
           ${vin ? `<div class="inv-vin">VIN: ${esc(vin)}</div>` : ""}
+          <div class="inv-txt" style="margin-top:10px;">
+            <a class="btn" style="height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line);text-decoration:none;font-weight:800;"
+               href="./listing.html?id=${esc(id)}">View details</a>
+          </div>
         </div>
       </div>
     `;
