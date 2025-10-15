@@ -28,13 +28,22 @@
 .price{font-weight:900;background:var(--copper);color:#0b0a09;border-radius:999px;padding:2px 10px;display:inline-block;margin-top:6px}
 .meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
 .desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
-.ctaRow{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111}
+
+/* Smart Contact */
+.actions{margin-top:14px;position:relative;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer}
 .btn.primary{background:var(--copper);border-color:transparent}
+.menu{position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;overflow:hidden;z-index:20}
+.menu.open{display:block}
+.menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#111;text-decoration:none;border-bottom:1px solid #f2f2f2}
+.menu a:last-child{border-bottom:none}
+.menu a:hover{background:#fafafa}
+
+/* Footer */
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
 .back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
+.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
 </style>
 </head>
 <body>
@@ -98,7 +107,7 @@
 
     const title = [data.year, data.make, data.model, data.trim].filter(Boolean).join(' ');
     document.title = `EVTime — ${title}`;
-    // hero image + thumbs
+
     const paths = parseImages(data.images).map(normalize);
     const urls = paths.map(p => publicImageUrls(p)[0] || null).filter(Boolean);
     const hero = urls[0] || 'og-card.png';
@@ -109,8 +118,13 @@
       data.condition ? `Cond: ${data.condition}` : null
     ].filter(Boolean).join(" • ");
     const priceText = (data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
-
     const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
+
+    const phone = '+14244256211';
+    const email = 'lifeliftusa@gmail.com';
+    const smsBody = encodeURIComponent('Hi! I’m interested in the ' + title);
+    const mailSub = encodeURIComponent('Interested in ' + title);
+    const mailBody = encodeURIComponent('Link: ' + location.href);
 
     m.innerHTML = `
       <div class="card">
@@ -133,18 +147,25 @@
           <div class="meta">${esc(leftMeta)}</div>
           ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
-          <div class="ctaRow">
-            <a class="btn primary" href="tel:+14244256211">Call</a>
-<a class="btn" href="sms:+14244256211?body=${encodeURIComponent('Hi! I’m interested in the ' + title)}">Text</a>
-<a class="btn" href="mailto:lifeliftusa@gmail.com?subject=${encodeURIComponent('Interested in ' + title)}&body=${encodeURIComponent('Link: ' + location.href)}">Email</a>
 
+          <!-- Smart Contact -->
+          <div class="actions" id="actions">
+            <button id="contactBtn" class="btn primary" type="button">Contact</button>
+            <div id="contactMenu" class="menu" role="menu" aria-label="Contact options">
+              <a role="menuitem" href="tel:${phone}">📞 Call ${phone}</a>
+              <a role="menuitem" href="sms:${phone}?body=${smsBody}">💬 Text ${phone}</a>
+              <a role="menuitem" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">✉️ Email ${email}</a>
+            </div>
+          </div>
+
+          <div class="actions">
             <a class="btn" href="./share.html">Back to inventory</a>
           </div>
         </div>
       </div>
     `;
 
-    // thumb click swaps hero
+    // Thumbs swap hero
     const thumbs = document.getElementById('thumbs');
     if (thumbs){
       const heroImg = document.getElementById('heroImg');
@@ -154,6 +175,23 @@
         heroImg.src = urls[i] || hero;
       });
     }
+
+    // Smart Contact menu interactions
+    const btn = document.getElementById('contactBtn');
+    const menu = document.getElementById('contactMenu');
+    const actions = document.getElementById('actions');
+
+    function closeMenu(){ menu.classList.remove('open'); }
+    function toggleMenu(){
+      menu.classList.toggle('open');
+    }
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleMenu(); });
+    document.addEventListener('click', (e)=>{
+      if (!actions.contains(e.target)) closeMenu();
+    });
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape') closeMenu();
+    });
   })();
 })();
 </script>
