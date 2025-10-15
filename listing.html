@@ -29,21 +29,37 @@
 .meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
 .desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
 
-/* Smart Contact */
-.actions{margin-top:14px;position:relative;display:flex;gap:10px;flex-wrap:wrap}
+/* Actions */
+.actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer}
 .btn.primary{background:var(--copper);border-color:transparent}
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
+.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
+
+/* Smart Contact menu */
+.menu-wrap{position:relative}
 .menu{position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;overflow:hidden;z-index:20}
 .menu.open{display:block}
 .menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#111;text-decoration:none;border-bottom:1px solid #f2f2f2}
 .menu a:last-child{border-bottom:none}
 .menu a:hover{background:#fafafa}
 
-/* Footer */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
-.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
+/* Inquire modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999}
+.modal.open{display:flex}
+.modal-card{background:#fff;width:min(560px,95vw);border-radius:14px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eee}
+.modal-title{font-weight:900}
+.modal-close{border:none;background:#f5f5f4;border-radius:999px;width:36px;height:36px;cursor:pointer;font-size:18px}
+.modal-body{padding:14px}
+label{display:block;font-weight:700;margin:8px 0 4px}
+input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+small.muted{color:#78716c}
+.msg{margin-top:8px;font-size:13px}
+.msg.ok{color:#0a7}
+.msg.err{color:#b00020}
 </style>
 </head>
 <body>
@@ -64,6 +80,42 @@
 <footer class="footer">
   <div class="wrap">© <span id="yr"></span> E.V.Time</div>
 </footer>
+
+<!-- Inquire modal -->
+<div id="inqModal" class="modal" role="dialog" aria-modal="true" aria-label="Inquire form">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title">Inquire about this vehicle</div>
+      <button id="inqClose" class="modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="inqForm">
+        <div class="row">
+          <label for="inq_name">Name</label>
+          <input id="inq_name" name="name" autocomplete="name" placeholder="Your name"/>
+        </div>
+        <div class="row">
+          <label for="inq_phone">Phone</label>
+          <input id="inq_phone" name="phone" autocomplete="tel" placeholder="424-425-6211"/>
+        </div>
+        <div class="row">
+          <label for="inq_email">Email</label>
+          <input id="inq_email" name="email" type="email" autocomplete="email" placeholder="you@example.com"/>
+        </div>
+        <div class="row">
+          <label for="inq_msg">Message</label>
+          <textarea id="inq_msg" name="message" rows="4" placeholder="Hi! I'm interested in this car."></textarea>
+        </div>
+        <small class="muted">By submitting, you agree we may contact you about this vehicle.</small>
+        <div class="actions" style="margin-top:12px">
+          <button id="inqSubmit" type="submit" class="btn primary">Send</button>
+          <button id="inqCancel" type="button" class="btn">Cancel</button>
+        </div>
+        <div id="inqStatus" class="msg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -120,6 +172,7 @@
     const priceText = (data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
     const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
 
+    // Contact constants
     const phone = '+14244256211';
     const email = 'lifeliftusa@gmail.com';
     const smsBody = encodeURIComponent('Hi! I’m interested in the ' + title);
@@ -148,18 +201,17 @@
           ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
 
-          <!-- Smart Contact -->
-          <div class="actions" id="actions">
-            <button id="contactBtn" class="btn primary" type="button">Contact</button>
-            <div id="contactMenu" class="menu" role="menu" aria-label="Contact options">
-              <a role="menuitem" href="tel:${phone}">📞 Call ${phone}</a>
-              <a role="menuitem" href="sms:${phone}?body=${smsBody}">💬 Text ${phone}</a>
-              <a role="menuitem" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">✉️ Email ${email}</a>
-            </div>
-          </div>
-
           <div class="actions">
-            <a class="btn" href="./share.html">Back to inventory</a>
+            <div class="menu-wrap">
+              <button id="contactBtn" class="btn primary" type="button">Contact</button>
+              <div id="contactMenu" class="menu" role="menu" aria-label="Contact options">
+                <a role="menuitem" href="tel:${phone}">📞 Call ${phone}</a>
+                <a role="menuitem" href="sms:${phone}?body=${smsBody}">💬 Text ${phone}</a>
+                <a role="menuitem" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">✉️ Email ${email}</a>
+              </div>
+            </div>
+            <button id="inqOpen" class="btn" type="button">Inquire</button>
+            <a class="btn" href="./share.html">Back</a>
           </div>
         </div>
       </div>
@@ -179,18 +231,65 @@
     // Smart Contact menu interactions
     const btn = document.getElementById('contactBtn');
     const menu = document.getElementById('contactMenu');
-    const actions = document.getElementById('actions');
-
     function closeMenu(){ menu.classList.remove('open'); }
-    function toggleMenu(){
-      menu.classList.toggle('open');
-    }
+    function toggleMenu(){ menu.classList.toggle('open'); }
     btn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleMenu(); });
-    document.addEventListener('click', (e)=>{
-      if (!actions.contains(e.target)) closeMenu();
-    });
-    document.addEventListener('keydown', (e)=>{
-      if (e.key === 'Escape') closeMenu();
+    document.addEventListener('click', (e)=>{ if (!menu.contains(e.target) && e.target!==btn) closeMenu(); });
+    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeMenu(); });
+
+    // Inquire modal controls
+    const modal = document.getElementById('inqModal');
+    const inqOpen = document.getElementById('inqOpen');
+    const inqClose = document.getElementById('inqClose');
+    const inqCancel = document.getElementById('inqCancel');
+    const inqForm = document.getElementById('inqForm');
+    const inqSubmit = document.getElementById('inqSubmit');
+    const inqStatus = document.getElementById('inqStatus');
+
+    function openModal(){ modal.classList.add('open'); inqStatus.textContent=''; inqStatus.className='msg'; }
+    function closeModal(){ modal.classList.remove('open'); }
+    inqOpen.addEventListener('click', openModal);
+    inqClose.addEventListener('click', closeModal);
+    inqCancel.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if (e.target===modal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') closeModal(); });
+
+    // Submit lead to Supabase (public insert; RLS allows it)
+    inqForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      closeMenu(); // hide contact menu if open
+      inqSubmit.disabled = true;
+
+      const name = document.getElementById('inq_name').value.trim();
+      const phone = document.getElementById('inq_phone').value.trim();
+      const email = document.getElementById('inq_email').value.trim();
+      const message = document.getElementById('inq_msg').value.trim();
+
+      // Minimal client-side sanity
+      if (!phone && !email){
+        inqStatus.textContent = 'Please enter a phone or email so we can reach you.';
+        inqStatus.className = 'msg err';
+        inqSubmit.disabled = false;
+        return;
+      }
+
+      const { error } = await supabase.from('leads').insert({
+        listing_id: id,
+        name, phone, email, message
+      }, { returning: 'minimal' });
+
+      if (error){
+        inqStatus.textContent = 'Could not send. Please try again.';
+        inqStatus.className = 'msg err';
+        inqSubmit.disabled = false;
+      } else {
+        inqStatus.textContent = 'Thanks! We received your inquiry.';
+        inqStatus.className = 'msg ok';
+        // Optional: close after a short pause
+        setTimeout(()=>{ closeModal(); inqSubmit.disabled = false; }, 900);
+        // Optional: clear fields
+        inqForm.reset();
+      }
     });
   })();
 })();
