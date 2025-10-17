@@ -11,16 +11,20 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <style>
 :root{ --bg:#0b0a09; --card:#fff; --text:#1c1917; --line:#e7e5e4; --muted:#78716c; --copper:#c98c5b; }
-*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text)}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
-.topbar{background:#fff;border-bottom:1px solid var(--line)} .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
+
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .hero{background:#000;position:relative}
 .hero img{width:100%;height:60vh;max-height:70vh;object-fit:contain;background:#000;display:block}
 .thumbs{display:flex;gap:8px;overflow:auto;padding:8px;background:#111}
 .thumbs img{height:72px;object-fit:contain;background:#000;border-radius:8px;cursor:pointer;border:1px solid #222}
+
 .body{padding:14px}
 .title{font-weight:900;font-size:20px}
 .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
@@ -33,18 +37,27 @@
 .actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer}
 .btn.primary{background:var(--copper);border-color:transparent}
+
+/* Native Live Agent menu */
+details.menu-wrap{position:relative}
+details.menu-wrap > summary{list-style:none}
+details.menu-wrap > summary::-webkit-details-marker{display:none}
+details.menu-wrap > summary.btn{user-select:none}
+.menu{
+  position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;
+  overflow:hidden;z-index:20
+}
+details[open] .menu{display:block}
+.menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#111;text-decoration:none;border-bottom:1px solid #f2f2f2}
+.menu a:last-child{border-bottom:none}
+.menu a:hover{background:#fafafa}
+
+/* Footer & sold */
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
 .back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
 .sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
-
-/* Live Agent menu */
-.menu-wrap{position:relative}
-.menu{position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;overflow:hidden;z-index:20}
-.menu.open{display:block}
-.menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#111;text-decoration:none;border-bottom:1px solid #f2f2f2}
-.menu a:last-child{border-bottom:none}
-.menu a:hover{background:#fafafa}
 
 /* Inquire modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999}
@@ -107,12 +120,12 @@ small.muted{color:#78716c}
           <input id="inq_email" name="email" type="email" autocomplete="email" placeholder="you@example.com"/>
         </div>
 
-        <!-- Financing preference -->
+        <!-- Financing preference (capital F) -->
         <div class="row">
           <label>Financing</label>
           <div class="rad-row" role="radiogroup" aria-label="Financing">
-            <label><input type="radio" name="inq_financing" value="yes"> I need financing</label>
-            <label><input type="radio" name="inq_financing" value="no" checked> No financing</label>
+            <label><input type="radio" name="inq_financing" value="yes"> I need Financing</label>
+            <label><input type="radio" name="inq_financing" value="no" checked> No Financing</label>
           </div>
         </div>
 
@@ -217,14 +230,16 @@ small.muted{color:#78716c}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
 
           <div class="actions">
-            <div class="menu-wrap">
-              <button id="contactBtn" class="btn primary" type="button">Live Agent</button>
-              <div id="contactMenu" class="menu" role="menu" aria-label="Live Agent options">
+            <!-- Live Agent: native no-JS menu -->
+            <details class="menu-wrap">
+              <summary class="btn primary" aria-haspopup="menu" aria-expanded="false">Live Agent</summary>
+              <div class="menu" role="menu" aria-label="Live Agent options">
                 <a role="menuitem" href="tel:${phone}">📞 Call ${phone}</a>
                 <a role="menuitem" href="sms:${phone}?body=${smsBody}">💬 Text ${phone}</a>
                 <a role="menuitem" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">✉️ Email ${email}</a>
               </div>
-            </div>
+            </details>
+
             <button id="inqOpen" class="btn" type="button">Talk to an Advisor</button>
             <a class="btn" href="./share.html">Back</a>
           </div>
@@ -242,15 +257,6 @@ small.muted{color:#78716c}
         heroImg.src = urls[i] || hero;
       });
     }
-
-    // Live Agent menu interactions
-    const btn = document.getElementById('contactBtn');
-    const menu = document.getElementById('contactMenu');
-    function closeMenu(){ menu.classList.remove('open'); }
-    function toggleMenu(){ menu.classList.toggle('open'); }
-    btn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleMenu(); });
-    document.addEventListener('click', (e)=>{ if (!menu.contains(e.target) && e.target!==btn) closeMenu(); });
-    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeMenu(); });
 
     // Inquire modal controls
     const modal = document.getElementById('inqModal');
@@ -272,7 +278,6 @@ small.muted{color:#78716c}
     // Submit lead to Supabase (public insert; RLS allows it)
     inqForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      closeMenu();
       inqSubmit.disabled = true;
 
       const name = document.getElementById('inq_name').value.trim();
@@ -288,7 +293,7 @@ small.muted{color:#78716c}
         return;
       }
 
-      // Store financing choice inside the message text (no schema change needed)
+      // Store Financing choice inside the message text (no schema change needed)
       const combinedMessage = `[Financing: ${financing === 'yes' ? 'Yes' : 'No'}] ${message}`;
 
       const { error } = await supabase.from('leads').insert({
