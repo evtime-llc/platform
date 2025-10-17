@@ -19,8 +19,15 @@ body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.hero{background:#000;position:relative}
+/* Card & hero */
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  overflow:visible; /* was hidden; now visible so menu isn’t clipped */
+}
+.hero{
+  background:#000;position:relative;overflow:hidden; /* keep media clipped nicely */
+  border-top-left-radius:14px;border-top-right-radius:14px;
+}
 .hero img{width:100%;height:60vh;max-height:70vh;object-fit:contain;background:#000;display:block}
 .thumbs{display:flex;gap:8px;overflow:auto;padding:8px;background:#111}
 .thumbs img{height:72px;object-fit:contain;background:#000;border-radius:8px;cursor:pointer;border:1px solid #222}
@@ -46,7 +53,7 @@ details.menu-wrap > summary.btn{user-select:none}
 .menu{
   position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);
   border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;
-  overflow:hidden;z-index:20
+  overflow:hidden;z-index:30; /* raised from 20 */
 }
 details[open] .menu{display:block}
 .menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#111;text-decoration:none;border-bottom:1px solid #f2f2f2}
