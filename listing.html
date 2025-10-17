@@ -38,7 +38,7 @@
 .back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
 .sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
 
-/* Smart Contact menu */
+/* Live Agent menu */
 .menu-wrap{position:relative}
 .menu{position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;overflow:hidden;z-index:20}
 .menu.open{display:block}
@@ -60,6 +60,10 @@ small.muted{color:#78716c}
 .msg{margin-top:8px;font-size:13px}
 .msg.ok{color:#0a7}
 .msg.err{color:#b00020}
+
+/* Simple radios inline */
+.rad-row{display:flex;gap:14px;align-items:center;margin-top:6px}
+.rad-row label{font-weight:600;margin:0;display:flex;gap:6px;align-items:center}
 </style>
 </head>
 <body>
@@ -85,7 +89,7 @@ small.muted{color:#78716c}
 <div id="inqModal" class="modal" role="dialog" aria-modal="true" aria-label="Inquire form">
   <div class="modal-card">
     <div class="modal-head">
-      <div class="modal-title">Inquire about this vehicle</div>
+      <div class="modal-title">Talk to an Advisor</div>
       <button id="inqClose" class="modal-close" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
@@ -102,10 +106,21 @@ small.muted{color:#78716c}
           <label for="inq_email">Email</label>
           <input id="inq_email" name="email" type="email" autocomplete="email" placeholder="you@example.com"/>
         </div>
+
+        <!-- Financing preference -->
+        <div class="row">
+          <label>Financing</label>
+          <div class="rad-row" role="radiogroup" aria-label="Financing">
+            <label><input type="radio" name="inq_financing" value="yes"> I need financing</label>
+            <label><input type="radio" name="inq_financing" value="no" checked> No financing</label>
+          </div>
+        </div>
+
         <div class="row">
           <label for="inq_msg">Message</label>
-          <textarea id="inq_msg" name="message" rows="4" placeholder="Hi! I'm interested in this car."></textarea>
+          <textarea id="inq_msg" name="message" rows="4" placeholder="Share anything helpful (timeline, questions, trade-in, etc.)"></textarea>
         </div>
+
         <small class="muted">By submitting, you agree we may contact you about this vehicle.</small>
         <div class="actions" style="margin-top:12px">
           <button id="inqSubmit" type="submit" class="btn primary">Send</button>
@@ -203,14 +218,14 @@ small.muted{color:#78716c}
 
           <div class="actions">
             <div class="menu-wrap">
-              <button id="contactBtn" class="btn primary" type="button">Contact</button>
-              <div id="contactMenu" class="menu" role="menu" aria-label="Contact options">
+              <button id="contactBtn" class="btn primary" type="button">Live Agent</button>
+              <div id="contactMenu" class="menu" role="menu" aria-label="Live Agent options">
                 <a role="menuitem" href="tel:${phone}">📞 Call ${phone}</a>
                 <a role="menuitem" href="sms:${phone}?body=${smsBody}">💬 Text ${phone}</a>
                 <a role="menuitem" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">✉️ Email ${email}</a>
               </div>
             </div>
-            <button id="inqOpen" class="btn" type="button">Inquire</button>
+            <button id="inqOpen" class="btn" type="button">Talk to an Advisor</button>
             <a class="btn" href="./share.html">Back</a>
           </div>
         </div>
@@ -228,7 +243,7 @@ small.muted{color:#78716c}
       });
     }
 
-    // Smart Contact menu interactions
+    // Live Agent menu interactions
     const btn = document.getElementById('contactBtn');
     const menu = document.getElementById('contactMenu');
     function closeMenu(){ menu.classList.remove('open'); }
@@ -257,15 +272,15 @@ small.muted{color:#78716c}
     // Submit lead to Supabase (public insert; RLS allows it)
     inqForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      closeMenu(); // hide contact menu if open
+      closeMenu();
       inqSubmit.disabled = true;
 
       const name = document.getElementById('inq_name').value.trim();
       const phone = document.getElementById('inq_phone').value.trim();
       const email = document.getElementById('inq_email').value.trim();
       const message = document.getElementById('inq_msg').value.trim();
+      const financing = document.querySelector('input[name="inq_financing"]:checked')?.value || 'no';
 
-      // Minimal client-side sanity
       if (!phone && !email){
         inqStatus.textContent = 'Please enter a phone or email so we can reach you.';
         inqStatus.className = 'msg err';
@@ -273,9 +288,12 @@ small.muted{color:#78716c}
         return;
       }
 
+      // Store financing choice inside the message text (no schema change needed)
+      const combinedMessage = `[Financing: ${financing === 'yes' ? 'Yes' : 'No'}] ${message}`;
+
       const { error } = await supabase.from('leads').insert({
         listing_id: id,
-        name, phone, email, message
+        name, phone, email, message: combinedMessage
       }, { returning: 'minimal' });
 
       if (error){
@@ -285,9 +303,7 @@ small.muted{color:#78716c}
       } else {
         inqStatus.textContent = 'Thanks! We received your inquiry.';
         inqStatus.className = 'msg ok';
-        // Optional: close after a short pause
         setTimeout(()=>{ closeModal(); inqSubmit.disabled = false; }, 900);
-        // Optional: clear fields
         inqForm.reset();
       }
     });
