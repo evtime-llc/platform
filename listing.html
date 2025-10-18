@@ -209,7 +209,7 @@ small.muted{color:#78716c}
 
     // Contact constants
     const phone = '+14244256211';
-    const email = 'lifeliftusa@gmail.com';
+    const email = 'welcome.itsevtime@gmail.com';
     const smsBody = encodeURIComponent('Hi! I’m interested in the ' + title);
     const mailSub = encodeURIComponent('Interested in ' + title);
     const mailBody = encodeURIComponent('Link: ' + location.href);
@@ -289,11 +289,11 @@ small.muted{color:#78716c}
 
       const name = document.getElementById('inq_name').value.trim();
       const phone = document.getElementById('inq_phone').value.trim();
-      const email = document.getElementById('inq_email').value.trim();
+      const emailInput = document.getElementById('inq_email').value.trim();
       const message = document.getElementById('inq_msg').value.trim();
       const financing = document.querySelector('input[name="inq_financing"]:checked')?.value || 'no';
 
-      if (!phone && !email){
+      if (!phone && !emailInput){
         inqStatus.textContent = 'Please enter a phone or email so we can reach you.';
         inqStatus.className = 'msg err';
         inqSubmit.disabled = false;
@@ -305,7 +305,7 @@ small.muted{color:#78716c}
 
       const { error } = await supabase.from('leads').insert({
         listing_id: id,
-        name, phone, email, message: combinedMessage
+        name, phone, email: emailInput, message: combinedMessage
       }, { returning: 'minimal' });
 
       if (error){
