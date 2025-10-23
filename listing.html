@@ -4,322 +4,165 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>EVTime — Vehicle Details</title>
-<meta name="theme-color" content="#0b0a09"/>
-<meta property="og:title" content="EVTime — Vehicle Details"/>
-<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
-<meta property="og:url" content="https://itsevtime.com/listing.html"/>
-<meta name="twitter:card" content="summary_large_image"/>
+<meta name="theme-color" content="#ffffff"/>
+
 <style>
-:root{ --bg:#0b0a09; --card:#fff; --text:#1c1917; --line:#e7e5e4; --muted:#78716c; --copper:#c98c5b; }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text)}
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
-
-/* Card & hero */
-.card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;
-  overflow:visible; /* was hidden; now visible so menu isn’t clipped */
+:root {
+  --bg:#fafafa; --line:#e7e5e4; --text:#111; --muted:#666;
+  --accent:#c98c5b; --accent-dark:#9e6d45;
 }
-.hero{
-  background:#000;position:relative;overflow:hidden; /* keep media clipped nicely */
-  border-top-left-radius:14px;border-top-right-radius:14px;
-}
-.hero img{width:100%;height:60vh;max-height:70vh;object-fit:contain;background:#000;display:block}
-.thumbs{display:flex;gap:8px;overflow:auto;padding:8px;background:#111}
-.thumbs img{height:72px;object-fit:contain;background:#000;border-radius:8px;cursor:pointer;border:1px solid #222}
-
-.body{padding:14px}
-.title{font-weight:900;font-size:20px}
-.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#f8f8f8}
-.price{font-weight:900;background:var(--copper);color:#0b0a09;border-radius:999px;padding:2px 10px;display:inline-block;margin-top:6px}
-.meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
-.desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
-
-/* Actions */
-.actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer}
-.btn.primary{background:var(--copper);border-color:transparent}
-
-/* Native Live Agent menu */
-details.menu-wrap{position:relative}
-details.menu-wrap > summary{list-style:none}
-details.menu-wrap > summary::-webkit-details-marker{display:none}
-details.menu-wrap > summary.btn{user-select:none}
-.menu{
-  position:absolute;top:52px;left:0;background:#fff;border:1px solid var(--line);
-  border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:none;min-width:240px;
-  overflow:hidden;z-index:30; /* raised from 20 */
-}
-details[open] .menu{display:block}
-.menu a{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#111;text-decoration:none;border-bottom:1px solid #f2f2f2}
-.menu a:last-child{border-bottom:none}
-.menu a:hover{background:#fafafa}
-
-/* Footer & sold */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.back{margin:10px 0 0}.back a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted #c98c5b}
-.sold{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;padding:4px 8px;border-radius:999px;font-size:12px}
-
-/* Inquire modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999}
-.modal.open{display:flex}
-.modal-card{background:#fff;width:min(560px,95vw);border-radius:14px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eee}
-.modal-title{font-weight:900}
-.modal-close{border:none;background:#f5f5f4;border-radius:999px;width:36px;height:36px;cursor:pointer;font-size:18px}
-.modal-body{padding:14px}
-label{display:block;font-weight:700;margin:8px 0 4px}
-input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
-small.muted{color:#78716c}
-.msg{margin-top:8px;font-size:13px}
-.msg.ok{color:#0a7}
-.msg.err{color:#b00020}
-
-/* Simple radios inline */
-.rad-row{display:flex;gap:14px;align-items:center;margin-top:6px}
-.rad-row label{font-weight:600;margin:0;display:flex;gap:6px;align-items:center}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text);}
+.wrap{max-width:880px;margin:0 auto;padding:16px;}
+img{max-width:100%;display:block;border-radius:12px;}
+h1{font-size:24px;margin:8px 0;}
+h2{margin-top:24px;font-size:20px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer;transition:.15s}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn.primary:hover{background:var(--accent-dark);}
+.meta{color:var(--muted);font-size:14px;margin:6px 0;}
+.price{font-weight:900;font-size:20px;color:var(--accent-dark);}
+.flex{display:flex;flex-wrap:wrap;gap:10px;}
+/* Drawer */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998;}
+.drawer{position:fixed;top:0;right:-400px;width:360px;max-width:90vw;height:100%;background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,.1);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;}
+.drawer.open{right:0;}
+.drawer-backdrop.open{display:block;}
+.drawer-header{padding:16px;border-bottom:1px solid var(--line);}
+.drawer-header h3{margin:0;font-size:18px;}
+.drawer-sub{color:var(--muted);font-size:13px;}
+.drawer-tabs{display:flex;border-bottom:1px solid var(--line);}
+.drawer-tab{flex:1;padding:12px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;}
+.drawer-tab.active{border-color:var(--accent);color:var(--accent-dark);}
+.drawer-body{flex:1;overflow:auto;padding:16px;}
+.drawer-footer{border-top:1px solid var(--line);padding:12px;text-align:center;font-size:13px;color:var(--muted);}
+.contact-buttons{display:flex;flex-direction:column;gap:10px;}
+.contact-buttons a{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:8px;text-decoration:none;font-weight:700;}
+.contact-buttons a.call{background:var(--accent);color:#fff;}
+.contact-buttons a.text{background:#eee;color:#111;}
+.contact-buttons a.email{background:#eee;color:#111;}
+.copy-links{margin-top:8px;text-align:center;}
+.copy-links button{border:none;background:none;color:var(--accent-dark);cursor:pointer;font-size:13px;}
+form label{display:block;margin-top:12px;font-weight:600;}
+form input, form textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;}
+form textarea{resize:vertical;}
+.financing{display:flex;align-items:center;gap:8px;margin-top:12px;}
+.financing input{width:auto;}
+.success{color:#0a7;margin-top:8px;font-weight:600;}
 </style>
 </head>
 <body>
-<!-- Topbar -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime">
-    </a>
+<div class="wrap" id="details"></div>
+
+<!-- Concierge Drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h3>EVTime Concierge</h3>
+    <div class="drawer-sub">Real humans. Fast replies.</div>
   </div>
-</div>
-
-<div class="wrap">
-  <div class="back"><a href="./share.html">← Back to inventory</a></div>
-  <div id="mount"></div>
-</div>
-
-<footer class="footer">
-  <div class="wrap">© <span id="yr"></span> E.V.Time</div>
-</footer>
-
-<!-- Inquire modal -->
-<div id="inqModal" class="modal" role="dialog" aria-modal="true" aria-label="Inquire form">
-  <div class="modal-card">
-    <div class="modal-head">
-      <div class="modal-title">Talk to an Advisor</div>
-      <button id="inqClose" class="modal-close" aria-label="Close">✕</button>
-    </div>
-    <div class="modal-body">
-      <form id="inqForm">
-        <div class="row">
-          <label for="inq_name">Name</label>
-          <input id="inq_name" name="name" autocomplete="name" placeholder="Your name"/>
-        </div>
-        <div class="row">
-          <label for="inq_phone">Phone</label>
-          <input id="inq_phone" name="phone" autocomplete="tel" placeholder="424-425-6211"/>
-        </div>
-        <div class="row">
-          <label for="inq_email">Email</label>
-          <input id="inq_email" name="email" type="email" autocomplete="email" placeholder="you@example.com"/>
-        </div>
-
-        <!-- Financing preference (capital F) -->
-        <div class="row">
-          <label>Financing</label>
-          <div class="rad-row" role="radiogroup" aria-label="Financing">
-            <label><input type="radio" name="inq_financing" value="yes"> I need Financing</label>
-            <label><input type="radio" name="inq_financing" value="no" checked> No Financing</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <label for="inq_msg">Message</label>
-          <textarea id="inq_msg" name="message" rows="4" placeholder="Share anything helpful (timeline, questions, trade-in, etc.)"></textarea>
-        </div>
-
-        <small class="muted">By submitting, you agree we may contact you about this vehicle.</small>
-        <div class="actions" style="margin-top:12px">
-          <button id="inqSubmit" type="submit" class="btn primary">Send</button>
-          <button id="inqCancel" type="button" class="btn">Cancel</button>
-        </div>
-        <div id="inqStatus" class="msg" role="status" aria-live="polite"></div>
-      </form>
-    </div>
+  <div class="drawer-tabs">
+    <div class="drawer-tab active" data-tab="contact">Quick Contact</div>
+    <div class="drawer-tab" data-tab="form">Talk to an Advisor</div>
   </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer">We usually respond within 1 business hour.</div>
 </div>
 
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-(function(){
-  const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
-  const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const esc = (s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+(async()=>{
+const SUPABASE_URL=(window.SUPABASE_URL||"https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+const SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||"").trim();
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-  function parseImages(images){
-    if (!images) return [];
-    if (Array.isArray(images)) return images;
-    const s = String(images||'').trim();
-    if (s.startsWith('[')) { try{ return JSON.parse(s)||[] } catch { return [] } }
-    return s.split(',').map(v=>v.trim()).filter(Boolean);
-  }
-  function normalize(path){ return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,''); }
-  function publicImageUrls(path){
-    let s = String(path||'').trim().replace(/^\/+/, ''); if (!s) return [];
-    const candidates = [];
-    if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
-    candidates.push(s, s.replace(/^images\//i,'')); if (!/^images\//i.test(s)) candidates.push('images/'+s);
-    const uniq = [...new Set(candidates)];
-    return uniq.map(p => supabase.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
-  }
+const $=id=>document.getElementById(id);
+const mount=$("details");
+const params=new URLSearchParams(location.search);
+const id=params.get("id");
+if(!id){mount.innerHTML="<p>Missing listing ID.</p>";return;}
+const {data,error}=await supabase.from("listing").select("*").eq("id",id).single();
+if(error||!data){mount.innerHTML="<p>Listing not found.</p>";return;}
 
-  const m = document.getElementById('mount');
-  const id = new URLSearchParams(location.search).get('id');
+const paths=Array.isArray(data.images)?data.images:data.images?JSON.parse(data.images):[];
+const cover=paths[0]?supabase.storage.from("images").getPublicUrl(paths[0]).data.publicUrl:"og-card.png";
+mount.innerHTML=`
+  <img src="${cover}" alt="">
+  <h1>${data.year||""} ${data.make||""} ${data.model||""} ${data.trim||""}</h1>
+  <div class="price">$${Number(data.price||0).toLocaleString()}</div>
+  <div class="meta">${data.city||""} • ${data.mileage?Number(data.mileage).toLocaleString()+" mi":""}</div>
+  <p>${data.description||""}</p>
+  <div class="flex">
+    <button class="btn primary" id="liveAgent">Live Agent</button>
+    <button class="btn" id="advisorBtn">Talk to an Advisor</button>
+  </div>
+`;
 
-  document.getElementById('yr').textContent = new Date().getFullYear();
+const drawer=$("drawer"),backdrop=$("drawerBackdrop"),body=$("drawerBody");
+const tabs=[...drawer.querySelectorAll(".drawer-tab")];
+function openDrawer(tab="contact"){
+  drawer.classList.add("open");backdrop.classList.add("open");
+  setTab(tab);
+}
+function closeDrawer(){
+  drawer.classList.remove("open");backdrop.classList.remove("open");
+}
+backdrop.onclick=closeDrawer;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer();});
 
-  if (!id){
-    m.innerHTML = `<div class="card body" style="background:#fff;padding:16px">Missing listing id.</div>`;
-    return;
-  }
+function setTab(tabName){
+  tabs.forEach(t=>t.classList.toggle("active",t.dataset.tab===tabName));
+  if(tabName==="contact") renderContact(); else renderForm();
+}
 
-  (async () => {
-    const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
-    if (error || !data){ m.innerHTML = `<div class="card body">Listing not found.</div>`; return; }
+tabs.forEach(t=>t.onclick=()=>setTab(t.dataset.tab));
 
-    const title = [data.year, data.make, data.model, data.trim].filter(Boolean).join(' ');
-    document.title = `EVTime — ${title}`;
+function renderContact(){
+body.innerHTML=`
+  <div class="contact-buttons">
+    <a class="call" href="tel:+14244256211">Call Now</a>
+    <a class="text" href="sms:+14244256211?body=Hi! I’m interested in ${data.year||""} ${data.make||""} ${data.model||""}">Text Now</a>
+    <a class="email" href="mailto:welcome.evtime@gmail.com?subject=Inquiry about ${data.year||""} ${data.make||""} ${data.model||""}">Email Concierge</a>
+  </div>
+  <div class="copy-links">
+    <button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button>
+  </div>`;
+$("copyEmail").onclick=()=>{navigator.clipboard.writeText("welcome.evtime@gmail.com");alert("Email copied.");};
+$("copyMsg").onclick=()=>{navigator.clipboard.writeText("Hi! I’m interested in "+(data.year||"")+" "+(data.make||"")+" "+(data.model||""));alert("Message copied.");};
+}
 
-    const paths = parseImages(data.images).map(normalize);
-    const urls = paths.map(p => publicImageUrls(p)[0] || null).filter(Boolean);
-    const hero = urls[0] || 'og-card.png';
+function renderForm(){
+body.innerHTML=`
+<form id="advisorForm">
+  <label>Name</label><input id="name" required>
+  <label>Phone</label><input id="phone" required>
+  <label>Email</label><input id="email" type="email" required>
+  <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I’m interested in ${data.year||""} ${data.make||""} ${data.model||""}"></textarea>
+  <div class="financing">
+    <input type="checkbox" id="financeChk"> <label for="financeChk">I’m interested in Financing</label>
+  </div>
+  <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
+  <div id="formMsg" class="success"></div>
+</form>`;
+$("advisorForm").onsubmit=async(e)=>{
+e.preventDefault();
+const payload={
+  name:$("name").value.trim(),
+  phone:$("phone").value.trim(),
+  email:$("email").value.trim(),
+  message:$("msg").value.trim(),
+  financing:$("financeChk").checked,
+  listing_id:id,
+  created_at:new Date().toISOString()
+};
+const {error}=await supabase.from("leads").insert(payload);
+$("formMsg").textContent=error?"Error sending.":"Thanks! We received your note.";
+if(!error)setTimeout(closeDrawer,2000);
+};
+}
 
-    const leftMeta = [
-      data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
-      data.title_status ? `Title: ${data.title_status}` : null,
-      data.condition ? `Cond: ${data.condition}` : null
-    ].filter(Boolean).join(" • ");
-    const priceText = (data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
-    const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
-
-    // Contact constants
-    const phone = '+14244256211';
-    const email = 'welcome.itsevtime@gmail.com';
-    const smsBody = encodeURIComponent('Hi! I’m interested in the ' + title);
-    const mailSub = encodeURIComponent('Interested in ' + title);
-    const mailBody = encodeURIComponent('Link: ' + location.href);
-
-    m.innerHTML = `
-      <div class="card">
-        <div class="hero">
-          ${sold}
-          <img id="heroImg" src="${esc(hero)}" alt="${esc(title)}" decoding="async">
-          ${urls.length>1 ? `
-            <div class="thumbs" id="thumbs">
-              ${urls.map((u,i)=>`<img src="${esc(u)}" data-i="${i}" alt="thumb ${i+1}">`).join('')}
-            </div>` : ``}
-        </div>
-        <div class="body">
-          <div class="title">${esc(title)}</div>
-          ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
-          <div class="badges">
-            ${data.vehicle_type ? `<div class="badge">${esc(String(data.vehicle_type).toUpperCase())}</div>` : ``}
-            ${data.city ? `<div class="badge">${esc(data.city)}</div>` : ``}
-            ${data.vin ? `<div class="badge">VIN: ${esc(data.vin)}</div>` : ``}
-          </div>
-          <div class="meta">${esc(leftMeta)}</div>
-          ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
-          ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
-
-          <div class="actions">
-            <!-- Live Agent: native no-JS menu -->
-            <details class="menu-wrap">
-              <summary class="btn primary" aria-haspopup="menu" aria-expanded="false">Live Agent</summary>
-              <div class="menu" role="menu" aria-label="Live Agent options">
-                <a role="menuitem" href="tel:${phone}">📞 Call ${phone}</a>
-                <a role="menuitem" href="sms:${phone}?body=${smsBody}">💬 Text ${phone}</a>
-                <a role="menuitem" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">✉️ Email ${email}</a>
-              </div>
-            </details>
-
-            <button id="inqOpen" class="btn" type="button">Talk to an Advisor</button>
-            <a class="btn" href="./share.html">Back</a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Thumbs swap hero
-    const thumbs = document.getElementById('thumbs');
-    if (thumbs){
-      const heroImg = document.getElementById('heroImg');
-      thumbs.addEventListener('click',(e)=>{
-        const t = e.target.closest('img[data-i]'); if(!t) return;
-        const i = Number(t.getAttribute('data-i')||0);
-        heroImg.src = urls[i] || hero;
-      });
-    }
-
-    // Inquire modal controls
-    const modal = document.getElementById('inqModal');
-    const inqOpen = document.getElementById('inqOpen');
-    const inqClose = document.getElementById('inqClose');
-    const inqCancel = document.getElementById('inqCancel');
-    const inqForm = document.getElementById('inqForm');
-    const inqSubmit = document.getElementById('inqSubmit');
-    const inqStatus = document.getElementById('inqStatus');
-
-    function openModal(){ modal.classList.add('open'); inqStatus.textContent=''; inqStatus.className='msg'; }
-    function closeModal(){ modal.classList.remove('open'); }
-    inqOpen.addEventListener('click', openModal);
-    inqClose.addEventListener('click', closeModal);
-    inqCancel.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e)=>{ if (e.target===modal) closeModal(); });
-    document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') closeModal(); });
-
-    // Submit lead to Supabase (public insert; RLS allows it)
-    inqForm.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      inqSubmit.disabled = true;
-
-      const name = document.getElementById('inq_name').value.trim();
-      const phone = document.getElementById('inq_phone').value.trim();
-      const emailInput = document.getElementById('inq_email').value.trim();
-      const message = document.getElementById('inq_msg').value.trim();
-      const financing = document.querySelector('input[name="inq_financing"]:checked')?.value || 'no';
-
-      if (!phone && !emailInput){
-        inqStatus.textContent = 'Please enter a phone or email so we can reach you.';
-        inqStatus.className = 'msg err';
-        inqSubmit.disabled = false;
-        return;
-      }
-
-      // Store Financing choice inside the message text (no schema change needed)
-      const combinedMessage = `[Financing: ${financing === 'yes' ? 'Yes' : 'No'}] ${message}`;
-
-      const { error } = await supabase.from('leads').insert({
-        listing_id: id,
-        name, phone, email: emailInput, message: combinedMessage
-      }, { returning: 'minimal' });
-
-      if (error){
-        inqStatus.textContent = 'Could not send. Please try again.';
-        inqStatus.className = 'msg err';
-        inqSubmit.disabled = false;
-      } else {
-        inqStatus.textContent = 'Thanks! We received your inquiry.';
-        inqStatus.className = 'msg ok';
-        setTimeout(()=>{ closeModal(); inqSubmit.disabled = false; }, 900);
-        inqForm.reset();
-      }
-    });
-  })();
+$("liveAgent").onclick=()=>openDrawer("contact");
+$("advisorBtn").onclick=()=>openDrawer("form");
 })();
 </script>
 </body>
