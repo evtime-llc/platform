@@ -4,54 +4,149 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>EVTime — Vehicle Details</title>
-<meta name="theme-color" content="#ffffff"/>
+<meta name="theme-color" content="#0b0a09"/>
 
 <style>
-:root {
-  --bg:#fafafa; --line:#e7e5e4; --text:#111; --muted:#666;
-  --accent:#c98c5b; --accent-dark:#9e6d45;
+:root{
+  --bg:#0b0a09;         /* dark brown/charcoal background */
+  --card:#ffffff;       /* white card */
+  --text:#1c1917;       /* dark text on white card */
+  --muted:#78716c;
+  --line:#e7e5e4;
+  --copper:#c98c5b;     /* brand copper */
+  --copper-dark:#9e6d45;
 }
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text);}
-.wrap{max-width:880px;margin:0 auto;padding:16px;}
-img{max-width:100%;display:block;border-radius:12px;}
-h1{font-size:24px;margin:8px 0;}
-h2{margin-top:24px;font-size:20px;}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer;transition:.15s}
-.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
-.btn.primary:hover{background:var(--accent-dark);}
-.meta{color:var(--muted);font-size:14px;margin:6px 0;}
-.price{font-weight:900;font-size:20px;color:var(--accent-dark);}
-.flex{display:flex;flex-wrap:wrap;gap:10px;}
-/* Drawer */
-.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998;}
-.drawer{position:fixed;top:0;right:-400px;width:360px;max-width:90vw;height:100%;background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,.1);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;}
-.drawer.open{right:0;}
-.drawer-backdrop.open{display:block;}
-.drawer-header{padding:16px;border-bottom:1px solid var(--line);}
-.drawer-header h3{margin:0;font-size:18px;}
-.drawer-sub{color:var(--muted);font-size:13px;}
-.drawer-tabs{display:flex;border-bottom:1px solid var(--line);}
-.drawer-tab{flex:1;padding:12px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;}
-.drawer-tab.active{border-color:var(--accent);color:var(--accent-dark);}
-.drawer-body{flex:1;overflow:auto;padding:16px;}
-.drawer-footer{border-top:1px solid var(--line);padding:12px;text-align:center;font-size:13px;color:var(--muted);}
-.contact-buttons{display:flex;flex-direction:column;gap:10px;}
-.contact-buttons a{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:8px;text-decoration:none;font-weight:700;}
-.contact-buttons a.call{background:var(--accent);color:#fff;}
-.contact-buttons a.text{background:#eee;color:#111;}
-.contact-buttons a.email{background:#eee;color:#111;}
-.copy-links{margin-top:8px;text-align:center;}
-.copy-links button{border:none;background:none;color:var(--accent-dark);cursor:pointer;font-size:13px;}
-form label{display:block;margin-top:12px;font-weight:600;}
-form input, form textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;}
-form textarea{resize:vertical;}
-.financing{display:flex;align-items:center;gap:8px;margin-top:12px;}
-.financing input{width:auto;}
-.success{color:#0a7;margin-top:8px;font-weight:600;}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+
+/* Header / Logo (matches site) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:220px} }
+
+/* Card */
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:visible;
+  box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+
+/* HERO + CAROUSEL */
+.hero{
+  position:relative;background:#000;border-top-left-radius:14px;border-top-right-radius:14px;
+  overflow:hidden; /* keep media nicely clipped */
+  border-bottom:1px solid var(--line);
+}
+.hero-frame{
+  position:relative;background:#000; /* image sits on black */
+  border:1px solid var(--copper);    /* copper accent frame */
+  border-radius:12px;margin:12px;    /* inner frame margin */
+  overflow:hidden;
+}
+.slide{
+  width:100%;height:60vh;max-height:72vh;min-height:320px;
+  display:flex;align-items:center;justify-content:center;
+  background:#000;
+}
+.slide img{
+  width:100%;height:100%;object-fit:contain;display:block;background:#000;
+}
+
+/* Carousel controls */
+.nav-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border:none;border-radius:999px;cursor:pointer;
+  background:rgba(255,255,255,.14);color:#fff;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.25);
+}
+.nav-btn:hover{background:rgba(255,255,255,.22)}
+.nav-prev{left:16px}
+.nav-next{right:16px}
+
+/* Dots */
+.dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
+.dot.active{background:#fff}
+@media (hover:hover){
+  .dot:hover{background:rgba(255,255,255,.6)}
+}
+
+/* SOLD badge */
+.sold{position:absolute;top:18px;left:18px;background:rgba(0,0,0,.75);color:#fff;
+  padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.03em}
+
+/* Body */
+.body{padding:14px 16px 18px}
+.title{font-weight:900;font-size:20px}
+.price{font-weight:900;color:#0b0a09;background:var(--copper);padding:2px 10px;border-radius:999px;display:inline-block;margin-top:6px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#f8f8f8}
+.meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
+.desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
+
+/* Actions */
+.actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;
+  border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer;transition:.15s
+}
+.btn.primary{background:var(--copper);border-color:transparent;color:#0b0a09}
+.btn.primary:hover{background:var(--copper-dark);color:#fff}
+
+/* Footer */
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+
+/* Concierge Drawer (Apple-clean) */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998}
+.drawer{position:fixed;top:0;right:-420px;width:380px;max-width:92vw;height:100%;
+  background:#fff;box-shadow:-6px 0 28px rgba(0,0,0,.18);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.drawer.open{right:0}
+.drawer-backdrop.open{display:block}
+.drawer-header{padding:16px;border-bottom:1px solid var(--line)}
+.drawer-header h3{margin:0;font-size:18px}
+.drawer-sub{color:var(--muted);font-size:13px}
+.drawer-tabs{display:flex;border-bottom:1px solid var(--line)}
+.drawer-tab{flex:1;padding:12px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
+.drawer-tab.active{border-color:var(--copper);color:var(--copper-dark)}
+.drawer-body{flex:1;overflow:auto;padding:16px}
+.drawer-footer{border-top:1px solid var(--line);padding:12px;text-align:center;font-size:13px;color:var(--muted)}
+.contact-buttons{display:flex;flex-direction:column;gap:10px}
+.contact-buttons a{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:800;border:1px solid var(--line);color:#111;background:#fff}
+.contact-buttons a.call{background:var(--copper);color:#0b0a09;border-color:transparent}
+.copy-links{margin-top:8px;text-align:center}
+.copy-links button{border:none;background:none;color:var(--copper-dark);cursor:pointer;font-size:13px}
+form label{display:block;margin-top:12px;font-weight:700}
+form input,form textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px}
+form textarea{resize:vertical}
+.financing{display:flex;align-items:center;gap:8px;margin-top:12px}
+.financing input{width:auto}
+.success{color:#0a7;margin-top:8px;font-weight:700}
+.back{margin:10px 0 0}.back a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 </style>
 </head>
 <body>
-<div class="wrap" id="details"></div>
+
+<!-- Topbar / Logo -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <a href="/" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime">
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="back"><a href="./share.html">← Back to inventory</a></div>
+  <div id="mount"></div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">© <span id="yr"></span> E.V.Time</div>
+</footer>
 
 <!-- Concierge Drawer -->
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
@@ -71,98 +166,218 @@ form textarea{resize:vertical;}
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-(async()=>{
-const SUPABASE_URL=(window.SUPABASE_URL||"https://tgkvhmxrftcegpryptwq.supabase.co").trim();
-const SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||"").trim();
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+(function(){
+  const SUPABASE_URL=(window.SUPABASE_URL||"https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+  const SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||"").trim();
+  const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-const $=id=>document.getElementById(id);
-const mount=$("details");
-const params=new URLSearchParams(location.search);
-const id=params.get("id");
-if(!id){mount.innerHTML="<p>Missing listing ID.</p>";return;}
-const {data,error}=await supabase.from("listing").select("*").eq("id",id).single();
-if(error||!data){mount.innerHTML="<p>Listing not found.</p>";return;}
+  const $=id=>document.getElementById(id);
+  document.getElementById('yr').textContent=new Date().getFullYear();
 
-const paths=Array.isArray(data.images)?data.images:data.images?JSON.parse(data.images):[];
-const cover=paths[0]?supabase.storage.from("images").getPublicUrl(paths[0]).data.publicUrl:"og-card.png";
-mount.innerHTML=`
-  <img src="${cover}" alt="">
-  <h1>${data.year||""} ${data.make||""} ${data.model||""} ${data.trim||""}</h1>
-  <div class="price">$${Number(data.price||0).toLocaleString()}</div>
-  <div class="meta">${data.city||""} • ${data.mileage?Number(data.mileage).toLocaleString()+" mi":""}</div>
-  <p>${data.description||""}</p>
-  <div class="flex">
-    <button class="btn primary" id="liveAgent">Live Agent</button>
-    <button class="btn" id="advisorBtn">Talk to an Advisor</button>
-  </div>
-`;
+  // ----- Helpers for legacy image paths
+  const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function parseImages(images){
+    if(!images) return [];
+    if(Array.isArray(images)) return images;
+    const s=String(images||'').trim();
+    if(s.startsWith('[')){ try{ return JSON.parse(s)||[] }catch{ return [] } }
+    return s.split(',').map(v=>v.trim()).filter(Boolean);
+  }
+  function normalize(path){
+    return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
+  }
+  function publicImageUrls(path){
+    let s=String(path||'').trim().replace(/^\/+/, '');
+    if(!s) return [];
+    const candidates=[];
+    if(/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+    candidates.push(s);
+    candidates.push(s.replace(/^images\//i,''));
+    if(!/^images\//i.test(s)) candidates.push('images/'+s);
+    const uniq=[...new Set(candidates)];
+    return uniq.map(p=>supabase.storage.from('images').getPublicUrl(p).data?.publicUrl||null).filter(Boolean);
+  }
+  function preload(url){ if(!url) return; const im=new Image(); im.decoding='async'; im.loading='eager'; im.src=url; }
 
-const drawer=$("drawer"),backdrop=$("drawerBackdrop"),body=$("drawerBody");
-const tabs=[...drawer.querySelectorAll(".drawer-tab")];
-function openDrawer(tab="contact"){
-  drawer.classList.add("open");backdrop.classList.add("open");
-  setTab(tab);
-}
-function closeDrawer(){
-  drawer.classList.remove("open");backdrop.classList.remove("open");
-}
-backdrop.onclick=closeDrawer;
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer();});
+  // ----- Load listing
+  const mount=$('mount');
+  const id=new URLSearchParams(location.search).get('id');
+  if(!id){ mount.innerHTML = `<div class="card body" style="padding:16px">Missing listing id.</div>`; return; }
 
-function setTab(tabName){
-  tabs.forEach(t=>t.classList.toggle("active",t.dataset.tab===tabName));
-  if(tabName==="contact") renderContact(); else renderForm();
-}
+  (async () => {
+    const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
+    if(error || !data){ mount.innerHTML = `<div class="card body" style="padding:16px">Listing not found.</div>`; return; }
 
-tabs.forEach(t=>t.onclick=()=>setTab(t.dataset.tab));
+    const title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');
+    document.title = `EVTime — ${title}`;
 
-function renderContact(){
-body.innerHTML=`
-  <div class="contact-buttons">
-    <a class="call" href="tel:+14244256211">Call Now</a>
-    <a class="text" href="sms:+14244256211?body=Hi! I’m interested in ${data.year||""} ${data.make||""} ${data.model||""}">Text Now</a>
-    <a class="email" href="mailto:welcome.evtime@gmail.com?subject=Inquiry about ${data.year||""} ${data.make||""} ${data.model||""}">Email Concierge</a>
-  </div>
-  <div class="copy-links">
-    <button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button>
-  </div>`;
-$("copyEmail").onclick=()=>{navigator.clipboard.writeText("welcome.evtime@gmail.com");alert("Email copied.");};
-$("copyMsg").onclick=()=>{navigator.clipboard.writeText("Hi! I’m interested in "+(data.year||"")+" "+(data.make||"")+" "+(data.model||""));alert("Message copied.");};
-}
+    const paths=parseImages(data.images).map(normalize);
+    const urls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
+    const heroUrl=urls[0] || 'og-card.png';
+    if(urls[1]) preload(urls[1]);
 
-function renderForm(){
-body.innerHTML=`
-<form id="advisorForm">
-  <label>Name</label><input id="name" required>
-  <label>Phone</label><input id="phone" required>
-  <label>Email</label><input id="email" type="email" required>
-  <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I’m interested in ${data.year||""} ${data.make||""} ${data.model||""}"></textarea>
-  <div class="financing">
-    <input type="checkbox" id="financeChk"> <label for="financeChk">I’m interested in Financing</label>
-  </div>
-  <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
-  <div id="formMsg" class="success"></div>
-</form>`;
-$("advisorForm").onsubmit=async(e)=>{
-e.preventDefault();
-const payload={
-  name:$("name").value.trim(),
-  phone:$("phone").value.trim(),
-  email:$("email").value.trim(),
-  message:$("msg").value.trim(),
-  financing:$("financeChk").checked,
-  listing_id:id,
-  created_at:new Date().toISOString()
-};
-const {error}=await supabase.from("leads").insert(payload);
-$("formMsg").textContent=error?"Error sending.":"Thanks! We received your note.";
-if(!error)setTimeout(closeDrawer,2000);
-};
-}
+    const leftMeta=[
+      data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
+      data.title_status ? `Title: ${data.title_status}` : null,
+      data.condition ? `Cond: ${data.condition}` : null
+    ].filter(Boolean).join(' • ');
+    const priceText=(data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
+    const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
 
-$("liveAgent").onclick=()=>openDrawer("contact");
-$("advisorBtn").onclick=()=>openDrawer("form");
+    // ----- Page HTML
+    mount.innerHTML = `
+      <div class="card">
+        <div class="hero">
+          ${sold}
+          <div class="hero-frame">
+            <div class="slide"><img id="heroImg" src="${esc(heroUrl)}" alt="${esc(title)}" decoding="async"></div>
+            ${urls.length>1 ? `
+              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
+              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
+              <div class="dots" id="dots"></div>
+            `:``}
+          </div>
+        </div>
+        <div class="body">
+          <div class="title">${esc(title)}</div>
+          ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
+          <div class="badges">
+            ${data.vehicle_type ? `<div class="badge">${esc(String(data.vehicle_type).toUpperCase())}</div>` : ``}
+            ${data.city ? `<div class="badge">${esc(data.city)}</div>` : ``}
+            ${data.vin ? `<div class="badge">VIN: ${esc(data.vin)}</div>` : ``}
+          </div>
+          <div class="meta">${esc(leftMeta)}</div>
+          ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
+          ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
+
+          <div class="actions">
+            <button class="btn primary" id="liveAgent" type="button">Live Agent</button>
+            <button class="btn" id="advisorBtn" type="button">Talk to an Advisor</button>
+            <a class="btn" href="./share.html">Back</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // ----- Carousel logic (arrows + dots + swipe)
+    let idx = 0;
+    const heroImg = document.getElementById('heroImg');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dotsEl = document.getElementById('dots');
+
+    function renderDots(){
+      if(!dotsEl) return;
+      dotsEl.innerHTML = urls.map((_,i)=>`<div class="dot${i===idx?' active':''}" data-i="${i}"></div>`).join('');
+    }
+    function show(i){
+      if(!urls.length) return;
+      idx = (i + urls.length) % urls.length;
+      const next=urls[idx];
+      const neighborNext = urls[(idx+1)%urls.length];
+      heroImg.style.opacity = '0';
+      setTimeout(()=>{ heroImg.src = next; heroImg.onload = ()=>{ heroImg.style.opacity = '1'; }; }, 120);
+      preload(neighborNext);
+      renderDots();
+    }
+    if(dotsEl){ renderDots(); dotsEl.addEventListener('click', (e)=>{ const d=e.target.closest('.dot'); if(!d) return; show(Number(d.getAttribute('data-i')||0)); }); }
+    if(prevBtn) prevBtn.onclick=()=>show(idx-1);
+    if(nextBtn) nextBtn.onclick=()=>show(idx+1);
+
+    // swipe support
+    let sx=null, sy=null;
+    heroImg.addEventListener('touchstart',(e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; },{passive:true});
+    heroImg.addEventListener('touchend',(e)=>{
+      if(sx==null) return;
+      const dx=e.changedTouches[0].clientX - sx;
+      const dy=e.changedTouches[0].clientY - sy;
+      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){ if(dx<0) show(idx+1); else show(idx-1); }
+      sx=sy=null;
+    },{passive:true});
+
+    // ----- Concierge Drawer
+    const drawer=$('drawer'), backdrop=$('drawerBackdrop'), body=$('drawerBody');
+    const tabs=[...drawer.querySelectorAll('.drawer-tab')];
+
+    function openDrawer(tab='contact'){ drawer.classList.add('open'); backdrop.classList.add('open'); setTab(tab); }
+    function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('open'); }
+    backdrop.onclick=closeDrawer;
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
+
+    function setTab(tabName){
+      tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===tabName));
+      if(tabName==='contact') renderContact(); else renderForm();
+    }
+    tabs.forEach(t=>t.onclick=()=>setTab(t.dataset.tab));
+
+    function renderContact(){
+      const phone='+14244256211';
+      const smsBody=encodeURIComponent('Hi! I’m interested in ' + title);
+      const email='welcome.evtime@gmail.com';
+      const mailSub=encodeURIComponent('Interested in ' + title);
+      const mailBody=encodeURIComponent('Link: ' + location.href);
+
+      body.innerHTML = `
+        <div class="contact-buttons">
+          <a class="call" href="tel:${phone}">Call Now</a>
+          <a class="text" href="sms:${phone}?body=${smsBody}">Text Now</a>
+          <a class="email" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">Email Concierge</a>
+        </div>
+        <div class="copy-links">
+          <button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button>
+        </div>
+      `;
+      $('copyEmail').onclick=()=>{ navigator.clipboard.writeText(email); alert('Email copied.'); };
+      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I’m interested in '+title); alert('Message copied.'); };
+    }
+
+    function renderForm(){
+      body.innerHTML = `
+        <form id="advisorForm">
+          <label>Name</label><input id="name" autocomplete="name" required>
+          <label>Phone</label><input id="phone" autocomplete="tel">
+          <label>Email</label><input id="email" type="email" autocomplete="email">
+          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I’m interested in ${esc(title)}"></textarea>
+          <div class="financing"><input type="checkbox" id="financeChk"> <label for="financeChk">I’m interested in Financing</label></div>
+          <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
+          <div id="formMsg" class="success" role="status" aria-live="polite"></div>
+        </form>
+      `;
+      $('advisorForm').onsubmit=async(e)=>{
+        e.preventDefault();
+        const name=$('name').value.trim();
+        const phone=$('phone').value.trim();
+        const email=$('email').value.trim();
+        const message=$('msg').value.trim();
+        const financing=$('financeChk').checked;
+
+        if(!phone && !email){
+          $('formMsg').textContent='Please enter a phone or email so we can reach you.';
+          $('formMsg').style.color='#b00020';
+          return;
+        }
+        const combinedMessage=(financing? '[Financing: Yes] ' : '[Financing: No] ') + message;
+
+        const { error } = await supabase.from('leads').insert({
+          listing_id:id, name, phone, email, message: combinedMessage
+        }, { returning:'minimal' });
+
+        if(error){
+          $('formMsg').textContent='Could not send. Please try again.';
+          $('formMsg').style.color='#b00020';
+        } else {
+          $('formMsg').textContent='Thanks! We received your note.';
+          $('formMsg').style.color='#0a7';
+          setTimeout(closeDrawer, 1200);
+          e.target.reset();
+        }
+      };
+    }
+
+    // Openers
+    document.getElementById('liveAgent').onclick=()=>openDrawer('contact');
+    document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
+  })();
 })();
 </script>
 </body>
