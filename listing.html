@@ -321,7 +321,8 @@ form textarea{resize:vertical}
         <div class="contact-buttons">
           <a class="call" href="tel:${phone}">Call Now</a>
           <a class="text" href="sms:${phone}?body=${smsBody}">Text Now</a>
-          <a class="email" href="mailto:${email}?subject=${mailSub}&body=${mailBody}">Email Concierge</a>
+         <a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=EVTime%20Inquiry" target="_blank" onclick="if(!window.location.hostname.includes('mail.google.com')){navigator.clipboard.writeText('${email}'); alert('Email address copied!');}">Email Concierge</a>
+
         </div>
         <div class="copy-links">
           <button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button>
