@@ -1,206 +1,385 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>EVTime — Listing</title>
-  <!-- Visuals come entirely from your existing stylesheet -->
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EVTime — Vehicle Details</title>
+<meta name="theme-color" content="#0b0a09"/>
+
+<style>
+:root{
+  --bg:#0b0a09;         /* dark brown/charcoal background */
+  --card:#ffffff;       /* white card */
+  --text:#1c1917;       /* dark text on white card */
+  --muted:#78716c;
+  --line:#e7e5e4;
+  --copper:#c98c5b;     /* brand copper */
+  --copper-dark:#9e6d45;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+
+/* Header / Logo (matches site) */
+.topbar{background:#fff;border-bottom:1px solid var(--line)}
+.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
+#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
+@media (max-width:600px){ #site-logo{max-height:220px} }
+
+/* Card */
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:visible;
+  box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+
+/* HERO + CAROUSEL */
+.hero{
+  position:relative;background:#000;border-top-left-radius:14px;border-top-right-radius:14px;
+  overflow:hidden; /* keep media nicely clipped */
+  border-bottom:1px solid var(--line);
+}
+.hero-frame{
+  position:relative;background:#000; /* image sits on black */
+  border:1px solid var(--copper);    /* copper accent frame */
+  border-radius:12px;margin:12px;    /* inner frame margin */
+  overflow:hidden;
+}
+.slide{
+  width:100%;height:60vh;max-height:72vh;min-height:320px;
+  display:flex;align-items:center;justify-content:center;
+  background:#000;
+}
+.slide img{
+  width:100%;height:100%;object-fit:contain;display:block;background:#000;
+}
+
+/* Carousel controls */
+.nav-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border:none;border-radius:999px;cursor:pointer;
+  background:rgba(255,255,255,.14);color:#fff;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.25);
+}
+.nav-btn:hover{background:rgba(255,255,255,.22)}
+.nav-prev{left:16px}
+.nav-next{right:16px}
+
+/* Dots */
+.dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
+.dot.active{background:#fff}
+@media (hover:hover){
+  .dot:hover{background:rgba(255,255,255,.6)}
+}
+
+/* SOLD badge */
+.sold{position:absolute;top:18px;left:18px;background:rgba(0,0,0,.75);color:#fff;
+  padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.03em}
+
+/* Body */
+.body{padding:14px 16px 18px}
+.title{font-weight:900;font-size:20px}
+.price{font-weight:900;color:#0b0a09;background:var(--copper);padding:2px 10px;border-radius:999px;display:inline-block;margin-top:6px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#f8f8f8}
+.meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
+.desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
+
+/* Actions */
+.actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;
+  border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer;transition:.15s
+}
+.btn.primary{background:var(--copper);border-color:transparent;color:#0b0a09}
+.btn.primary:hover{background:var(--copper-dark);color:#fff}
+
+/* Footer */
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+
+/* Concierge Drawer (Apple-clean) */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998}
+.drawer{position:fixed;top:0;right:-420px;width:380px;max-width:92vw;height:100%;
+  background:#fff;box-shadow:-6px 0 28px rgba(0,0,0,.18);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.drawer.open{right:0}
+.drawer-backdrop.open{display:block}
+.drawer-header{padding:16px;border-bottom:1px solid var(--line)}
+.drawer-header h3{margin:0;font-size:18px}
+.drawer-sub{color:var(--muted);font-size:13px}
+.drawer-tabs{display:flex;border-bottom:1px solid var(--line)}
+.drawer-tab{flex:1;padding:12px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
+.drawer-tab.active{border-color:var(--copper);color:var(--copper-dark)}
+.drawer-body{flex:1;overflow:auto;padding:16px}
+.drawer-footer{border-top:1px solid var(--line);padding:12px;text-align:center;font-size:13px;color:var(--muted)}
+.contact-buttons{display:flex;flex-direction:column;gap:10px}
+.contact-buttons a{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:800;border:1px solid var(--line);color:#111;background:#fff}
+.contact-buttons a.call{background:var(--copper);color:#0b0a09;border-color:transparent}
+.copy-links{margin-top:8px;text-align:center}
+.copy-links button{border:none;background:none;color:var(--copper-dark);cursor:pointer;font-size:13px}
+form label{display:block;margin-top:12px;font-weight:700}
+form input,form textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px}
+form textarea{resize:vertical}
+.financing{display:flex;align-items:center;gap:8px;margin-top:12px}
+.financing input{width:auto}
+.success{color:#0a7;margin-top:8px;font-weight:700}
+.back{margin:10px 0 0}.back a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+</style>
 </head>
 <body>
-  <header></header>
 
-  <main>
-    <!-- HERO (uses your existing styles.css) -->
-    <section class="hero" id="hero">
-      <div class="hero-stage" id="heroStage"></div>
-      <div class="hero-nav">
-        <button id="prevImg" aria-label="Previous image">‹</button>
-        <button id="nextImg" aria-label="Next image">›</button>
+<!-- Topbar / Logo -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <a href="/" aria-label="Go to Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime">
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="back"><a href="./share.html">← Back to inventory</a></div>
+  <div id="mount"></div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">© <span id="yr"></span> E.V.Time</div>
+</footer>
+
+<!-- Concierge Drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h3>EVTime Concierge</h3>
+    <div class="drawer-sub">Real humans. Fast replies.</div>
+  </div>
+  <div class="drawer-tabs">
+    <div class="drawer-tab active" data-tab="contact">Quick Contact</div>
+    <div class="drawer-tab" data-tab="form">Talk to an Advisor</div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer">We usually respond within 1 business hour.</div>
+</div>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  const SUPABASE_URL=(window.SUPABASE_URL||"https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+  const SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||"").trim();
+  const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+  const $=id=>document.getElementById(id);
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  // ----- Helpers for legacy image paths
+  const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function parseImages(images){
+    if(!images) return [];
+    if(Array.isArray(images)) return images;
+    const s=String(images||'').trim();
+    if(s.startsWith('[')){ try{ return JSON.parse(s)||[] }catch{ return [] } }
+    return s.split(',').map(v=>v.trim()).filter(Boolean);
+  }
+  function normalize(path){
+    return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
+  }
+  function publicImageUrls(path){
+    let s=String(path||'').trim().replace(/^\/+/, '');
+    if(!s) return [];
+    const candidates=[];
+    if(/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+    candidates.push(s);
+    candidates.push(s.replace(/^images\//i,''));
+    if(!/^images\//i.test(s)) candidates.push('images/'+s);
+    const uniq=[...new Set(candidates)];
+    return uniq.map(p=>supabase.storage.from('images').getPublicUrl(p).data?.publicUrl||null).filter(Boolean);
+  }
+  function preload(url){ if(!url) return; const im=new Image(); im.decoding='async'; im.loading='eager'; im.src=url; }
+
+  // ----- Load listing
+  const mount=$('mount');
+  const id=new URLSearchParams(location.search).get('id');
+  if(!id){ mount.innerHTML = `<div class="card body" style="padding:16px">Missing listing id.</div>`; return; }
+
+  (async () => {
+    const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
+    if(error || !data){ mount.innerHTML = `<div class="card body" style="padding:16px">Listing not found.</div>`; return; }
+
+    const title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');
+    document.title = `EVTime — ${title}`;
+
+    const paths=parseImages(data.images).map(normalize);
+    const urls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
+    const heroUrl=urls[0] || 'og-card.png';
+    if(urls[1]) preload(urls[1]);
+
+    const leftMeta=[
+      data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
+      data.title_status ? `Title: ${data.title_status}` : null,
+      data.condition ? `Cond: ${data.condition}` : null
+    ].filter(Boolean).join(' • ');
+    const priceText=(data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
+    const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
+
+    // ----- Page HTML
+    mount.innerHTML = `
+      <div class="card">
+        <div class="hero">
+          ${sold}
+          <div class="hero-frame">
+            <div class="slide"><img id="heroImg" src="${esc(heroUrl)}" alt="${esc(title)}" decoding="async"></div>
+            ${urls.length>1 ? `
+              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
+              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
+              <div class="dots" id="dots"></div>
+            `:``}
+          </div>
+        </div>
+        <div class="body">
+          <div class="title">${esc(title)}</div>
+          ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
+          <div class="badges">
+            ${data.vehicle_type ? `<div class="badge">${esc(String(data.vehicle_type).toUpperCase())}</div>` : ``}
+            ${data.city ? `<div class="badge">${esc(data.city)}</div>` : ``}
+            ${data.vin ? `<div class="badge">VIN: ${esc(data.vin)}</div>` : ``}
+          </div>
+          <div class="meta">${esc(leftMeta)}</div>
+          ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
+          ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
+
+          <div class="actions">
+            <button class="btn primary" id="liveAgent" type="button">Live Agent</button>
+            <button class="btn" id="advisorBtn" type="button">Talk to an Advisor</button>
+            <a class="btn" href="./share.html">Back</a>
+          </div>
+        </div>
       </div>
-      <div class="dots" id="dots"></div>
-    </section>
+    `;
 
-    <!-- Title / specs -->
-    <section id="specs"></section>
+    // ----- Carousel logic (arrows + dots + swipe)
+    let idx = 0;
+    const heroImg = document.getElementById('heroImg');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dotsEl = document.getElementById('dots');
 
-    <!-- Single CTA row under photos only -->
-    <div class="cta-row" id="ctaRow">
-      <button id="ctaAdvisorTop">Contact an Advisor</button>
-      <button id="ctaBackTop">Back</button>
-    </div>
+    function renderDots(){
+      if(!dotsEl) return;
+      dotsEl.innerHTML = urls.map((_,i)=>`<div class="dot${i===idx?' active':''}" data-i="${i}"></div>`).join('');
+    }
+    function show(i){
+      if(!urls.length) return;
+      idx = (i + urls.length) % urls.length;
+      const next=urls[idx];
+      const neighborNext = urls[(idx+1)%urls.length];
+      heroImg.style.opacity = '0';
+      setTimeout(()=>{ heroImg.src = next; heroImg.onload = ()=>{ heroImg.style.opacity = '1'; }; }, 120);
+      preload(neighborNext);
+      renderDots();
+    }
+    if(dotsEl){ renderDots(); dotsEl.addEventListener('click', (e)=>{ const d=e.target.closest('.dot'); if(!d) return; show(Number(d.getAttribute('data-i')||0)); }); }
+    if(prevBtn) prevBtn.onclick=()=>show(idx-1);
+    if(nextBtn) nextBtn.onclick=()=>show(idx+1);
 
-    <!-- Your details / ads content -->
-    <section id="details"></section>
-  </main>
+    // swipe support
+    let sx=null, sy=null;
+    heroImg.addEventListener('touchstart',(e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; },{passive:true});
+    heroImg.addEventListener('touchend',(e)=>{
+      if(sx==null) return;
+      const dx=e.changedTouches[0].clientX - sx;
+      const dy=e.changedTouches[0].clientY - sy;
+      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){ if(dx<0) show(idx+1); else show(idx-1); }
+      sx=sy=null;
+    },{passive:true});
 
-  <!-- Drawer: visuals controlled by your CSS (unchanged) -->
-  <aside class="drawer" id="advisorDrawer" aria-hidden="true" data-drawer>
-    <div class="drawer-header">
-      <div class="drawer-title">EVTime Concierge</div>
-      <button class="drawer-close" id="drawerClose" data-drawer-close>Close</button>
-    </div>
-    <div class="drawer-body">
-      <div class="section">
-        <h3>Quick Contact</h3>
-        <div class="contact-buttons" id="quickContact"></div>
+    // ----- Concierge Drawer
+    const drawer=$('drawer'), backdrop=$('drawerBackdrop'), body=$('drawerBody');
+    const tabs=[...drawer.querySelectorAll('.drawer-tab')];
+
+    function openDrawer(tab='contact'){ drawer.classList.add('open'); backdrop.classList.add('open'); setTab(tab); }
+    function closeDrawer(){ drawer.classList.remove('open'); backdrop.classList.remove('open'); }
+    backdrop.onclick=closeDrawer;
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
+
+    function setTab(tabName){
+      tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===tabName));
+      if(tabName==='contact') renderContact(); else renderForm();
+    }
+    tabs.forEach(t=>t.onclick=()=>setTab(t.dataset.tab));
+
+    function renderContact(){
+      const phone='+14244256211';
+      const smsBody=encodeURIComponent('Hi! I’m interested in ' + title);
+      const email='welcome.evtime@gmail.com';
+      const mailSub=encodeURIComponent('Interested in ' + title);
+      const mailBody=encodeURIComponent('Link: ' + location.href);
+
+      body.innerHTML = `
+        <div class="contact-buttons">
+          <a class="call" href="tel:${phone}">Call Now</a>
+          <a class="text" href="sms:${phone}?body=${smsBody}">Text Now</a>
+         <a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=EVTime%20Inquiry" target="_blank" onclick="if(!window.location.hostname.includes('mail.google.com')){navigator.clipboard.writeText('${email}'); alert('Email address copied!');}">Email Concierge</a>
+
+        </div>
         <div class="copy-links">
           <button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button>
         </div>
-      </div>
-      <div class="section">
-        <h3>Request Information</h3>
-        <form id="advisorForm" class="form">
-          <div class="row">
-            <input id="fName" name="name" placeholder="Full name" required />
-            <input id="fPhone" name="phone" placeholder="Phone" />
-          </div>
-          <input id="fEmail" name="email" type="email" placeholder="Email" required />
-          <textarea id="fMsg" name="message" rows="5" placeholder="Your message"></textarea>
-          <label><input type="checkbox" id="fFinance" /> I’m interested in financing</label>
-          <button type="submit">Send to Concierge</button>
-        </form>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Scripts -->
-  <script src="config.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    // Constants
-    const PHONE_PUBLIC = "+1 424-425-6211";
-    const EMAIL_PUBLIC = "welcome.evtime@gmail.com";
-    const supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-
-    // Helpers
-    const qs = (s, r=document) => r.querySelector(s);
-    const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
-    const getParam = (n) => new URLSearchParams(location.search).get(n);
-
-    function normalizeImagePath(p, id){
-      if (!p) return null;
-      if (/^https?:\/\//i.test(p)) return p;        // already URL
-      let key = p.replace(/^images\//,'').replace(/^images\//,''); // strip legacy prefixes twice if needed
-      if (!/^[0-9a-f-]{36}$/i.test(key) && id) key = `${id}/${key}`; // legacy filename → put in id/
-      return `${window.SUPABASE_URL}/storage/v1/object/public/images/${key}`;
-    }
-
-    // Carousel
-    let imgs = []; let idx = 0;
-    function renderCarousel(){
-      const stage = qs('#heroStage'); if (!stage) return;
-      stage.innerHTML = '';
-      const img = document.createElement('img');
-      img.alt = 'Vehicle photo';
-      img.src = imgs[idx] || '';
-      stage.appendChild(img);
-
-      const dots = qs('#dots'); if (!dots) return;
-      dots.innerHTML = '';
-      imgs.forEach((_, i) => {
-        const d = document.createElement('div');
-        d.className = 'dot' + (i === idx ? ' active' : '');
-        d.addEventListener('click', () => { idx = i; renderCarousel(); });
-        dots.appendChild(d);
-      });
-    }
-    function nextImg(){ if (!imgs.length) return; idx = (idx+1) % imgs.length; renderCarousel(); }
-    function prevImg(){ if (!imgs.length) return; idx = (idx-1+imgs.length) % imgs.length; renderCarousel(); }
-
-    const nextBtn = qs('#nextImg'); if (nextBtn) nextBtn.addEventListener('click', nextImg);
-    const prevBtn = qs('#prevImg'); if (prevBtn) prevBtn.addEventListener('click', prevImg);
-
-    // Drawer controls (no visual changes)
-    const drawer = qs('#advisorDrawer');
-    function openDrawer(){ if (drawer){ drawer.classList.add('open'); drawer.setAttribute('aria-hidden','false'); } }
-    function closeDrawer(){ if (drawer){ drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); } }
-    window.closeDrawer = closeDrawer;
-
-    const ctaAdv = qs('#ctaAdvisorTop'); if (ctaAdv) ctaAdv.addEventListener('click', openDrawer);
-    const ctaBack = qs('#ctaBackTop'); if (ctaBack) ctaBack.addEventListener('click', ()=>{
-      const isOpen = drawer && (drawer.classList.contains('open') || drawer.getAttribute('aria-hidden') === 'false');
-      if (isOpen) { closeDrawer(); return; }
-      if (history.length > 1) history.back(); else location.href = 'share.html';
-    });
-    const drawerClose = qs('#drawerClose'); if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
-
-    // Quick Contact: Gmail web compose with fallback copy
-    function setQuickContact(phone, email, mailSub, mailBody){
-      const c = qs('#quickContact'); if (!c) return;
-      const smsBody = encodeURIComponent(mailBody);
-      c.innerHTML = `
-        <a class="call" href="tel:${phone}">Call Now</a>
-        <a class="text" href="sms:${phone}?body=${smsBody}">Text Now</a>
-        <a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(mailSub)}" target="_blank"
-           onclick="if(!window.location.hostname.includes('mail.google.com')){navigator.clipboard.writeText('${email}'); alert('Email address copied!');}">
-           Email Concierge
-        </a>
       `;
-      const copyEmail = qs('#copyEmail'); if (copyEmail) copyEmail.onclick = ()=>{ navigator.clipboard.writeText(email); alert('Email copied!'); };
-      const copyMsg = qs('#copyMsg'); if (copyMsg) copyMsg.onclick = ()=>{ navigator.clipboard.writeText(mailBody); alert('Message copied!'); };
+      $('copyEmail').onclick=()=>{ navigator.clipboard.writeText(email); alert('Email copied.'); };
+      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I’m interested in '+title); alert('Message copied.'); };
     }
 
-    // Form submit → public.leads
-    const form = qs('#advisorForm');
-    if (form) form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const name = qs('#fName').value.trim();
-      const phone = qs('#fPhone').value.trim();
-      const email = qs('#fEmail').value.trim();
-      const msg = qs('#fMsg').value.trim();
-      const finance = qs('#fFinance').checked;
-      const listing_id = getParam('id');
-      const message = `${finance ? '[Financing: Yes] ' : ''}${msg}`;
+    function renderForm(){
+      body.innerHTML = `
+        <form id="advisorForm">
+          <label>Name</label><input id="name" autocomplete="name" required>
+          <label>Phone</label><input id="phone" autocomplete="tel">
+          <label>Email</label><input id="email" type="email" autocomplete="email">
+          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I’m interested in ${esc(title)}"></textarea>
+          <div class="financing"><input type="checkbox" id="financeChk"> <label for="financeChk">I’m interested in Financing</label></div>
+          <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
+          <div id="formMsg" class="success" role="status" aria-live="polite"></div>
+        </form>
+      `;
+      $('advisorForm').onsubmit=async(e)=>{
+        e.preventDefault();
+        const name=$('name').value.trim();
+        const phone=$('phone').value.trim();
+        const email=$('email').value.trim();
+        const message=$('msg').value.trim();
+        const financing=$('financeChk').checked;
 
-      const { error } = await supabase.from('leads').insert({ listing_id, name, phone, email, message });
-      if (error) { alert('Could not submit. Please try again.'); console.error(error); return; }
-      alert('Thanks! EVTime Concierge has been notified.');
-      closeDrawer();
-    });
+        if(!phone && !email){
+          $('formMsg').textContent='Please enter a phone or email so we can reach you.';
+          $('formMsg').style.color='#b00020';
+          return;
+        }
+        const combinedMessage=(financing? '[Financing: Yes] ' : '[Financing: No] ') + message;
 
-    // Init
-    (async function init(){
-      const id = getParam('id');
-      if (!id) { location.href = 'share.html'; return; }
+        const { error } = await supabase.from('leads').insert({
+          listing_id:id, name, phone, email, message: combinedMessage
+        }, { returning:'minimal' });
 
-      const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
-      if (error || !data) { console.error(error); alert('Listing not found.'); return; }
-
-      const title = [data.year, data.make, data.model, data.trim].filter(Boolean).join(' ');
-      const specs = qs('#specs');
-      if (specs){
-        specs.innerHTML = `<h1>${title}</h1>` +
-          `<div>${data.city ? data.city + ' • ' : ''}${data.mileage ? (Number(data.mileage).toLocaleString() + ' mi • ') : ''}${data.price ? ('$' + Number(data.price).toLocaleString()) : ''}</div>`;
-      }
-
-      // images (array or legacy string)
-      let list = [];
-      if (Array.isArray(data.images)) list = data.images;
-      else if (typeof data.images === 'string' && data.images.trim()) {
-        try { list = JSON.parse(data.images); if (!Array.isArray(list)) list = [data.images]; }
-        catch { list = data.images.split(',').map(s=>s.trim()); }
-      }
-      imgs = list.map(p => normalizeImagePath(p, data.id)).filter(Boolean);
-      if (!imgs.length) imgs = [''];
-      idx = 0; renderCarousel();
-
-      // quick contact
-      const mailSub = 'EVTime Inquiry';
-      const baseMsg = `Hello EVTime, I\'m interested in ${title}${data.vin ? ' (VIN: ' + data.vin + ')' : ''}.`;
-      setQuickContact(PHONE_PUBLIC, EMAIL_PUBLIC, mailSub, baseMsg);
-
-      // label cleanup: remove “Live Agent”, rename “Talk to an Advisor” → “Contact an Advisor”
-      const cleanLabels = () => {
-        qsa('a,button,[role="button"]').forEach(el => {
-          const t = (el.innerText || el.textContent || '').trim().toLowerCase();
-          if (t === 'live agent' || /(^|\s)live\s*agent(\s|$)/.test(t)) el.style.display = 'none';
-          if (/^talk\s*to\s*an\s*advisor$/.test(t)) el.textContent = 'Contact an Advisor';
-        });
+        if(error){
+          $('formMsg').textContent='Could not send. Please try again.';
+          $('formMsg').style.color='#b00020';
+        } else {
+          $('formMsg').textContent='Thanks! We received your note.';
+          $('formMsg').style.color='#0a7';
+          setTimeout(closeDrawer, 1200);
+          e.target.reset();
+        }
       };
-      cleanLabels();
-      new MutationObserver(cleanLabels).observe(document.documentElement, { childList: true, subtree: true });
-    })();
-  </script>
+    }
+
+    // Openers
+    document.getElementById('liveAgent').onclick=()=>openDrawer('contact');
+    document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
+  })();
+})();
+</script>
 </body>
 </html>
