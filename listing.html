@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>EVTime — Listing</title>
-  <!-- NOTE: Theme/visuals come entirely from your existing styles.css. No drawer/style overrides here. -->
+  <!-- Visuals come entirely from your existing stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header></header>
 
   <main>
-    <!-- HERO (uses your existing styles; images are object-fit: contain) -->
+    <!-- HERO (uses your existing styles.css) -->
     <section class="hero" id="hero">
       <div class="hero-stage" id="heroStage"></div>
       <div class="hero-nav">
@@ -21,20 +21,20 @@
       <div class="dots" id="dots"></div>
     </section>
 
-    <!-- SIMPLE TITLE / SPECS (your CSS can style this) -->
+    <!-- Title / specs -->
     <section id="specs"></section>
 
-    <!-- UNDER-PHOTOS CTA ROW (ONLY here) -->
+    <!-- Single CTA row under photos only -->
     <div class="cta-row" id="ctaRow">
       <button id="ctaAdvisorTop">Contact an Advisor</button>
       <button id="ctaBackTop">Back</button>
     </div>
 
-    <!-- DETAILS (keep your real content; placeholder) -->
+    <!-- Your details / ads content -->
     <section id="details"></section>
   </main>
 
-  <!-- EXISTING DRAWER (structure only; visuals come from your CSS) -->
+  <!-- Drawer: visuals controlled by your CSS (unchanged) -->
   <aside class="drawer" id="advisorDrawer" aria-hidden="true" data-drawer>
     <div class="drawer-header">
       <div class="drawer-title">EVTime Concierge</div>
@@ -64,43 +64,39 @@
     </div>
   </aside>
 
-  <!-- SCRIPTS -->
+  <!-- Scripts -->
   <script src="config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // CONSTANTS
+    // Constants
     const PHONE_PUBLIC = "+1 424-425-6211";
     const EMAIL_PUBLIC = "welcome.evtime@gmail.com";
     const supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-    // HELPERS
+    // Helpers
     const qs = (s, r=document) => r.querySelector(s);
     const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
     const getParam = (n) => new URLSearchParams(location.search).get(n);
 
     function normalizeImagePath(p, id){
       if (!p) return null;
-      if (/^https?:\/\//i.test(p)) return p; // already a URL
-      let key = p.replace(/^images\//,'').replace(/^images\//,'');
-      if (!/^\w{8}-/i.test(key) && id) key = `${id}/${key}`; // legacy filename → put in id folder
+      if (/^https?:\/\//i.test(p)) return p;        // already URL
+      let key = p.replace(/^images\//,'').replace(/^images\//,''); // strip legacy prefixes twice if needed
+      if (!/^[0-9a-f-]{36}$/i.test(key) && id) key = `${id}/${key}`; // legacy filename → put in id/
       return `${window.SUPABASE_URL}/storage/v1/object/public/images/${key}`;
     }
 
-    function smsEncode(s){ return encodeURIComponent(s); }
-
-    // CAROUSEL
+    // Carousel
     let imgs = []; let idx = 0;
     function renderCarousel(){
-      const stage = qs('#heroStage');
+      const stage = qs('#heroStage'); if (!stage) return;
       stage.innerHTML = '';
       const img = document.createElement('img');
       img.alt = 'Vehicle photo';
-      img.style.maxWidth = '100%';
-      img.style.maxHeight = '100%';
-      img.style.objectFit = 'contain';
       img.src = imgs[idx] || '';
       stage.appendChild(img);
-      const dots = qs('#dots');
+
+      const dots = qs('#dots'); if (!dots) return;
       dots.innerHTML = '';
       imgs.forEach((_, i) => {
         const d = document.createElement('div');
@@ -111,40 +107,43 @@
     }
     function nextImg(){ if (!imgs.length) return; idx = (idx+1) % imgs.length; renderCarousel(); }
     function prevImg(){ if (!imgs.length) return; idx = (idx-1+imgs.length) % imgs.length; renderCarousel(); }
-    document.addEventListener('click', (e)=>{
-      if (e.target && e.target.id === 'nextImg') nextImg();
-      if (e.target && e.target.id === 'prevImg') prevImg();
-    });
 
-    // DRAWER
+    const nextBtn = qs('#nextImg'); if (nextBtn) nextBtn.addEventListener('click', nextImg);
+    const prevBtn = qs('#prevImg'); if (prevBtn) prevBtn.addEventListener('click', prevImg);
+
+    // Drawer controls (no visual changes)
     const drawer = qs('#advisorDrawer');
     function openDrawer(){ if (drawer){ drawer.classList.add('open'); drawer.setAttribute('aria-hidden','false'); } }
     function closeDrawer(){ if (drawer){ drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); } }
     window.closeDrawer = closeDrawer;
 
-    // CTA BUTTONS (only under photos)
-    qs('#ctaAdvisorTop').addEventListener('click', openDrawer);
-    qs('#ctaBackTop').addEventListener('click', ()=>{
+    const ctaAdv = qs('#ctaAdvisorTop'); if (ctaAdv) ctaAdv.addEventListener('click', openDrawer);
+    const ctaBack = qs('#ctaBackTop'); if (ctaBack) ctaBack.addEventListener('click', ()=>{
       const isOpen = drawer && (drawer.classList.contains('open') || drawer.getAttribute('aria-hidden') === 'false');
       if (isOpen) { closeDrawer(); return; }
       if (history.length > 1) history.back(); else location.href = 'share.html';
     });
+    const drawerClose = qs('#drawerClose'); if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
 
-    // QUICK CONTACT (Gmail compose with clipboard fallback)
+    // Quick Contact: Gmail web compose with fallback copy
     function setQuickContact(phone, email, mailSub, mailBody){
-      const c = qs('#quickContact');
-      const smsBody = smsEncode(mailBody);
+      const c = qs('#quickContact'); if (!c) return;
+      const smsBody = encodeURIComponent(mailBody);
       c.innerHTML = `
         <a class="call" href="tel:${phone}">Call Now</a>
         <a class="text" href="sms:${phone}?body=${smsBody}">Text Now</a>
-        <a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(mailSub)}" target="_blank" onclick="if(!window.location.hostname.includes('mail.google.com')){navigator.clipboard.writeText('${email}'); alert('Email address copied!');}">Email Concierge</a>
+        <a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(mailSub)}" target="_blank"
+           onclick="if(!window.location.hostname.includes('mail.google.com')){navigator.clipboard.writeText('${email}'); alert('Email address copied!');}">
+           Email Concierge
+        </a>
       `;
-      qs('#copyEmail').onclick = ()=>{ navigator.clipboard.writeText(email); alert('Email copied!'); };
-      qs('#copyMsg').onclick = ()=>{ navigator.clipboard.writeText(mailBody); alert('Message copied!'); };
+      const copyEmail = qs('#copyEmail'); if (copyEmail) copyEmail.onclick = ()=>{ navigator.clipboard.writeText(email); alert('Email copied!'); };
+      const copyMsg = qs('#copyMsg'); if (copyMsg) copyMsg.onclick = ()=>{ navigator.clipboard.writeText(mailBody); alert('Message copied!'); };
     }
 
-    // FORM SUBMIT → public.leads
-    qs('#advisorForm').addEventListener('submit', async (e)=>{
+    // Form submit → public.leads
+    const form = qs('#advisorForm');
+    if (form) form.addEventListener('submit', async (e)=>{
       e.preventDefault();
       const name = qs('#fName').value.trim();
       const phone = qs('#fPhone').value.trim();
@@ -153,13 +152,14 @@
       const finance = qs('#fFinance').checked;
       const listing_id = getParam('id');
       const message = `${finance ? '[Financing: Yes] ' : ''}${msg}`;
+
       const { error } = await supabase.from('leads').insert({ listing_id, name, phone, email, message });
       if (error) { alert('Could not submit. Please try again.'); console.error(error); return; }
       alert('Thanks! EVTime Concierge has been notified.');
       closeDrawer();
     });
 
-    // INIT — load listing + wire contact
+    // Init
     (async function init(){
       const id = getParam('id');
       if (!id) { location.href = 'share.html'; return; }
@@ -168,9 +168,13 @@
       if (error || !data) { console.error(error); alert('Listing not found.'); return; }
 
       const title = [data.year, data.make, data.model, data.trim].filter(Boolean).join(' ');
-      qs('#specs').innerHTML = `<h1>${title}</h1>` +
-        `<div>${data.city ? data.city + ' • ' : ''}${data.mileage ? (Number(data.mileage).toLocaleString() + ' mi • ') : ''}${data.price ? ('$' + Number(data.price).toLocaleString()) : ''}</div>`;
+      const specs = qs('#specs');
+      if (specs){
+        specs.innerHTML = `<h1>${title}</h1>` +
+          `<div>${data.city ? data.city + ' • ' : ''}${data.mileage ? (Number(data.mileage).toLocaleString() + ' mi • ') : ''}${data.price ? ('$' + Number(data.price).toLocaleString()) : ''}</div>`;
+      }
 
+      // images (array or legacy string)
       let list = [];
       if (Array.isArray(data.images)) list = data.images;
       else if (typeof data.images === 'string' && data.images.trim()) {
@@ -181,16 +185,17 @@
       if (!imgs.length) imgs = [''];
       idx = 0; renderCarousel();
 
+      // quick contact
       const mailSub = 'EVTime Inquiry';
       const baseMsg = `Hello EVTime, I\'m interested in ${title}${data.vin ? ' (VIN: ' + data.vin + ')' : ''}.`;
       setQuickContact(PHONE_PUBLIC, EMAIL_PUBLIC, mailSub, baseMsg);
 
-      // CLEAN LABELS — remove "Live Agent" and rename Talk→Contact
+      // label cleanup: remove “Live Agent”, rename “Talk to an Advisor” → “Contact an Advisor”
       const cleanLabels = () => {
         qsa('a,button,[role="button"]').forEach(el => {
           const t = (el.innerText || el.textContent || '').trim().toLowerCase();
-          if (t === 'live agent' || /(^|\\s)live\\s*agent(\\s|$)/.test(t)) el.style.display = 'none';
-          if (/^talk\\s*to\\s*an\\s*advisor$/.test(t)) el.textContent = 'Contact an Advisor';
+          if (t === 'live agent' || /(^|\s)live\s*agent(\s|$)/.test(t)) el.style.display = 'none';
+          if (/^talk\s*to\s*an\s*advisor$/.test(t)) el.textContent = 'Contact an Advisor';
         });
       };
       cleanLabels();
