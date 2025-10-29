@@ -381,5 +381,51 @@ form textarea{resize:vertical}
   })();
 })();
 </script>
+  <script>
+(function () {
+  // 1) Hide any "Live Agent" button/link
+  const liveAgentEls = Array.from(document.querySelectorAll('a,button'))
+    .filter(el => /live\s*agent/i.test(el.textContent || ''));
+  liveAgentEls.forEach(el => el.style.display = 'none');
+
+  // 2) Find existing "Talk to an Advisor" element and rename it
+  const advisorEl = Array.from(document.querySelectorAll('a,button'))
+    .find(el => /talk\s*to\s*an\s*advisor/i.test(el.textContent || ''));
+
+  if (!advisorEl) return; // nothing to do if not found
+
+  advisorEl.textContent = 'Contact an Advisor';
+
+  // 3) Insert a Back button to the right of the Advisor button
+  const backBtn = document.createElement(advisorEl.tagName.toLowerCase() === 'a' ? 'a' : 'button');
+  backBtn.className = (advisorEl.className || '') + ' back-btn';
+  backBtn.textContent = 'Back';
+  backBtn.style.marginLeft = '0.5rem';
+
+  // Behavior: close drawer if open; else back to inventory
+  backBtn.addEventListener('click', function () {
+    const drawer = document.querySelector('.drawer, #drawer, [data-drawer]');
+    const isOpen = drawer && (drawer.classList.contains('open') || drawer.getAttribute('aria-hidden') === 'false');
+    // try close if a global close function exists
+    if (isOpen && typeof window.closeDrawer === 'function') {
+      window.closeDrawer();
+      return;
+    }
+    // try toggler if present
+    const closeBtn = document.querySelector('[data-drawer-close], .drawer-close, #drawerClose');
+    if (isOpen && closeBtn) {
+      closeBtn.click();
+      return;
+    }
+    // fallback: navigate back or to inventory
+    if (history.length > 1) history.back();
+    else window.location.href = 'share.html';
+  });
+
+  // Insert the Back button right after the Advisor button
+  advisorEl.insertAdjacentElement('afterend', backBtn);
+})();
+</script>
+
 </body>
 </html>
