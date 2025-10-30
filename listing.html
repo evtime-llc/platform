@@ -251,7 +251,7 @@ form textarea{resize:vertical}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
 
           <div class="actions">
-            <button class="btn primary" id="liveAgent" type="button">Live Agent</button>
+            
             <button class="btn" id="advisorBtn" type="button">Contact an Advisor</button>
             <a class="btn" href="./share.html">Back</a>
           </div>
@@ -398,7 +398,7 @@ form textarea{resize:vertical}
     }
 
     // Openers
-    document.getElementById('liveAgent').onclick=()=>openDrawer('contact');
+ 
     document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
   })();
 })();
