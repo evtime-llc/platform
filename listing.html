@@ -251,6 +251,7 @@ form textarea{resize:vertical}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
 
           <div class="actions">
+            <button class="btn primary" id="liveAgent" type="button">Live Agent</button>
             <button class="btn" id="advisorBtn" type="button">Contact an Advisor</button>
             <a class="btn" href="./share.html">Back</a>
           </div>
@@ -330,7 +331,7 @@ form textarea{resize:vertical}
 
     function renderContact(){
       const phone='+14244256211';
-      const smsBody=encodeURIComponent('Hi! I'm interested in ' + title);
+      const smsBody=encodeURIComponent('Hi! I’m interested in ' + title);
       const email='welcome.evtime@gmail.com';
 
       body.innerHTML = `
@@ -347,7 +348,7 @@ form textarea{resize:vertical}
         </div>
       `;
       $('copyEmail').onclick=()=>{ navigator.clipboard.writeText(email); alert('Email copied.'); };
-      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I'm interested in '+title); alert('Message copied.'); };
+      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I’m interested in '+title); alert('Message copied.'); };
     }
 
     function renderForm(){
@@ -356,10 +357,10 @@ form textarea{resize:vertical}
           <label>Name</label><input id="name" autocomplete="name" required>
           <label>Phone</label><input id="phone" autocomplete="tel">
           <label>Email</label><input id="email" type="email" autocomplete="email">
-          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I'm interested in ${esc(title)}"></textarea>
+          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I’m interested in ${esc(title)}"></textarea>
           <div class="financing">
             <input type="checkbox" id="financeChk">
-            <label for="financeChk">I'm interested in Financing</label>
+            <label for="financeChk">I’m interested in Financing</label>
           </div>
           <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
           <div id="formMsg" class="success" role="status" aria-live="polite"></div>
@@ -397,6 +398,7 @@ form textarea{resize:vertical}
     }
 
     // Openers
+    document.getElementById('liveAgent').onclick=()=>openDrawer('contact');
     document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
   })();
 })();
