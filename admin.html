@@ -94,7 +94,8 @@
     <div id="sessionInfo" class="muted">Checking session…</div>
     <div id="signinBox">
       <label>Email for magic link</label>
-      <input id="email" type="email" placeholder="you@domain.com"/>
+      <input id="email" type="email" value="vahehr@gmail.com" required/>
+
       <button id="sendLink" class="btn">Send Magic Link</button>
       <div id="authMsg" class="muted" aria-live="polite"></div>
     </div>
@@ -307,15 +308,17 @@
 
     supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
 
-    $("sendLink").onclick = async () => {
-      const email = $("email").value.trim();
-      $("authMsg").textContent = "Sending magic link...";
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
-      });
-      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
-    };
+  $("sendLink").onclick = async () => {
+  const email = $("email").value.trim();
+  if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
+  $("authMsg").textContent = "Sending magic link...";
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
+  });
+  $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
+};
+
 
     $("signout").onclick = async () => {
       await supabase.auth.signOut();
