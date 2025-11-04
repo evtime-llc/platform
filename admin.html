@@ -45,17 +45,15 @@
     .badge.other { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
 
     /* Cover thumbnail */
-/* Cover thumbnail */
-.thumb{
-  width: 120px;        /* bigger */
-  height: 90px;        /* keeps rows neat */
-  object-fit: contain; /* no cropping */
-  object-position: center;
-  background:#f8f8f8;  /* subtle letterbox instead of crop */
-  border-radius:8px;
-  display:block;
-}
-
+    .thumb{
+      width: 120px;
+      height: 90px;
+      object-fit: contain;
+      object-position: center;
+      background:#f8f8f8;
+      border-radius:8px;
+      display:block;
+    }
 
     /* Modal */
     .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
@@ -71,6 +69,11 @@
 
     .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     @media (max-width:800px){ .two { grid-template-columns:1fr; } }
+
+    /* Small inline status */
+    .inline { display:inline-flex; align-items:center; gap:8px; }
+    .tiny { font-size:11px; color:#666; }
+    .link { color:#0366d6; text-decoration:none; }
   </style>
 </head>
 <body>
@@ -85,7 +88,6 @@
   </div>
 
   <h1>EVTime — Admin</h1>
-  
 
   <fieldset id="authBox">
     <legend>Authentication</legend>
@@ -512,16 +514,13 @@
 
     // ---------- Move (swap positions within block)
     async function moveWithinBlock(id, dir){
-      // Fetch current block view
       const { data, error } = await supabase.from('listing').select(baseSelect).limit(1000);
       if (error) throw error;
 
-      // Group & sort
       const blocks = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
       data.forEach(r => blocks[blockKey(r)].push(r));
       Object.keys(blocks).forEach(k => blocks[k].sort(byPosThenDate));
 
-      // Locate the row and its neighbor within the same block
       let blockName = null, idx = -1;
       for (const k of ['live_tesla','live_other_ev','live_other','sold']){
         const arr = blocks[k];
@@ -532,15 +531,14 @@
 
       const arr = blocks[blockName];
       const nIdx = idx + (dir === 'up' ? -1 : 1);
-      if (nIdx < 0 || nIdx >= arr.length) return; // edge
+      if (nIdx < 0 || nIdx >= arr.length) return;
 
-      const a = arr[idx];       // moving row
+      const a = arr[idx];
       const neighbor = arr[nIdx];
 
       const posA = Number(a.position ?? 0);
       const posN = Number(neighbor.position ?? 0);
 
-      // Swap positions (prevents ties/jitter)
       const { error: upErr } = await supabase.from('listing').upsert([
         { id: a.id, position: posN },
         { id: neighbor.id, position: posA }
@@ -554,6 +552,7 @@
     async function deleteListing(id){
       if (!confirm("Delete this listing and all its photos? This cannot be undone.")) return;
       try{
+        // remove image assets
         const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
         if (listErr) diag(`<span class="err">List files error: ${esc(listErr.message)}</span>`);
         if (files?.length){
@@ -561,6 +560,13 @@
           const { error: delErr } = await supabase.storage.from('images').remove(paths);
           if (delErr) diag(`<span class="err">Remove files error: ${esc(delErr.message)}</span>`);
         }
+        // remove video assets
+        const { data: vfiles } = await supabase.storage.from('videos').list(id, { limit: 100 });
+        if (vfiles?.length){
+          const vpaths = vfiles.map(f => `${id}/${f.name}`);
+          await supabase.storage.from('videos').remove(vpaths);
+        }
+
         const { error } = await supabase.from('listing').delete().eq('id', id);
         if (error) throw error;
       } catch(e){
@@ -655,6 +661,29 @@
         <div class="bar"><div id="uProgEdit"></div></div>
         <div id="uListEdit" class="muted" style="margin-top:6px;"></div>
 
+        <!-- Video section -->
+        <fieldset style="margin-top:14px">
+          <legend>Listing Video (MP4 ≤ 50 MB, 1080p OK)</legend>
+          <div class="tiny" style="margin-bottom:8px;">
+            ${row.video ? `<span class="inline">Status: <span class="ok">has video</span> • <a class="link" href="${esc(row.video)}" target="_blank" rel="noopener">open</a></span>` : `Status: no video`}
+          </div>
+          <div class="two">
+            <div>
+              <label>Video (.mp4)</label>
+              <input id="e_video" type="file" accept="video/mp4"/>
+            </div>
+            <div>
+              <label>Poster (optional .jpg/.png)</label>
+              <input id="e_video_poster" type="file" accept="image/*"/>
+            </div>
+          </div>
+          <div class="inline" style="margin-top:10px; gap:10px;">
+            <button id="e_video_remove" class="btn">Remove Video</button>
+            <span class="tiny">Uploads replace any existing video/poster.</span>
+          </div>
+          <div id="e_video_msg" class="tiny" style="margin-top:6px;"></div>
+        </fieldset>
+
         <div style="display:flex; gap:12px; margin-top:12px;">
           <button id="e_save" class="btn">Save changes</button>
           <button id="e_cancel" class="btn">Cancel</button>
@@ -670,7 +699,23 @@
       body.innerHTML = editFormHTML(data);
       editModal.classList.add('open');
 
+      const setVidMsg = (t, ok=false) => { const el=$("e_video_msg"); if(!el) return; el.textContent=t; el.style.color = ok ? '#0a7' : '#666'; };
+
       $("e_cancel").onclick = ()=> editModal.classList.remove('open');
+
+      // Remove video handler
+      $("e_video_remove").onclick = async () => {
+        try{
+          setVidMsg('Removing…');
+          await supabase.storage.from('videos').remove([`${id}/main.mp4`, `${id}/poster.jpg`]);
+          const { error: upErr } = await supabase.from('listing').update({ video: null, video_poster: null }).eq('id', id);
+          if (upErr) throw upErr;
+          setVidMsg('Video removed.', true);
+        }catch(e){
+          setVidMsg(e.message || 'Remove failed.');
+          diag(`<span class="err">${esc(e.stack || e)}</span>`);
+        }
+      };
 
       $("e_save").onclick = async () => {
         $("e_msg").textContent = "Saving…";
@@ -700,6 +745,31 @@
             images = [...images, ...newGalleryPaths];
           }
 
+          // --- Video upload (optional)
+          const vFile = document.getElementById('e_video').files[0] || null;
+          const pFile = document.getElementById('e_video_poster').files[0] || null;
+
+          const maxVideoBytes = 50 * 1024 * 1024; // 50 MB practical limit
+          const isMp4 = f => f && (f.type === 'video/mp4' || f.name?.toLowerCase().endsWith('.mp4'));
+          const isImage = f => f && f.type?.startsWith('image/');
+
+          let videoUrl = null, posterUrl = null;
+
+          if (vFile){
+            if (!isMp4(vFile)) throw new Error('Video must be .mp4');
+            if (vFile.size > maxVideoBytes) throw new Error('Video over 50 MB');
+            const { error: vErr } = await supabase.storage.from('videos').upload(`${id}/main.mp4`, vFile, { upsert: true, cacheControl: '3600' });
+            if (vErr) throw vErr;
+            videoUrl = supabase.storage.from('videos').getPublicUrl(`${id}/main.mp4`).data?.publicUrl || null;
+          }
+          if (pFile){
+            if (!isImage(pFile)) throw new Error('Poster must be an image');
+            if (pFile.size > 10 * 1024 * 1024) throw new Error('Poster over 10 MB');
+            const { error: pErr } = await supabase.storage.from('videos').upload(`${id}/poster.jpg`, pFile, { upsert: true, cacheControl: '3600' });
+            if (pErr) throw pErr;
+            posterUrl = supabase.storage.from('videos').getPublicUrl(`${id}/poster.jpg`).data?.publicUrl || null;
+          }
+
           const patch = {
             status: document.querySelector('input[name="e_status"]:checked')?.value || data.status,
             vehicle_type: document.querySelector('input[name="e_vehicle_type"]:checked')?.value || data.vehicle_type,
@@ -718,6 +788,9 @@
             description: $("e_description").value.trim() || data.description,
             images: images
           };
+
+          if (videoUrl){ patch.video = videoUrl; patch.video_provider = 'supabase'; }
+          if (posterUrl){ patch.video_poster = posterUrl; }
 
           const { error: upErr } = await supabase.from('listing').update(patch).eq('id', id);
           if (upErr) throw upErr;
