@@ -40,7 +40,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   border-bottom:1px solid var(--line);
 }
 .hero-frame{
-  position:relative;background:#000; /* image sits on black */
+  position:relative;background:#000; /* image/video sits on black */
   border:1px solid var(--copper);    /* copper accent frame */
   border-radius:12px;margin:12px;    /* inner frame margin */
   overflow:hidden;
@@ -48,11 +48,24 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .slide{
   width:100%;height:60vh;max-height:72vh;min-height:320px;
   display:flex;align-items:center;justify-content:center;
-  background:#000;
+  background:#000;position:relative;
 }
-.slide img{
+.slide img, .slide video{
   width:100%;height:100%;object-fit:contain;display:block;background:#000;
 }
+
+/* Play overlay for video poster */
+.play-veil{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(transparent, rgba(0,0,0,.25) 40%, rgba(0,0,0,.35));
+  cursor:pointer;
+}
+.play-btn{
+  width:78px;height:78px;border-radius:999px;border:none;
+  background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);font-size:30px;color:#0b0a09;
+}
+.play-btn:after{content:"▶";transform:translateX(2px);}
 
 /* Carousel controls */
 .nav-btn{
@@ -68,8 +81,10 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 /* Dots */
 .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
+.dot{min-width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:#000;font-weight:900}
 .dot.active{background:#fff}
+.dot.video{background:rgba(255,255,255,.8); padding:0 2px; border-radius:6px}
+.dot.video:before{content:"▶";font-size:8px;line-height:1;color:#0b0a09;margin-top:-1px}
 @media (hover:hover){
   .dot:hover{background:rgba(255,255,255,.6)}
 }
@@ -211,10 +226,20 @@ form textarea{resize:vertical}
     const title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');
     document.title = `EVTime — ${title}`;
 
+    // Build slides: all images, then (optionally) the video as the LAST slide
     const paths=parseImages(data.images).map(normalize);
-    const urls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
-    const heroUrl=urls[0] || 'og-card.png';
-    if(urls[1]) preload(urls[1]);
+    const imgUrls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
+    const heroUrl=imgUrls[0] || 'og-card.png';
+    if(imgUrls[1]) preload(imgUrls[1]);
+
+    const slides = imgUrls.map(u => ({ type:'image', src:u }));
+    if (data.video){
+      slides.push({
+        type:'video',
+        src: String(data.video),
+        poster: String(data.video_poster || heroUrl)
+      });
+    }
 
     const leftMeta=[
       data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
@@ -230,10 +255,10 @@ form textarea{resize:vertical}
         <div class="hero">
           ${sold}
           <div class="hero-frame">
-            <div class="slide"><img id="heroImg" src="${esc(heroUrl)}" alt="${esc(title)}" decoding="async"></div>
-            ${urls.length>1 ? `
-              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
-              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
+            <div class="slide" id="heroStage"></div>
+            ${slides.length>1 ? `
+              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
+              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
               <div class="dots" id="dots"></div>
             `:``}
           </div>
@@ -250,37 +275,75 @@ form textarea{resize:vertical}
           ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
 
-       <div class="actions">
-  <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
-  ${data.video ? `<a class="btn" href="${esc(String(data.video))}" target="_blank" rel="noopener">Watch video</a>` : ``}
-  <a class="btn" href="./share.html">Back</a>
-</div>
-
+          <div class="actions">
+            <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
+            <a class="btn" href="./share.html">Back</a>
+          </div>
         </div>
       </div>
     `;
 
     // ----- Carousel logic (arrows + dots + swipe)
     let idx = 0;
-    const heroImg = document.getElementById('heroImg');
+    const stage = document.getElementById('heroStage');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const dotsEl = document.getElementById('dots');
 
     function renderDots(){
       if(!dotsEl) return;
-      dotsEl.innerHTML = urls.map((_,i)=>`<div class="dot${i===idx?' active':''}" data-i="${i}"></div>`).join('');
+      dotsEl.innerHTML = slides.map((s,i)=>{
+        const isVideo = s.type === 'video';
+        return `<div class="dot${isVideo?' video':''}${i===idx?' active':''}" data-i="${i}"></div>`;
+      }).join('');
     }
+
+    // lazy video creation on demand
+    let videoInited = false;
+    function renderSlide(i){
+      const s = slides[i];
+      stage.style.opacity = '0';
+      setTimeout(()=>{
+        if (s.type === 'image'){
+          stage.innerHTML = `<img alt="${esc(title)}" src="${esc(s.src)}" decoding="async">`;
+        } else {
+          // poster + play overlay; instantiate <video> on click
+          const poster = esc(s.poster || heroUrl);
+          stage.innerHTML = `
+            <img alt="${esc(title)} video poster" src="${poster}" decoding="async">
+            <div class="play-veil" id="playVeil"><button class="play-btn" aria-label="Play video"></button></div>
+          `;
+          const veil = document.getElementById('playVeil');
+          if (veil){
+            veil.onclick = ()=>{
+              if (videoInited) return;
+              videoInited = true;
+              stage.innerHTML = `
+                <video id="heroVideo" controls playsinline muted preload="metadata" poster="${poster}">
+                  <source src="${esc(s.src)}" type="video/mp4">
+                </video>
+              `;
+              const v = document.getElementById('heroVideo');
+              // attempt autoplay muted (mobile-friendly); if blocked, user can tap
+              v?.play?.().catch(()=>{ /* ignore */ });
+            };
+          }
+        }
+        // small fade-in
+        stage.style.opacity = '1';
+      }, 120);
+    }
+
     function show(i){
-      if(!urls.length) return;
-      idx = (i + urls.length) % urls.length;
-      const next=urls[idx];
-      const neighborNext = urls[(idx+1)%urls.length];
-      heroImg.style.opacity = '0';
-      setTimeout(()=>{ heroImg.src = next; heroImg.onload = ()=>{ heroImg.style.opacity = '1'; }; }, 120);
-      preload(neighborNext);
+      if(!slides.length) return;
+      idx = (i + slides.length) % slides.length;
+      renderSlide(idx);
+      // preload neighbor image (videos are not preloaded)
+      const nextIdx = (idx+1)%slides.length;
+      if (slides[nextIdx]?.type==='image') preload(slides[nextIdx].src);
       renderDots();
     }
+
     if(dotsEl){
       renderDots();
       dotsEl.addEventListener('click', (e)=>{
@@ -292,13 +355,16 @@ form textarea{resize:vertical}
     if(prevBtn) prevBtn.onclick=()=>show(idx-1);
     if(nextBtn) nextBtn.onclick=()=>show(idx+1);
 
+    // initial render
+    renderSlide(0);
+
     // swipe support
     let sx=null, sy=null;
-    heroImg.addEventListener('touchstart',(e)=>{
+    stage.addEventListener('touchstart',(e)=>{
       const t=e.touches[0];
       sx=t.clientX; sy=t.clientY;
     },{passive:true});
-    heroImg.addEventListener('touchend',(e)=>{
+    stage.addEventListener('touchend',(e)=>{
       if(sx==null) return;
       const dx=e.changedTouches[0].clientX - sx;
       const dy=e.changedTouches[0].clientY - sy;
