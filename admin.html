@@ -205,12 +205,6 @@
   <fieldset>
     <legend>Diagnostics</legend>
     <div id="diag"></div>
-
-    <!-- Tiny videos bucket preflight -->
-    <div style="margin-top:8px">
-      <button id="checkVideos" class="btn">Check videos bucket</button>
-      <span id="checkVideosMsg" class="muted" style="margin-left:8px"></span>
-    </div>
   </fieldset>
 
   <!-- Edit Modal -->
@@ -439,7 +433,7 @@
     };
 
     // ---------- ADMIN TABLE
-    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,video_poster,video_provider';
+    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video';
 
     async function fetchOrdered(statusVal){
       return supabase
@@ -490,6 +484,7 @@
         const title = `${r.year||''} ${r.make||''} ${r.model||''} ${r.trim||''}`.trim();
         const price = (r.price!=null && r.price!=='') ? `$${Number(r.price).toLocaleString()}` : '';
         const vinTxt = r.vin ? `VIN: ${esc(r.vin)}` : '';
+        const vidBadge = r.video ? `<span class="badge" style="background:#e6f0ff;color:#1d4ed8;border:1px solid #c7dcff;margin-left:6px;">🎥 VIDEO</span>` : '';
 
         const paths = parseImages(r.images).map(normalize);
         const firstPath = paths[0] || "";
@@ -500,7 +495,7 @@
             <td><img class="thumb" src="${esc(coverUrl)}" alt="cover photo"></td>
             <td>${badgeS}</td>
             <td>
-              <div class="title">${esc(title || '(no title)')}</div>
+              <div class="title">${esc(title || '(no title)')}${vidBadge}</div>
               <div class="sub">${vinTxt}</div>
             </td>
             <td>
@@ -706,7 +701,7 @@
       body.innerHTML = editFormHTML(data);
       editModal.classList.add('open');
 
-      const setVidMsg = (t, ok=false) => { const el=$("e_video_msg"); if(!el) return; el.textContent=t; el.style.color = ok ? '#0a7' : '#c00'; };
+      const setVidMsg = (t, ok=false) => { const el=$("e_video_msg"); if(!el) return; el.textContent=t; el.style.color = ok ? '#0a7' : '#666'; };
 
       $("e_cancel").onclick = ()=> editModal.classList.remove('open');
 
@@ -720,7 +715,7 @@
           setVidMsg('Video removed.', true);
         }catch(e){
           setVidMsg(e.message || 'Remove failed.');
-          diag(`<span class="err">video remove: ${esc(e.stack || e)}</span>`);
+          diag(`<span class="err">${esc(e.stack || e)}</span>`);
         }
       };
 
@@ -757,7 +752,7 @@
           const pFile = document.getElementById('e_video_poster').files[0] || null;
 
           const maxVideoBytes = 50 * 1024 * 1024; // 50 MB practical limit
-          const isMp4 = f => f && (f.type === 'video/mp4' || (f.name && f.name.toLowerCase().endsWith('.mp4')));
+          const isMp4 = f => f && (f.type === 'video/mp4' || f.name?.toLowerCase().endsWith('.mp4'));
           const isImage = f => f && f.type?.startsWith('image/');
 
           let videoUrl = null, posterUrl = null;
@@ -765,24 +760,16 @@
           if (vFile){
             if (!isMp4(vFile)) throw new Error('Video must be .mp4');
             if (vFile.size > maxVideoBytes) throw new Error('Video over 50 MB');
-            const up = await supabase.storage.from('videos').upload(`${id}/main.mp4`, vFile, { upsert: true, cacheControl: '3600' });
-            if (up.error){
-              setVidMsg(`Upload error: ${up.error.message}`);
-              throw up.error;
-            }
+            const { error: vErr } = await supabase.storage.from('videos').upload(`${id}/main.mp4`, vFile, { upsert: true, cacheControl: '3600' });
+            if (vErr) throw vErr;
             videoUrl = supabase.storage.from('videos').getPublicUrl(`${id}/main.mp4`).data?.publicUrl || null;
-            setVidMsg('Video uploaded.', true);
           }
           if (pFile){
             if (!isImage(pFile)) throw new Error('Poster must be an image');
             if (pFile.size > 10 * 1024 * 1024) throw new Error('Poster over 10 MB');
-            const up2 = await supabase.storage.from('videos').upload(`${id}/poster.jpg`, pFile, { upsert: true, cacheControl: '3600' });
-            if (up2.error){
-              setVidMsg(`Poster upload error: ${up2.error.message}`);
-              throw up2.error;
-            }
+            const { error: pErr } = await supabase.storage.from('videos').upload(`${id}/poster.jpg`, pFile, { upsert: true, cacheControl: '3600' });
+            if (pErr) throw pErr;
             posterUrl = supabase.storage.from('videos').getPublicUrl(`${id}/poster.jpg`).data?.publicUrl || null;
-            setVidMsg('Poster uploaded.', true);
           }
 
           const patch = {
@@ -837,36 +824,6 @@
         diag(`<span class="err">Action error: ${esc(err.message)}</span>`);
       }
     });
-
-    // ---------- Videos bucket quick check
-    (function(){
-      const btn = document.getElementById('checkVideos');
-      const msg = document.getElementById('checkVideosMsg');
-      if (!btn) return;
-      const set = (t, ok=false)=>{ msg.textContent = t; msg.style.color = ok ? '#0a7' : '#c00'; };
-
-      btn.addEventListener('click', async ()=>{
-        try{
-          set('Checking…', false);
-          // 1) List root to verify bucket exists + read
-          const { error: listErr } = await supabase.storage.from('videos').list('', { limit: 1 });
-          if (listErr) { set(`ERROR: ${listErr.message}`); diag(`<span class="err">videos.list: ${esc(listErr.message)}</span>`); return; }
-          // 2) Upload a tiny probe to verify write policy
-          const probe = new Blob(['ok'], { type: 'text/plain' });
-          const key = `__probe_${Date.now()}.txt`;
-          const up = await supabase.storage.from('videos').upload(key, probe, { upsert: true, cacheControl: '60' });
-          if (up.error) { set(`UPLOAD ERROR: ${up.error.message}`); diag(`<span class="err">videos.upload: ${esc(up.error.message)}</span>`); return; }
-          // 3) Cleanup
-          await supabase.storage.from('videos').remove([key]);
-
-          set('OK: bucket exists and upload allowed.', true);
-          diag('Videos bucket check: OK');
-        }catch(e){
-          set(`ERROR: ${e.message||e}`, false);
-          diag(`<span class="err">${esc(e.stack||e)}</span>`);
-        }
-      });
-    })();
 
     // ---------- Basic diagnostics (kept simple)
     (async () => {
