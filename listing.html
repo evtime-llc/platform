@@ -46,28 +46,20 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 }
 .slide{
   width:100%;height:60vh;max-height:72vh;min-height:320px;
-  display:flex;align-items:center;justify-content:center;
-  background:#000;position:relative;
+  display:flex;align-items:center;justify-content:center;background:#000;
 }
-.media-img, .media-video{
-  width:100%;height:100%;object-fit:contain;display:block;background:#000;
-}
+.slide img,.slide video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
 
-/* Video play overlay */
+/* Play overlay for video */
 .play-overlay{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(transparent,rgba(0,0,0,.25) 35%,rgba(0,0,0,.55));
-  opacity:1;transition:opacity .2s;
+  position:absolute;inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:74px;height:74px;border-radius:999px;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.9);
 }
-.play-overlay.hidden{opacity:0;pointer-events:none}
-.play-btn{
-  border:none;border-radius:999px;cursor:pointer;width:70px;height:70px;
-  background:rgba(0,0,0,.6);color:#fff;font-size:30px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 20px rgba(0,0,0,.35)
-}
-.sound-tip{
-  position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.55);
-  color:#fff;border-radius:999px;padding:6px 10px;font-size:12px
+.play-overlay:after{
+  content:""; display:block;
+  border-style:solid; border-width:12px 0 12px 18px; border-color:transparent transparent transparent #fff;
+  margin-left:4px;
 }
 
 /* Carousel controls */
@@ -86,9 +78,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
 .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
 .dot.active{background:#fff}
-@media (hover:hover){
-  .dot:hover{background:rgba(255,255,255,.6)}
-}
+@media (hover:hover){ .dot:hover{background:rgba(255,255,255,.6)} }
 
 /* SOLD badge */
 .sold{position:absolute;top:18px;left:18px;background:rgba(0,0,0,.75);color:#fff;
@@ -190,7 +180,7 @@ form textarea{resize:vertical}
   const $=id=>document.getElementById(id);
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // Helpers
+  // ----- Helpers
   const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function parseImages(images){
     if(!images) return [];
@@ -215,7 +205,10 @@ form textarea{resize:vertical}
   }
   function preload(url){ if(!url) return; const im=new Image(); im.decoding='async'; im.loading='eager'; im.src=url; }
 
-  // Load listing
+  // Pause any playing video
+  function pauseAllVideos(){ document.querySelectorAll('video').forEach(v=>{ try{ v.pause(); }catch{} }); }
+
+  // ----- Load listing
   const mount=$('mount');
   const id=new URLSearchParams(location.search).get('id');
   if(!id){ mount.innerHTML = `<div class="card body" style="padding:16px">Missing listing id.</div>`; return; }
@@ -227,29 +220,29 @@ form textarea{resize:vertical}
     const title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');
     document.title = `EVTime — ${title}`;
 
-    // Build media array: images first, then optional video as last slide
+    // Build media list: all images, then (optional) video LAST
     const paths=parseImages(data.images).map(normalize);
     const imageUrls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
+    const heroUrl=imageUrls[0] || 'og-card.png';
+    if(imageUrls[1]) preload(imageUrls[1]);
 
-    const media=[];
-    imageUrls.forEach(u=>media.push({type:'image', src:u}));
+    const hasVideo = !!data.video;
+    const posterCandidate = data.video_poster || imageUrls[0] || null;
 
-    const videoUrl = data.video || null;
-    const posterUrl = data.video_poster || null;
-
-    if(videoUrl){
-      media.push({type:'video', src:videoUrl, poster:posterUrl || imageUrls[0] || 'og-card.png'});
+    const media = imageUrls.map(u=>({ kind:'img', src:u }));
+    if(hasVideo){
+      media.push({
+        kind:'video',
+        src: data.video,
+        poster: posterCandidate
+      });
     }
-
-    // Fallback hero (first media or site OG)
-    const firstMedia = media[0] || {type:'image', src:'og-card.png'};
 
     const leftMeta=[
       data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
       data.title_status ? `Title: ${data.title_status}` : null,
       data.condition ? `Cond: ${data.condition}` : null
     ].filter(Boolean).join(' • ');
-
     const priceText=(data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
     const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
 
@@ -259,24 +252,16 @@ form textarea{resize:vertical}
         <div class="hero">
           ${sold}
           <div class="hero-frame">
-            <div class="slide">
-              ${firstMedia.type==='video'
-                ? `<video id="heroVid" class="media-video" preload="metadata" playsinline webkit-playsinline muted poster="${esc(firstMedia.poster||'')}"></video>
-                   <div id="playOverlay" class="play-overlay">
-                     <button id="playBtn" class="play-btn">▶</button>
-                     <div class="sound-tip">Sound on after play</div>
-                   </div>`
-                : `<img id="heroImg" class="media-img" src="${esc(firstMedia.src)}" alt="${esc(title)}" decoding="async">`
-              }
-              ${media.length>1 ? `
-                <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
-                <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
-                <div class="dots" id="dots"></div>
-              `:``}
+            <div class="slide" id="slideHost">
+              <img id="heroImg" src="${esc(heroUrl)}" alt="${esc(title)}" decoding="async">
             </div>
+            ${media.length>1 ? `
+              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
+              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
+              <div class="dots" id="dots"></div>
+            `:``}
           </div>
         </div>
-
         <div class="body">
           <div class="title">${esc(title)}</div>
           ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
@@ -291,159 +276,125 @@ form textarea{resize:vertical}
 
           <div class="actions">
             <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
-            ${videoUrl ? `<a class="btn" href="${esc(videoUrl)}" target="_blank" rel="noopener">Watch Video</a>` : ``}
             <a class="btn" href="./share.html">Back</a>
           </div>
         </div>
       </div>
     `;
 
-    // Elements (may or may not exist depending on first media)
-    const heroImg = document.getElementById('heroImg');
-    const heroVid = document.getElementById('heroVid');
-    const playOverlay = document.getElementById('playOverlay');
-    const playBtn = document.getElementById('playBtn');
+    // ----- Carousel logic with mixed media
+    let idx = 0;
+    const slideHost = document.getElementById('slideHost');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const dotsEl = document.getElementById('dots');
 
-    // Carousel state
-    let idx = 0;
-
-    // Initialize first media content when it's a video
-    if (heroVid && firstMedia.type==='video') {
-      heroVid.src = firstMedia.src;
-      if (firstMedia.poster) heroVid.setAttribute('poster', firstMedia.poster);
-    }
-
     function renderDots(){
       if(!dotsEl) return;
-      dotsEl.innerHTML = media.map((m,i)=>`<div class="dot${i===idx?' active':''}" data-i="${i}" title="${m.type==='video'?'Video':'Photo'}"></div>`).join('');
+      dotsEl.innerHTML = media.map((m,i)=>`
+        <div class="dot${i===idx?' active':''}" data-i="${i}" title="${m.kind==='video'?'Video':'Photo'}"></div>
+      `).join('');
     }
 
-    function stopVideo(){
-      if(heroVid){
-        heroVid.pause();
-        heroVid.currentTime = 0;
+    function buildSlide(item){
+      pauseAllVideos();
+      slideHost.innerHTML = '';
+      if(item.kind === 'img'){
+        const im = document.createElement('img');
+        im.alt = title;
+        im.decoding = 'async';
+        im.src = item.src;
+        slideHost.appendChild(im);
+      }else{
+        const wrap = document.createElement('div');
+        wrap.style.position='relative';
+        wrap.style.width='100%';
+        wrap.style.height='100%';
+
+        const vid = document.createElement('video');
+        vid.setAttribute('playsinline','');
+        vid.setAttribute('muted','');
+        vid.muted = true;            // enforce mute
+        vid.volume = 0;              // enforce mute
+        vid.preload = 'metadata';
+        vid.poster = item.poster || '';
+        vid.src = item.src;
+        vid.controls = false;
+
+        // If user tries to unmute via any control, force mute back
+        vid.addEventListener('volumechange', ()=>{ if(vid.volume !== 0) vid.volume = 0; if(!vid.muted) vid.muted = true; });
+
+        // Overlay play button
+        const play = document.createElement('div');
+        play.className = 'play-overlay';
+        play.addEventListener('click', async ()=>{
+          try{
+            vid.controls = true; // show controls after starting
+            await vid.play();
+            play.style.display = 'none';
+          }catch(e){}
+        });
+
+        wrap.appendChild(vid);
+        wrap.appendChild(play);
+        slideHost.appendChild(wrap);
       }
-      if(playOverlay) playOverlay.classList.remove('hidden');
     }
 
     function show(i){
       if(!media.length) return;
       idx = (i + media.length) % media.length;
-      const m = media[idx];
+      const item=media[idx];
+      // fade effect for images only
+      slideHost.style.opacity='0';
+      setTimeout(()=>{
+        buildSlide(item);
+        slideHost.style.opacity='1';
+      }, 120);
 
-      if (m.type === 'image') {
-        // Switch to image element
-        if (!heroImg) {
-          // Replace video markup with image
-          const slide = document.querySelector('.slide');
-          slide.innerHTML = `<img id="heroImg" class="media-img" src="${esc(m.src)}" alt="${esc(title)}" decoding="async">
-            ${media.length>1 ? `
-              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
-              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
-              <div class="dots" id="dots"></div>` : ``}`;
-          // rebind elements
-          bindNav();
-        } else {
-          heroImg.style.opacity = '0';
-          const next= m.src;
-          setTimeout(()=>{
-            heroImg.src = next;
-            heroImg.onload = ()=>{ heroImg.style.opacity = '1'; };
-          }, 120);
-        }
+      // Preload next image (and let browser handle video)
+      const nextItem = media[(idx+1)%media.length];
+      if(nextItem?.kind==='img') preload(nextItem.src);
+
+      renderDots();
+    }
+
+    if(media.length){
+      // initial
+      if(media[0].kind==='img'){
+        // already set in initial HTML
       } else {
-        // Switch to video element
-        if (!heroVid) {
-          const slide = document.querySelector('.slide');
-          slide.innerHTML = `
-            <video id="heroVid" class="media-video" preload="metadata" playsinline webkit-playsinline muted poster="${esc(m.poster||'')}"></video>
-            <div id="playOverlay" class="play-overlay">
-              <button id="playBtn" class="play-btn">▶</button>
-              <div class="sound-tip">Sound on after play</div>
-            </div>
-            ${media.length>1 ? `
-              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
-              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
-              <div class="dots" id="dots"></div>` : ``}`;
-          bindNav();
-          const hv=document.getElementById('heroVid');
-          hv.src = m.src;
-          if(m.poster) hv.setAttribute('poster', m.poster);
-          const po=document.getElementById('playOverlay');
-          const pb=document.getElementById('playBtn');
-          if(pb) pb.onclick = async ()=>{
-            try{
-              // Unmute only after user gesture; some browsers require user action
-              hv.muted = false;
-              await hv.play();
-              if(po) po.classList.add('hidden');
-            }catch{
-              // If autoplay with sound is blocked, keep muted on first play
-              hv.muted = true;
-              await hv.play();
-              if(po) po.classList.add('hidden');
-            }
-          };
-        } else {
-          stopVideo();
-          heroVid.src = m.src;
-          if(m.poster) heroVid.setAttribute('poster', m.poster);
-        }
-      }
-      // Preload neighbor image
-      const nextIdx = (idx+1) % media.length;
-      const nm = media[nextIdx];
-      if (nm && nm.type==='image') preload(nm.src);
-
-      renderDots();
-    }
-
-    function bindNav(){
-      // rebind elements after slide content replacement
-      const _prev=document.getElementById('prevBtn');
-      const _next=document.getElementById('nextBtn');
-      const _dots=document.getElementById('dots');
-      if(_prev) _prev.onclick=()=>{ stopVideo(); show(idx-1); };
-      if(_next) _next.onclick=()=>{ stopVideo(); show(idx+1); };
-      if(_dots){
-        _dots.addEventListener('click', (e)=>{
-          const d=e.target.closest('.dot');
-          if(!d) return;
-          stopVideo();
-          show(Number(d.getAttribute('data-i')||0));
-        });
-      }
-      renderDots();
-
-      // swipe support (bind to whichever media is present)
-      const slideMedia = document.querySelector('.slide video, .slide img');
-      if(slideMedia){
-        let sx=null, sy=null;
-        slideMedia.addEventListener('touchstart',(e)=>{
-          const t=e.touches[0];
-          sx=t.clientX; sy=t.clientY;
-        },{passive:true});
-        slideMedia.addEventListener('touchend',(e)=>{
-          if(sx==null) return;
-          const dx=e.changedTouches[0].clientX - sx;
-          const dy=e.changedTouches[0].clientY - sy;
-          if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
-            if(dx<0) show(idx+1); else show(idx-1);
-          }
-          sx=sy=null;
-        },{passive:true});
+        buildSlide(media[0]);
       }
     }
 
-    // Initial bindings
-    bindNav();
-    // If first is image, ensure neighbor preload
-    if (media[1] && media[1].type==='image') preload(media[1].src);
+    if(dotsEl){
+      renderDots();
+      dotsEl.addEventListener('click', (e)=>{
+        const d=e.target.closest('.dot');
+        if(!d) return;
+        show(Number(d.getAttribute('data-i')||0));
+      });
+    }
+    if(prevBtn) prevBtn.onclick=()=>show(idx-1);
+    if(nextBtn) nextBtn.onclick=()=>show(idx+1);
 
-    // Concierge Drawer
+    // swipe support
+    let sx=null, sy=null;
+    slideHost.addEventListener('touchstart',(e)=>{
+      const t=e.touches[0]; sx=t.clientX; sy=t.clientY;
+    },{passive:true});
+    slideHost.addEventListener('touchend',(e)=>{
+      if(sx==null) return;
+      const dx=e.changedTouches[0].clientX - sx;
+      const dy=e.changedTouches[0].clientY - sy;
+      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
+        if(dx<0) show(idx+1); else show(idx-1);
+      }
+      sx=sy=null;
+    },{passive:true});
+
+    // ----- Concierge Drawer
     const drawer=$('drawer'), backdrop=$('drawerBackdrop'), body=$('drawerBody');
     const tabs=[...drawer.querySelectorAll('.drawer-tab')];
 
@@ -455,6 +406,7 @@ form textarea{resize:vertical}
     function closeDrawer(){
       drawer.classList.remove('open');
       backdrop.classList.remove('open');
+      pauseAllVideos(); // pause if drawer opened/closed mid-play
     }
     backdrop.onclick=closeDrawer;
     document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
@@ -533,6 +485,7 @@ form textarea{resize:vertical}
       };
     }
 
+    // Openers
     document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
   })();
 })();
