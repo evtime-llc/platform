@@ -250,10 +250,12 @@ form textarea{resize:vertical}
           ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
           ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
 
-          <div class="actions">
-            <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
-            <a class="btn" href="./share.html">Back</a>
-          </div>
+       <div class="actions">
+  <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
+  ${data.video ? `<a class="btn" href="${esc(String(data.video))}" target="_blank" rel="noopener">Watch video</a>` : ``}
+  <a class="btn" href="./share.html">Back</a>
+</div>
+
         </div>
       </div>
     `;
