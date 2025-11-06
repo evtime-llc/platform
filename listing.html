@@ -8,12 +8,12 @@
 
 <style>
 :root{
-  --bg:#0b0a09;         /* dark brown/charcoal background */
-  --card:#ffffff;       /* white card */
-  --text:#1c1917;       /* dark text on white card */
+  --bg:#0b0a09;
+  --card:#ffffff;
+  --text:#1c1917;
   --muted:#78716c;
   --line:#e7e5e4;
-  --copper:#c98c5b;     /* brand copper */
+  --copper:#c98c5b;
   --copper-dark:#9e6d45;
 }
 
@@ -21,7 +21,7 @@
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 
-/* Header / Logo (matches site) */
+/* Header / Logo */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
@@ -36,13 +36,12 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 /* HERO + CAROUSEL */
 .hero{
   position:relative;background:#000;border-top-left-radius:14px;border-top-right-radius:14px;
-  overflow:hidden; /* keep media nicely clipped */
-  border-bottom:1px solid var(--line);
+  overflow:hidden;border-bottom:1px solid var(--line);
 }
 .hero-frame{
-  position:relative;background:#000; /* image/video sits on black */
-  border:1px solid var(--copper);    /* copper accent frame */
-  border-radius:12px;margin:12px;    /* inner frame margin */
+  position:relative;background:#000;
+  border:1px solid var(--copper);
+  border-radius:12px;margin:12px;
   overflow:hidden;
 }
 .slide{
@@ -50,22 +49,26 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   display:flex;align-items:center;justify-content:center;
   background:#000;position:relative;
 }
-.slide img, .slide video{
+.media-img, .media-video{
   width:100%;height:100%;object-fit:contain;display:block;background:#000;
 }
 
-/* Play overlay for video poster */
-.play-veil{
+/* Video play overlay */
+.play-overlay{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(transparent, rgba(0,0,0,.25) 40%, rgba(0,0,0,.35));
-  cursor:pointer;
+  background:linear-gradient(transparent,rgba(0,0,0,.25) 35%,rgba(0,0,0,.55));
+  opacity:1;transition:opacity .2s;
 }
+.play-overlay.hidden{opacity:0;pointer-events:none}
 .play-btn{
-  width:78px;height:78px;border-radius:999px;border:none;
-  background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;
-  box-shadow:0 10px 24px rgba(0,0,0,.35);font-size:30px;color:#0b0a09;
+  border:none;border-radius:999px;cursor:pointer;width:70px;height:70px;
+  background:rgba(0,0,0,.6);color:#fff;font-size:30px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.35)
 }
-.play-btn:after{content:"▶";transform:translateX(2px);}
+.sound-tip{
+  position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.55);
+  color:#fff;border-radius:999px;padding:6px 10px;font-size:12px
+}
 
 /* Carousel controls */
 .nav-btn{
@@ -81,10 +84,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 
 /* Dots */
 .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
-.dot{min-width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:#000;font-weight:900}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
 .dot.active{background:#fff}
-.dot.video{background:rgba(255,255,255,.8); padding:0 2px; border-radius:6px}
-.dot.video:before{content:"▶";font-size:8px;line-height:1;color:#0b0a09;margin-top:-1px}
 @media (hover:hover){
   .dot:hover{background:rgba(255,255,255,.6)}
 }
@@ -115,7 +116,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
 
-/* Concierge Drawer (Apple-clean) */
+/* Concierge Drawer */
 .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998}
 .drawer{position:fixed;top:0;right:-420px;width:380px;max-width:92vw;height:100%;
   background:#fff;box-shadow:-6px 0 28px rgba(0,0,0,.18);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;border-left:1px solid var(--line)}
@@ -189,7 +190,7 @@ form textarea{resize:vertical}
   const $=id=>document.getElementById(id);
   document.getElementById('yr').textContent=new Date().getFullYear();
 
-  // ----- Helpers for legacy image paths
+  // Helpers
   const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function parseImages(images){
     if(!images) return [];
@@ -214,7 +215,7 @@ form textarea{resize:vertical}
   }
   function preload(url){ if(!url) return; const im=new Image(); im.decoding='async'; im.loading='eager'; im.src=url; }
 
-  // ----- Load listing
+  // Load listing
   const mount=$('mount');
   const id=new URLSearchParams(location.search).get('id');
   if(!id){ mount.innerHTML = `<div class="card body" style="padding:16px">Missing listing id.</div>`; return; }
@@ -226,43 +227,56 @@ form textarea{resize:vertical}
     const title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');
     document.title = `EVTime — ${title}`;
 
-    // Build slides: all images, then (optionally) the video as the LAST slide
+    // Build media array: images first, then optional video as last slide
     const paths=parseImages(data.images).map(normalize);
-    const imgUrls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
-    const heroUrl=imgUrls[0] || 'og-card.png';
-    if(imgUrls[1]) preload(imgUrls[1]);
+    const imageUrls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
 
-    const slides = imgUrls.map(u => ({ type:'image', src:u }));
-    if (data.video){
-      slides.push({
-        type:'video',
-        src: String(data.video),
-        poster: String(data.video_poster || heroUrl)
-      });
+    const media=[];
+    imageUrls.forEach(u=>media.push({type:'image', src:u}));
+
+    const videoUrl = data.video || null;
+    const posterUrl = data.video_poster || null;
+
+    if(videoUrl){
+      media.push({type:'video', src:videoUrl, poster:posterUrl || imageUrls[0] || 'og-card.png'});
     }
+
+    // Fallback hero (first media or site OG)
+    const firstMedia = media[0] || {type:'image', src:'og-card.png'};
 
     const leftMeta=[
       data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
       data.title_status ? `Title: ${data.title_status}` : null,
       data.condition ? `Cond: ${data.condition}` : null
     ].filter(Boolean).join(' • ');
+
     const priceText=(data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
     const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
 
-    // ----- Page HTML
+    // Page HTML
     mount.innerHTML = `
       <div class="card">
         <div class="hero">
           ${sold}
           <div class="hero-frame">
-            <div class="slide" id="heroStage"></div>
-            ${slides.length>1 ? `
-              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
-              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
-              <div class="dots" id="dots"></div>
-            `:``}
+            <div class="slide">
+              ${firstMedia.type==='video'
+                ? `<video id="heroVid" class="media-video" preload="metadata" playsinline webkit-playsinline muted poster="${esc(firstMedia.poster||'')}"></video>
+                   <div id="playOverlay" class="play-overlay">
+                     <button id="playBtn" class="play-btn">▶</button>
+                     <div class="sound-tip">Sound on after play</div>
+                   </div>`
+                : `<img id="heroImg" class="media-img" src="${esc(firstMedia.src)}" alt="${esc(title)}" decoding="async">`
+              }
+              ${media.length>1 ? `
+                <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
+                <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
+                <div class="dots" id="dots"></div>
+              `:``}
+            </div>
           </div>
         </div>
+
         <div class="body">
           <div class="title">${esc(title)}</div>
           ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
@@ -277,104 +291,159 @@ form textarea{resize:vertical}
 
           <div class="actions">
             <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
+            ${videoUrl ? `<a class="btn" href="${esc(videoUrl)}" target="_blank" rel="noopener">Watch Video</a>` : ``}
             <a class="btn" href="./share.html">Back</a>
           </div>
         </div>
       </div>
     `;
 
-    // ----- Carousel logic (arrows + dots + swipe)
-    let idx = 0;
-    const stage = document.getElementById('heroStage');
+    // Elements (may or may not exist depending on first media)
+    const heroImg = document.getElementById('heroImg');
+    const heroVid = document.getElementById('heroVid');
+    const playOverlay = document.getElementById('playOverlay');
+    const playBtn = document.getElementById('playBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const dotsEl = document.getElementById('dots');
 
-    function renderDots(){
-      if(!dotsEl) return;
-      dotsEl.innerHTML = slides.map((s,i)=>{
-        const isVideo = s.type === 'video';
-        return `<div class="dot${isVideo?' video':''}${i===idx?' active':''}" data-i="${i}"></div>`;
-      }).join('');
+    // Carousel state
+    let idx = 0;
+
+    // Initialize first media content when it's a video
+    if (heroVid && firstMedia.type==='video') {
+      heroVid.src = firstMedia.src;
+      if (firstMedia.poster) heroVid.setAttribute('poster', firstMedia.poster);
     }
 
-    // lazy video creation on demand
-    let videoInited = false;
-    function renderSlide(i){
-      const s = slides[i];
-      stage.style.opacity = '0';
-      setTimeout(()=>{
-        if (s.type === 'image'){
-          stage.innerHTML = `<img alt="${esc(title)}" src="${esc(s.src)}" decoding="async">`;
-        } else {
-          // poster + play overlay; instantiate <video> on click
-          const poster = esc(s.poster || heroUrl);
-          stage.innerHTML = `
-            <img alt="${esc(title)} video poster" src="${poster}" decoding="async">
-            <div class="play-veil" id="playVeil"><button class="play-btn" aria-label="Play video"></button></div>
-          `;
-          const veil = document.getElementById('playVeil');
-          if (veil){
-            veil.onclick = ()=>{
-              if (videoInited) return;
-              videoInited = true;
-              stage.innerHTML = `
-                <video id="heroVideo" controls playsinline muted preload="metadata" poster="${poster}">
-                  <source src="${esc(s.src)}" type="video/mp4">
-                </video>
-              `;
-              const v = document.getElementById('heroVideo');
-              // attempt autoplay muted (mobile-friendly); if blocked, user can tap
-              v?.play?.().catch(()=>{ /* ignore */ });
-            };
-          }
-        }
-        // small fade-in
-        stage.style.opacity = '1';
-      }, 120);
+    function renderDots(){
+      if(!dotsEl) return;
+      dotsEl.innerHTML = media.map((m,i)=>`<div class="dot${i===idx?' active':''}" data-i="${i}" title="${m.type==='video'?'Video':'Photo'}"></div>`).join('');
+    }
+
+    function stopVideo(){
+      if(heroVid){
+        heroVid.pause();
+        heroVid.currentTime = 0;
+      }
+      if(playOverlay) playOverlay.classList.remove('hidden');
     }
 
     function show(i){
-      if(!slides.length) return;
-      idx = (i + slides.length) % slides.length;
-      renderSlide(idx);
-      // preload neighbor image (videos are not preloaded)
-      const nextIdx = (idx+1)%slides.length;
-      if (slides[nextIdx]?.type==='image') preload(slides[nextIdx].src);
-      renderDots();
-    }
+      if(!media.length) return;
+      idx = (i + media.length) % media.length;
+      const m = media[idx];
 
-    if(dotsEl){
-      renderDots();
-      dotsEl.addEventListener('click', (e)=>{
-        const d=e.target.closest('.dot');
-        if(!d) return;
-        show(Number(d.getAttribute('data-i')||0));
-      });
-    }
-    if(prevBtn) prevBtn.onclick=()=>show(idx-1);
-    if(nextBtn) nextBtn.onclick=()=>show(idx+1);
-
-    // initial render
-    renderSlide(0);
-
-    // swipe support
-    let sx=null, sy=null;
-    stage.addEventListener('touchstart',(e)=>{
-      const t=e.touches[0];
-      sx=t.clientX; sy=t.clientY;
-    },{passive:true});
-    stage.addEventListener('touchend',(e)=>{
-      if(sx==null) return;
-      const dx=e.changedTouches[0].clientX - sx;
-      const dy=e.changedTouches[0].clientY - sy;
-      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
-        if(dx<0) show(idx+1); else show(idx-1);
+      if (m.type === 'image') {
+        // Switch to image element
+        if (!heroImg) {
+          // Replace video markup with image
+          const slide = document.querySelector('.slide');
+          slide.innerHTML = `<img id="heroImg" class="media-img" src="${esc(m.src)}" alt="${esc(title)}" decoding="async">
+            ${media.length>1 ? `
+              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
+              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
+              <div class="dots" id="dots"></div>` : ``}`;
+          // rebind elements
+          bindNav();
+        } else {
+          heroImg.style.opacity = '0';
+          const next= m.src;
+          setTimeout(()=>{
+            heroImg.src = next;
+            heroImg.onload = ()=>{ heroImg.style.opacity = '1'; };
+          }, 120);
+        }
+      } else {
+        // Switch to video element
+        if (!heroVid) {
+          const slide = document.querySelector('.slide');
+          slide.innerHTML = `
+            <video id="heroVid" class="media-video" preload="metadata" playsinline webkit-playsinline muted poster="${esc(m.poster||'')}"></video>
+            <div id="playOverlay" class="play-overlay">
+              <button id="playBtn" class="play-btn">▶</button>
+              <div class="sound-tip">Sound on after play</div>
+            </div>
+            ${media.length>1 ? `
+              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous">‹</button>
+              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next">›</button>
+              <div class="dots" id="dots"></div>` : ``}`;
+          bindNav();
+          const hv=document.getElementById('heroVid');
+          hv.src = m.src;
+          if(m.poster) hv.setAttribute('poster', m.poster);
+          const po=document.getElementById('playOverlay');
+          const pb=document.getElementById('playBtn');
+          if(pb) pb.onclick = async ()=>{
+            try{
+              // Unmute only after user gesture; some browsers require user action
+              hv.muted = false;
+              await hv.play();
+              if(po) po.classList.add('hidden');
+            }catch{
+              // If autoplay with sound is blocked, keep muted on first play
+              hv.muted = true;
+              await hv.play();
+              if(po) po.classList.add('hidden');
+            }
+          };
+        } else {
+          stopVideo();
+          heroVid.src = m.src;
+          if(m.poster) heroVid.setAttribute('poster', m.poster);
+        }
       }
-      sx=sy=null;
-    },{passive:true});
+      // Preload neighbor image
+      const nextIdx = (idx+1) % media.length;
+      const nm = media[nextIdx];
+      if (nm && nm.type==='image') preload(nm.src);
 
-    // ----- Concierge Drawer
+      renderDots();
+    }
+
+    function bindNav(){
+      // rebind elements after slide content replacement
+      const _prev=document.getElementById('prevBtn');
+      const _next=document.getElementById('nextBtn');
+      const _dots=document.getElementById('dots');
+      if(_prev) _prev.onclick=()=>{ stopVideo(); show(idx-1); };
+      if(_next) _next.onclick=()=>{ stopVideo(); show(idx+1); };
+      if(_dots){
+        _dots.addEventListener('click', (e)=>{
+          const d=e.target.closest('.dot');
+          if(!d) return;
+          stopVideo();
+          show(Number(d.getAttribute('data-i')||0));
+        });
+      }
+      renderDots();
+
+      // swipe support (bind to whichever media is present)
+      const slideMedia = document.querySelector('.slide video, .slide img');
+      if(slideMedia){
+        let sx=null, sy=null;
+        slideMedia.addEventListener('touchstart',(e)=>{
+          const t=e.touches[0];
+          sx=t.clientX; sy=t.clientY;
+        },{passive:true});
+        slideMedia.addEventListener('touchend',(e)=>{
+          if(sx==null) return;
+          const dx=e.changedTouches[0].clientX - sx;
+          const dy=e.changedTouches[0].clientY - sy;
+          if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
+            if(dx<0) show(idx+1); else show(idx-1);
+          }
+          sx=sy=null;
+        },{passive:true});
+      }
+    }
+
+    // Initial bindings
+    bindNav();
+    // If first is image, ensure neighbor preload
+    if (media[1] && media[1].type==='image') preload(media[1].src);
+
+    // Concierge Drawer
     const drawer=$('drawer'), backdrop=$('drawerBackdrop'), body=$('drawerBody');
     const tabs=[...drawer.querySelectorAll('.drawer-tab')];
 
@@ -464,7 +533,6 @@ form textarea{resize:vertical}
       };
     }
 
-    // Openers
     document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
   })();
 })();
