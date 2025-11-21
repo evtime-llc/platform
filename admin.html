@@ -30,7 +30,7 @@
 
     /* Manage table */
     table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: middle; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: top; }
     th { text-align:left; font-size:13px; color:#555; }
     td .title { font-weight:800; }
     td .sub { font-size:12px; color:#666; }
@@ -434,7 +434,9 @@
     };
 
     // ---------- ADMIN TABLE
-    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_score,trust_score,ai_status,ai_last_run';
+    const baseSelect =
+      'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,' +
+      'ai_score,trust_score,ai_status,ai_last_run,ai_summary';
 
     async function fetchOrdered(statusVal){
       return supabase
@@ -491,21 +493,28 @@
         const firstPath = paths[0] || "";
         const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
 
-        const aiScore = (r.ai_score === 0 || r.ai_score) ? Number(r.ai_score) : null;
-        const trust = (r.trust_score === 0 || r.trust_score) ? Number(r.trust_score) : null;
-        const aiStatus = String(r.ai_status || '').toLowerCase();
-        const aiLast = r.ai_last_run ? new Date(r.ai_last_run).toLocaleDateString() : '';
+        // AI fields
+        const aiStatusRaw = String(r.ai_status || '').toLowerCase();
+        const aiStatus = aiStatusRaw || 'pending';
+        const aiScore = (r.ai_score ?? '') === '' ? null : r.ai_score;
+        const trustScore = (r.trust_score ?? '') === '' ? null : r.trust_score;
+        const aiLastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : '';
+        let summary = (r.ai_summary || '').trim();
+        if (summary.length > 140) summary = summary.slice(0, 140) + '…';
 
-        const aiScoreText = aiScore !== null ? esc(aiScore) : '—';
-        const trustText = trust !== null ? esc(trust) : '—';
-        const aiStatusText = aiStatus || '—';
-        const aiLastText = aiLast ? esc(aiLast) : '';
+        const aiLineMain = [
+          aiStatus.toUpperCase(),
+          aiScore != null ? `Score ${aiScore}` : null,
+          trustScore != null ? `Trust ${trustScore}` : null
+        ].filter(Boolean).join(' • ') || 'PENDING';
 
-        const aiCell = `
-          <div class="sub">Score: ${aiScoreText} • Trust: ${trustText}</div>
-          <div class="tiny">Status: ${esc(aiStatusText)}</div>
-          <div class="tiny">${aiLastText ? 'Last: ' + aiLastText : ''}</div>
-        `;
+        const aiSummaryHtml = summary
+          ? `<div class="sub tiny">${esc(summary)}</div>`
+          : '';
+
+        const aiLastHtml = aiLastRun
+          ? `<div class="tiny">Ran: ${esc(aiLastRun)}</div>`
+          : '';
 
         return `
           <tr data-id="${escAttr(r.id)}">
@@ -520,7 +529,11 @@
               <div class="sub">${esc(price)}</div>
             </td>
             <td>${badgeT}</td>
-            <td>${aiCell}</td>
+            <td>
+              <div class="tiny"><strong>AI:</strong> ${esc(aiLineMain)}</div>
+              ${aiSummaryHtml}
+              ${aiLastHtml}
+            </td>
             <td class="actions">
               <button class="btn" data-act="up">↑ Up</button>
               <button class="btn" data-act="down">↓ Down</button>
