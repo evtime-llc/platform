@@ -193,6 +193,7 @@
             <th>Vehicle</th>
             <th>City / Price</th>
             <th>Type</th>
+            <th>AI</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -433,7 +434,7 @@
     };
 
     // ---------- ADMIN TABLE
-    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video';
+    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_score,trust_score,ai_status,ai_last_run';
 
     async function fetchOrdered(statusVal){
       return supabase
@@ -490,6 +491,22 @@
         const firstPath = paths[0] || "";
         const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
 
+        const aiScore = (r.ai_score === 0 || r.ai_score) ? Number(r.ai_score) : null;
+        const trust = (r.trust_score === 0 || r.trust_score) ? Number(r.trust_score) : null;
+        const aiStatus = String(r.ai_status || '').toLowerCase();
+        const aiLast = r.ai_last_run ? new Date(r.ai_last_run).toLocaleDateString() : '';
+
+        const aiScoreText = aiScore !== null ? esc(aiScore) : '—';
+        const trustText = trust !== null ? esc(trust) : '—';
+        const aiStatusText = aiStatus || '—';
+        const aiLastText = aiLast ? esc(aiLast) : '';
+
+        const aiCell = `
+          <div class="sub">Score: ${aiScoreText} • Trust: ${trustText}</div>
+          <div class="tiny">Status: ${esc(aiStatusText)}</div>
+          <div class="tiny">${aiLastText ? 'Last: ' + aiLastText : ''}</div>
+        `;
+
         return `
           <tr data-id="${escAttr(r.id)}">
             <td><img class="thumb" src="${esc(coverUrl)}" alt="cover photo"></td>
@@ -503,6 +520,7 @@
               <div class="sub">${esc(price)}</div>
             </td>
             <td>${badgeT}</td>
+            <td>${aiCell}</td>
             <td class="actions">
               <button class="btn" data-act="up">↑ Up</button>
               <button class="btn" data-act="down">↓ Down</button>
