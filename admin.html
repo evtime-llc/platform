@@ -25,9 +25,6 @@
     .ok { color: #0a7; }
     .err { color: #c00; white-space: pre-wrap; }
     .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
-    .pill.ai-ok { background:#e6f7ef; color:#0a7; }
-    .pill.ai-warning { background:#fff7e6; color:#b45309; }
-    .pill.ai-pending { background:#e5e7eb; color:#374151; }
     .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
     .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
 
@@ -437,7 +434,7 @@
     };
 
     // ---------- ADMIN TABLE
-    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_summary,ai_score,trust_score,ai_status,ai_last_run';
+    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_status,ai_score,trust_score,ai_last_run';
 
     async function fetchOrdered(statusVal){
       return supabase
@@ -494,29 +491,19 @@
         const firstPath = paths[0] || "";
         const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
 
-        // AI summary snippet
-        const aiStatusRaw = String(r.ai_status || '').toLowerCase();
-        const hasRun = !!r.ai_last_run;
-        let aiLabel = 'PENDING';
-        let aiClass = 'ai-pending';
-        if (hasRun) {
-          if (aiStatusRaw === 'warning') {
-            aiLabel = 'CHECK';
-            aiClass = 'ai-warning';
-          } else if (aiStatusRaw === 'ok') {
-            aiLabel = 'OK';
-            aiClass = 'ai-ok';
-          }
-        }
-        const trust = (r.trust_score ?? r.ai_score);
-        const trustText = (trust != null && trust !== '') ? `${trust}%` : '—';
-        const lastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : '';
+        const aiStatusRaw = String(r.ai_status || '').trim().toLowerCase();
+        const aiStatus = aiStatusRaw ? aiStatusRaw.toUpperCase() : 'PENDING';
+        const aiScore = (typeof r.ai_score === 'number') ? r.ai_score : null;
+        const trust = (typeof r.trust_score === 'number') ? r.trust_score : null;
+        const lastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : null;
 
-        const aiParts = [];
-        aiParts.push(`<div class="tiny">Status: <span class="pill ${esc(aiClass)}">${esc(aiLabel)}</span></div>`);
-        aiParts.push(`<div class="tiny">Score: ${esc(trustText)}</div>`);
-        if (lastRun) aiParts.push(`<div class="tiny">Ran: ${esc(lastRun)}</div>`);
-        const aiHtml = aiParts.join('');
+        const aiLine = [
+          `AI: ${aiStatus}`,
+          aiScore != null ? `Score ${aiScore}` : null,
+          trust != null ? `Trust ${trust}` : null
+        ].filter(Boolean).join(' • ');
+
+        const lastLine = lastRun ? `Ran: ${lastRun}` : 'Not run yet';
 
         return `
           <tr data-id="${escAttr(r.id)}">
@@ -531,7 +518,10 @@
               <div class="sub">${esc(price)}</div>
             </td>
             <td>${badgeT}</td>
-            <td>${aiHtml}</td>
+            <td>
+              <div class="tiny">${esc(aiLine)}</div>
+              <div class="tiny">${esc(lastLine)}</div>
+            </td>
             <td class="actions">
               <button class="btn" data-act="up">↑ Up</button>
               <button class="btn" data-act="down">↓ Down</button>
