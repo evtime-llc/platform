@@ -1,121 +1,896 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>How it works / Why E.V.Time</title>
-<meta name="theme-color" content="#0b0a09"/>
+  <meta charset="utf-8"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>EVTime Admin</title>
+  <style>
+    /* Logo header styles */
+    .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
+    .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
+    #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
+    @media (max-width:600px){ #site-logo { max-height:220px; } }
 
-<style>
-:root{
-  --bg:#0b0a09; --card:#fff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
-  --copper:#c98c5b; --copperDark:#9e6d45; --copperSoft:#f5eae0;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
+    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
+    legend { font-weight: 800; }
+    label { display:block; margin: 8px 0 4px; font-weight: 600; }
+    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .muted { color:#666; font-size: 12px; }
+    .ok { color: #0a7; }
+    .err { color: #c00; white-space: pre-wrap; }
+    .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
+    .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
+    .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
 
-/* Standard header */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-.logo-wrap a{display:block}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
+    /* Manage table */
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: middle; }
+    th { text-align:left; font-size:13px; color:#555; }
+    td .title { font-weight:800; }
+    td .sub { font-size:12px; color:#666; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 10px; border:1px solid #ddd; border-radius:8px; background:#fff; cursor:pointer; }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .btn.danger { border-color:#f3c; color:#a00 }
+    .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; display:inline-block; }
+    .badge.live { background:#e6f7ef; color:#0a7; border:1px solid #bfead3; }
+    .badge.sold { background:#f7e6e6; color:#a00; border:1px solid #f0caca; }
+    .badge.ev { background:#e8f0ff; color:#1d4ed8; border:1px solid #c7dcff; }
+    .badge.other { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
 
-/* Page width */
-.wrap{max-width:880px;margin:0 auto;padding:12px}
+    /* Cover thumbnail */
+    .thumb{
+      width: 120px;
+      height: 90px;
+      object-fit: contain;
+      object-position: center;
+      background:#f8f8f8;
+      border-radius:8px;
+      display:block;
+    }
 
-/* Hero card */
-.hero{padding:16px 12px}
-.card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0
-}
-.hlite{
-  background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));
-  border:1px solid rgba(201,140,91,.55);
-  box-shadow:0 6px 22px rgba(201,140,91,.25);
-}
-h1{margin:6px 0 8px;font-size:24px}
-h2{margin:4px 0 8px;font-size:18px}
-p{margin:6px 0 8px}
-.muted{color:#78716c}
+    /* Modal */
+    .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
+    .modal.open { display:flex; }
+    .modal-card { background:#fff; width: min(860px, 95vw); max-height: 90vh; overflow:auto; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .modal-title { font-weight:900; font-size:18px; }
+    .close { border:none; background:#eee; border-radius:999px; width:34px; height:34px; font-size:18px; cursor:pointer; }
 
-/* Check bullets */
-.list{list-style:none;padding:0;margin:8px 0}
-.list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
-.check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
-.check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
+    .rad-group { display:flex; gap:12px; flex-wrap: wrap; }
+    .rad-group label { display:flex; align-items:center; gap:6px; font-weight:600; }
+    .rad-group input { width:auto; }
 
-/* Placeholder image blocks (no external links) */
-.ph{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px dashed #d6d3d1;background:#f8f7f6;display:flex;align-items:center;justify-content:center;color:#9a948f;font-size:14px}
+    .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width:800px){ .two { grid-template-columns:1fr; } }
 
-/* Buttons/links */
-.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800}
-.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
-.btn.primary:hover{background:var(--copperDark);color:#fff}
-a.link{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-a.link:hover{border-bottom-style:solid}
+    /* Small inline status */
+    .inline { display:inline-flex; align-items:center; gap:8px; }
+    .tiny { font-size:11px; color:#666; }
+    .link { color:#0366d6; text-decoration:none; }
 
-/* Footer */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-.footer a:hover{border-bottom-style:solid}
-</style>
+    /* Admin nav tabs */
+    .admin-nav{
+      margin:16px 0 8px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .nav-tab{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 24px;
+      border-radius:999px;
+      border:1px solid #c68a3a;
+      background:#fff8ee;
+      color:#8a5a1f;
+      font-weight:800;
+      font-size:14px;
+      text-decoration:none;
+      min-width:150px;
+      cursor:pointer;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .nav-tab:hover{
+      background:#fbe1ba;
+    }
+    .nav-tab.active{
+      background:#c68a3a;
+      color:#fff;
+      border-color:#c68a3a;
+      cursor:default;
+      box-shadow:0 2px 6px rgba(0,0,0,.12);
+    }
+  </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
-    </a>
-  </div>
-</div>
-
-<!-- Hero -->
-<div class="wrap hero">
-  <div class="card hlite">
-    <h1>How it works / Why E.V.Time</h1>
-    <p class="muted">Friendly, straightforward car selling — with real people and fair offers.</p>
-    <div class="ph">Hero photo placeholder</div>
+  <!-- Topbar / Logo -->
+  <div class="topbar">
+    <div class="logo-wrap">
+      <a href="/" aria-label="Go to Home">
+        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin">
+      </a>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>How it works</h2>
-    <ul class="list">
-      <li><span class="check"></span><div><b>Tell us about your car.</b> Scan or enter your VIN, mileage, and notes.</div></li>
-      <li><span class="check"></span><div><b>We review and text you a number.</b> A real specialist looks at your info and replies quickly.</div></li>
-      <li><span class="check"></span><div><b>Simple handoff.</b> If you like it, we schedule a quick look and complete paperwork via our licensed partner, Waltons Auto Sales.</div></li>
-    </ul>
+  <h1>EVTime — Admin</h1>
+
+  <!-- Copper nav tabs -->
+  <div class="admin-nav">
+    <span class="nav-tab active">Inventory</span>
+    <a class="nav-tab" href="/admin-leads.html">Leads</a>
   </div>
 
-  <div class="card">
-    <h2>Why E.V.Time</h2>
-    <ul class="list">
-      <li><span class="check"></span><div><b>Honest offers.</b> We don’t blast out computer guesses — we actually evaluate your car.</div></li>
-      <li><span class="check"></span><div><b>Low overhead, better numbers.</b> We keep it lean so we can be competitive.</div></li>
-      <li><span class="check"></span><div><b>Privacy first.</b> Your info is only used to evaluate and contact you — never sold or shared.</div></li>
-    </ul>
+  <fieldset id="authBox">
+    <legend>Authentication</legend>
+    <div id="sessionInfo" class="muted">Checking session…</div>
+    <div id="signinBox">
+      <label>Email for magic link</label>
+      <input id="email" type="email" value="vahehr@gmail.com" required/>
+      <button id="sendLink" class="btn">Send Magic Link</button>
+      <div id="authMsg" class="muted" aria-live="polite"></div>
+    </div>
+    <button id="signout" class="btn" style="display:none">Sign out</button>
+  </fieldset>
+
+  <fieldset id="createBox" style="display:none">
+    <legend>Create Listing</legend>
+
+    <div class="row3">
+      <div>
+        <label>Status</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_status" value="live" checked> Live</label>
+          <label><input type="radio" name="c_status" value="sold"> Sold</label>
+        </div>
+      </div>
+      <div>
+        <label>Vehicle Type</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_vehicle_type" value="ev" checked> EV</label>
+          <label><input type="radio" name="c_vehicle_type" value="other"> Other</label>
+        </div>
+      </div>
+      <div>
+        <label>Price (USD)</label>
+        <input id="c_price" type="number" min="0" step="100"/>
+      </div>
+    </div>
+
+    <div class="row3">
+      <div><label>Year</label><input id="c_year" type="number" min="1990" max="2100" /></div>
+      <div><label>Make</label><input id="c_make" placeholder="Tesla"/></div>
+      <div><label>Model</label><input id="c_model" placeholder="Model 3"/></div>
+    </div>
+
+    <div class="row3">
+      <div><label>Trim</label><input id="c_trim" placeholder="Long Range"/></div>
+      <div><label>Powertrain</label><input id="c_powertrain" placeholder="RWD / AWD / Dual Motor"/></div>
+      <div><label>Mileage</label><input id="c_mileage" type="number" min="0"/></div>
+    </div>
+
+    <div class="row3">
+      <div>
+        <label>Title Status</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_title_status" value="Clean" checked> Clean</label>
+          <label><input type="radio" name="c_title_status" value="Other"> Other</label>
+        </div>
+      </div>
+      <div>
+        <label>Condition</label>
+        <div class="rad-group">
+          <label><input type="radio" name="c_condition" value="Excellent" checked> Excellent</label>
+          <label><input type="radio" name="c_condition" value="Good"> Good</label>
+          <label><input type="radio" name="c_condition" value="Fair"> Fair</label>
+        </div>
+      </div>
+      <div><label>City</label><input id="c_city" placeholder="Torrance, CA"/></div>
+    </div>
+
+    <div class="row3">
+      <div><label>VIN</label><input id="c_vin" placeholder="5YJ3E1EA..." maxlength="25"/></div>
+      <div><label>Special Features (comma-separated)</label><input id="c_special_features" placeholder="FSD, Acceleration Boost, Tow Hitch"/></div>
+      <div></div>
+    </div>
+
+    <label>Description</label>
+    <textarea id="c_description" rows="4" placeholder="Clean SoCal car, one owner…"></textarea>
+
+    <div class="two">
+      <div>
+        <label>Cover Photo (required)</label>
+        <input id="c_cover" type="file" accept="image/*"/>
+      </div>
+      <div>
+        <label>Gallery Photos (optional, up to 9)</label>
+        <input id="c_gallery" type="file" accept="image/*" multiple/>
+      </div>
+    </div>
+    <div class="bar"><div id="uProgCreate"></div></div>
+    <div id="uListCreate" class="muted" style="margin-top:6px;"></div>
+
+    <button id="create" class="btn">Create Listing</button>
+    <div id="createMsg" class="muted" aria-live="polite"></div>
+  </fieldset>
+
+  <fieldset id="manageBox" style="display:none">
+    <legend>Inventory</legend>
+    <div id="tblWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Cover</th>
+            <th>Status</th>
+            <th>Vehicle</th>
+            <th>City / Price</th>
+            <th>Type</th>
+            <th>AI</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbl"></tbody>
+      </table>
+      <div id="emptyMsg" class="muted" style="display:none">No rows.</div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Diagnostics</legend>
+    <div id="diag"></div>
+  </fieldset>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Edit Listing</div>
+        <button class="close" id="editClose" aria-label="Close">✕</button>
+      </div>
+      <div id="editBody">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Trust & privacy</h2>
-    <p class="muted">We respect your time and your data. Read our <a class="link" href="./legal.html">Legal & Disclosures</a> for full details.</p>
-  </div>
+  <!-- Config + Supabase client -->
+  <script src="/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    // ---------- Helpers
+    const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-  <div class="card" style="display:flex;gap:10px;flex-wrap:wrap">
-    <a class="btn" href="./share.html">Browse inventory</a>
-    <a class="btn primary" href="./sell.html">Sell your car</a>
-  </div>
-</div>
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: 'evtime-auth'
+      }
+    });
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="wrap">
-    © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a>
-  </div>
-</footer>
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+    const $ = id => document.getElementById(id);
+    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
+    const lock = (btn, on)=> { if (btn) btn.disabled = !!on; };
+
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const escAttr = esc;
+
+    // ---------- Image helpers
+    function parseImages(images){
+      if (!images) return [];
+      if (Array.isArray(images)) return images;
+      if (typeof images === 'string'){
+        const s = images.trim();
+        if (s.startsWith('[')) { try{ return JSON.parse(s)||[] } catch { return [] } }
+        return s.split(',').map(v=>v.trim()).filter(Boolean);
+      }
+      return [];
+    }
+    function normalize(path){
+      return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
+    }
+    function publicImageUrls(path){
+      let s = String(path||'').trim().replace(/^\/+/, '');
+      if (!s) return [];
+      const candidates = [];
+      if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
+      candidates.push(s);
+      candidates.push(s.replace(/^images\//i,''));
+      if (!/^images\//i.test(s)) candidates.push('images/' + s);
+      const uniq = [...new Set(candidates)];
+      return uniq.map(p => supabase.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
+    }
+    function chooseUrl(path){
+      const urls = publicImageUrls(path);
+      return urls[0] || null;
+    }
+
+    // ---------- Auth UI
+    async function setSessionUI() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
+      if (session) {
+        const email = session.user?.email || "";
+        if (email.toLowerCase() !== "vahehr@gmail.com") {
+          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
+          await supabase.auth.signOut();
+          $("signinBox").style.display = "block";
+          $("signout").style.display = "none";
+          $("createBox").style.display = "none";
+          $("manageBox").style.display = "none";
+          return;
+        }
+        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
+        $("signinBox").style.display = "none";
+        $("signout").style.display = "inline-block";
+        $("createBox").style.display = "block";
+        $("manageBox").style.display = "block";
+        await refreshListings();
+      } else {
+        $("sessionInfo").textContent = "Not signed in.";
+        $("signinBox").style.display = "block";
+        $("signout").style.display = "none";
+        $("createBox").style.display = "none";
+        $("manageBox").style.display = "none";
+      }
+    }
+
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+
+    $("sendLink").onclick = async () => {
+      const email = $("email").value.trim();
+      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
+      $("authMsg").textContent = "Sending magic link...";
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
+      });
+      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
+    };
+
+    $("signout").onclick = async () => {
+      await supabase.auth.signOut();
+      await setSessionUI();
+    };
+
+    (async () => {
+      const qs = window.location.search;
+      if (qs && qs.includes("code=")) {
+        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
+        || !!localStorage.getItem('evtime-auth');
+      diag('Local session present: ' + hasLocal);
+      await setSessionUI();
+    })();
+
+    // ---------- Grouping & ordering
+    function blockKey(row){
+      const status = String(row.status||'').toLowerCase();
+      if (status === 'sold') return 'sold';
+      const vt = String(row.vehicle_type || 'ev').toLowerCase();
+      const make = String(row.make || '').trim().toLowerCase();
+      if (vt === 'ev'){
+        if (make === 'tesla') return 'live_tesla';
+        return 'live_other_ev';
+      }
+      return 'live_other';
+    }
+    function byPosThenDate(a,b){
+      const pa = Number(a.position ?? 0), pb = Number(b.position ?? 0);
+      if (pb !== pa) return pb - pa;
+      const ad = new Date(a.updated_at || a.created_at || 0).getTime();
+      const bd = new Date(b.updated_at || b.created_at || 0).getTime();
+      return bd - ad;
+    }
+
+    // ---------- Uploads
+    async function uploadFilesTo(listingId, files, progEl, listEl){
+      if (!files || files.length === 0) return [];
+      const uploaded = [];
+      let done = 0;
+      for (const file of files) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const relPath = `${listingId}/${Date.now()}_${safeName}`;
+        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
+        if (error) throw new Error(`Upload failed: ${error.message}`);
+        uploaded.push(relPath);
+        done++;
+        if (progEl) progEl.style.width = `${Math.round((done/files.length)*100)}%`;
+        if (listEl) listEl.innerHTML += `<code>${esc(relPath)}</code><br/>`;
+      }
+      return uploaded;
+    }
+
+    // ---------- CREATE
+    $("create").onclick = async () => {
+      $("createMsg").textContent = "";
+      lock($("create"), true);
+      try {
+        const cover = $("c_cover").files?.[0];
+        if (!cover) { $("createMsg").textContent = "Please add a cover photo."; return; }
+
+        const listingId = crypto.randomUUID();
+
+        const coverPaths = await uploadFilesTo(listingId, [cover], $("uProgCreate"), $("uListCreate"));
+        const galleryFiles = Array.from($("c_gallery").files || []).slice(0, 9);
+        const galleryPaths = galleryFiles.length ? await uploadFilesTo(listingId, galleryFiles, $("uProgCreate"), $("uListCreate")) : [];
+
+        const payload = {
+          id: listingId,
+          status: document.querySelector('input[name="c_status"]:checked')?.value || "live",
+          vehicle_type: document.querySelector('input[name="c_vehicle_type"]:checked')?.value || "ev",
+          year: parseInt($("c_year").value || "0", 10),
+          make: $("c_make").value.trim(),
+          model: $("c_model").value.trim(),
+          trim: $("c_trim").value.trim(),
+          powertrain: $("c_powertrain").value.trim(),
+          mileage: parseInt($("c_mileage").value || "0", 10),
+          title_status: document.querySelector('input[name="c_title_status"]:checked')?.value || "Clean",
+          condition: document.querySelector('input[name="c_condition"]:checked')?.value || "Excellent",
+          city: $("c_city").value.trim(),
+          vin: $("c_vin")?.value?.trim?.() || "",
+          price: parseInt($("c_price").value || "0", 10),
+          special_features: $("c_special_features").value.trim(),
+          description: $("c_description").value.trim(),
+          images: [ ...coverPaths, ...galleryPaths ],
+          position: Date.now()
+        };
+
+        const { error } = await supabase.from("listing").insert(payload);
+        if (error) throw error;
+
+        $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${esc(listingId)}</code>`;
+
+        // Reset create form
+        ["c_price","c_year","c_make","c_model","c_trim","c_powertrain","c_mileage","c_city","c_special_features","c_description","c_vin"]
+          .forEach(id=>{ const el=$(id); if(el) el.value=""; });
+        document.querySelector('input[name="c_status"][value="live"]').checked = true;
+        document.querySelector('input[name="c_vehicle_type"][value="ev"]').checked = true;
+        document.querySelector('input[name="c_title_status"][value="Clean"]').checked = true;
+        document.querySelector('input[name="c_condition"][value="Excellent"]').checked = true;
+        $("c_cover").value = ""; $("c_gallery").value = "";
+        $("uProgCreate").style.width = "0%"; $("uListCreate").innerHTML = "";
+        await refreshListings();
+      } catch (e) {
+        $("createMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+        diag(`<span class="err">${esc(e.stack || e)}</span>`);
+      } finally {
+        lock($("create"), false);
+      }
+    };
+
+    // ---------- ADMIN TABLE
+    const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_status,ai_score,trust_score,ai_last_run';
+
+    async function fetchOrdered(statusVal){
+      return supabase
+        .from('listing')
+        .select(baseSelect)
+        .eq('status', statusVal)
+        .order('position', { ascending:false, nullsFirst:false })
+        .order('updated_at', { ascending:false, nullsFirst:false })
+        .limit(1000);
+    }
+
+    async function refreshListings(){
+      const [liveRes, soldRes] = await Promise.all([fetchOrdered('live'), fetchOrdered('sold')]);
+      if (liveRes.error || soldRes.error){
+        diag(`<span class="err">Load error: ${esc((liveRes.error || soldRes.error).message)}</span>`);
+        $("tbl").innerHTML = "";
+        $("emptyMsg").style.display = "block";
+        return;
+      }
+      const live = liveRes.data || [];
+      const sold = soldRes.data || [];
+
+      const live_tesla = [], live_other_ev = [], live_other = [];
+      for (const r of live){
+        const k = blockKey(r);
+        if (k === 'live_tesla') live_tesla.push(r);
+        else if (k === 'live_other_ev') live_other_ev.push(r);
+        else live_other.push(r);
+      }
+      live_tesla.sort(byPosThenDate);
+      live_other_ev.sort(byPosThenDate);
+      live_other.sort(byPosThenDate);
+      sold.sort(byPosThenDate);
+
+      const rows = [...live_tesla, ...live_other_ev, ...live_other, ...sold];
+      renderTable(rows);
+    }
+
+    function renderTable(rows){
+      const tb = $("tbl");
+      if (!rows.length){ tb.innerHTML = ""; $("emptyMsg").style.display = "block"; return; }
+      $("emptyMsg").style.display = "none";
+      tb.innerHTML = rows.map(r=>{
+        const status = String(r.status||'').toLowerCase();
+        const vt = String(r.vehicle_type||'ev').toLowerCase();
+        const badgeS = `<span class="badge ${esc(status)}">${esc(status.toUpperCase())}</span>`;
+        const badgeT = `<span class="badge ${esc(vt)}">${esc(vt.toUpperCase())}</span>`;
+        const title = `${r.year||''} ${r.make||''} ${r.model||''} ${r.trim||''}`.trim();
+        const price = (r.price!=null && r.price!=='') ? `$${Number(r.price).toLocaleString()}` : '';
+        const vinTxt = r.vin ? `VIN: ${esc(r.vin)}` : '';
+        const vidBadge = r.video ? `<span class="badge" style="background:#e6f0ff;color:#1d4ed8;border:1px solid #c7dcff;margin-left:6px;">🎥 VIDEO</span>` : '';
+
+        const paths = parseImages(r.images).map(normalize);
+        const firstPath = paths[0] || "";
+        const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
+
+        const aiStatusRaw = String(r.ai_status || '').trim().toLowerCase();
+        const aiStatus = aiStatusRaw ? aiStatusRaw.toUpperCase() : 'PENDING';
+        const aiScore = (typeof r.ai_score === 'number') ? r.ai_score : null;
+        const trust = (typeof r.trust_score === 'number') ? r.trust_score : null;
+        const lastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : null;
+
+        const aiLine = [
+          `AI: ${aiStatus}`,
+          aiScore != null ? `Score ${aiScore}` : null,
+          trust != null ? `Trust ${trust}` : null
+        ].filter(Boolean).join(' • ');
+
+        const lastLine = lastRun ? `Ran: ${lastRun}` : 'Not run yet';
+
+        return `
+          <tr data-id="${escAttr(r.id)}">
+            <td><img class="thumb" src="${esc(coverUrl)}" alt="cover photo"></td>
+            <td>${badgeS}</td>
+            <td>
+              <div class="title">${esc(title || '(no title)')}${vidBadge}</div>
+              <div class="sub">${vinTxt}</div>
+            </td>
+            <td>
+              <div>${esc(r.city||'')}</div>
+              <div class="sub">${esc(price)}</div>
+            </td>
+            <td>${badgeT}</td>
+            <td>
+              <div class="tiny">${esc(aiLine)}</div>
+              <div class="tiny">${esc(lastLine)}</div>
+            </td>
+            <td class="actions">
+              <button class="btn" data-act="up">↑ Up</button>
+              <button class="btn" data-act="down">↓ Down</button>
+              <button class="btn" data-act="edit">✎ Edit</button>
+              <button class="btn danger" data-act="delete">🗑 Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // ---------- Move (swap positions within block)
+    async function moveWithinBlock(id, dir){
+      const { data, error } = await supabase.from('listing').select(baseSelect).limit(1000);
+      if (error) throw error;
+
+      const blocks = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
+      data.forEach(r => blocks[blockKey(r)].push(r));
+      Object.keys(blocks).forEach(k => blocks[k].sort(byPosThenDate));
+
+      let blockName = null, idx = -1;
+      for (const k of ['live_tesla','live_other_ev','live_other','sold']){
+        const arr = blocks[k];
+        const i = arr.findIndex(x => x.id === id);
+        if (i !== -1){ blockName = k; idx = i; break; }
+      }
+      if (blockName == null) return;
+
+      const arr = blocks[blockName];
+      const nIdx = idx + (dir === 'up' ? -1 : 1);
+      if (nIdx < 0 || nIdx >= arr.length) return;
+
+      const a = arr[idx];
+      const neighbor = arr[nIdx];
+
+      const posA = Number(a.position ?? 0);
+      const posN = Number(neighbor.position ?? 0);
+
+      const { error: upErr } = await supabase.from('listing').upsert([
+        { id: a.id, position: posN },
+        { id: neighbor.id, position: posA }
+      ]);
+      if (upErr) throw upErr;
+
+      await refreshListings();
+    }
+
+    // ---------- Delete (hard delete)
+    async function deleteListing(id){
+      if (!confirm("Delete this listing and all its photos? This cannot be undone.")) return;
+      try{
+        // remove image assets
+        const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
+        if (listErr) diag(`<span class="err">List files error: ${esc(listErr.message)}</span>`);
+        if (files?.length){
+          const paths = files.map(f => `${id}/${f.name}`);
+          const { error: delErr } = await supabase.storage.from('images').remove(paths);
+          if (delErr) diag(`<span class="err">Remove files error: ${esc(delErr.message)}</span>`);
+        }
+        // remove video assets
+        const { data: vfiles } = await supabase.storage.from('videos').list(id, { limit: 100 });
+        if (vfiles?.length){
+          const vpaths = vfiles.map(f => `${id}/${f.name}`);
+          await supabase.storage.from('videos').remove(vpaths);
+        }
+
+        const { error } = await supabase.from('listing').delete().eq('id', id);
+        if (error) throw error;
+      } catch(e){
+        diag(`<span class="err">Delete failed: ${esc(e.message)}</span>`);
+      }
+      await refreshListings();
+    }
+
+    // ---------- Edit modal
+    const editModal = $("editModal");
+    const editClose = $("editClose");
+    editClose.onclick = ()=> editModal.classList.remove('open');
+    window.addEventListener('keydown', (e)=>{ if (e.key==='Escape') editModal.classList.remove('open'); });
+    editModal.addEventListener('click', (e)=>{ if (e.target === editModal) editModal.classList.remove('open'); });
+
+    function editFormHTML(row){
+      const radio = (name, val, cur, label) => `
+        <label><input type="radio" name="${name}" value="${escAttr(val)}" ${String(cur).toLowerCase()===String(val).toLowerCase()?'checked':''}> ${label}</label>
+      `;
+      return `
+        <div class="row3">
+          <div>
+            <label>Status</label>
+            <div class="rad-group">
+              ${radio('e_status','live',row.status,'Live')}
+              ${radio('e_status','sold',row.status,'Sold')}
+            </div>
+          </div>
+          <div>
+            <label>Vehicle Type</label>
+            <div class="rad-group">
+              ${radio('e_vehicle_type','ev',row.vehicle_type||'ev','EV')}
+              ${radio('e_vehicle_type','other',row.vehicle_type,'Other')}
+            </div>
+          </div>
+          <div>
+            <label>Price (USD)</label>
+            <input id="e_price" type="number" min="0" step="100" value="${escAttr(row.price ?? '')}"/>
+          </div>
+        </div>
+
+        <div class="row3">
+          <div><label>Year</label><input id="e_year" type="number" min="1990" max="2100" value="${escAttr(row.year ?? '')}"/></div>
+          <div><label>Make</label><input id="e_make" value="${escAttr(row.make||'')}"/></div>
+          <div><label>Model</label><input id="e_model" value="${escAttr(row.model||'')}"/></div>
+        </div>
+
+        <div class="row3">
+          <div><label>Trim</label><input id="e_trim" value="${escAttr(row.trim||'')}"/></div>
+          <div><label>Powertrain</label><input id="e_powertrain" value="${escAttr(row.powertrain||'')}"/></div>
+          <div><label>Mileage</label><input id="e_mileage" type="number" min="0" value="${escAttr(row.mileage ?? '')}"/></div>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label>Title Status</label>
+            <div class="rad-group">
+              ${radio('e_title_status','Clean',row.title_status,'Clean')}
+              ${radio('e_title_status','Other',row.title_status,'Other')}
+            </div>
+          </div>
+          <div>
+            <label>Condition</label>
+            <div class="rad-group">
+              ${radio('e_condition','Excellent',row.condition,'Excellent')}
+              ${radio('e_condition','Good',row.condition,'Good')}
+              ${radio('e_condition','Fair',row.condition,'Fair')}
+            </div>
+          </div>
+          <div><label>City</label><input id="e_city" value="${escAttr(row.city||'')}"/></div>
+        </div>
+
+        <div class="row3">
+          <div><label>VIN</label><input id="e_vin" value="${escAttr(row.vin||'')}" maxlength="25"/></div>
+          <div><label>Special Features (comma-separated)</label><input id="e_special_features" value="${escAttr(row.special_features||'')}"/></div>
+          <div></div>
+        </div>
+
+        <label>Description</label>
+        <textarea id="e_description" rows="4">${esc(row.description||'')}</textarea>
+
+        <div class="two">
+          <div>
+            <label>Replace Cover (optional)</label>
+            <input id="e_cover" type="file" accept="image/*"/>
+          </div>
+          <div>
+            <label>Add Gallery Photos (optional)</label>
+            <input id="e_gallery" type="file" accept="image/*" multiple/>
+          </div>
+        </div>
+        <div class="bar"><div id="uProgEdit"></div></div>
+        <div id="uListEdit" class="muted" style="margin-top:6px;"></div>
+
+        <!-- Video section -->
+        <fieldset style="margin-top:14px">
+          <legend>Listing Video (MP4 ≤ 50 MB, 1080p OK)</legend>
+          <div class="tiny" style="margin-bottom:8px;">
+            ${row.video ? `<span class="inline">Status: <span class="ok">has video</span> • <a class="link" href="${esc(row.video)}" target="_blank" rel="noopener">open</a></span>` : `Status: no video`}
+          </div>
+          <div class="two">
+            <div>
+              <label>Video (.mp4)</label>
+              <input id="e_video" type="file" accept="video/mp4"/>
+            </div>
+            <div>
+              <label>Poster (optional .jpg/.png)</label>
+              <input id="e_video_poster" type="file" accept="image/*"/>
+            </div>
+          </div>
+          <div class="inline" style="margin-top:10px; gap:10px;">
+            <button id="e_video_remove" class="btn">Remove Video</button>
+            <span class="tiny">Uploads replace any existing video/poster.</span>
+          </div>
+          <div id="e_video_msg" class="tiny" style="margin-top:6px;"></div>
+        </fieldset>
+
+        <div style="display:flex; gap:12px; margin-top:12px;">
+          <button id="e_save" class="btn">Save changes</button>
+          <button id="e_cancel" class="btn">Cancel</button>
+        </div>
+        <div id="e_msg" class="muted" style="margin-top:6px;" aria-live="polite"></div>
+      `;
+    }
+
+    async function openEdit(id){
+      const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
+      if (error){ diag(`<span class="err">Load row error: ${esc(error.message)}</span>`); return; }
+      const body = $("editBody");
+      body.innerHTML = editFormHTML(data);
+      editModal.classList.add('open');
+
+      const setVidMsg = (t, ok=false) => { const el=$("e_video_msg"); if(!el) return; el.textContent=t; el.style.color = ok ? '#0a7' : '#666'; };
+
+      $("e_cancel").onclick = ()=> editModal.classList.remove('open');
+
+      // Remove video handler
+      $("e_video_remove").onclick = async () => {
+        try{
+          setVidMsg('Removing…');
+          await supabase.storage.from('videos').remove([`${id}/main.mp4`, `${id}/poster.jpg`]);
+          const { error: upErr } = await supabase.from('listing').update({ video: null, video_poster: null }).eq('id', id);
+          if (upErr) throw upErr;
+          setVidMsg('Video removed.', true);
+        }catch(e){
+          setVidMsg(e.message || 'Remove failed.');
+          diag(`<span class="err">${esc(e.stack || e)}</span>`);
+        }
+      };
+
+      $("e_save").onclick = async () => {
+        $("e_msg").textContent = "Saving…";
+        try{
+          const cover = $("e_cover").files?.[0] || null;
+          const galFiles = Array.from($("e_gallery").files || []);
+
+          let newCoverPath = null;
+          let newGalleryPaths = [];
+          if (cover){
+            const up = await uploadFilesTo(id, [cover], $("uProgEdit"), $("uListEdit"));
+            newCoverPath = up[0] || null;
+          }
+          if (galFiles.length){
+            newGalleryPaths = await uploadFilesTo(id, galFiles, $("uProgEdit"), $("uListEdit"));
+          }
+
+          let images = Array.isArray(data.images)
+            ? data.images.slice()
+            : (typeof data.images === 'string' && data.images.trim().startsWith('[') ? (JSON.parse(data.images)||[]) : (data.images||'').split(',').map(s=>s.trim()).filter(Boolean));
+
+          if (!Array.isArray(images)) images = [];
+          if (newCoverPath){
+            images = [newCoverPath, ...images.filter(p => p !== newCoverPath)];
+          }
+          if (newGalleryPaths.length){
+            images = [...images, ...newGalleryPaths];
+          }
+
+          // --- Video upload (optional)
+          const vFile = document.getElementById('e_video').files[0] || null;
+          const pFile = document.getElementById('e_video_poster').files[0] || null;
+
+          const maxVideoBytes = 50 * 1024 * 1024; // 50 MB practical limit
+          const isMp4 = f => f && (f.type === 'video/mp4' || f.name?.toLowerCase().endsWith('.mp4'));
+          const isImage = f => f && f.type?.startsWith('image/');
+
+          let videoUrl = null, posterUrl = null;
+
+          if (vFile){
+            if (!isMp4(vFile)) throw new Error('Video must be .mp4');
+            if (vFile.size > maxVideoBytes) throw new Error('Video over 50 MB');
+            const { error: vErr } = await supabase.storage.from('videos').upload(`${id}/main.mp4`, vFile, { upsert: true, cacheControl: '3600' });
+            if (vErr) throw vErr;
+            videoUrl = supabase.storage.from('videos').getPublicUrl(`${id}/main.mp4`).data?.publicUrl || null;
+          }
+          if (pFile){
+            if (!isImage(pFile)) throw new Error('Poster must be an image');
+            if (pFile.size > 10 * 1024 * 1024) throw new Error('Poster over 10 MB');
+            const { error: pErr } = await supabase.storage.from('videos').upload(`${id}/poster.jpg`, pFile, { upsert: true, cacheControl: '3600' });
+            if (pErr) throw pErr;
+            posterUrl = supabase.storage.from('videos').getPublicUrl(`${id}/poster.jpg`).data?.publicUrl || null;
+          }
+
+          const patch = {
+            status: document.querySelector('input[name="e_status"]:checked')?.value || data.status,
+            vehicle_type: document.querySelector('input[name="e_vehicle_type"]:checked')?.value || data.vehicle_type,
+            price: Number.isFinite(parseInt($("e_price").value,10)) ? parseInt($("e_price").value,10) : data.price,
+            year: Number.isFinite(parseInt($("e_year").value,10)) ? parseInt($("e_year").value,10) : data.year,
+            make: $("e_make").value.trim() || data.make,
+            model: $("e_model").value.trim() || data.model,
+            trim: $("e_trim").value.trim() || data.trim,
+            powertrain: $("e_powertrain").value.trim() || data.powertrain,
+            mileage: Number.isFinite(parseInt($("e_mileage").value,10)) ? parseInt($("e_mileage").value,10) : data.mileage,
+            title_status: document.querySelector('input[name="e_title_status"]:checked')?.value || data.title_status,
+            condition: document.querySelector('input[name="e_condition"]:checked')?.value || data.condition,
+            city: $("e_city").value.trim() || data.city,
+            vin: $("e_vin").value.trim() || data.vin,
+            special_features: $("e_special_features").value.trim() || data.special_features,
+            description: $("e_description").value.trim() || data.description,
+            images: images
+          };
+
+          if (videoUrl){ patch.video = videoUrl; patch.video_provider = 'supabase'; }
+          if (posterUrl){ patch.video_poster = posterUrl; }
+
+          const { error: upErr } = await supabase.from('listing').update(patch).eq('id', id);
+          if (upErr) throw upErr;
+
+          $("e_msg").innerHTML = `<span class="ok">Saved.</span>`;
+          editModal.classList.remove('open');
+          await refreshListings();
+        }catch(e){
+          $("e_msg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+          diag(`<span class="err">${esc(e.stack || e)}</span>`);
+        }
+      };
+    }
+
+    // ---------- Table actions
+    $("tbl").addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      const tr = e.target.closest('tr[data-id]');
+      if (!tr) return;
+      const id = tr.getAttribute('data-id');
+      const act = btn.getAttribute('data-act');
+      try{
+        if (act === 'up') { await moveWithinBlock(id, 'up'); }
+        else if (act === 'down') { await moveWithinBlock(id, 'down'); }
+        else if (act === 'edit') { await openEdit(id); }
+        else if (act === 'delete') { await deleteListing(id); }
+      }catch(err){
+        diag(`<span class="err">Action error: ${esc(err.message)}</span>`);
+      }
+    });
+
+    // ---------- Basic diagnostics (kept simple)
+    (async () => {
+      diag("Testing anon read from 'listing'…");
+      const { error } = await supabase.from("listing").select("id").limit(1);
+      if (error) diag(`<span class="err">Read error: ${esc(error.message)}</span>`); else diag("Read OK.");
+    })();
+  </script>
 </body>
 </html>
