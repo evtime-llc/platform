@@ -14,31 +14,140 @@
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
     @media (max-width:600px){ #site-logo { max-height:220px; } }
 
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
-    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+      background:#fafafa;
+    }
+
+    fieldset {
+      border: 1px solid #ddd;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background:#fff;
+    }
+
     legend { font-weight: 800; }
     label { display:block; margin: 8px 0 4px; font-weight: 600; }
-    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    input, textarea, select, button {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: inherit;
+    }
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .muted { color:#666; font-size: 12px; }
     .ok { color: #0a7; }
     .err { color: #c00; white-space: pre-wrap; }
-    .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
-    .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
-    .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
+    .pill {
+      display:inline-block;
+      background:#f4f4f4;
+      padding:4px 8px;
+      border-radius:999px;
+      margin-right:6px;
+      font-size:12px;
+    }
+    .bar {
+      height: 6px;
+      background:#eee;
+      border-radius: 999px;
+      overflow:hidden;
+      margin-top:6px;
+    }
+    .bar > div {
+      height: 100%;
+      width: 0;
+      background: #4a8;
+      transition: width .2s;
+    }
+
+    /* Simple admin nav */
+    .admin-nav-wrap {
+      margin: 12px 0 20px;
+    }
+    .admin-nav {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .nav-btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid #e5e7eb;
+      font-size:13px;
+      font-weight:600;
+      text-decoration:none;
+      cursor:pointer;
+      background:#ffffff;
+      color:#111827;
+      box-shadow:0 1px 2px rgba(0,0,0,0.04);
+      transition:background .15s ease, box-shadow .15s ease, transform .05s ease, border-color .15s ease;
+    }
+    .nav-btn span.icon {
+      font-size:14px;
+      margin-right:6px;
+    }
+    .nav-btn:hover {
+      background:#f3f4f6;
+      box-shadow:0 2px 6px rgba(0,0,0,0.06);
+      transform:translateY(-1px);
+      border-color:#d1d5db;
+    }
+    .nav-btn.primary {
+      background:linear-gradient(135deg,#111827,#1f2937);
+      color:#f9fafb;
+      border-color:#111827;
+    }
+    .nav-btn.primary:hover {
+      background:linear-gradient(135deg,#020617,#111827);
+      box-shadow:0 3px 10px rgba(0,0,0,0.25);
+    }
+    .nav-btn.secondary {
+      background:#ffffff;
+    }
 
     /* Manage table */
     table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: middle; }
+    th, td {
+      padding:10px 8px;
+      border-bottom:1px solid #eee;
+      vertical-align: middle;
+    }
     th { text-align:left; font-size:13px; color:#555; }
     td .title { font-weight:800; }
     td .sub { font-size:12px; color:#666; }
     .actions { display:flex; gap:8px; flex-wrap:wrap; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 10px; border:1px solid #ddd; border-radius:8px; background:#fff; cursor:pointer; }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      padding:8px 10px;
+      border:1px solid #ddd;
+      border-radius:8px;
+      background:#fff;
+      cursor:pointer;
+      font-size:13px;
+    }
     .btn:disabled { opacity:.5; cursor:not-allowed; }
     .btn.danger { border-color:#f3c; color:#a00 }
-    .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; display:inline-block; }
+
+    .badge {
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      display:inline-block;
+    }
     .badge.live { background:#e6f7ef; color:#0a7; border:1px solid #bfead3; }
     .badge.sold { background:#f7e6e6; color:#a00; border:1px solid #f0caca; }
     .badge.ev { background:#e8f0ff; color:#1d4ed8; border:1px solid #c7dcff; }
@@ -58,17 +167,36 @@
     /* Modal */
     .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
     .modal.open { display:flex; }
-    .modal-card { background:#fff; width: min(860px, 95vw); max-height: 90vh; overflow:auto; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
+    .modal-card {
+      background:#fff;
+      width: min(860px, 95vw);
+      max-height: 90vh;
+      overflow:auto;
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.2)
+    }
     .modal-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
     .modal-title { font-weight:900; font-size:18px; }
-    .close { border:none; background:#eee; border-radius:999px; width:34px; height:34px; font-size:18px; cursor:pointer; }
+    .close {
+      border:none;
+      background:#eee;
+      border-radius:999px;
+      width:34px;
+      height:34px;
+      font-size:18px;
+      cursor:pointer;
+    }
 
     .rad-group { display:flex; gap:12px; flex-wrap: wrap; }
     .rad-group label { display:flex; align-items:center; gap:6px; font-weight:600; }
     .rad-group input { width:auto; }
 
     .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    @media (max-width:800px){ .two { grid-template-columns:1fr; } }
+    @media (max-width:800px){
+      .two { grid-template-columns:1fr; }
+      .admin-nav { gap:8px; }
+    }
 
     /* Small inline status */
     .inline { display:inline-flex; align-items:center; gap:8px; }
@@ -88,6 +216,23 @@
   </div>
 
   <h1>EVTime — Admin</h1>
+
+  <!-- Simple admin navigation -->
+  <div class="admin-nav-wrap">
+    <div class="admin-nav">
+      <!-- Current page -->
+      <button type="button" class="nav-btn primary">
+        <span class="icon">🚗</span>
+        Inventory
+      </button>
+
+      <!-- Link to leads admin -->
+      <a href="/admin-leads.html" class="nav-btn secondary">
+        <span class="icon">💬</span>
+        Leads &amp; Inquiries
+      </a>
+    </div>
+  </div>
 
   <fieldset id="authBox">
     <legend>Authentication</legend>
@@ -202,7 +347,6 @@
       <div id="emptyMsg" class="muted" style="display:none">No rows.</div>
     </div>
   </fieldset>
-<a href="/admin-leads.html" style="font-weight:800; margin-left:16px;">Leads</a>
 
   <fieldset>
     <legend>Diagnostics</legend>
@@ -849,7 +993,8 @@
     (async () => {
       diag("Testing anon read from 'listing'…");
       const { error } = await supabase.from("listing").select("id").limit(1);
-      if (error) diag(`<span class="err">Read error: ${esc(error.message)}</span>`); else diag("Read OK.");
+      if (error) diag(`<span class="err">Read error: ${esc(error.message)}</span>`);
+      else diag("Read OK.");
     })();
   </script>
 </body>
