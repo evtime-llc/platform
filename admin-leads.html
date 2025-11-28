@@ -6,129 +6,71 @@
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>EVTime — Leads Admin</title>
+  <title>EVTime Admin — Leads</title>
   <style>
-    /* Top logo/header */
+    /* Logo header styles */
     .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
     @media (max-width:600px){ #site-logo { max-height:220px; } }
 
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      padding: 24px;
-      max-width: 1100px;
-      margin: 0 auto;
-      background:#fafafa;
-    }
-    h1 { margin-top:16px; }
-
-    fieldset {
-      border: 1px solid #ddd;
-      padding: 16px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      background:#fff;
-    }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
+    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
     legend { font-weight: 800; }
     label { display:block; margin: 8px 0 4px; font-weight: 600; }
-    input, button, select {
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .muted { color:#666; font-size: 12px; }
+    .ok { color: #0a7; }
+    .err { color: #c00; white-space: pre-wrap; }
+    .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
+
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: top; }
+    th { text-align:left; font-size:13px; color:#555; }
+    td .title { font-weight:800; }
+    td .sub { font-size:12px; color:#666; }
+
+    .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; display:inline-block; }
+    .badge.ai-ok { background:#e6f7ef; color:#0a7; border:1px solid #bfead3; }
+    .badge.ai-warning { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
+    .badge.ai-pending { background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; }
+
+    .tiny { font-size:11px; color:#666; }
+    .diag-line { font-size:11px; }
+
+    /* Admin nav tabs (same as admin.html) */
+    .admin-nav{
+      margin:16px 0 8px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    input[type="email"] { width: 260px; max-width:100%; }
-    button.btn {
+    .nav-tab{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:6px;
-      padding:8px 12px;
-      border-radius:8px;
-      border:1px solid #ddd;
-      background:#fff;
-      cursor:pointer;
+      padding:10px 24px;
+      border-radius:999px;
+      border:1px solid #c68a3a;
+      background:#fff8ee;
+      color:#8a5a1f;
+      font-weight:800;
       font-size:14px;
+      text-decoration:none;
+      min-width:150px;
+      cursor:pointer;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
     }
-    button.btn:disabled { opacity:.5; cursor:not-allowed; }
-
-    .muted { color:#666; font-size:12px; }
-    .ok { color:#0a7; }
-    .err { color:#c00; white-space:pre-wrap; }
-    .pill {
-      display:inline-block;
-      background:#f4f4f4;
-      padding:4px 8px;
-      border-radius:999px;
-      margin-right:6px;
-      font-size:12px;
+    .nav-tab:hover{
+      background:#fbe1ba;
     }
-
-    /* Leads table */
-    table { width:100%; border-collapse: collapse; margin-top:10px; font-size:13px; }
-    th, td {
-      padding:8px 6px;
-      border-bottom:1px solid #eee;
-      vertical-align: top;
-    }
-    th { text-align:left; color:#555; font-size:12px; text-transform:uppercase; letter-spacing:0.03em; }
-    tr:nth-child(even) { background:#fcfcfc; }
-
-    .lead-main { font-weight:700; font-size:13px; }
-    .lead-sub { font-size:12px; color:#666; }
-    .message { white-space:pre-wrap; font-size:12px; }
-    .ai-notes { white-space:pre-wrap; font-size:12px; }
-
-    .badge {
-      display:inline-block;
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:11px;
-      font-weight:700;
-      border:1px solid transparent;
-    }
-    .badge.ai-ok {
-      background:#e6f7ef;
-      color:#0a7;
-      border-color:#bfead3;
-    }
-    .badge.ai-warning {
-      background:#fff7e6;
-      color:#b45309;
-      border-color:#ffe5b4;
-    }
-    .badge.ai-null {
-      background:#f4f4f5;
-      color:#555;
-      border-color:#e4e4e7;
-    }
-
-    .controls {
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-bottom:8px;
-      align-items:center;
-    }
-    .controls span.label-small { font-size:12px; color:#555; }
-
-    .tiny { font-size:11px; color:#777; }
-
-    @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr { display:block; }
-      thead { display:none; }
-      tr { border:1px solid #eee; border-radius:8px; margin-bottom:10px; padding:8px; }
-      td { border:none; padding:4px 0; }
-      td[data-label]::before {
-        content: attr(data-label) ": ";
-        font-weight:700;
-        display:inline-block;
-        min-width:90px;
-        font-size:11px;
-        text-transform:uppercase;
-        color:#555;
-      }
+    .nav-tab.active{
+      background:#c68a3a;
+      color:#fff;
+      border-color:#c68a3a;
+      cursor:default;
+      box-shadow:0 2px 6px rgba(0,0,0,.12);
     }
   </style>
 </head>
@@ -143,82 +85,52 @@
     </div>
   </div>
 
-  <h1>EVTime — Leads Admin</h1>
+  <h1>EVTime — Admin</h1>
 
-  <!-- Auth box -->
+  <!-- Copper nav tabs -->
+  <div class="admin-nav">
+    <a class="nav-tab" href="/admin.html">Inventory</a>
+    <span class="nav-tab active">Leads</span>
+  </div>
+
   <fieldset id="authBox">
     <legend>Authentication</legend>
     <div id="sessionInfo" class="muted">Checking session…</div>
-
     <div id="signinBox">
-      <label for="email">Email for magic link</label>
+      <label>Email for magic link</label>
       <input id="email" type="email" value="vahehr@gmail.com" required/>
-      <button id="sendLink" class="btn">Send Magic Link</button>
+      <button id="sendLink" >Send Magic Link</button>
       <div id="authMsg" class="muted" aria-live="polite"></div>
     </div>
-
-    <button id="signout" class="btn" style="display:none">Sign out</button>
+    <button id="signout" style="display:none">Sign out</button>
   </fieldset>
 
-  <!-- Leads list -->
   <fieldset id="leadsBox" style="display:none">
-    <legend>Leads + AI</legend>
-
-    <div class="controls">
-      <span class="label-small">Rows:</span>
-      <select id="limitSelect">
-        <option value="50">50</option>
-        <option value="100" selected>100</option>
-        <option value="200">200</option>
-      </select>
-
-      <span class="label-small">AI status:</span>
-      <select id="statusFilter">
-        <option value="all">All</option>
-        <option value="ok">OK only</option>
-        <option value="warning">Warnings only</option>
-        <option value="null">No AI yet</option>
-      </select>
-
-      <span class="label-small">Quick search:</span>
-      <input id="searchInput" type="text" placeholder="name / email / phone" style="flex:1; min-width:140px; max-width:260px;">
-
-      <button id="refreshBtn" class="btn">Refresh</button>
-    </div>
-
-    <div class="tiny" id="summaryLine"></div>
-
-    <div id="tblWrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Created</th>
-            <th>Contact</th>
-            <th>Listing ID</th>
-            <th>Message</th>
-            <th>AI Status</th>
-            <th>AI Notes</th>
-          </tr>
-        </thead>
-        <tbody id="tblLeads"></tbody>
-      </table>
-      <div id="emptyMsg" class="muted" style="display:none">No leads found.</div>
-    </div>
+    <legend>Leads</legend>
+    <table>
+      <thead>
+        <tr>
+          <th>Lead</th>
+          <th>Contact</th>
+          <th>Message</th>
+          <th>AI</th>
+          <th>Meta</th>
+        </tr>
+      </thead>
+      <tbody id="leadsTbl"></tbody>
+    </table>
+    <div id="leadsEmpty" class="muted" style="display:none">No leads yet.</div>
   </fieldset>
 
-  <!-- Diagnostics -->
   <fieldset>
     <legend>Diagnostics</legend>
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Config + Supabase -->
+  <!-- Config + Supabase client -->
   <script src="/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // -------------------
-    // Basic helpers
-    // -------------------
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
@@ -232,20 +144,14 @@
       }
     });
 
-    const $ = (id) => document.getElementById(id);
-    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
+    const $ = id => document.getElementById(id);
+    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div class="diag-line">${m}</div>`; };
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const escAttr = esc;
 
-    // -------------------
-    // Auth UI
-    // -------------------
+    // ---------- Auth UI
     async function setSessionUI() {
       const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
-      }
-
+      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
       if (session) {
         const email = session.user?.email || "";
         if (email.toLowerCase() !== "vahehr@gmail.com") {
@@ -269,17 +175,11 @@
       }
     }
 
-    supabase.auth.onAuthStateChange((event) => {
-      diag(`Auth event: ${esc(event)}`);
-      setSessionUI();
-    });
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
-      if (!email) {
-        $("authMsg").textContent = "Enter your email first.";
-        return;
-      }
+      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
       $("authMsg").textContent = "Sending magic link...";
       const { error } = await supabase.auth.signInWithOtp({
         email,
@@ -303,132 +203,75 @@
       await setSessionUI();
     })();
 
-    // -------------------
-    // Leads load + render
-    // -------------------
-    async function refreshLeads() {
-      const limit = parseInt($("limitSelect").value || "100", 10);
+    // ---------- Leads
+    const leadsSelect = 'id,created_at,listing_id,name,phone,email,message,ai_notes,ai_status,ai_last_run,ai_summary';
 
+    async function refreshLeads(){
       const { data, error } = await supabase
-        .from("leads")
-        .select("id,created_at,listing_id,name,email,phone,message,ai_notes,ai_status,ai_last_run")
-        .order("created_at", { ascending:false })
-        .limit(limit);
+        .from('leads')
+        .select(leadsSelect)
+        .order('created_at', { ascending:false })
+        .limit(500);
 
-      if (error) {
-        diag(`<span class="err">Load leads error: ${esc(error.message)}</span>`);
-        $("tblLeads").innerHTML = "";
-        $("emptyMsg").style.display = "block";
-        $("summaryLine").textContent = "";
+      if (error){
+        diag(`<span class="err">Leads load error: ${esc(error.message)}</span>`);
+        $("leadsTbl").innerHTML = "";
+        $("leadsEmpty").style.display = "block";
         return;
       }
 
       const rows = data || [];
-      renderLeads(rows);
-    }
-
-    function renderLeads(rows) {
-      const statusFilter = $("statusFilter").value;
-      const search = $("searchInput").value.trim().toLowerCase();
-
-      let filtered = rows.slice();
-
-      if (statusFilter === "ok") {
-        filtered = filtered.filter(r => (r.ai_status || "").toLowerCase() === "ok");
-      } else if (statusFilter === "warning") {
-        filtered = filtered.filter(r => (r.ai_status || "").toLowerCase() === "warning");
-      } else if (statusFilter === "null") {
-        filtered = filtered.filter(r => !r.ai_status && !r.ai_notes && !r.ai_last_run);
-      }
-
-      if (search) {
-        filtered = filtered.filter(r => {
-          const blob = [
-            r.name || "",
-            r.email || "",
-            r.phone || "",
-            r.message || ""
-          ].join(" ").toLowerCase();
-          return blob.includes(search);
-        });
-      }
-
-      $("summaryLine").textContent = `Showing ${filtered.length} of ${rows.length} loaded leads.`;
-
-      const tb = $("tblLeads");
-      if (!filtered.length) {
+      const tb = $("leadsTbl");
+      if (!rows.length){
         tb.innerHTML = "";
-        $("emptyMsg").style.display = "block";
+        $("leadsEmpty").style.display = "block";
         return;
       }
-      $("emptyMsg").style.display = "none";
+      $("leadsEmpty").style.display = "none";
 
-      tb.innerHTML = filtered.map(r => {
-        const created = r.created_at ? new Date(r.created_at).toLocaleString() : "";
-        const lastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : "";
-        const msg = r.message || "";
-        const aiNotes = r.ai_notes || "";
-        const aiStatusRaw = (r.ai_status || "").toLowerCase();
-        let aiBadgeCls = "badge ai-null";
-        let aiBadgeText = "PENDING";
-        if (aiStatusRaw === "ok") {
-          aiBadgeCls = "badge ai-ok";
-          aiBadgeText = "OK";
-        } else if (aiStatusRaw === "warning") {
-          aiBadgeCls = "badge ai-warning";
-          aiBadgeText = "WARNING";
-        } else if (aiStatusRaw) {
-          aiBadgeText = aiStatusRaw.toUpperCase();
-        }
+      tb.innerHTML = rows.map(r=>{
+        const created = r.created_at ? new Date(r.created_at).toLocaleString() : '';
+        const lastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : null;
+        const aiStatusRaw = String(r.ai_status || '').trim().toLowerCase();
+        let badgeClass = 'ai-pending';
+        let badgeLabel = 'PENDING';
+        if (aiStatusRaw === 'ok'){ badgeClass = 'ai-ok'; badgeLabel = 'OK'; }
+        else if (aiStatusRaw === 'warning'){ badgeClass = 'ai-warning'; badgeLabel = 'WARNING'; }
+
+        const message = r.message || '';
+        const aiNotes = r.ai_notes || '';
+        const aiSummary = r.ai_summary || '';
 
         return `
           <tr>
-            <td data-label="Created">
-              <div class="lead-sub">${esc(created)}</div>
-              ${lastRun ? `<div class="tiny">AI last run: ${esc(lastRun)}</div>` : `<div class="tiny">AI last run: —</div>`}
+            <td>
+              <div class="title">${esc(r.name || '(no name)')}</div>
+              <div class="sub tiny">${esc(r.id)}</div>
             </td>
-            <td data-label="Contact">
-              <div class="lead-main">${esc(r.name || "(no name)")}</div>
-              <div class="lead-sub">${esc(r.email || "")}</div>
-              <div class="lead-sub">${esc(r.phone || "")}</div>
-              <div class="tiny">Lead ID: <code>${esc(r.id)}</code></div>
+            <td>
+              <div class="sub">${esc(r.email || '')}</div>
+              <div class="sub tiny">${esc(r.phone || '')}</div>
             </td>
-            <td data-label="Listing ID">
-              <div class="lead-sub">${esc(r.listing_id || "")}</div>
+            <td>
+              <div class="sub">${esc(message)}</div>
             </td>
-            <td data-label="Message">
-              <div class="message">${esc(msg)}</div>
+            <td>
+              <div><span class="badge ${badgeClass}">${badgeLabel}</span></div>
+              ${aiNotes ? `<div class="tiny" style="margin-top:4px;">${esc(aiNotes)}</div>` : ''}
+              ${aiSummary ? `<div class="tiny" style="margin-top:4px;"><strong>Summary:</strong> ${esc(aiSummary)}</div>` : ''}
+              ${lastRun ? `<div class="tiny" style="margin-top:4px;">Ran: ${esc(lastRun)}</div>` : '<div class="tiny" style="margin-top:4px;">Not run yet</div>'}
             </td>
-            <td data-label="AI Status">
-              <span class="${aiBadgeCls}">${esc(aiBadgeText)}</span>
-            </td>
-            <td data-label="AI Notes">
-              <div class="ai-notes">${esc(aiNotes || "")}</div>
+            <td>
+              <div class="tiny">Created: ${esc(created)}</div>
+              ${r.listing_id ? `<div class="tiny">Listing: ${esc(r.listing_id)}</div>` : ''}
             </td>
           </tr>
         `;
       }).join("");
     }
 
-    // -------------------
-    // UI events
-    // -------------------
-    $("refreshBtn").onclick = () => { refreshLeads(); };
-    $("limitSelect").onchange = () => { refreshLeads(); };
-    $("statusFilter").onchange = () => { refreshLeads(); };
-
-    let searchTimer = null;
-    $("searchInput").addEventListener("input", () => {
-      if (searchTimer) clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => { refreshLeads(); }, 300);
-    });
-
-    // Small read test
-    (async () => {
-      diag("Testing anon read from 'leads'…");
-      const { error } = await supabase.from("leads").select("id").limit(1);
-      if (error) diag(`<span class="err">Read error: ${esc(error.message)}</span>`); else diag("Read OK.");
-    })();
+    // Optional: periodic refresh while you have page open
+    setInterval(()=>{ refreshLeads().catch(()=>{}); }, 60000);
   </script>
 </body>
 </html>
