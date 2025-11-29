@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EVTime — AI Queue</title>
+
+<style>
+body{font-family:system-ui;padding:24px;max-width:1200px;margin:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}
+th{text-align:left;color:#555}
+.badge{padding:2px 8px;border-radius:999px;font-weight:700;font-size:11px}
+.pending{background:#eef2ff;color:#3730a3}
+.processing{background:#fff7e6;color:#b45309}
+.completed{background:#e6f7ef;color:#0a7}
+.error{background:#fde8e8;color:#a00}
+.muted{color:#666;font-size:12px}
+</style>
+</head>
+
+<body>
+
+<h1>AI Gateway — Debug</h1>
+<p class="muted">Read-only queue inspection</p>
+
+<table>
+<thead>
+<tr>
+  <th>ID</th>
+  <th>API</th>
+  <th>Target</th>
+  <th>Status</th>
+  <th>Worker</th>
+  <th>Created</th>
+  <th>Processed</th>
+  <th>Error</th>
+</tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
+
+<script src="/config.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+const supabase = window.supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY
+);
+
+async function load() {
+  const { data, error } = await supabase
+    .from('ai_gateway')
+    .select('id,api_name,target_table,target_id,status,claimed_by,created_at,processed_at,error_message')
+    .order('created_at',{ascending:false})
+    .limit(200);
+
+  if (error) {
+    document.body.innerHTML += '<pre>'+error.message+'</pre>';
+    return;
+  }
+
+  rows.innerHTML = data.map(r=>{
+    const s = String(r.status||'').toLowerCase();
+    return `
+      <tr>
+        <td>${r.id}</td>
+        <td>${r.api_name}</td>
+        <td>${r.target_table}:${r.target_id||''}</td>
+        <td><span class="badge ${s}">${s||'unknown'}</span></td>
+        <td>${r.claimed_by||''}</td>
+        <td>${r.created_at?new Date(r.created_at).toLocaleString():''}</td>
+        <td>${r.processed_at?new Date(r.processed_at).toLocaleString():''}</td>
+        <td class="muted">${r.error_message||''}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+load();
+setInterval(load, 15000);
+</script>
+
+</body>
+</html>
