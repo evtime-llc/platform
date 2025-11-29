@@ -7,30 +7,27 @@
   <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin — Leads</title>
+
   <style>
-    /* Logo header styles */
     .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
-    @media (max-width:600px){ #site-logo { max-height:220px; } }
 
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
-    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
-    legend { font-weight: 800; }
-    label { display:block; margin: 8px 0 4px; font-weight: 600; }
-    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-    .muted { color:#666; font-size: 12px; }
-    .ok { color: #0a7; }
-    .err { color: #c00; white-space: pre-wrap; }
-    .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
+    body { font-family: system-ui; padding:24px; max-width:1000px; margin:0 auto; }
+    fieldset { border:1px solid #ddd; padding:16px; margin-bottom:16px; border-radius:8px; }
+    legend { font-weight:800; }
+    .muted { color:#666; font-size:12px; }
+    .ok { color:#0a7; }
+    .err { color:#c00; white-space:pre-wrap; }
+    .pill { background:#f4f4f4; padding:4px 8px; border-radius:999px; font-size:12px; }
 
-    table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: top; }
-    th { text-align:left; font-size:13px; color:#555; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align:top; }
+    th { font-size:13px; color:#555; }
     td .title { font-weight:800; }
     td .sub { font-size:12px; color:#666; }
 
-    .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; display:inline-block; }
+    .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; }
     .badge.ai-ok { background:#e6f7ef; color:#0a7; border:1px solid #bfead3; }
     .badge.ai-warning { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
     .badge.ai-pending { background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; }
@@ -38,240 +35,146 @@
     .tiny { font-size:11px; color:#666; }
     .diag-line { font-size:11px; }
 
-    /* Admin nav tabs (same as admin.html) */
     .admin-nav{
-      margin:16px 0 8px;
+      margin:16px 0;
       display:flex;
       justify-content:center;
       gap:10px;
-      flex-wrap:wrap;
     }
     .nav-tab{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
       padding:10px 24px;
       border-radius:999px;
       border:1px solid #c68a3a;
       background:#fff8ee;
       color:#8a5a1f;
       font-weight:800;
-      font-size:14px;
       text-decoration:none;
-      min-width:150px;
-      cursor:pointer;
-      box-shadow:0 1px 3px rgba(0,0,0,.06);
-    }
-    .nav-tab:hover{
-      background:#fbe1ba;
     }
     .nav-tab.active{
       background:#c68a3a;
       color:#fff;
-      border-color:#c68a3a;
       cursor:default;
-      box-shadow:0 2px 6px rgba(0,0,0,.12);
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Topbar / Logo -->
-  <div class="topbar">
-    <div class="logo-wrap">
-      <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin">
-      </a>
-    </div>
+<div class="topbar">
+  <div class="logo-wrap">
+    <img id="site-logo" src="mainlogo.svg?v=402">
   </div>
+</div>
 
-  <h1>EVTime — Admin</h1>
+<h1>EVTime — Admin</h1>
 
-  <!-- Copper nav tabs -->
-  <div class="admin-nav">
-    <a class="nav-tab" href="/admin.html">Inventory</a>
-    <span class="nav-tab active">Leads</span>
+<div class="admin-nav">
+  <a class="nav-tab" href="/admin.html">Inventory</a>
+  <span class="nav-tab active">Leads</span>
+</div>
+
+<fieldset id="authBox">
+  <legend>Authentication</legend>
+  <div id="sessionInfo" class="muted">Checking session…</div>
+  <div id="signinBox">
+    <input id="email" type="email" value="vahehr@gmail.com"/>
+    <button id="sendLink">Send Magic Link</button>
+    <div id="authMsg" class="muted"></div>
   </div>
+  <button id="signout" style="display:none">Sign out</button>
+</fieldset>
 
-  <fieldset id="authBox">
-    <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session…</div>
-    <div id="signinBox">
-      <label>Email for magic link</label>
-      <input id="email" type="email" value="vahehr@gmail.com" required/>
-      <button id="sendLink" >Send Magic Link</button>
-      <div id="authMsg" class="muted" aria-live="polite"></div>
-    </div>
-    <button id="signout" style="display:none">Sign out</button>
-  </fieldset>
+<fieldset id="leadsBox" style="display:none">
+  <legend>Leads</legend>
+  <table>
+    <thead>
+      <tr>
+        <th>Lead</th>
+        <th>Contact</th>
+        <th>Message</th>
+        <th>AI</th>
+        <th>Meta</th>
+      </tr>
+    </thead>
+    <tbody id="leadsTbl"></tbody>
+  </table>
+  <div id="leadsEmpty" class="muted" style="display:none">No leads yet.</div>
+</fieldset>
 
-  <fieldset id="leadsBox" style="display:none">
-    <legend>Leads</legend>
-    <table>
-      <thead>
-        <tr>
-          <th>Lead</th>
-          <th>Contact</th>
-          <th>Message</th>
-          <th>AI</th>
-          <th>Meta</th>
-        </tr>
-      </thead>
-      <tbody id="leadsTbl"></tbody>
-    </table>
-    <div id="leadsEmpty" class="muted" style="display:none">No leads yet.</div>
-  </fieldset>
+<fieldset>
+  <legend>Diagnostics</legend>
+  <div id="diag"></div>
+</fieldset>
 
-  <fieldset>
-    <legend>Diagnostics</legend>
-    <div id="diag"></div>
-  </fieldset>
+<script src="/config.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-  <!-- Config + Supabase client -->
-  <script src="/config.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
-    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
+<script>
+const supabase = window.supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY,
+  { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'evtime-auth' } }
+);
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storageKey: 'evtime-auth'
-      }
-    });
+const $ = id => document.getElementById(id);
+const diag = m => $('diag').innerHTML += `<div class="diag-line">${m}</div>`;
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    const $ = id => document.getElementById(id);
-    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div class="diag-line">${m}</div>`; };
-    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+supabase.auth.onAuthStateChange(()=>setSessionUI());
 
-    // ---------- Auth UI
-    async function setSessionUI() {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
-      if (session) {
-        const email = session.user?.email || "";
-        if (email.toLowerCase() !== "vahehr@gmail.com") {
-          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
-          await supabase.auth.signOut();
-          $("signinBox").style.display = "block";
-          $("signout").style.display = "none";
-          $("leadsBox").style.display = "none";
-          return;
-        }
-        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
-        $("signinBox").style.display = "none";
-        $("signout").style.display = "inline-block";
-        $("leadsBox").style.display = "block";
-        await refreshLeads();
-      } else {
-        $("sessionInfo").textContent = "Not signed in.";
-        $("signinBox").style.display = "block";
-        $("signout").style.display = "none";
-        $("leadsBox").style.display = "none";
-      }
+async function setSessionUI(){
+  const { data:{session} } = await supabase.auth.getSession();
+  if (!session) return;
+
+  $('signinBox').style.display='none';
+  $('signout').style.display='inline';
+  $('leadsBox').style.display='block';
+  refreshLeads();
+}
+
+$('sendLink').onclick = async ()=>{
+  await supabase.auth.signInWithOtp({
+    email:$('email').value,
+    options:{ emailRedirectTo:'https://itsevtime.com/admin-leads.html' }
+  });
+};
+
+$('signout').onclick = async ()=>{ await supabase.auth.signOut(); };
+
+async function refreshLeads(){
+  const { data } = await supabase
+    .from('leads')
+    .select('id,created_at,name,email,phone,message,ai_notes,ai_summary,ai_status,ai_last_run')
+    .order('created_at',{ascending:false});
+
+  if(!data?.length){ $('leadsEmpty').style.display='block'; return; }
+
+  $('leadsTbl').innerHTML = data.map(r=>{
+    const s = (r.ai_status||'').toLowerCase();
+
+    let badgeClass='ai-pending', badgeLabel='PENDING';
+    if(s==='ok'){ badgeClass='ai-ok'; badgeLabel='OK'; }
+    else if(s==='warning'){ badgeClass='ai-warning'; badgeLabel='WARNING'; }
+    else if(s==='error' || s==='failed'){
+      badgeClass='ai-warning'; badgeLabel='ERROR';
     }
 
-    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+    return `
+      <tr>
+        <td><div class="title">${esc(r.name||'(no name)')}</div></td>
+        <td class="sub">${esc(r.email||'')}</td>
+        <td class="sub">${esc(r.message||'')}</td>
+        <td>
+          <span class="badge ${badgeClass}">${badgeLabel}</span>
+          ${r.ai_notes ? `<div class="tiny">${esc(r.ai_notes)}</div>`:''}
+          ${r.ai_summary ? `<div class="tiny"><b>Summary:</b> ${esc(r.ai_summary)}</div>`:''}
+        </td>
+        <td class="tiny">${new Date(r.created_at).toLocaleString()}</td>
+      </tr>`;
+  }).join('');
+}
 
-    $("sendLink").onclick = async () => {
-      const email = $("email").value.trim();
-      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
-      $("authMsg").textContent = "Sending magic link...";
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: "https://itsevtime.com/admin-leads.html" }
-      });
-      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
-    };
-
-    $("signout").onclick = async () => {
-      await supabase.auth.signOut();
-      await setSessionUI();
-    };
-
-    (async () => {
-      const qs = window.location.search;
-      if (qs && qs.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-      await setSessionUI();
-    })();
-
-    // ---------- Leads
-    const leadsSelect = 'id,created_at,listing_id,name,phone,email,message,ai_notes,ai_status,ai_last_run,ai_summary';
-
-    async function refreshLeads(){
-      const { data, error } = await supabase
-        .from('leads')
-        .select(leadsSelect)
-        .order('created_at', { ascending:false })
-        .limit(500);
-
-      if (error){
-        diag(`<span class="err">Leads load error: ${esc(error.message)}</span>`);
-        $("leadsTbl").innerHTML = "";
-        $("leadsEmpty").style.display = "block";
-        return;
-      }
-
-      const rows = data || [];
-      const tb = $("leadsTbl");
-      if (!rows.length){
-        tb.innerHTML = "";
-        $("leadsEmpty").style.display = "block";
-        return;
-      }
-      $("leadsEmpty").style.display = "none";
-
-      tb.innerHTML = rows.map(r=>{
-        const created = r.created_at ? new Date(r.created_at).toLocaleString() : '';
-        const lastRun = r.ai_last_run ? new Date(r.ai_last_run).toLocaleString() : null;
-        const aiStatusRaw = String(r.ai_status || '').trim().toLowerCase();
-        let badgeClass = 'ai-pending';
-        let badgeLabel = 'PENDING';
-        if (aiStatusRaw === 'ok'){ badgeClass = 'ai-ok'; badgeLabel = 'OK'; }
-        else if (aiStatusRaw === 'warning'){ badgeClass = 'ai-warning'; badgeLabel = 'WARNING'; }
-
-        const message = r.message || '';
-        const aiNotes = r.ai_notes || '';
-        const aiSummary = r.ai_summary || '';
-
-        return `
-          <tr>
-            <td>
-              <div class="title">${esc(r.name || '(no name)')}</div>
-              <div class="sub tiny">${esc(r.id)}</div>
-            </td>
-            <td>
-              <div class="sub">${esc(r.email || '')}</div>
-              <div class="sub tiny">${esc(r.phone || '')}</div>
-            </td>
-            <td>
-              <div class="sub">${esc(message)}</div>
-            </td>
-            <td>
-              <div><span class="badge ${badgeClass}">${badgeLabel}</span></div>
-              ${aiNotes ? `<div class="tiny" style="margin-top:4px;">${esc(aiNotes)}</div>` : ''}
-              ${aiSummary ? `<div class="tiny" style="margin-top:4px;"><strong>Summary:</strong> ${esc(aiSummary)}</div>` : ''}
-              ${lastRun ? `<div class="tiny" style="margin-top:4px;">Ran: ${esc(lastRun)}</div>` : '<div class="tiny" style="margin-top:4px;">Not run yet</div>'}
-            </td>
-            <td>
-              <div class="tiny">Created: ${esc(created)}</div>
-              ${r.listing_id ? `<div class="tiny">Listing: ${esc(r.listing_id)}</div>` : ''}
-            </td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    // Optional: periodic refresh while you have page open
-    setInterval(()=>{ refreshLeads().catch(()=>{}); }, 60000);
-  </script>
+setInterval(()=>refreshLeads(),60000);
+</script>
 </body>
 </html>
