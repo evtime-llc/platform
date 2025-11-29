@@ -1,85 +1,338 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>EVTime — AI Queue</title>
+  <meta charset="utf-8"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>EVTime Admin — AI Gateway Debug</title>
+  <style>
+    /* Logo header styles (same as index/admin) */
+    .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
+    .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
+    #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
+    @media (max-width:600px){ #site-logo { max-height:220px; } }
 
-<style>
-body{font-family:system-ui;padding:24px;max-width:1200px;margin:auto}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #eee;font-size:13px}
-th{text-align:left;color:#555}
-.badge{padding:2px 8px;border-radius:999px;font-weight:700;font-size:11px}
-.pending{background:#eef2ff;color:#3730a3}
-.processing{background:#fff7e6;color:#b45309}
-.completed{background:#e6f7ef;color:#0a7}
-.error{background:#fde8e8;color:#a00}
-.muted{color:#666;font-size:12px}
-</style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
+    legend { font-weight: 800; }
+    label { display:block; margin: 8px 0 4px; font-weight: 600; }
+    input, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    .muted { color:#666; font-size: 12px; }
+    .ok { color: #0a7; }
+    .err { color: #c00; white-space: pre-wrap; }
+    .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
+    .diag-line { font-size:11px; }
+
+    table { width:100%; border-collapse: collapse; font-size:13px; }
+    th, td { padding:8px 6px; border-bottom:1px solid #eee; vertical-align: top; }
+    th { text-align:left; font-size:12px; color:#555; }
+    td .title { font-weight:800; }
+    td .sub { font-size:11px; color:#666; }
+
+    .badge {
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      display:inline-block;
+    }
+    .badge.status-ok {
+      background:#e6f7ef; color:#0a7; border:1px solid #bfead3;
+    }
+    .badge.status-pending {
+      background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe;
+    }
+    .badge.status-error {
+      background:#f7e6e6; color:#a00; border:1px solid #f0caca;
+    }
+
+    .tiny { font-size:11px; color:#666; }
+
+    /* Simple inline code style for JSON preview */
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:11px;
+      background:#f9fafb;
+      padding:4px 6px;
+      border-radius:4px;
+      display:inline-block;
+      max-width:100%;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    /* Admin nav (3 tabs: Inventory / Leads / AI Debug) */
+    .admin-nav{
+      margin:16px 0 8px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .nav-tab{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 24px;
+      border-radius:999px;
+      border:1px solid #c68a3a;
+      background:#fff8ee;
+      color:#8a5a1f;
+      font-weight:800;
+      font-size:14px;
+      text-decoration:none;
+      min-width:150px;
+      cursor:pointer;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .nav-tab:hover{
+      background:#fbe1ba;
+    }
+    .nav-tab.active{
+      background:#c68a3a;
+      color:#fff;
+      border-color:#c68a3a;
+      cursor:default;
+      box-shadow:0 2px 6px rgba(0,0,0,.12);
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>AI Gateway — Debug</h1>
-<p class="muted">Read-only queue inspection</p>
+  <!-- Topbar / Logo (link to home) -->
+  <div class="topbar">
+    <div class="logo-wrap">
+      <a href="/" aria-label="Go to Home">
+        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin — AI Gateway Debug">
+      </a>
+    </div>
+  </div>
 
-<table>
-<thead>
-<tr>
-  <th>ID</th>
-  <th>API</th>
-  <th>Target</th>
-  <th>Status</th>
-  <th>Worker</th>
-  <th>Created</th>
-  <th>Processed</th>
-  <th>Error</th>
-</tr>
-</thead>
-<tbody id="rows"></tbody>
-</table>
+  <h1>EVTime — Admin</h1>
 
-<script src="/config.js"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script>
-const supabase = window.supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY
-);
+  <!-- Copper nav tabs (3 pages) -->
+  <div class="admin-nav">
+    <a class="nav-tab" href="/admin.html">Inventory</a>
+    <a class="nav-tab" href="/admin-leads.html">Leads</a>
+    <span class="nav-tab active">AI Debug</span>
+  </div>
 
-async function load() {
-  const { data, error } = await supabase
-    .from('ai_gateway')
-    .select('id,api_name,target_table,target_id,status,claimed_by,created_at,processed_at,error_message')
-    .order('created_at',{ascending:false})
-    .limit(200);
+  <fieldset id="authBox">
+    <legend>Authentication</legend>
+    <div id="sessionInfo" class="muted">Checking session…</div>
+    <div id="signinBox">
+      <label>Email for magic link</label>
+      <input id="email" type="email" value="vahehr@gmail.com" required/>
+      <button id="sendLink">Send Magic Link</button>
+      <div id="authMsg" class="muted" aria-live="polite"></div>
+    </div>
+    <button id="signout" style="display:none">Sign out</button>
+  </fieldset>
 
-  if (error) {
-    document.body.innerHTML += '<pre>'+error.message+'</pre>';
-    return;
-  }
+  <fieldset id="gatewayBox" style="display:none">
+    <legend>AI Gateway — Tasks</legend>
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Status</th>
+          <th>Timing</th>
+          <th>Errors</th>
+        </tr>
+      </thead>
+      <tbody id="gwTbl"></tbody>
+    </table>
+    <div id="gwEmpty" class="muted" style="display:none">No tasks yet.</div>
+  </fieldset>
 
-  rows.innerHTML = data.map(r=>{
-    const s = String(r.status||'').toLowerCase();
-    return `
-      <tr>
-        <td>${r.id}</td>
-        <td>${r.api_name}</td>
-        <td>${r.target_table}:${r.target_id||''}</td>
-        <td><span class="badge ${s}">${s||'unknown'}</span></td>
-        <td>${r.claimed_by||''}</td>
-        <td>${r.created_at?new Date(r.created_at).toLocaleString():''}</td>
-        <td>${r.processed_at?new Date(r.processed_at).toLocaleString():''}</td>
-        <td class="muted">${r.error_message||''}</td>
-      </tr>
+  <fieldset>
+    <legend>Diagnostics</legend>
+    <div id="diag"></div>
+  </fieldset>
+
+  <!-- Config + Supabase client -->
+  <script src="/config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
+    const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: 'evtime-auth'
+      }
+    });
+
+    const $ = id => document.getElementById(id);
+    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div class="diag-line">${m}</div>`; };
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // ---------- Auth UI
+    async function setSessionUI() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
+      if (session) {
+        const email = session.user?.email || "";
+        if (email.toLowerCase() !== "vahehr@gmail.com") {
+          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
+          await supabase.auth.signOut();
+          $("signinBox").style.display = "block";
+          $("signout").style.display = "none";
+          $("gatewayBox").style.display = "none";
+          return;
+        }
+        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
+        $("signinBox").style.display = "none";
+        $("signout").style.display = "inline-block";
+        $("gatewayBox").style.display = "block";
+        await refreshGateway();
+      } else {
+        $("sessionInfo").textContent = "Not signed in.";
+        $("signinBox").style.display = "block";
+        $("signout").style.display = "none";
+        $("gatewayBox").style.display = "none";
+      }
+    }
+
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+
+    $("sendLink").onclick = async () => {
+      const email = $("email").value.trim();
+      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
+      $("authMsg").textContent = "Sending magic link...";
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: "https://itsevtime.com/admin-ai-gateway.html" } // adjust path if different
+      });
+      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
+    };
+
+    $("signout").onclick = async () => {
+      await supabase.auth.signOut();
+      await setSessionUI();
+    };
+
+    (async () => {
+      const qs = window.location.search;
+      if (qs && qs.includes("code=")) {
+        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      await setSessionUI();
+    })();
+
+    // ---------- AI Gateway table
+    const gwSelect = `
+      id,
+      api_name,
+      target_table,
+      target_id,
+      status,
+      created_at,
+      processed_at,
+      finished_at,
+      retries,
+      attempts,
+      claimed_by,
+      claimed_at,
+      last_error,
+      error_message,
+      last_error_at
     `;
-  }).join('');
-}
 
-load();
-setInterval(load, 15000);
-</script>
+    function statusBadge(status, hasError){
+      const s = String(status || '').toLowerCase();
+      if (hasError || s === 'error' || s === 'failed'){
+        return { cls:'status-error', label:(s || 'ERROR').toUpperCase() };
+      }
+      if (s === 'done' || s === 'completed'){
+        return { cls:'status-ok', label:(s || 'OK').toUpperCase() };
+      }
+      return { cls:'status-pending', label:(s || 'PENDING').toUpperCase() };
+    }
 
+    async function refreshGateway(){
+      const { data, error } = await supabase
+        .from('ai_gateway')
+        .select(gwSelect)
+        .order('created_at', { ascending:false })
+        .limit(200);
+
+      if (error){
+        diag(`<span class="err">ai_gateway load error: ${esc(error.message)}</span>`);
+        $("gwTbl").innerHTML = "";
+        $("gwEmpty").style.display = "block";
+        return;
+      }
+
+      const rows = data || [];
+      const tb = $("gwTbl");
+      if (!rows.length){
+        tb.innerHTML = "";
+        $("gwEmpty").style.display = "block";
+        return;
+      }
+      $("gwEmpty").style.display = "none";
+
+      tb.innerHTML = rows.map(r=>{
+        const created = r.created_at ? new Date(r.created_at).toLocaleString() : '';
+        const processed = r.processed_at ? new Date(r.processed_at).toLocaleString() : '';
+        const finished = r.finished_at ? new Date(r.finished_at).toLocaleString() : '';
+        const lastErrAt = r.last_error_at ? new Date(r.last_error_at).toLocaleString() : '';
+
+        const hasError = !!(r.last_error || r.error_message);
+        const badge = statusBadge(r.status, hasError);
+
+        const metaLines = [];
+        if (r.target_table) metaLines.push(`Table: ${r.target_table}`);
+        if (r.target_id) metaLines.push(`Target: ${r.target_id}`);
+        if (r.claimed_by) metaLines.push(`Claimed by: ${r.claimed_by}`);
+        if (r.claimed_at) metaLines.push(`Claimed at: ${new Date(r.claimed_at).toLocaleString()}`);
+        if (typeof r.retries === 'number') metaLines.push(`Retries: ${r.retries}`);
+        if (typeof r.attempts === 'number') metaLines.push(`Attempts: ${r.attempts}`);
+
+        const errLines = [];
+        if (r.last_error) errLines.push(r.last_error);
+        if (r.error_message && r.error_message !== r.last_error) errLines.push(r.error_message);
+        if (lastErrAt) errLines.push(`Last error at: ${lastErrAt}`);
+
+        return `
+          <tr>
+            <td>
+              <div class="title">${esc(r.api_name || '(no api_name)')}</div>
+              <div class="sub tiny">${esc(r.id)}</div>
+              ${metaLines.length ? `<div class="tiny">${esc(metaLines.join(' • '))}</div>` : ''}
+            </td>
+            <td>
+              <div><span class="badge ${badge.cls}">${esc(badge.label)}</span></div>
+            </td>
+            <td>
+              <div class="tiny">Created: ${esc(created)}</div>
+              ${processed ? `<div class="tiny">Processed: ${esc(processed)}</div>` : ''}
+              ${finished ? `<div class="tiny">Finished: ${esc(finished)}</div>` : ''}
+            </td>
+            <td>
+              ${errLines.length ? `<div class="tiny">${esc(errLines.join(' | '))}</div>` : '<div class="tiny">No errors recorded.</div>'}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // Optional: periodic refresh
+    setInterval(()=>{ refreshGateway().catch(()=>{}); }, 60000);
+  </script>
 </body>
 </html>
