@@ -56,77 +56,37 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .btn.ghost:hover{background:var(--copper-soft)}
 .btn:hover{transform:translateY(-1px)}
 
-/* New hero copy block (above the image) */
+/* Hero copy block under logo/buttons */
 .hero-copy{
   background:#fff;
+  border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
 }
-.hero-grid{
+.hero-copy-inner{
   max-width:880px;
   margin:0 auto;
-  padding:24px 12px 28px;
-  display:grid;
-  gap:24px;
-  align-items:flex-start;
+  padding:20px 12px 18px;
+  text-align:center;
 }
-@media (min-width:800px){
-  .hero-grid{
-    grid-template-columns:minmax(0,1.7fr) minmax(0,1.3fr);
-  }
+.hero-headline{
+  font-size:26px;
+  font-weight:800;
+  margin:0 0 4px;
+  color:var(--text);
 }
-.hero-main h1{
-  margin:4px 0 10px;
-  font-size:clamp(26px,3vw,34px);
+@media (min-width:768px){
+  .hero-headline{font-size:32px;}
 }
 .hero-sub{
-  margin:0 0 14px;
+  font-size:14px;
+  font-weight:600;
   color:var(--muted);
-  max-width:34rem;
-  font-size:15px;
-  line-height:1.5;
+  margin:0 0 10px;
 }
-.hero-cta-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:10px;
-}
-.hero-micro{
-  font-size:12px;
-  color:var(--muted);
-}
-.eyebrow{
-  font-size:12px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin:0 0 4px;
-}
-.hero-pillars{
-  display:grid;
-  gap:10px;
-  font-size:13px;
-}
-@media (min-width:900px){
-  .hero-pillars{
-    gap:12px;
-  }
-}
-.pillar{
-  background:var(--copper-soft);
-  border-radius:12px;
-  padding:10px 12px;
-  border:1px solid rgba(0,0,0,.03);
-}
-.pillar-title{
-  font-weight:700;
-  margin-bottom:2px;
-  font-size:13px;
-}
-.pillar-text{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.4;
+.hero-copy p{
+  margin:3px 0;
+  font-size:14px;
+  color:#44403c;
 }
 
 /* HERO section with baked-in text image */
@@ -182,35 +142,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </nav>
 
-<!-- New hero copy block -->
-<section class="hero-copy" aria-labelledby="hero-title">
-  <div class="hero-grid">
-    <div class="hero-main">
-      <p class="eyebrow">EVs first. Humans always.</p>
-      <h1 id="hero-title">Finally, a car marketplace built on trust.</h1>
-      <p class="hero-sub">Friendly, honest, secure — with real humans behind every listing.</p>
-      <div class="hero-cta-row">
-        <a class="btn primary" href="./sell.html">Get an offer for your EV</a>
-        <a class="btn ghost" href="./share.html">Browse trusted cars</a>
-      </div>
-      <div class="hero-micro">
-        Only real owners. No flippers. No pressure.
-      </div>
-    </div>
-    <div class="hero-pillars">
-      <div class="pillar">
-        <div class="pillar-title">Human-checked listings</div>
-        <div class="pillar-text">We review every car before it goes live.</div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-title">Simple, honest numbers</div>
-        <div class="pillar-text">Clear prices, no surprise dealer junk fees.</div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-title">Help, not hype</div>
-        <div class="pillar-text">Talk to a real person at any step.</div>
-      </div>
-    </div>
+<!-- Hero headline + statement block -->
+<section class="hero-copy" aria-label="EVTime promise">
+  <div class="hero-copy-inner">
+    <div class="hero-headline">FINALLY, A CAR MARKETPLACE BUILT ON TRUST</div>
+    <div class="hero-sub">Friendly. Honest. Secure.</div>
+    <p>Buying or selling a car shouldn’t feel stressful, confusing, or risky.</p>
+    <p>You shouldn’t have to post ads, answer strangers, negotiate endlessly, or worry about getting burned.</p>
+    <p>At E.V.Time, a real person handles the process with care, clarity, and common sense — so you can move on with your life knowing it’s being done right.</p>
   </div>
 </section>
 
