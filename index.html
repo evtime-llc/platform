@@ -56,52 +56,20 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .btn.ghost:hover{background:var(--copper-soft)}
 .btn:hover{transform:translateY(-1px)}
 
-/* Hero copy block under logo/buttons */
-.hero-copy{
-  background:#fff;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-}
-.hero-copy-inner{
-  max-width:880px;
-  margin:0 auto;
-  padding:20px 12px 18px;
-  text-align:center;
-}
-.hero-headline{
-  font-size:26px;
-  font-weight:800;
-  margin:0 0 4px;
-  color:var(--text);
-}
-@media (min-width:768px){
-  .hero-headline{font-size:32px;}
-}
-.hero-sub{
-  font-size:14px;
-  font-weight:600;
-  color:var(--muted);
-  margin:0 0 10px;
-}
-.hero-copy p{
-  margin:3px 0;
-  font-size:14px;
-  color:#44403c;
-}
-
 /* HERO section with baked-in text image */
 .hero{
   position:relative; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
   max-width:100%; margin:0 auto; background:#000;
 }
+/* Always show full image (no cropping), letterboxed if needed */
 .hero-img{
   width:100%;
   height:auto;
-  max-height:60vh;
-  object-fit:contain;
+  max-height:60vh;            /* adjust taller/shorter if you want */
+  object-fit:contain;         /* no cropping */
   object-position:center center;
   display:block;
-  background:#000;
+  background:#000;            /* clean letterbox fill */
 }
 @media (max-width:600px){
   .hero-img{ max-height:40vh; }
@@ -141,19 +109,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </nav>
 
-<!-- Hero headline + statement block -->
-<section class="hero-copy" aria-label="EVTime promise">
-  <div class="hero-copy-inner">
-    <div class="hero-headline">FINALLY, A CAR MARKETPLACE BUILT ON TRUST</div>
-    <div class="hero-sub">Friendly. Honest. Secure.</div>
-    <p>Buying or selling a car shouldn’t feel stressful, confusing, or risky.</p>
-    <p>You shouldn’t have to post ads, answer strangers, negotiate endlessly, or worry about getting burned.</p>
-    <p>At E.V.Time, a real person handles the process with care, clarity, and common sense — so you can move on with your life knowing it’s being done right.</p>
-  </div>
-</section>
-
 <!-- HERO (image contains text, so no overlay) -->
-<section class="hero" aria-label="Homepage hero image">
+<section class="hero" aria-label="Homepage hero">
   <img class="hero-img" src="hero_text_centered_highest.png?v=8" alt="Family with Tesla in driveway — EVTime">
 </section>
 
