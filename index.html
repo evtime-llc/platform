@@ -54,21 +54,15 @@
       padding:16px 12px 24px;
     }
 
-    /* Hero card */
-    .hero-card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:18px 16px 20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.10);
+    /* CTA strip (separate from hero) */
+    .cta-strip{
+      margin-top:8px;
+      margin-bottom:14px;
     }
-
-    /* CTA row directly under logo */
     .cta-row{
       display:flex;
       flex-wrap:wrap;
       gap:10px;
-      margin-bottom:14px;
     }
     .btn{
       display:inline-flex;
@@ -76,7 +70,7 @@
       justify-content:center;
       height:44px;
       padding:0 16px;
-      border-radius:999px;
+      border-radius:12px;
       border:1px solid var(--line);
       background:#fff;
       cursor:pointer;
@@ -105,7 +99,14 @@
       background:var(--copperSoft);
     }
 
-    /* Text hierarchy */
+    /* Hero card (text only) */
+    .hero-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px 16px 20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.10);
+    }
     .hero-kicker{
       margin:0 0 2px;
       font-size:18px;
@@ -176,26 +177,27 @@
     </div>
   </div>
 
-  <!-- Hero / Main content -->
   <main class="wrap">
-    <section class="hero-card">
 
-      <!-- CTAs: directly under logo -->
+    <!-- CTAs: own strip, directly under logo -->
+    <section class="cta-strip">
       <div class="cta-row">
         <a class="btn primary" href="./sell.html">Sell your car</a>
         <a class="btn secondary" href="./share.html">Browse inventory</a>
+        <a class="btn secondary" href="./about.html">How it works</a>
       </div>
+    </section>
 
-      <!-- Signature line + subline -->
+    <!-- Hero / text card ONLY -->
+    <section class="hero-card">
       <p class="hero-kicker">Finally, a car marketplace built on trust.</p>
       <p class="hero-sub">Friendly. Honest. Secure.</p>
 
-      <!-- Approved core paragraph (unchanged) -->
       <p>Buying or selling a car shouldn’t feel stressful, confusing, or risky.</p>
       <p>At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.</p>
       <p class="hero-punch">You’re in good hands, start to finish.</p>
-
     </section>
+
   </main>
 
   <!-- Footer -->
