@@ -7,48 +7,42 @@
 <meta name="theme-color" content="#0b0a09"/>
 
 <meta property="og:title" content="it’s E.V.Time — Forum and MarketPlace" />
-<meta property="og:description" content="Sell, trade, or browse cars. Simple and friendly." />
-<meta property="og:image" content="https://itsevtime.com/og-card.png" />
-<meta property="og:url" content="https://itsevtime.com/" />
+<meta property="og:description" content="A calmer, more trustworthy way to buy or sell a car." />
 <meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
 
-<!-- SEO / perf additions -->
 <link rel="canonical" href="https://itsevtime.com/">
-<meta name="description" content="Sell, trade, or browse EVs. Teslas first, then other EVs. Simple and friendly.">
+<meta name="description" content="A safer, calmer way to buy or sell a car — handled by professionals, start to finish.">
 <link rel="icon" href="/favicon.ico">
-<link rel="preload" as="image" href="/hero_text_centered_highest.png?v=8" fetchpriority="high">
 
 <style>
 :root{
   --bg:#0b0a09; --card:#ffffff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
-  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0; --cta:#c98c5b; --ctaText:#0b0a09;
+  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 
-/* Shared containers */
-.wrap{max-width:880px;margin:0 auto;padding:12px}
+/* Layout */
+.wrap{max-width:880px;margin:0 auto;padding:16px}
 .logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
 
-/* Header / Logo */
+/* Header */
 .topbar{background:#fff;border-bottom:1px solid var(--line)}
 .logo-wrap a{display:block}
 #site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
 @media (max-width:600px){ #site-logo{max-height:220px} }
 
-/* Button bar ABOVE the photo (no full-width strip) */
-.buttonbar{padding:10px 0}
+/* Buttons */
+.buttonbar{padding:18px 0}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-
-/* Buttons (original look) */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;
-  height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
-  background:#fff;color:var(--text);text-decoration:none;font-weight:700;transition:.15s ease
+  height:46px;padding:0 18px;border-radius:14px;border:1px solid var(--line);
+  background:#fff;color:var(--text);text-decoration:none;font-weight:800;
+  transition:.15s ease
 }
 .btn.primary{
-  background:var(--cta);color:var(--ctaText);border-color:transparent;
+  background:var(--copper);color:#0b0a09;border-color:transparent;
   box-shadow:0 4px 14px rgba(201,140,91,.35)
 }
 .btn.primary:hover{background:var(--copper-dark);color:#fff}
@@ -56,28 +50,30 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .btn.ghost:hover{background:var(--copper-soft)}
 .btn:hover{transform:translateY(-1px)}
 
-/* HERO section with baked-in text image */
+/* Hero Text Block */
 .hero{
-  position:relative; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-  max-width:100%; margin:0 auto; background:#000;
+  background:#fff;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
 }
-/* Always show full image (no cropping), letterboxed if needed */
-.hero-img{
-  width:100%;
-  height:auto;
-  max-height:60vh;            /* adjust taller/shorter if you want */
-  object-fit:contain;         /* no cropping */
-  object-position:center center;
-  display:block;
-  background:#000;            /* clean letterbox fill */
+.hero .card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 12px 32px rgba(0,0,0,.12);
 }
-@media (max-width:600px){
-  .hero-img{ max-height:40vh; }
+.hero p{
+  font-size:18px;
+  line-height:1.6;
+  margin:0 0 14px;
 }
+.hero p:last-child{margin-bottom:0}
+.hero strong{font-weight:900}
 
 /* Footer */
 .footer{border-top:1px solid var(--line);background:#fff}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer .wrap{padding:16px;color:#44403c;font-size:13px}
 .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 .footer a:hover{border-bottom-style:solid}
 .right{float:right}
@@ -95,13 +91,24 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </div>
 
-<!-- Hidden H1 for SEO/a11y while keeping your visual design -->
-<h1 style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
-  it’s E.V.Time — Forum and MarketPlace
-</h1>
+<!-- Hero Copy -->
+<section class="hero">
+  <div class="wrap">
+    <div class="card">
+      <p><strong>Buying or selling a car shouldn’t feel stressful, confusing, or risky.</strong></p>
 
-<!-- Buttons ABOVE the photo -->
-<nav class="logo-wrap buttonbar" aria-label="Primary actions">
+      <p>
+        At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
+        using escrow-grade structure to manage documentation, verification, and transfer with precision.
+      </p>
+
+      <p>You’re in good hands, start to finish.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Primary Actions -->
+<nav class="wrap buttonbar" aria-label="Primary actions">
   <div class="row">
     <a class="btn primary" href="./sell.html">Sell your car</a>
     <a class="btn ghost" href="./share.html">Browse inventory</a>
@@ -109,11 +116,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
   </div>
 </nav>
 
-<!-- HERO (image contains text, so no overlay) -->
-<section class="hero" aria-label="Homepage hero">
-  <img class="hero-img" src="hero_text_centered_highest.png?v=8" alt="Family with Tesla in driveway — EVTime">
-</section>
-
+<!-- Footer -->
 <footer class="footer">
   <div class="wrap clearfix">
     <div>© <span id="yr"></span> E.V.Time</div>
