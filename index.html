@@ -1,9 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>E.V.Time — Finally, a Car Marketplace Built on Trust</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>E.V.Time — Finally, a car marketplace built on trust</title>
 
 <style>
 :root{
@@ -15,171 +15,161 @@
   --copper:#c98c5b;
   --copperDark:#9e6d45;
 }
+
+/* reset */
 *{box-sizing:border-box}
+html,body{margin:0;padding:0}
+
+/* page */
 body{
-  margin:0;
   background:var(--bg);
   color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 }
 
-/* full width sections */
-.section{
+/* full-width sections */
+.full{
   width:100%;
 }
-.inner{
+
+/* constrained inner width */
+.wrap{
   max-width:1100px;
   margin:0 auto;
-  padding:16px 20px;
+  padding:18px;
 }
 
 /* header */
 .topbar{
-  background:#fff;
+  background:#ffffff;
   border-bottom:1px solid var(--line);
 }
-.logo{
-  max-height:180px;
-  display:block;
+#site-logo{
   width:100%;
+  max-height:200px;
   object-fit:contain;
+  display:block;
 }
 
-/* CTAs */
+/* CTA row (separate, top-level) */
 .cta-row{
+  background:#ffffff;
+  border-bottom:1px solid var(--line);
+}
+.ctas{
   display:flex;
-  gap:12px;
   flex-wrap:wrap;
-  margin-top:12px;
+  gap:12px;
+  justify-content:center;
 }
 .btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  height:46px;
+  height:44px;
   padding:0 18px;
   border-radius:12px;
   border:1px solid var(--line);
-  background:#fff;
   font-weight:800;
   text-decoration:none;
-  color:#1c1917;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
+  background:#ffffff;
 }
 .btn.primary{
   background:var(--copper);
-  border-color:transparent;
+  border:1px solid transparent;
+  color:#0b0a09;
 }
 .btn.primary:hover{
   background:var(--copperDark);
-  color:#fff;
+  color:#ffffff;
 }
 
 /* hero */
 .hero{
-  background:#fff;
-  border-bottom:1px solid var(--line);
-}
-.hero-inner{
-  padding:40px 20px 48px;
+  background:#ffffff;
 }
 .hero h1{
-  font-size:34px;
-  margin:0 0 12px;
-  letter-spacing:.2px;
+  font-size:30px;
+  margin:8px 0 12px;
+  text-align:center;
 }
 .hero p{
+  font-size:17px;
   max-width:820px;
-  font-size:18px;
+  margin:0 auto;
+  text-align:center;
   line-height:1.5;
-  margin:10px 0;
-  color:#1c1917;
-}
-
-/* placeholder hero image */
-.hero-image{
-  margin-top:28px;
-  width:100%;
-  height:360px;
-  border-radius:18px;
-  background:#f5f4f2;
-  border:1px dashed #d6d3d1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#9a948f;
-  font-size:15px;
 }
 
 /* footer */
-footer{
-  background:#fff;
+.footer{
+  background:#ffffff;
   border-top:1px solid var(--line);
+  margin-top:20px;
 }
-footer .inner{
+.footer .wrap{
+  text-align:center;
   font-size:13px;
   color:#44403c;
 }
-footer a{
+.footer a{
   color:var(--copper);
   text-decoration:none;
-  border-bottom:1px dotted var(--copper);
 }
-
+.footer a:hover{
+  text-decoration:underline;
+}
 </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
-<div class="section topbar">
-  <div class="inner">
-    <a href="/">
-      <img src="mainlogo.svg?v=402" alt="E.V.Time" class="logo">
+<div class="full topbar">
+  <div class="wrap">
+    <a href="/" aria-label="Home">
+      <img id="site-logo" src="mainlogo.svg?v=402" alt="E.V.Time">
     </a>
+  </div>
+</div>
 
-    <!-- CTAs — locked at top -->
-    <div class="cta-row">
-      <a class="btn" href="./share.html">Browse Inventory</a>
-      <a class="btn primary" href="./sell.html">Sell Your Car</a>
+<!-- CTAS (SEPARATE FROM HERO) -->
+<div class="full cta-row">
+  <div class="wrap">
+    <div class="ctas">
+      <a class="btn primary" href="./sell.html">Sell your car</a>
+      <a class="btn" href="./share.html">Browse inventory</a>
+      <a class="btn" href="./about.html">How it works</a>
+      <a class="btn" href="./about.html#why">Why E.V.Time</a>
     </div>
   </div>
 </div>
 
-<!-- HERO -->
-<div class="section hero">
-  <div class="inner hero-inner">
-
-    <!-- Signature line -->
-    <h1>Finally, a Car Marketplace Built on Trust</h1>
-
-    <!-- Approved paragraph (LOCKED) -->
+<!-- HERO / MESSAGE -->
+<div class="full hero">
+  <div class="wrap">
+    <h1>Finally, a car marketplace built on trust</h1>
     <p>
       Buying or selling a car shouldn’t feel stressful, confusing, or risky.
-    </p>
-    <p>
-      At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
-    </p>
-    <p>
+      <br><br>
+      At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
+      using escrow-grade structure to manage documentation, verification, and transfer with precision.
+      <br><br>
       <strong>You’re in good hands, start to finish.</strong>
     </p>
-
-    <!-- Hero image placeholder -->
-    <div class="hero-image">
-      Hero image goes here
-    </div>
-
   </div>
 </div>
 
 <!-- FOOTER -->
-<footer class="section">
-  <div class="inner">
+<div class="full footer">
+  <div class="wrap">
     © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal & Disclosures</a>
   </div>
-</footer>
+</div>
 
 <script>
-document.getElementById('yr').textContent=new Date().getFullYear();
+document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 
 </body>
