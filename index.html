@@ -1,202 +1,140 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>EV.Time — Finally, a car marketplace built on trust</title>
-  <meta name="theme-color" content="#0b0a09"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>E.V.Time — Finally, A Car Marketplace Built on Trust</title>
+<meta name="theme-color" content="#0b0a09" />
 
-  <style>
-    :root{
-      --bg:#0b0a09;
-      --card:#ffffff;
-      --text:#1c1917;
-      --muted:#78716c;
-      --line:#e7e5e4;
-      --copper:#c98c5b;
-      --copper-dark:#9e6d45;
-      --copper-soft:#f5eae0;
-    }
+<style>
+:root{
+  --bg:#0b0a09;
+  --card:#ffffff;
+  --text:#1c1917;
+  --muted:#78716c;
+  --line:#e7e5e4;
+  --copper:#c98c5b;
+  --copperDark:#9e6d45;
+}
 
-    *{ box-sizing:border-box; }
+*{box-sizing:border-box}
 
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    }
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+}
 
-    /* Top logo bar (same feel as other pages) */
-    .topbar{
-      background:#ffffff;
-      border-bottom:1px solid var(--line);
-    }
-    .logo-wrap{
-      max-width:880px;
-      margin:0 auto;
-      padding:8px 12px 14px;
-    }
-    .logo-wrap a{ display:block; }
-    #site-logo{
-      display:block;
-      width:100%;
-      height:auto;
-      max-height:200px;
-      object-fit:contain;
-    }
-    @media (max-width:600px){
-      #site-logo{ max-height:220px; }
-    }
+/* Header */
+.topbar{
+  background:#ffffff;
+  border-bottom:1px solid var(--line);
+}
+.logo-wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:12px;
+  text-align:center;
+}
+#site-logo{
+  max-width:100%;
+  height:auto;
+}
 
-    /* CTA bar under logo (separate from hero) */
-    .cta-bar{
-      background:var(--bg);
-      border-bottom:1px solid #1c1917;
-    }
-    .cta-wrap{
-      max-width:880px;
-      margin:0 auto;
-      padding:12px 12px 18px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:center;
-    }
-    .cta-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:8px 18px;
-      border-radius:999px;
-      border:1px solid var(--copper);
-      background:transparent;
-      color:#fefce8;
-      font-size:14px;
-      font-weight:700;
-      text-decoration:none;
-      white-space:nowrap;
-      transition:background .15s ease,color .15s ease,box-shadow .15s ease,transform .08s ease;
-    }
-    .cta-btn.primary{
-      background:var(--copper);
-      color:#0b0a09;
-      box-shadow:0 2px 6px rgba(0,0,0,0.2);
-    }
-    .cta-btn:hover{
-      background:var(--copper-soft);
-      color:#1c1917;
-      transform:translateY(-1px);
-      box-shadow:0 3px 10px rgba(0,0,0,0.25);
-    }
-    .cta-btn.primary:hover{
-      background:var(--copper-dark);
-      color:#ffffff;
-    }
+/* CTA row */
+.cta-row{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  padding:14px 12px;
+  background:var(--bg);
+}
+.cta{
+  padding:10px 18px;
+  border-radius:999px;
+  font-weight:800;
+  text-decoration:none;
+  border:1px solid var(--copper);
+  color:var(--copper);
+  background:transparent;
+}
+.cta.primary{
+  background:var(--copper);
+  color:#0b0a09;
+}
 
-    /* Hero section */
-    .hero-wrap{
-      max-width:880px;
-      margin:28px auto 40px;
-      padding:0 12px;
-    }
-    .hero-card{
-      background:var(--card);
-      border-radius:16px;
-      border:1px solid var(--line);
-      padding:24px 18px 26px;
-      text-align:center;
-      box-shadow:0 10px 30px rgba(0,0,0,0.30);
-    }
-    .hero-title{
-      margin:0 0 10px;
-      font-size:24px;
-      font-weight:900;
-    }
-    .hero-line{
-      margin:4px 0 10px;
-      font-size:15px;
-      color:#44403c;
-    }
-    .hero-text{
-      margin:4px 0 8px;
-      font-size:14px;
-      color:#44403c;
-    }
-    .hero-tagline{
-      margin:10px 0 0;
-      font-size:14px;
-      font-weight:800;
-      color:#111827;
-    }
+/* Hero */
+.hero{
+  max-width:800px;
+  margin:0 auto;
+  padding:48px 16px 60px;
+  text-align:center;
+  color:#ffffff;
+}
+.hero h1{
+  margin:0 0 6px;
+  font-size:32px;
+  font-weight:900;
+}
+.hero .sig{
+  margin-bottom:26px;
+  font-weight:700;
+  color:var(--copper);
+}
+.hero p{
+  margin:12px 0;
+  line-height:1.6;
+  font-size:16px;
+}
 
-    /* Footer */
-    .footer{
-      border-top:1px solid var(--line);
-      background:#ffffff;
-      margin-top:32px;
-    }
-    .footer-inner{
-      max-width:880px;
-      margin:0 auto;
-      padding:14px 12px;
-      font-size:13px;
-      color:#44403c;
-      text-align:center;
-    }
-    .footer-inner a{
-      color:var(--copper-dark);
-      text-decoration:none;
-      border-bottom:1px dotted var(--copper-dark);
-    }
-    .footer-inner a:hover{
-      border-bottom-style:solid;
-    }
-  </style>
+/* Footer */
+footer{
+  border-top:1px solid #2a2725;
+  text-align:center;
+  font-size:13px;
+  color:#a8a29e;
+  padding:18px 12px;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- Logo -->
-  <div class="topbar">
-    <div class="logo-wrap">
-      <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and Marketplace">
-      </a>
-    </div>
+<div class="topbar">
+  <div class="logo-wrap">
+    <img id="site-logo" src="mainlogo.svg" alt="it’s E.V.Time" />
   </div>
+</div>
 
-  <!-- Primary CTAs (separate strip) -->
-  <div class="cta-bar">
-    <div class="cta-wrap">
-      <a class="cta-btn primary" href="./sell.html">Sell your car</a>
-      <a class="cta-btn" href="./share.html">Browse inventory</a>
-      <a class="cta-btn" href="./about.html">How it works / Why E.V.Time</a>
-      <a class="cta-btn" href="./privacy.html">Legal &amp; disclosures</a>
-    </div>
-  </div>
+<div class="cta-row">
+  <a class="cta primary" href="/sell.html">Sell your car</a>
+  <a class="cta" href="/share.html">Browse inventory</a>
+  <a class="cta" href="/about.html">How it works</a>
+  <a class="cta" href="/about.html">Why E.V.Time</a>
+</div>
 
-  <!-- Hero content card -->
-  <main class="hero-wrap">
-    <section class="hero-card">
-      <h1 class="hero-title">Finally, a car marketplace built on trust.</h1>
-      <p class="hero-line">Buying or selling a car shouldn’t feel stressful, confusing, or risky.</p>
-      <p class="hero-text">
-        At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using
-        escrow-grade structure to manage documentation, verification, and transfer with precision.
-      </p>
-      <p class="hero-tagline">You’re in good hands, start to finish.</p>
-    </section>
-  </main>
+<section class="hero">
+  <h1>Finally, A Car Marketplace Built on Trust</h1>
+  <div class="sig">Friendly. Honest. Secure.</div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-inner">
-      © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a>
-    </div>
-  </footer>
+  <p>Buying or selling a car shouldn’t feel stressful, confusing, or risky.</p>
 
-  <script>
-    document.getElementById('yr').textContent = new Date().getFullYear();
-  </script>
+  <p>
+    At E.V.Time, your transaction is handled by a professional team —
+    including licensed DMV personnel — using escrow-grade structure
+    to manage documentation, verification, and transfer with precision.
+  </p>
+
+  <p><strong>You’re in good hands, start to finish.</strong></p>
+</section>
+
+<footer>
+  © <span id="yr"></span> E.V.Time · <a href="/legal.html" style="color:var(--copper);text-decoration:none;">Legal & Disclosures</a>
+</footer>
+
+<script>
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+
 </body>
 </html>
