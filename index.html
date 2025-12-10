@@ -1,219 +1,186 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>EVTime — Finally, a car marketplace built on trust.</title>
-  <meta name="theme-color" content="#0b0a09"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>E.V.Time — Finally, a Car Marketplace Built on Trust</title>
 
-  <style>
-    :root{
-      --bg:#0b0a09;
-      --card:#fff;
-      --text:#1c1917;
-      --muted:#78716c;
-      --line:#e7e5e4;
-      --copper:#c98c5b;
-      --copperDark:#9e6d45;
-      --copperSoft:#f5eae0;
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    }
+<style>
+:root{
+  --bg:#0b0a09;
+  --card:#ffffff;
+  --text:#1c1917;
+  --muted:#78716c;
+  --line:#e7e5e4;
+  --copper:#c98c5b;
+  --copperDark:#9e6d45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+}
 
-    /* Top logo bar */
-    .topbar{
-      background:#fff;
-      border-bottom:1px solid var(--line);
-    }
-    .logo-wrap{
-      max-width:880px;
-      margin:0 auto;
-      padding:8px 12px 10px;
-    }
-    .logo-wrap a{display:block;}
-    #site-logo{
-      display:block;
-      width:100%;
-      height:auto;
-      max-height:200px;
-      object-fit:contain;
-    }
-    @media (max-width:600px){
-      #site-logo{max-height:220px;}
-    }
+/* full width sections */
+.section{
+  width:100%;
+}
+.inner{
+  max-width:1100px;
+  margin:0 auto;
+  padding:16px 20px;
+}
 
-    /* Page width */
-    .wrap{
-      max-width:880px;
-      margin:0 auto;
-      padding:16px 12px 24px;
-    }
+/* header */
+.topbar{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.logo{
+  max-height:180px;
+  display:block;
+  width:100%;
+  object-fit:contain;
+}
 
-    /* CTA strip (separate from hero) */
-    .cta-strip{
-      margin-top:8px;
-      margin-bottom:14px;
-    }
-    .cta-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      height:44px;
-      padding:0 16px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:#fff;
-      cursor:pointer;
-      text-decoration:none;
-      font-weight:800;
-      font-size:14px;
-      color:var(--text);
-      white-space:nowrap;
-    }
-    .btn.primary{
-      background:var(--copper);
-      color:#0b0a09;
-      border-color:transparent;
-      box-shadow:0 3px 10px rgba(201,140,91,.28);
-    }
-    .btn.primary:hover{
-      background:var(--copperDark);
-      color:#fff;
-    }
-    .btn.secondary{
-      background:#fff;
-      color:var(--copperDark);
-      border-color:var(--copperSoft);
-    }
-    .btn.secondary:hover{
-      background:var(--copperSoft);
-    }
+/* CTAs */
+.cta-row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:46px;
+  padding:0 18px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:800;
+  text-decoration:none;
+  color:#1c1917;
+}
+.btn.primary{
+  background:var(--copper);
+  border-color:transparent;
+}
+.btn.primary:hover{
+  background:var(--copperDark);
+  color:#fff;
+}
 
-    /* Hero card (text only) */
-    .hero-card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:18px 16px 20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.10);
-    }
-    .hero-kicker{
-      margin:0 0 2px;
-      font-size:18px;
-      font-weight:800;
-    }
-    .hero-sub{
-      margin:0 0 10px;
-      font-size:14px;
-      color:var(--muted);
-      font-weight:600;
-    }
-    p{
-      margin:6px 0 8px;
-      font-size:15px;
-      line-height:1.5;
-    }
-    .hero-punch{
-      margin-top:10px;
-      font-weight:800;
-      font-size:15px;
-    }
+/* hero */
+.hero{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.hero-inner{
+  padding:40px 20px 48px;
+}
+.hero h1{
+  font-size:34px;
+  margin:0 0 12px;
+  letter-spacing:.2px;
+}
+.hero p{
+  max-width:820px;
+  font-size:18px;
+  line-height:1.5;
+  margin:10px 0;
+  color:#1c1917;
+}
 
-    /* Footer */
-    footer.footer{
-      border-top:1px solid var(--line);
-      background:#fff;
-    }
-    .footer .wrap{
-      padding:14px 12px;
-      color:#44403c;
-      font-size:13px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .footer-links{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .footer a{
-      color:var(--copperDark);
-      text-decoration:none;
-      border-bottom:1px dotted var(--copperDark);
-    }
-    .footer a:hover{
-      border-bottom-style:solid;
-    }
+/* placeholder hero image */
+.hero-image{
+  margin-top:28px;
+  width:100%;
+  height:360px;
+  border-radius:18px;
+  background:#f5f4f2;
+  border:1px dashed #d6d3d1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#9a948f;
+  font-size:15px;
+}
 
-    @media (max-width:600px){
-      .hero-card{padding:16px 14px 18px;}
-      .cta-row{flex-direction:column;align-items:flex-start;}
-      .btn{width:100%;justify-content:center;}
-      .footer .wrap{flex-direction:column;align-items:flex-start;}
-    }
-  </style>
+/* footer */
+footer{
+  background:#fff;
+  border-top:1px solid var(--line);
+}
+footer .inner{
+  font-size:13px;
+  color:#44403c;
+}
+footer a{
+  color:var(--copper);
+  text-decoration:none;
+  border-bottom:1px dotted var(--copper);
+}
+
+</style>
 </head>
+
 <body>
 
-  <!-- Header / Logo -->
-  <div class="topbar">
-    <div class="logo-wrap">
-      <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="E.V.Time — EV marketplace">
-      </a>
+<!-- HEADER -->
+<div class="section topbar">
+  <div class="inner">
+    <a href="/">
+      <img src="mainlogo.svg?v=402" alt="E.V.Time" class="logo">
+    </a>
+
+    <!-- CTAs — locked at top -->
+    <div class="cta-row">
+      <a class="btn" href="./share.html">Browse Inventory</a>
+      <a class="btn primary" href="./sell.html">Sell Your Car</a>
     </div>
   </div>
+</div>
 
-  <main class="wrap">
+<!-- HERO -->
+<div class="section hero">
+  <div class="inner hero-inner">
 
-    <!-- CTAs: own strip, directly under logo -->
-    <section class="cta-strip">
-      <div class="cta-row">
-        <a class="btn primary" href="./sell.html">Sell your car</a>
-        <a class="btn secondary" href="./share.html">Browse inventory</a>
-        <a class="btn secondary" href="./about.html">How it works</a>
-      </div>
-    </section>
+    <!-- Signature line -->
+    <h1>Finally, a Car Marketplace Built on Trust</h1>
 
-    <!-- Hero / text card ONLY -->
-    <section class="hero-card">
-      <p class="hero-kicker">Finally, a car marketplace built on trust.</p>
-      <p class="hero-sub">Friendly. Honest. Secure.</p>
+    <!-- Approved paragraph (LOCKED) -->
+    <p>
+      Buying or selling a car shouldn’t feel stressful, confusing, or risky.
+    </p>
+    <p>
+      At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
+    </p>
+    <p>
+      <strong>You’re in good hands, start to finish.</strong>
+    </p>
 
-      <p>Buying or selling a car shouldn’t feel stressful, confusing, or risky.</p>
-      <p>At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.</p>
-      <p class="hero-punch">You’re in good hands, start to finish.</p>
-    </section>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="wrap">
-      <span>© <span id="yr"></span> E.V.Time</span>
-      <div class="footer-links">
-        <a href="./about.html">How it works / Why E.V.Time</a>
-        <a href="./legal.html">Legal &amp; Disclosures</a>
-        <a href="./privacy.html">Privacy</a>
-      </div>
+    <!-- Hero image placeholder -->
+    <div class="hero-image">
+      Hero image goes here
     </div>
-  </footer>
 
-  <script>
-    document.getElementById('yr').textContent = new Date().getFullYear();
-  </script>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="section">
+  <div class="inner">
+    © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal & Disclosures</a>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+
 </body>
 </html>
