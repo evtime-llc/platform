@@ -21,12 +21,10 @@
     <path d="M84,0 L132,0 L168,36 L132,72 L84,72 L120,36 Z" fill="#5c3a24" opacity=".95"/>
   </g>
 
-  <!-- Wordmark -->
-  <text class="txt" x="420" y="120" font-size="56" fill="#1c1917">it’s</text>
-  <text class="txt" x="520" y="130" font-size="120" font-weight="900" fill="#1c1917"
-        textLength="740" lengthAdjust="spacing">E.V.Time</text>
+  <!-- Wordmark - dots removed, "EV Time" with half-space -->
+  <text class="txt" x="420" y="120" font-size="56" fill="#1c1917">it's</text>
+  <text class="txt" x="520" y="130" font-size="120" font-weight="900" fill="#1c1917">EV Time</text>
 
-  <!-- Tagline aligned to wordmark width -->
-  <text class="txt" x="520" y="172" font-size="42" fill="#7a6e67"
-        textLength="740" lengthAdjust="spacing">Forum and MarketPlace</text>
+  <!-- Tagline -->
+  <text class="txt" x="520" y="172" font-size="42" fill="#7a6e67">Forum and MarketPlace</text>
 </svg>
