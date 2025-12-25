@@ -66,7 +66,7 @@
       flex-wrap:wrap;
       gap:10px;
       justify-content:center;
-      margin-bottom:18px;
+      margin-bottom:22px;
     }
     .cta-btn{
       display:inline-flex;
@@ -104,20 +104,36 @@
     /* Hero layout */
     .hero-shell{
       display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:center;
+      justify-content:center;
+    }
+
+    .hero-media{
+      position:relative;
+      width:100%;
+      max-width:900px;
+    }
+
+    .hero-img{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:20px;
+      box-shadow:0 18px 40px rgba(0,0,0,0.45);
     }
 
     /* Hero card (white box) */
     .hero-card{
-      width:100%;
-      max-width:780px;
+      position:absolute;
+      left:50%;
+      bottom:6%;
+      transform:translateX(-50%);
+      width:88%;
+      max-width:760px;
       background:var(--card);
       border-radius:18px;
       border:1px solid var(--line);
       padding:22px 22px 20px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.28);
+      box-shadow:0 14px 36px rgba(0,0,0,0.4);
       text-align:left;
     }
 
@@ -154,20 +170,6 @@
       color:#1f2933;
     }
 
-    /* Hero image block */
-    .hero-img-box{
-      width:100%;
-      max-width:1040px;
-      border-radius:18px;
-      overflow:hidden;
-      box-shadow:0 16px 40px rgba(0,0,0,0.45);
-    }
-    .hero-img-box img{
-      display:block;
-      width:100%;
-      height:auto;
-    }
-
     /* Footer */
     .footer{
       border-top:1px solid var(--line);
@@ -191,9 +193,16 @@
       border-bottom-style:solid;
     }
 
-    @media (max-width:640px){
+    @media (max-width:720px){
+      .hero-media{
+        max-width:100%;
+      }
       .hero-card{
-        padding:18px 16px 16px;
+        position:static;
+        transform:none;
+        width:100%;
+        margin-top:14px;
+        box-shadow:0 12px 28px rgba(0,0,0,0.35);
       }
       .hero-kicker{
         font-size:20px;
@@ -226,29 +235,27 @@
 
     <!-- Hero -->
     <section class="hero-shell" aria-labelledby="hero-title">
-      <div class="hero-card">
-        <h1 id="hero-title" class="hero-kicker">
-          Finally, A Car Marketplace Built on Trust
-        </h1>
-        <p class="hero-subtag">
-          Friendly. Honest. Secure.
-        </p>
+      <div class="hero-media">
+        <img src="EVTime_hero_with_borders.png" alt="EVTime process from offer to escrow to happy EV owner" class="hero-img"/>
 
-        <p class="hero-body">
-          Buying or selling a car shouldn’t feel stressful, confusing, or risky.
-        </p>
-        <p class="hero-body">
-          At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
-        </p>
-        <p class="hero-punch">
-          You’re in good hands, start to finish.
-        </p>
-      </div>
+        <div class="hero-card">
+          <h1 id="hero-title" class="hero-kicker">
+            Finally, A Car Marketplace Built on Trust
+          </h1>
+          <p class="hero-subtag">
+            Friendly. Honest. Secure.
+          </p>
 
-      <!-- Hero image -->
-      <div class="hero-img-box">
-        <img src="./EVTime_hero_with_borders.png"
-             alt="EVTime process — selling, marketplace, verification, escrow and happy EV owners">
+          <p class="hero-body">
+            Buying or selling a car shouldn’t feel stressful, confusing, or risky.
+          </p>
+          <p class="hero-body">
+            At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
+          </p>
+          <p class="hero-punch">
+            You’re in good hands, start to finish.
+          </p>
+        </div>
       </div>
     </section>
   </main>
