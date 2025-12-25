@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <defs><style>.txt{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}</style></defs>
-  <rect width="1024" height="1024" fill="#0b1325"/>
-  <text class="txt" x="92" y="168" font-size="72" fill="#cbd5e1" letter-spacing=".5px">it’s</text>
-  <text class="txt" x="512" y="520" font-size="220" font-weight="800" fill="#f8fafc" text-anchor="middle">E.V.Time</text>
-  <rect x="232" y="560" width="560" height="18" rx="9" fill="#38bdf8"/>
-</svg>
