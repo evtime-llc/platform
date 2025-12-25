@@ -104,36 +104,20 @@
     /* Hero layout */
     .hero-shell{
       display:flex;
-      justify-content:center;
-    }
-
-    .hero-media{
-      position:relative;
-      width:100%;
-      max-width:900px;
-    }
-
-    .hero-img{
-      display:block;
-      width:100%;
-      height:auto;
-      border-radius:20px;
-      box-shadow:0 18px 40px rgba(0,0,0,0.45);
+      flex-direction:column;
+      gap:16px;
+      align-items:center;
     }
 
     /* Hero card (white box) */
     .hero-card{
-      position:absolute;
-      left:50%;
-      bottom:6%;
-      transform:translateX(-50%);
-      width:88%;
-      max-width:760px;
+      width:100%;
+      max-width:880px;
       background:var(--card);
       border-radius:18px;
       border:1px solid var(--line);
       padding:22px 22px 20px;
-      box-shadow:0 14px 36px rgba(0,0,0,0.4);
+      box-shadow:0 12px 30px rgba(0,0,0,0.32);
       text-align:left;
     }
 
@@ -170,6 +154,22 @@
       color:#1f2933;
     }
 
+    /* Hero image strip */
+    .hero-image-frame{
+      width:100%;
+      max-width:880px;
+      border-radius:22px;
+      padding:6px;
+      background:#111827;
+      box-shadow:0 18px 40px rgba(0,0,0,0.5);
+    }
+    .hero-image{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:18px;
+    }
+
     /* Footer */
     .footer{
       border-top:1px solid var(--line);
@@ -193,22 +193,22 @@
       border-bottom-style:solid;
     }
 
-    @media (max-width:720px){
-      .hero-media{
-        max-width:100%;
-      }
+    @media (max-width:640px){
       .hero-card{
-        position:static;
-        transform:none;
-        width:100%;
-        margin-top:14px;
-        box-shadow:0 12px 28px rgba(0,0,0,0.35);
+        padding:18px 16px 16px;
       }
       .hero-kicker{
         font-size:20px;
       }
       .hero-subtag{
         font-size:14px;
+      }
+      .hero-image-frame{
+        padding:4px;
+        border-radius:16px;
+      }
+      .hero-image{
+        border-radius:12px;
       }
     }
   </style>
@@ -235,27 +235,32 @@
 
     <!-- Hero -->
     <section class="hero-shell" aria-labelledby="hero-title">
-      <div class="hero-media">
-        <img src="EVTime_hero_with_borders.png" alt="EVTime process from offer to escrow to happy EV owner" class="hero-img"/>
+      <div class="hero-card">
+        <h1 id="hero-title" class="hero-kicker">
+          Finally, A Car Marketplace Built on Trust
+        </h1>
+        <p class="hero-subtag">
+          Friendly. Honest. Secure.
+        </p>
 
-        <div class="hero-card">
-          <h1 id="hero-title" class="hero-kicker">
-            Finally, A Car Marketplace Built on Trust
-          </h1>
-          <p class="hero-subtag">
-            Friendly. Honest. Secure.
-          </p>
+        <p class="hero-body">
+          Buying or selling a car shouldn’t feel stressful, confusing, or risky.
+        </p>
+        <p class="hero-body">
+          At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
+        </p>
+        <p class="hero-punch">
+          You’re in good hands, start to finish.
+        </p>
+      </div>
 
-          <p class="hero-body">
-            Buying or selling a car shouldn’t feel stressful, confusing, or risky.
-          </p>
-          <p class="hero-body">
-            At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
-          </p>
-          <p class="hero-punch">
-            You’re in good hands, start to finish.
-          </p>
-        </div>
+      <!-- Hero image strip (update src if your filename is different) -->
+      <div class="hero-image-frame">
+        <img
+          class="hero-image"
+          src="EVTime_hero_with_borders.png"
+          alt="EVTime process collage: selling your EV, marketplace selection, verification, escrow and DMV handling, and a happy owner with their Tesla."
+        />
       </div>
     </section>
   </main>
