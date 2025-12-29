@@ -47,7 +47,7 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:24px;
+      gap:20px;
     }
     .logo-link{
       display:block;
@@ -55,45 +55,44 @@
     }
     #site-logo{
       display:block;
-      height:70px;
+      height:90px;
       width:auto;
     }
 
-    /* Navigation - 5 CTAs */
+    /* Navigation - 5 CTAs in one line */
     .nav{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+      gap:8px;
+      flex-wrap:nowrap;
       align-items:center;
     }
     .nav-btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      padding:12px 18px;
+      padding:11px 15px;
       border-radius:8px;
-      font-size:15px;
+      font-size:14px;
       font-weight:600;
       text-decoration:none;
-      border:2px solid var(--line);
-      background:#f9f8f7;
-      color:#3f3f46;
+      border:2px solid var(--copper);
+      background:var(--copper);
+      color:#fff;
       cursor:pointer;
       transition:all .2s ease;
       white-space:nowrap;
     }
     .nav-btn:hover{
-      background:var(--copper);
-      border-color:var(--copper);
-      color:#fff;
+      background:var(--copperDark);
+      border-color:var(--copperDark);
       transform:translateY(-1px);
-      box-shadow:0 4px 12px rgba(201,140,91,0.3);
+      box-shadow:0 4px 12px rgba(201,140,91,0.4);
     }
 
-    /* Hero Section - Full width */
+    /* Hero Section - No top padding */
     .hero{
       background:var(--bg);
-      padding:60px 24px 80px;
+      padding:0 24px 80px;
     }
     .hero-inner{
       max-width:1200px;
@@ -139,6 +138,7 @@
       border-radius:24px;
       overflow:hidden;
       box-shadow:0 24px 60px rgba(0,0,0,0.5);
+      margin-top:40px;
     }
     .hero-image{
       display:block;
@@ -180,21 +180,25 @@
         gap:16px;
       }
       #site-logo{
-        height:50px;
+        height:60px;
       }
       .nav{
         width:100%;
         justify-content:center;
+        flex-wrap:wrap;
       }
       .nav-btn{
         font-size:13px;
-        padding:10px 14px;
+        padding:10px 12px;
       }
       .hero{
-        padding:40px 16px 60px;
+        padding:0 16px 60px;
       }
       .hero-card{
         padding:28px 24px;
+      }
+      .hero-image-wrap{
+        margin-top:30px;
       }
       .hero-title{
         font-size:32px;
@@ -217,7 +221,7 @@
   <header class="header">
     <div class="header-inner">
       <a href="/" class="logo-link" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=404" alt="EVTime">
+        <img id="site-logo" src="mainlogo.svg?v=405" alt="EVTime">
       </a>
       <nav class="nav">
         <a href="./sell.html" class="nav-btn">Sell Your Car</a>
@@ -267,8 +271,7 @@
     <div class="footer-inner">
       <div>© <span id="yr"></span> E.V.Time</div>
       <div><a href="./legal.html">Legal &amp; Disclosures</a></div>
-    </div>
-  </footer>
+    </footer>
 
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
