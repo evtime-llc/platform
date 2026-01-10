@@ -19,6 +19,7 @@
       --copper:#c98c5b;
       --copperDark:#9e6d45;
       --copperSoft:#f5eae0;
+      --copperGray:#b5a89a;
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
@@ -32,10 +33,10 @@
       line-height:1.6;
     }
 
-    /* Header - Full width white */
+    /* Header - Centered layout */
     .header{
       background:#fff;
-      border-bottom:1px solid var(--line);
+      border-bottom:1.5px solid var(--copperGray);
       position:sticky;
       top:0;
       z-index:100;
@@ -45,15 +46,14 @@
       margin:0 auto;
       padding:16px 0;
       display:flex;
+      flex-direction:column;
       align-items:center;
-      justify-content:space-between;
-      gap:16px;
+      gap:12px;
     }
     
-    /* Logo with glow wave animation */
+    /* Logo with glow wave animation - slower and brighter */
     .logo-link{
       display:block;
-      flex-shrink:0;
       position:relative;
       overflow:hidden;
     }
@@ -67,15 +67,15 @@
       background:linear-gradient(
         90deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.6) 50%,
         transparent 100%
       );
-      animation:logoGlow 10s ease-in-out infinite;
+      animation:logoGlow 30s ease-in-out infinite;
       pointer-events:none;
     }
     @keyframes logoGlow{
       0%{ left:-100%; }
-      10%{ left:100%; }
+      5%{ left:100%; }
       100%{ left:100%; }
     }
     
@@ -85,12 +85,13 @@
       width:auto;
     }
 
-    /* Navigation - Plain text links */
+    /* Navigation - Plain text links centered */
     .nav{
       display:flex;
       gap:32px;
       flex-wrap:nowrap;
       align-items:center;
+      justify-content:center;
     }
     .nav-btn{
       font-size:15px;
@@ -191,7 +192,6 @@
     /* Responsive */
     @media (max-width:768px){
       .header-inner{
-        flex-direction:column;
         padding:16px;
         gap:16px;
       }
@@ -237,7 +237,7 @@
   <header class="header">
     <div class="header-inner">
       <a href="/" class="logo-link" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=410" alt="EVTime">
+        <img id="site-logo" src="mainlogo.svg?v=411" alt="EVTime">
       </a>
       <nav class="nav">
         <a href="./sell.html" class="nav-btn">Sell Your Car</a>
