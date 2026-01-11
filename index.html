@@ -33,10 +33,10 @@
       line-height:1.6;
     }
 
-    /* Header - Small, logo left + CTAs right */
+    /* Header - Centered with logo + CTAs inline */
     .header{
       background:#fff;
-      border-bottom:1.5px solid var(--copperGray);
+      border-bottom:1.5px solid #b5a89a;
       position:sticky;
       top:0;
       z-index:100;
@@ -47,8 +47,8 @@
       padding:8px 0;
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap:16px;
+      justify-content:center;
+      gap:24px;
     }
     
     /* Logo with glow wave animation */
@@ -86,10 +86,10 @@
       width:auto;
     }
 
-    /* Navigation - White text, copper on hover */
+    /* Navigation - White text, immediately after logo */
     .nav{
       display:flex;
-      gap:32px;
+      gap:24px;
       flex-wrap:nowrap;
       align-items:center;
     }
@@ -238,7 +238,7 @@
   <header class="header">
     <div class="header-inner">
       <a href="/" class="logo-link" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=412" alt="EVTime">
+        <img id="site-logo" src="mainlogo.svg?v=413" alt="EVTime">
       </a>
       <nav class="nav">
         <a href="./sell.html" class="nav-btn">Sell Your Car</a>
