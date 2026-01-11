@@ -359,5 +359,12 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
 </footer>
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
+<script>
+fetch('./header.html')
+  .then(function(response) { return response.text(); })
+  .then(function(data) { document.getElementById('header-placeholder').innerHTML = data; });
+</script>
+
 </body>
 </html>
+
