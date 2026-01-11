@@ -14,12 +14,73 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 
-/* Standard header */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-.logo-wrap a{display:block}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
+/* Header styles */
+header {
+  background: #3d3935;
+  border-bottom: 1.5px solid #b5a89a;
+  padding: 8px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+#site-logo {
+  height: 50px;
+  display: block;
+}
+
+.logo-link {
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.logo-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+  animation: logoGlow 30s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes logoGlow {
+  0% { left: -100%; }
+  10% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-btn {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  color: var(--copper);
+  transform: scale(1.1);
+}
 
 /* Page width */
 .wrap{max-width:880px;margin:0 auto;padding:12px}
@@ -60,18 +121,19 @@ a.link:hover{border-bottom-style:solid}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
 .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 .footer a:hover{border-bottom-style:solid}
+
+@media (max-width: 768px) {
+  #site-logo { height: 40px; }
+  .nav { flex-wrap: wrap; gap: 16px; }
+  .nav-btn { font-size: 12px; }
+  h1 { font-size: 20px; }
+  h2 { font-size: 16px; }
+}
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
-    </a>
-  </div>
-</div>
+<div id="header-placeholder"></div>
 
 <!-- Hero -->
 <div class="wrap hero">
@@ -93,7 +155,7 @@ a.link:hover{border-bottom-style:solid}
   <div class="card">
     <h2>Why E.V.Time</h2>
     <ul class="list">
-      <li><span class="check"></span><div><b>Honest offers.</b> We don’t blast out computer guesses — we actually evaluate your car.</div></li>
+      <li><span class="check"></span><div><b>Honest offers.</b> We don't blast out computer guesses — we actually evaluate your car.</div></li>
       <li><span class="check"></span><div><b>Low overhead, better numbers.</b> We keep it lean so we can be competitive.</div></li>
       <li><span class="check"></span><div><b>Privacy first.</b> Your info is only used to evaluate and contact you — never sold or shared.</div></li>
     </ul>
@@ -116,6 +178,14 @@ a.link:hover{border-bottom-style:solid}
     © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a>
   </div>
 </footer>
+
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+
+<script>
+fetch('./header.html')
+  .then(function(response) { return response.text(); })
+  .then(function(data) { document.getElementById('header-placeholder').innerHTML = data; });
+</script>
+
 </body>
 </html>
