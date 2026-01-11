@@ -2,292 +2,385 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>it’s E.V.Time — Browse Inventory</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>it's E.V.Time — Browse Inventory</title>
 <meta name="theme-color" content="#0b0a09"/>
 
-<meta property="og:title" content="it’s E.V.Time — Browse Inventory" />
-<meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles." />
-<meta property="og:image" content="https://itsevtime.com/og-card.png" />
-<meta property="og:url" content="https://itsevtime.com/share.html" />
-<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:title" content="it's E.V.Time — Browse Inventory"/>
+<meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/share.html"/>
+<meta name="twitter:card" content="summary_large_image"/>
 
 <style>
-:root{
-  --bg:#0b0a09; --card:#ffffff; --text:#1c1917; --muted:#78716c; --line:#e7e5e4;
-  --copper:#c98c5b; --copper-dark:#9e6d45; --copper-soft:#f5eae0; --cta:#c98c5b; --ctaText:#0b0a09;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-
-/* Shared containers */
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-
-/* Header / Logo */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap a{display:block}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
-
-/* Button bar */
-.buttonbar{padding:10px 0}
-.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);
-  background:#fff;color:var(--text);text-decoration:none;font-weight:700;transition:.15s ease
-}
-.btn.primary{
-  background:var(--cta);color:var(--ctaText);border-color:transparent;
-  box-shadow:0 4px 14px rgba(201,140,91,.35)
-}
-.btn.primary:hover{background:var(--copper-dark);color:#fff}
-.btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
-.btn.ghost:hover{background:var(--copper-soft)}
-.btn:hover{transform:translateY(-1px)}
-
-/* Inventory grid */
-.inv-section{padding-top:8px}
-.inv-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
-
-/* Card */
-.inv-card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  display:flex;flex-direction:column;min-width:260px;max-width:320px;flex:1 1 280px;
-  cursor:pointer; position:relative;
-}
-.inv-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
-.inv-photo img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
-.sold-badge{
-  position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);color:#fff;font-weight:900;
-  padding:4px 8px;border-radius:999px;font-size:12px;letter-spacing:.03em
+:root {
+  --bg: #0b0a09;
+  --card: #ffffff;
+  --text: #1c1917;
+  --copper: #c98c5b;
+  --copper-light: #d4a574;
+  --border: #e5e7eb;
 }
 
-/* Full-card clickable overlay */
-.card-hit{
-  position:absolute; inset:0; z-index:5;
-  text-indent:-9999px; /* accessible but invisible */
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height:1.5;
 }
 
-/* In-card body */
-.inv-body{padding:12px 12px 14px}
-.inv-title{font-weight:900}
-.inv-price{
-  font-weight:900;color:#0b0a09;background:var(--copper);
-  padding:2px 8px;border-radius:999px;white-space:nowrap
+/* Header styles */
+header {
+  background: #3d3935;
+  border-bottom: 1.5px solid #b5a89a;
+  padding: 8px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.inv-meta{margin-top:6px;color:#57534e;font-weight:700;font-size:13px;display:flex;justify-content:space-between;gap:10px}
-.inv-txt{margin-top:6px;font-size:13px}
-.inv-vin{margin-top:6px;font-size:12px;color:#78716c}
 
-/* Divider */
-.divider-wrap{padding-top:20px}
-.divider{
-  display:flex;align-items:center;gap:10px;color:#fff;font-weight:900
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
 }
-.divider .line{height:1px;background:var(--line);flex:1}
 
-/* Footer */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:#c98c5b;text-decoration:none;border-bottom:1px dotted var(--copper)}
-.footer a:hover{border-bottom-style:solid}
-.right{float:right}
-.clearfix::after{content:"";display:block;clear:both}
+#site-logo {
+  height: 50px;
+  display: block;
+}
+
+.logo-link {
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.logo-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+  animation: logoGlow 30s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes logoGlow {
+  0% { left: -100%; }
+  10% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-btn {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  color: var(--copper);
+  transform: scale(1.1);
+}
+
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+h1 {
+  font-size: 32px;
+  margin: 24px 0 12px;
+  color: var(--card);
+}
+
+.divider {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 32px 0 16px;
+  color: var(--copper);
+}
+
+#inventory {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 260px;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.card-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.card-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body {
+  padding: 14px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.card-meta {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.card-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--copper);
+  margin-bottom: 10px;
+}
+
+.card-btn {
+  display: inline-block;
+  background: var(--copper);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  position: relative;
+  z-index: 3;
+  transition: background 0.2s;
+}
+
+.card-btn:hover {
+  background: var(--copper-light);
+}
+
+.sold-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(220,38,38,0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  z-index: 4;
+}
+
+footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--card);
+  background: var(--bg);
+  border-top: 1px solid #333;
+}
+
+footer a {
+  color: var(--copper);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  #site-logo { height: 40px; }
+  .nav { flex-wrap: wrap; gap: 16px; }
+  .nav-btn { font-size: 12px; }
+  h1 { font-size: 24px; }
+  .card { width: 100%; }
+}
 </style>
 </head>
+
 <body>
+<div id="header-placeholder"></div>
 
-<!-- Topbar / Logo -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime — Browse Inventory">
-    </a>
-  </div>
+<div class="wrap">
+  <h1>Browse Inventory</h1>
+  <div id="inventory"></div>
 </div>
 
-<!-- Buttons -->
-<div class="logo-wrap buttonbar">
-  <div class="row" role="navigation" aria-label="Primary actions">
-    <a class="btn primary" href="./sell.html">Sell your car</a>
-    <a class="btn ghost" href="./share.html">Browse inventory</a>
-    <a class="btn ghost" href="./about.html">How it works / Why E.V.Time</a>
-  </div>
-</div>
-
-<!-- Inventory mount -->
-<div class="wrap" id="inventory"></div>
-
-<footer class="footer">
-  <div class="wrap clearfix">
-    <div>© <span id="yr"></span> E.V.Time</div>
-    <div class="right"><a href="./legal.html">Legal &amp; Disclosures</a></div>
-  </div>
+<footer>
+  © <span id="yr"></span> EVTime. All rights reserved.
+  <br><a href="./legal.html">Legal</a>
 </footer>
 
-<!-- Config + Supabase client -->
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-(async () => {
-  const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
-  const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const url = window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co';
+const anonKey = window.SUPABASE_ANON_KEY || '';
+const sb = supabase.createClient(url, anonKey);
 
-  // -------- Helpers
-  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function parseImages(images){
-    if (!images) return [];
-    if (Array.isArray(images)) return images;
-    if (typeof images === 'string'){
-      const s = images.trim();
-      if (s.startsWith('[')) { try{ return JSON.parse(s)||[] } catch { return [] } }
-      return s.split(',').map(v=>v.trim()).filter(Boolean);
-    }
+function esc(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function parseImages(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === 'string') {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {}
+    return val.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function normalize(p) {
+  if (!p) return '';
+  p = p.trim();
+  if (p.startsWith('http://') || p.startsWith('https://')) return p;
+  if (p.startsWith('/')) p = p.slice(1);
+  return p;
+}
+
+function publicImageUrls(path) {
+  const n = normalize(path);
+  if (n.startsWith('http://') || n.startsWith('https://')) return [n];
+  const base = url.replace(/\/+$/, '');
+  return [
+    `${base}/storage/v1/object/public/images/${n}`,
+    `https://tgkvhmxrftcegpryptwq.supabase.co/storage/v1/object/public/images/${n}`
+  ];
+}
+
+function chooseUrl(path) {
+  const arr = parseImages(path);
+  if (!arr.length) return 'og-card.png';
+  return publicImageUrls(arr[0])[0];
+}
+
+function cardHTML(item) {
+  const title = `${item.year || ''} ${item.make || ''} ${item.model || ''} ${item.trim || ''}`.trim();
+  const leftMeta = [
+    item.mileage ? `${item.mileage.toLocaleString()} mi` : '',
+    item.title_status ? `Title: ${item.title_status}` : '',
+    item.condition ? `Cond: ${item.condition}` : ''
+  ].filter(Boolean).join(' • ');
+
+  const priceStr = item.price ? `$${item.price.toLocaleString()}` : '';
+  const soldBadge = (item.status === 'sold') ? '<div class="sold-badge">SOLD</div>' : '';
+  const imgSrc = chooseUrl(item.images);
+
+  return `
+<div class="card">
+  <a href="./listing.html?id=${item.id}" class="card-link"></a>
+  ${soldBadge}
+  <img class="card-img" src="${esc(imgSrc)}" alt="${esc(title)}" loading="lazy">
+  <div class="card-body">
+    <div class="card-title">${esc(title)}</div>
+    <div class="card-meta">${esc(leftMeta)}</div>
+    <div class="card-price">${esc(priceStr)}</div>
+    <a href="./listing.html?id=${item.id}" class="card-btn">View details</a>
+  </div>
+</div>
+  `;
+}
+
+async function fetchOrdered(statusVal) {
+  const { data, error } = await sb
+    .from('listing')
+    .select('id, year, make, model, trim, mileage, special_features, title_status, condition, description, city, vin, price, images, status, vehicle_type, position, updated_at, created_at')
+    .eq('status', statusVal)
+    .order('position', { ascending: false })
+    .order('updated_at', { ascending: false })
+    .limit(1000);
+  if (error) {
+    console.error(error);
     return [];
   }
-  function normalize(path){
-    return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
-  }
-  function publicImageUrls(path){
-    let s = String(path||'').trim().replace(/^\/+/, '');
-    if (!s) return [];
-    const candidates = [];
-    if (/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
-    candidates.push(s);
-    candidates.push(s.replace(/^images\//i,''));
-    if (!/^images\//i.test(s)) candidates.push('images/' + s);
-    const uniq = [...new Set(candidates)];
-    return uniq.map(p => supabase.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
-  }
-  function chooseUrl(path){
-    const urls = publicImageUrls(path);
-    return { url: urls[0] || null, alts: urls.slice(1) };
-  }
+  return data || [];
+}
 
-  // -------- Block + order (mirror admin)
-  function blockKey(row){
-    const status = String(row.status||'').toLowerCase();
-    if (status === 'sold') return 'sold';
-    const vt = String(row.vehicle_type || 'ev').toLowerCase();
-    const make = String(row.make || '').trim().toLowerCase();
-    if (vt === 'ev'){
-      if (make === 'tesla') return 'live_tesla';
-      return 'live_other_ev';
-    }
-    return 'live_other';
-  }
+(async function() {
+  const inv = document.getElementById('inventory');
+  const live = await fetchOrdered('live');
+  const sold = await fetchOrdered('sold');
 
-  // -------- Card HTML (whole card navigates via overlay)
-  function cardHTML(item){
-    const {
-      id, year, make, model, trim, mileage, special_features,
-      title_status, condition, description, city, vin, price, images, status
-    } = item;
+  const tesla = live.filter(c => (c.vehicle_type || '').toLowerCase().includes('tesla'));
+  const otherEV = live.filter(c => {
+    const vt = (c.vehicle_type || '').toLowerCase();
+    return vt.includes('ev') && !vt.includes('tesla');
+  });
+  const other = live.filter(c => {
+    const vt = (c.vehicle_type || '').toLowerCase();
+    return !vt.includes('tesla') && !vt.includes('ev');
+  });
 
-    const paths = parseImages(images).map(normalize);
-    const firstUrl = (paths.length ? chooseUrl(paths[0]).url : null) || "og-card.png";
-
-    const title = [year, make, model, trim].filter(Boolean).join(" ");
-    const leftMeta = [
-      mileage ? `${Number(mileage).toLocaleString()} mi` : null,
-      title_status ? `Title: ${title_status}` : null,
-      condition ? `Cond: ${condition}` : null
-    ].filter(Boolean).join(" • ");
-    const priceText = (price != null && price !== "") ? `$${Number(price).toLocaleString()}` : "";
-    const cityText = city ? esc(city) : "";
-    const soldBadge = String(status||'').toLowerCase()==='sold' ? `<div class="sold-badge">SOLD</div>` : '';
-
-    return `
-      <div class="inv-card" data-id="${esc(id)}">
-        <a class="card-hit" href="./listing.html?id=${esc(id)}" aria-label="View details">View details</a>
-        <div class="inv-photo">
-          ${soldBadge}
-          <img src="${esc(firstUrl)}" alt="${esc(title)}" loading="lazy" decoding="async">
-        </div>
-        <div class="inv-body">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-            <div class="inv-title">${esc(title)}</div>
-            ${priceText ? `<div class="inv-price">${esc(priceText)}</div>` : ``}
-          </div>
-          <div class="inv-meta">
-            <span>${esc(leftMeta)}</span>
-            <span>${esc(cityText)}</span>
-          </div>
-          ${special_features ? `<div class="inv-txt">${esc(special_features)}</div>` : ""}
-          ${description ? `<div class="inv-txt" style="color:#44403c;">${esc(description)}</div>` : ""}
-          ${vin ? `<div class="inv-vin">VIN: ${esc(vin)}</div>` : ""}
-          <div class="inv-txt" style="margin-top:10px;">
-            <a class="btn" style="height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line);text-decoration:none;font-weight:800;"
-               href="./listing.html?id=${esc(id)}">View details</a>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  const renderSection = (items) => items.length ? `<div class="inv-section"><div class="inv-row">${items.map(cardHTML).join("")}</div></div>` : "";
-  const dividerHTML = (text) => `
-    <div class="divider-wrap">
-      <div class="divider">
-        <div class="line"></div>
-        <div>${esc(text)}</div>
-        <div class="line"></div>
-      </div>
-    </div>
-  `;
-
-  const mount = document.getElementById('inventory');
-
-  // -------- Fetch ordered from server, then group
-  async function fetchOrdered(statusVal){
-    return supabase
-      .from('listing')
-      .select('id,year,make,model,trim,mileage,special_features,title_status,condition,description,city,vin,price,images,status,vehicle_type,position,updated_at,created_at')
-      .eq('status', statusVal)
-      .order('position', { ascending:false, nullsFirst:false })
-      .order('updated_at', { ascending:false, nullsFirst:false })
-      .limit(1000);
-  }
-
-  const [liveRes, soldRes] = await Promise.all([fetchOrdered('live'), fetchOrdered('sold')]);
-  if (liveRes.error || soldRes.error){
-    console.error(liveRes.error || soldRes.error);
-    mount.innerHTML = `<div style="color:#fff">Error loading inventory.</div>`;
-    return;
-  }
-  const live = liveRes.data || [];
-  const sold = soldRes.data || [];
-
-  // Split LIVE by Tesla EV / other EV / other vehicles
-  const live_tesla = [], live_other_ev = [], live_other = [];
-  for (const r of live){
-    const k = blockKey(r);
-    if (k === 'live_tesla') live_tesla.push(r);
-    else if (k === 'live_other_ev') live_other_ev.push(r);
-    else live_other.push(r);
-  }
-
-  // Build HTML in admin’s block order
   let html = '';
-  if (live_tesla.length) html += renderSection(live_tesla);
-  if (live_other_ev.length) html += renderSection(live_other_ev);
-  if (live_other.length) {
-    html += dividerHTML('Other vehicles');
-    html += renderSection(live_other);
+  if (tesla.length) html += tesla.map(cardHTML).join('');
+  if (otherEV.length) {
+    html += '<div class="divider" style="width:100%;">Other vehicles</div>';
+    html += otherEV.map(cardHTML).join('');
   }
+  if (other.length) html += other.map(cardHTML).join('');
   if (sold.length) {
-    html += dividerHTML('Sold');
-    html += renderSection(sold);
+    html += '<div class="divider" style="width:100%;">Sold</div>';
+    html += sold.map(cardHTML).join('');
   }
-  mount.innerHTML = html || `<div style="color:#fff">No vehicles available right now.</div>`;
 
-  // Footer year
-  document.getElementById('yr').textContent = new Date().getFullYear();
+  inv.innerHTML = html || '<p style="color:#fff;">No vehicles available at the moment.</p>';
 })();
 </script>
+
+<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+
+<script>
+fetch('./header.html')
+  .then(function(response) { return response.text(); })
+  .then(function(data) { document.getElementById('header-placeholder').innerHTML = data; });
+</script>
+
 </body>
 </html>
