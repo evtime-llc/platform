@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sell Your Car • it’s E.V.Time</title>
+<title>Sell Your Car • it's E.V.Time</title>
 <meta name="theme-color" content="#0b0a09"/>
 
 <style>
@@ -14,12 +14,79 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 
-/* Header (uniform) */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-.logo-wrap a{display:block}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
+/* Header - Dark gray background */
+.header{
+  background:#3d3935;
+  border-bottom:1.5px solid #b5a89a;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.header-inner{
+  max-width:1280px;
+  margin:0 auto;
+  padding:8px 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+}
+
+/* Logo with glow wave animation */
+.logo-link{
+  display:block;
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+.logo-link::after{
+  content:'';
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  animation:logoGlow 30s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes logoGlow{
+  0%{ left:-100%; }
+  5%{ left:100%; }
+  100%{ left:100%; }
+}
+
+#site-logo{
+  display:block;
+  height:50px;
+  width:auto;
+}
+
+/* Navigation - White text */
+.nav{
+  display:flex;
+  gap:24px;
+  flex-wrap:nowrap;
+  align-items:center;
+}
+.nav-btn{
+  font-size:15px;
+  font-weight:600;
+  text-decoration:none;
+  color:#ffffff;
+  cursor:pointer;
+  transition:all .3s ease;
+  white-space:nowrap;
+}
+.nav-btn:hover{
+  color:var(--copper);
+  transform:scale(1.1);
+}
 
 /* Page width */
 .wrap{max-width:880px;margin:0 auto;padding:12px}
@@ -73,20 +140,14 @@ video{width:100%;border-radius:8px}
 </head>
 <body>
 
-<!-- Header -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="it’s E.V.Time — Forum and MarketPlace">
-    </a>
-  </div>
-</div>
+<!-- Header placeholder -->
+<div id="header-placeholder"></div>
 
 <main class="wrap">
   <div class="card">
     <h1>Honest offers from people you can trust.</h1>
     <ul class="bullets">
-      <li><span class="check"></span><div>We won’t send a computer-generated quote. We’ll personally review your info and text you our best offer — fast.</div></li>
+      <li><span class="check"></span><div>We won't send a computer-generated quote. We'll personally review your info and text you our best offer — fast.</div></li>
       <li><span class="check"></span><div>We keep your information private and use it only to evaluate your car and contact you — never to sell or share.</div></li>
       <li><span class="check"></span><div>Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div></li>
     </ul>
@@ -135,7 +196,7 @@ video{width:100%;border-radius:8px}
   <div id="about" class="sheet" style="margin-top:12px">
     <h2 style="margin:4px 0 6px;font-size:18px">How it works / Why E.V.Time</h2>
     <p class="small" style="font-size:13px;color:#44403c">
-      We’re a small, friendly buyer focused on fair trade-in offers with low overhead. Submit your VIN and details; a real person reviews the car and texts you a number. If you like it, we schedule a quick look and handle the paperwork through our licensed partner, Waltons Auto Sales.
+      We're a small, friendly buyer focused on fair trade-in offers with low overhead. Submit your VIN and details; a real person reviews the car and texts you a number. If you like it, we schedule a quick look and handle the paperwork through our licensed partner, Waltons Auto Sales.
     </p>
   </div>
 </main>
@@ -159,6 +220,13 @@ video{width:100%;border-radius:8px}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
+// Load header
+fetch('header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+  });
+
 /* ===== Helpers ===== */
 function normalizeVIN(raw){
   if(!raw) return '';
@@ -237,7 +305,7 @@ captureBtn.addEventListener('click', async ()=>{
       setStatus('VIN captured from camera ✔', true);
       closeCamera();
     }else{
-      setStatus('Couldn’t read a clear 17-char VIN. Try again or upload a photo.');
+      setStatus('Couldn't read a clear 17-char VIN. Try again or upload a photo.');
     }
   }catch(e){
     setStatus('Scanner error. Try again or upload a photo.');
@@ -264,7 +332,7 @@ vinPhoto.addEventListener('change', async (e)=>{
         setStatus('No clear VIN found in this photo. Try a closer, sharper shot.');
       }
     }catch(err){
-      setStatus('Couldn’t process the photo. Please try a clearer shot.');
+      setStatus('Couldn't process the photo. Please try a clearer shot.');
     }
   };
   img.onerror = ()=> setStatus('Bad image file. Try another photo.');
