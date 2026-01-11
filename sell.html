@@ -221,12 +221,9 @@ video{width:100%;border-radius:8px}
 
 <script>
 // Load header
-fetch('./header.html')
-
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('header-placeholder').innerHTML = data;
-  });
+fetch('./header.html').then(response => response.text()).then(data => {
+  document.getElementById('header-placeholder').innerHTML = data;
+});
 
 /* ===== Helpers ===== */
 function normalizeVIN(raw){
@@ -349,8 +346,7 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
   const notes = (document.getElementById('notes').value || '').trim();
 
   const msg = `VIN: ${v}\nMileage: ${miles || '(n/a)'}\nCondition: ${cond || '(n/a)'}\nNotes: ${notes || '(n/a)'}`;
-  const sms = `Hello, I\'m submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
-
+  const sms = `Hello, I am submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
   location.href = `sms:+14244256211?&body=${sms}`;
 });
 </script>
