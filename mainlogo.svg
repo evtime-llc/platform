@@ -1,23 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" width="1000" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
   <!-- Black background -->
-  <rect width="1000" height="400" fill="#0b0a09"/>
+  <rect width="1200" height="500" fill="#000000"/>
   
-  <!-- Car silhouette in copper #c98c5b -->
-  <g stroke="#c98c5b" stroke-width="3" fill="none">
-    <!-- Car outline - sleek sedan profile -->
-    <path d="M 150 220 Q 180 180 250 170 L 350 170 Q 380 165 420 180 L 650 180 Q 720 175 780 190 Q 820 200 850 220 L 870 240 Q 875 250 875 260 L 875 280 Q 870 290 860 295 L 820 295 Q 810 310 790 310 Q 770 310 760 295 L 240 295 Q 230 310 210 310 Q 190 310 180 295 L 140 295 Q 130 290 125 280 L 125 240 Q 130 225 150 220 Z"/>
+  <!-- Car silhouette - sleek sedan outline in copper -->
+  <g stroke="#c98c5b" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main car body outline -->
+    <path d="M 180 280 
+             Q 220 240 280 230 
+             L 380 230 
+             Q 420 220 480 240 
+             L 720 240 
+             Q 800 230 860 250 
+             Q 900 260 930 280 
+             L 950 300 
+             Q 955 310 955 320 
+             L 955 340 
+             Q 950 350 940 355 
+             L 880 355 
+             Q 870 370 845 370 
+             Q 820 370 810 355 
+             L 390 355 
+             Q 380 370 355 370 
+             Q 330 370 320 355 
+             L 260 355 
+             Q 250 350 245 340 
+             L 245 300 
+             Q 250 285 180 280 Z"/>
     
-    <!-- Windshield -->
-    <path d="M 280 170 L 320 140 L 580 140 L 620 170"/>
+    <!-- Windshield and roof line -->
+    <path d="M 340 230 L 390 190 L 680 190 L 730 230" stroke-width="5"/>
     
-    <!-- Side windows -->
-    <line x1="330" y1="145" x2="450" y2="145" stroke-width="2"/>
-    <line x1="480" y1="145" x2="570" y2="145" stroke-width="2"/>
+    <!-- Side window separation -->
+    <line x1="540" y1="195" x2="540" y2="230" stroke-width="4"/>
     
-    <!-- Door line -->
-    <line x1="450" y1="180" x2="450" y2="270" stroke-width="2"/>
+    <!-- Door lines -->
+    <line x1="480" y1="240" x2="480" y2="330" stroke-width="3"/>
+    <line x1="720" y1="240" x2="720" y2="330" stroke-width="3"/>
+    
+    <!-- Front and rear details -->
+    <line x1="220" y1="250" x2="240" y2="280" stroke-width="3"/>
+    <line x1="920" y1="260" x2="930" y1="280" stroke-width="3"/>
   </g>
   
-  <!-- "EV Time" text in white -->
-  <text x="500" y="340" font-family="Arial, Helvetica, sans-serif" font-size="80" font-weight="600" fill="#ffffff" text-anchor="middle">EV Time</text>
+  <!-- "EV Time" text in large white letters -->
+  <text x="600" y="440" 
+        font-family="Arial, Helvetica, sans-serif" 
+        font-size="110" 
+        font-weight="600" 
+        fill="#ffffff" 
+        text-anchor="middle"
+        letter-spacing="5">EV Time</text>
 </svg>
