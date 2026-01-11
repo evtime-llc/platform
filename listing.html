@@ -19,13 +19,76 @@
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-.wrap{max-width:880px;margin:0 auto;padding:12px}
 
-/* Header / Logo */
-.topbar{background:#fff;border-bottom:1px solid var(--line)}
-.logo-wrap{max-width:880px;margin:0 auto;padding:0 12px}
-#site-logo{display:block;width:100%;height:auto;max-height:200px;object-fit:contain}
-@media (max-width:600px){ #site-logo{max-height:220px} }
+/* Header styles */
+header {
+  background: #3d3935;
+  border-bottom: 1.5px solid #b5a89a;
+  padding: 8px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+#site-logo {
+  height: 50px;
+  display: block;
+}
+
+.logo-link {
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.logo-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+  animation: logoGlow 30s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes logoGlow {
+  0% { left: -100%; }
+  10% { left: 100%; }
+  100% { left: 100%; }
+}
+
+.nav {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-btn {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  color: var(--copper);
+  transform: scale(1.1);
+}
+
+.wrap{max-width:880px;margin:0 auto;padding:12px}
 
 /* Card */
 .card{
@@ -63,14 +126,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 }
 
 /* Carousel controls */
-.nav-btn{
+.carousel-btn{
   position:absolute;top:50%;transform:translateY(-50%);
   width:42px;height:42px;border:none;border-radius:999px;cursor:pointer;
   background:rgba(255,255,255,.14);color:#fff;font-size:22px;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 2px 10px rgba(0,0,0,.25);
 }
-.nav-btn:hover{background:rgba(255,255,255,.22)}
+.carousel-btn:hover{background:rgba(255,255,255,.22)}
 .nav-prev{left:16px}
 .nav-next{right:16px}
 
@@ -103,8 +166,9 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .btn.primary:hover{background:var(--copper-dark);color:#fff}
 
 /* Footer */
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:24px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer{border-top:1px solid #333;padding:16px 14px;color:#fff;text-align:center;background:#0b0a09;margin-top:24px}
+.footer a{color:var(--copper);text-decoration:none}
+.footer a:hover{text-decoration:underline}
 
 /* Concierge Drawer */
 .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998}
@@ -132,18 +196,19 @@ form textarea{resize:vertical}
 .financing input{width:auto}
 .success{color:#0a7;margin-top:8px;font-weight:700}
 .back{margin:10px 0 0}.back a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+
+@media (max-width: 768px) {
+  #site-logo { height: 40px; }
+  .nav { flex-wrap: wrap; gap: 16px; }
+  .nav-btn { font-size: 12px; }
+  .title { font-size: 18px; }
+  .price { font-size: 16px; }
+}
 </style>
 </head>
 <body>
 
-<!-- Topbar / Logo -->
-<div class="topbar">
-  <div class="logo-wrap">
-    <a href="/" aria-label="Go to Home">
-      <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime">
-    </a>
-  </div>
-</div>
+<div id="header-placeholder"></div>
 
 <div class="wrap">
   <div class="back"><a href="./share.html">← Back to inventory</a></div>
@@ -151,7 +216,7 @@ form textarea{resize:vertical}
 </div>
 
 <footer class="footer">
-  <div class="wrap">© <span id="yr"></span> E.V.Time</div>
+  <div>© <span id="yr"></span> EV TIME · <a href="./legal.html">Legal</a></div>
 </footer>
 
 <!-- Concierge Drawer -->
@@ -256,8 +321,8 @@ form textarea{resize:vertical}
               <img id="heroImg" src="${esc(heroUrl)}" alt="${esc(title)}" decoding="async">
             </div>
             ${media.length>1 ? `
-              <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
-              <button class="nav-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
+              <button class="carousel-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
+              <button class="carousel-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
               <div class="dots" id="dots"></div>
             `:``}
           </div>
@@ -314,22 +379,20 @@ form textarea{resize:vertical}
         const vid = document.createElement('video');
         vid.setAttribute('playsinline','');
         vid.setAttribute('muted','');
-        vid.muted = true;            // enforce mute
-        vid.volume = 0;              // enforce mute
+        vid.muted = true;
+        vid.volume = 0;
         vid.preload = 'metadata';
         vid.poster = item.poster || '';
         vid.src = item.src;
         vid.controls = false;
 
-        // If user tries to unmute via any control, force mute back
         vid.addEventListener('volumechange', ()=>{ if(vid.volume !== 0) vid.volume = 0; if(!vid.muted) vid.muted = true; });
 
-        // Overlay play button
         const play = document.createElement('div');
         play.className = 'play-overlay';
         play.addEventListener('click', async ()=>{
           try{
-            vid.controls = true; // show controls after starting
+            vid.controls = true;
             await vid.play();
             play.style.display = 'none';
           }catch(e){}
@@ -345,14 +408,12 @@ form textarea{resize:vertical}
       if(!media.length) return;
       idx = (i + media.length) % media.length;
       const item=media[idx];
-      // fade effect for images only
       slideHost.style.opacity='0';
       setTimeout(()=>{
         buildSlide(item);
         slideHost.style.opacity='1';
       }, 120);
 
-      // Preload next image (and let browser handle video)
       const nextItem = media[(idx+1)%media.length];
       if(nextItem?.kind==='img') preload(nextItem.src);
 
@@ -360,9 +421,7 @@ form textarea{resize:vertical}
     }
 
     if(media.length){
-      // initial
       if(media[0].kind==='img'){
-        // already set in initial HTML
       } else {
         buildSlide(media[0]);
       }
@@ -379,7 +438,6 @@ form textarea{resize:vertical}
     if(prevBtn) prevBtn.onclick=()=>show(idx-1);
     if(nextBtn) nextBtn.onclick=()=>show(idx+1);
 
-    // swipe support
     let sx=null, sy=null;
     slideHost.addEventListener('touchstart',(e)=>{
       const t=e.touches[0]; sx=t.clientX; sy=t.clientY;
@@ -406,7 +464,7 @@ form textarea{resize:vertical}
     function closeDrawer(){
       drawer.classList.remove('open');
       backdrop.classList.remove('open');
-      pauseAllVideos(); // pause if drawer opened/closed mid-play
+      pauseAllVideos();
     }
     backdrop.onclick=closeDrawer;
     document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
@@ -419,7 +477,7 @@ form textarea{resize:vertical}
 
     function renderContact(){
       const phone='+14244256211';
-      const smsBody=encodeURIComponent('Hi! I’m interested in ' + title);
+      const smsBody=encodeURIComponent('Hi! I am interested in ' + title);
       const email='welcome.evtime@gmail.com';
 
       body.innerHTML = `
@@ -436,7 +494,7 @@ form textarea{resize:vertical}
         </div>
       `;
       $('copyEmail').onclick=()=>{ navigator.clipboard.writeText(email); alert('Email copied.'); };
-      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I’m interested in '+title); alert('Message copied.'); };
+      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I am interested in '+title); alert('Message copied.'); };
     }
 
     function renderForm(){
@@ -445,10 +503,10 @@ form textarea{resize:vertical}
           <label>Name</label><input id="name" autocomplete="name" required>
           <label>Phone</label><input id="phone" autocomplete="tel">
           <label>Email</label><input id="email" type="email" autocomplete="email">
-          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I’m interested in ${esc(title)}"></textarea>
+          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I am interested in ${esc(title)}"></textarea>
           <div class="financing">
             <input type="checkbox" id="financeChk">
-            <label for="financeChk">I’m interested in Financing</label>
+            <label for="financeChk">I am interested in Financing</label>
           </div>
           <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
           <div id="formMsg" class="success" role="status" aria-live="polite"></div>
@@ -485,10 +543,16 @@ form textarea{resize:vertical}
       };
     }
 
-    // Openers
     document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
   })();
 })();
 </script>
+
+<script>
+fetch('./header.html')
+  .then(function(response) { return response.text(); })
+  .then(function(data) { document.getElementById('header-placeholder').innerHTML = data; });
+</script>
+
 </body>
 </html>
