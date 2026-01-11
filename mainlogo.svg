@@ -5,27 +5,7 @@
   <!-- Car silhouette - sleek sedan outline in copper -->
   <g stroke="#c98c5b" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <!-- Main car body outline -->
-    <path d="M 180 280 
-             Q 220 240 280 230 
-             L 380 230 
-             Q 420 220 480 240 
-             L 720 240 
-             Q 800 230 860 250 
-             Q 900 260 930 280 
-             L 950 300 
-             Q 955 310 955 320 
-             L 955 340 
-             Q 950 350 940 355 
-             L 880 355 
-             Q 870 370 845 370 
-             Q 820 370 810 355 
-             L 390 355 
-             Q 380 370 355 370 
-             Q 330 370 320 355 
-             L 260 355 
-             Q 250 350 245 340 
-             L 245 300 
-             Q 250 285 180 280 Z"/>
+    <path d="M 180 280 Q 220 240 280 230 L 380 230 Q 420 220 480 240 L 720 240 Q 800 230 860 250 Q 900 260 930 280 L 950 300 Q 955 310 955 320 L 955 340 Q 950 350 940 355 L 880 355 Q 870 370 845 370 Q 820 370 810 355 L 390 355 Q 380 370 355 370 Q 330 370 320 355 L 260 355 Q 250 350 245 340 L 245 300 Q 250 285 180 280 Z"/>
     
     <!-- Windshield and roof line -->
     <path d="M 340 230 L 390 190 L 680 190 L 730 230" stroke-width="5"/>
@@ -39,15 +19,9 @@
     
     <!-- Front and rear details -->
     <line x1="220" y1="250" x2="240" y2="280" stroke-width="3"/>
-    <line x1="920" y1="260" x2="930" y1="280" stroke-width="3"/>
+    <line x1="920" y1="260" x2="930" y2="280" stroke-width="3"/>
   </g>
   
-  <!-- "EV Time" text in large white letters -->
-  <text x="600" y="440" 
-        font-family="Arial, Helvetica, sans-serif" 
-        font-size="110" 
-        font-weight="600" 
-        fill="#ffffff" 
-        text-anchor="middle"
-        letter-spacing="5">EV Time</text>
+  <!-- EV Time text in large white letters -->
+  <text x="600" y="440" font-family="Arial, Helvetica, sans-serif" font-size="110" font-weight="600" fill="#ffffff" text-anchor="middle" letter-spacing="5">EV Time</text>
 </svg>
