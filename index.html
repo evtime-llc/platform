@@ -234,21 +234,8 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <a href="/" class="logo-link" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
-      </a>
-      <nav class="nav">
-        <a href="./sell.html" class="nav-btn">Sell Your Car</a>
-        <a href="./share.html" class="nav-btn">Browse Inventory</a>
-        <a href="./about.html" class="nav-btn">How it Works</a>
-        <a href="./about.html" class="nav-btn">Why EV Time</a>
-        <a href="#" class="nav-btn">Live Chat</a>
-      </nav>
-    </div>
-  </header>
+  <!-- Header placeholder - will be loaded by JavaScript -->
+  <div id="header-placeholder"></div>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -292,6 +279,14 @@
   </footer>
 
   <script>
+    // Load header
+    fetch('header.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+      });
+    
+    // Set year
     document.getElementById('yr').textContent = new Date().getFullYear();
   </script>
 </body>
