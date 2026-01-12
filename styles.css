@@ -1,0 +1,23 @@
+:root {
+  --bg: #2d2926;
+  --card: #ffffff;
+  --text: #1c1917;
+  --muted: #78716c;
+  --line: #e7e5e4;
+  --copper: #c98c5b;
+  --copper-dark: #9e6d45;
+  --copper-light: #d4a574;
+  --copper-soft: #f5eae0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
