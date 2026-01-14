@@ -12,92 +12,9 @@
 <meta property="og:url" content="https://itsevtime.com/share.html"/>
 <meta name="twitter:card" content="summary_large_image"/>
 
+<link rel="stylesheet" href="./styles.css">
+
 <style>
-:root {
-  --bg: #0b0a09;
-  --card: #ffffff;
-  --text: #1c1917;
-  --copper: #c98c5b;
-  --copper-light: #d4a574;
-  --border: #e5e7eb;
-}
-
-* { box-sizing:border-box; margin:0; padding:0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height:1.5;
-}
-
-/* Header styles */
-header {
-  background: #3d3935;
-  border-bottom: 1.5px solid #b5a89a;
-  padding: 8px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-}
-
-#site-logo {
-  height: 50px;
-  display: block;
-}
-
-.logo-link {
-  position: relative;
-  overflow: hidden;
-  display: block;
-}
-
-.logo-link::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
-  animation: logoGlow 30s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes logoGlow {
-  0% { left: -100%; }
-  10% { left: 100%; }
-  100% { left: 100%; }
-}
-
-.nav {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-
-.nav-btn {
-  color: #fff;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.nav-btn:hover {
-  color: var(--copper);
-  transform: scale(1.1);
-}
-
 .wrap {
   max-width: 880px;
   margin: 0 auto;
@@ -227,17 +144,29 @@ footer a:hover {
 }
 
 @media (max-width: 768px) {
-  #site-logo { height: 40px; }
-  .nav { flex-wrap: wrap; gap: 16px; }
-  .nav-btn { font-size: 12px; }
   h1 { font-size: 24px; }
   .card { width: 100%; }
 }
 </style>
 </head>
 
-<body>
-<div id="header-placeholder"></div>
+<body data-page="share">
+
+<!-- Header - directly embedded -->
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo-link">
+      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
+    </a>
+    <nav class="nav">
+      <a href="./sell.html" class="nav-btn">Sell Your Car</a>
+      <a href="./share.html" class="nav-btn">Browse Inventory</a>
+      <a href="./about.html" class="nav-btn">How it Works</a>
+      <a href="./about.html" class="nav-btn">Why EV Time</a>
+      <a href="#" class="nav-btn">Live Chat</a>
+    </nav>
+  </div>
+</header>
 
 <div class="wrap">
   <h1>Browse Inventory</h1>
@@ -375,12 +304,6 @@ async function fetchOrdered(statusVal) {
 </script>
 
 <script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
-
-<script>
-fetch('./header.html')
-  .then(function(response) { return response.text(); })
-  .then(function(data) { document.getElementById('header-placeholder').innerHTML = data; });
-</script>
 
 </body>
 </html>
