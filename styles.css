@@ -1,5 +1,5 @@
 :root {
-  --bg: #2d2926;
+  --bg: #3a3a3a;
   --card: #ffffff;
   --text: #1c1917;
   --muted: #78716c;
@@ -22,7 +22,7 @@ body {
   line-height: 1.6;
 }
 
-/* Header - Sticky on all pages */
+/* Header */
 header {
   background: #0b0a09;
   padding: 0;
@@ -39,23 +39,17 @@ header {
   justify-content: center;
   gap: 32px;
   height: 50px;
-  padding: 0;
-}
-
-#site-logo {
-  height: 50px;
-  display: block;
+  padding: 0 24px;
 }
 
 .logo-link {
   position: relative;
   overflow: hidden;
   display: block;
-  height: 50px;
 }
 
 .logo-link::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -70,6 +64,11 @@ header {
   0% { left: -100%; }
   10% { left: 100%; }
   100% { left: 100%; }
+}
+
+#site-logo {
+  height: 50px;
+  display: block;
 }
 
 .nav {
@@ -89,31 +88,32 @@ header {
 
 .nav-btn:hover {
   color: #c98c5b;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
-/* Active CTA highlighting */
-body[data-page="sell"] .nav-btn[href="./sell.html"] {
-  color: #c98c5b;
-}
-
-body[data-page="share"] .nav-btn[href="./share.html"] {
-  color: #c98c5b;
-}
-
+/* Active page highlighting */
+body[data-page="sell"] .nav-btn[href="./sell.html"],
+body[data-page="share"] .nav-btn[href="./share.html"],
 body[data-page="about"] .nav-btn[href="./about.html"] {
   color: #c98c5b;
 }
 
-body[data-page="listing"] .nav-btn[href="./listing.html"] {
-  color: #c98c5b;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  #site-logo { height: 40px; }
-  .header-inner { height: 40px; }
-  .logo-link { height: 40px; }
-  .nav { flex-wrap: wrap; gap: 16px; }
-  .nav-btn { font-size: 12px; }
+  #site-logo {
+    height: 40px;
+  }
+  
+  .header-inner {
+    height: 40px;
+    gap: 16px;
+  }
+  
+  .nav {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .nav-btn {
+    font-size: 12px;
+  }
 }
