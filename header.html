@@ -1,18 +1,3 @@
-<header>
-  <div class="header-inner">
-    <a href="/" class="logo-link">
-      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
-    </a>
-    <nav class="nav">
-      <a href="./sell.html" class="nav-btn">Sell Your Car</a>
-      <a href="./share.html" class="nav-btn">Browse Inventory</a>
-      <a href="./about.html" class="nav-btn">How it Works</a>
-      <a href="./about.html" class="nav-btn">Why EV Time</a>
-      <a href="#" class="nav-btn">Live Chat</a>
-    </nav>
-  </div>
-</header>
-
 <style>
 header {
   background: #0b0a09;
@@ -27,26 +12,20 @@ header {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 32px;
+  justify-content: space-between;
   height: 50px;
-  padding: 0;
-}
-
-#site-logo {
-  height: 50px;
-  display: block;
+  padding: 0 24px;
 }
 
 .logo-link {
   position: relative;
   overflow: hidden;
   display: block;
-  height: 50px;
+  flex-shrink: 0;
 }
 
 .logo-link::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -61,6 +40,11 @@ header {
   0% { left: -100%; }
   10% { left: 100%; }
   100% { left: 100%; }
+}
+
+#site-logo {
+  height: 50px;
+  display: block;
 }
 
 .nav {
@@ -80,14 +64,64 @@ header {
 
 .nav-btn:hover {
   color: #c98c5b;
+  transform: scale(1.05);
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-icon:hover {
   transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
-  #site-logo { height: 40px; }
-  .header-inner { height: 40px; }
-  .logo-link { height: 40px; }
-  .nav { flex-wrap: wrap; gap: 16px; }
-  .nav-btn { font-size: 12px; }
+  #site-logo {
+    height: 40px;
+  }
+  
+  .header-inner {
+    height: 40px;
+    padding: 0 16px;
+  }
+  
+  .nav {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .nav-btn {
+    font-size: 11px;
+  }
+  
+  .search-icon {
+    width: 16px;
+    height: 16px;
+  }
 }
 </style>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo-link">
+      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
+    </a>
+    
+    <nav class="nav">
+      <a href="./sell.html" class="nav-btn">Sell</a>
+      <a href="./share.html" class="nav-btn">Inventory</a>
+      <a href="./escrow.html" class="nav-btn">Escrow</a>
+      <a href="./dmv.html" class="nav-btn">DMV</a>
+      <a href="./about.html" class="nav-btn">About</a>
+      <a href="./support.html" class="nav-btn">Support</a>
+      <a href="#" class="nav-btn">Chat</a>
+      <svg class="search-icon" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+    </nav>
+  </div>
+</header>
