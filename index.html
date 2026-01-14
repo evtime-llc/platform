@@ -12,74 +12,11 @@
   <link rel="stylesheet" href="./styles.css">
 
   <style>
-    /* Header styles */
-    header {
-      background: #0b0a09;
-      padding: 0;
+    /* Force sticky header even with dynamic load */
+    #header-placeholder {
       position: sticky;
       top: 0;
       z-index: 100;
-    }
-
-    .header-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-      height: 50px;
-      padding: 0;
-    }
-
-    #site-logo {
-      height: 50px;
-      display: block;
-    }
-
-    .logo-link {
-      position: relative;
-      overflow: hidden;
-      display: block;
-      height: 50px;
-    }
-
-    .logo-link::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
-      animation: logoGlow 30s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes logoGlow {
-      0% { left: -100%; }
-      10% { left: 100%; }
-      100% { left: 100%; }
-    }
-
-    .nav {
-      display: flex;
-      gap: 32px;
-      align-items: center;
-    }
-
-    .nav-btn {
-      color: #fff;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 400;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-    }
-
-    .nav-btn:hover {
-      color: #c98c5b;
-      transform: scale(1.1);
     }
 
     /* Hero Section - Minimal top padding */
@@ -166,11 +103,6 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-      #site-logo { height: 40px; }
-      .header-inner { height: 40px; }
-      .logo-link { height: 40px; }
-      .nav { flex-wrap: wrap; gap: 16px; }
-      .nav-btn { font-size: 12px; }
       .hero{
         padding:20px 16px 60px;
       }
@@ -197,21 +129,8 @@
 </head>
 <body>
 
-  <!-- Header - directly embedded -->
-  <header>
-    <div class="header-inner">
-      <a href="/" class="logo-link">
-        <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
-      </a>
-      <nav class="nav">
-        <a href="./sell.html" class="nav-btn">Sell Your Car</a>
-        <a href="./share.html" class="nav-btn">Browse Inventory</a>
-        <a href="./about.html" class="nav-btn">How it Works</a>
-        <a href="./about.html" class="nav-btn">Why EV Time</a>
-        <a href="#" class="nav-btn">Live Chat</a>
-      </nav>
-    </div>
-  </header>
+  <!-- Header placeholder - loaded dynamically -->
+  <div id="header-placeholder"></div>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -255,6 +174,15 @@
   </footer>
 
   <script>
+    // Load header dynamically
+    fetch('./header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('header-placeholder').innerHTML = html;
+      })
+      .catch(error => console.error('Error loading header:', error));
+
+    // Set year
     document.getElementById('yr').textContent = new Date().getFullYear();
   </script>
 </body>
