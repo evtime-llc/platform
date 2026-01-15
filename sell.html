@@ -148,138 +148,156 @@ video{width:100%;border-radius:8px}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
-// Load header dynamically
-fetch('./header.html')
-  .then(response => response.text())
-  .then(html => {
-    document.getElementById('header-placeholder').innerHTML = html;
-  })
-  .catch(error => console.error('Error loading header:', error));
-
-/* ===== Helpers ===== */
-function normalizeVIN(raw){
-  if(!raw) return '';
-  let s = raw.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  s = s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');
-  const m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/);
-  if(m){ s = m[0]; }
-  if(s.length > 17) s = s.substring(0,17);
-  return s;
-}
-function isVIN17(s){ return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||''); }
-function setStatus(msg, ok){
-  const el = document.getElementById('vinStatus');
-  el.textContent = msg || '';
-  el.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
-}
-
-/* Elements */
-const vinEl=document.getElementById('vin');
-const scanBtn=document.getElementById('scanBtn');
-const vinPhoto=document.getElementById('vinPhoto');
-const submitBtn=document.getElementById('submitBtn');
-
-const camWrap=document.getElementById('camWrap');
-const video=document.getElementById('video');
-const captureBtn=document.getElementById('captureBtn');
-const closeCamBtn=document.getElementById('closeCamBtn');
-
-/* Live validation */
-vinEl.addEventListener('input', ()=>{
-  let v = normalizeVIN(vinEl.value);
-  vinEl.value = v;
-  if(v.length === 17 && isVIN17(v)){ setStatus('Looks like a valid VIN.', true); }
-  else if(v.length > 0){ setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).'); }
-  else setStatus('');
-});
-
-/* Camera flow */
-let stream=null;
-async function openCamera(){
-  try{
-    camWrap.style.display='flex';
-    stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false });
-    video.srcObject = stream;
-  }catch(err){
-    camWrap.style.display='none';
-    alert('Camera not available. Try uploading a clear VIN photo instead.');
-  }
-}
-function closeCamera(){
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
-  camWrap.style.display='none';
-}
-scanBtn.addEventListener('click', openCamera);
-closeCamBtn.addEventListener('click', closeCamera);
-
-captureBtn.addEventListener('click', async ()=>{
-  if(!video.videoWidth){ alert('Camera not ready. Try again in a second.'); return; }
-  const vw = video.videoWidth, vh = video.videoHeight;
-  const cropX = vw*0.08, cropY = vh*0.28, cw = vw*0.84, ch = vh*0.36;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = cw; canvas.height = ch;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, cw, ch);
-
-  setStatus('Reading VIN from camera…');
-  try{
-    const { data } = await Tesseract.recognize(canvas, 'eng', {
-      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
+(function() {
+  fetch('./header.html')
+    .then(function(response) { return response.text(); })
+    .then(function(html) {
+      document.getElementById('header-placeholder').innerHTML = html;
+    })
+    .catch(function(error) {
+      console.error('Error loading header:', error);
     });
-    const text = (data && data.text) ? data.text : '';
-    let v = normalizeVIN(text);
-    if(isVIN17(v)){
-      vinEl.value = v;
-      setStatus('VIN captured from camera ✔', true);
-      closeCamera();
-    }else{
-      setStatus('Couldn't read a clear 17-char VIN. Try again or upload a photo.');
-    }
-  }catch(e){
-    setStatus('Scanner error. Try again or upload a photo.');
+
+  function normalizeVIN(raw) {
+    if (!raw) return '';
+    var s = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    s = s.replace(/O/g, '0').replace(/I/g, '1').replace(/Q/g, '0');
+    var m = s.match(/[A-HJ-NPR-Z0-9]{17,25}/);
+    if (m) { s = m[0]; }
+    if (s.length > 17) s = s.substring(0, 17);
+    return s;
   }
-});
 
-/* Photo upload flow */
-vinPhoto.addEventListener('change', async (e)=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
-  setStatus('Reading VIN from photo…');
-  const img = new Image();
-  img.onload = async ()=>{
-    try{
-      const { data } = await Tesseract.recognize(img, 'eng', {
-        tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
-      });
-      const text = (data && data.text) ? data.text : '';
-      const v = normalizeVIN(text);
-      if(isVIN17(v)){
-        vinEl.value = v;
-        setStatus('VIN captured from photo ✔', true);
-      }else{
-        setStatus('No clear VIN found in this photo. Try a closer, sharper shot.');
-      }
-    }catch(err){
-      setStatus('Couldn't process the photo. Please try a clearer shot.');
+  function isVIN17(s) {
+    return /^[A-HJ-NPR-Z0-9]{17}$/.test(s || '');
+  }
+
+  function setStatus(msg, ok) {
+    var el = document.getElementById('vinStatus');
+    el.textContent = msg || '';
+    el.className = 'small ' + (ok ? 'success' : msg ? 'error' : '');
+  }
+
+  var vinEl = document.getElementById('vin');
+  var scanBtn = document.getElementById('scanBtn');
+  var vinPhoto = document.getElementById('vinPhoto');
+  var submitBtn = document.getElementById('submitBtn');
+  var camWrap = document.getElementById('camWrap');
+  var video = document.getElementById('video');
+  var captureBtn = document.getElementById('captureBtn');
+  var closeCamBtn = document.getElementById('closeCamBtn');
+  var stream = null;
+
+  vinEl.addEventListener('input', function() {
+    var v = normalizeVIN(vinEl.value);
+    vinEl.value = v;
+    if (v.length === 17 && isVIN17(v)) {
+      setStatus('Looks like a valid VIN.', true);
+    } else if (v.length > 0) {
+      setStatus('VIN must be 17 characters (A–Z, 0–9; no I, O, Q).');
+    } else {
+      setStatus('');
     }
-  };
-  img.onerror = ()=> setStatus('Bad image file. Try another photo.');
-  img.src = URL.createObjectURL(f);
-});
+  });
 
-/* Submit — SMS to your cell */
-document.getElementById('submitBtn').addEventListener('click', ()=>{
-  const v = vinEl.value.trim().toUpperCase();
-  if(!isVIN17(v)){ alert('Please enter a valid 17-character VIN.'); return; }
-  const miles = (document.getElementById('miles').value || '').trim();
-  const cond  = (document.getElementById('cond').value || '').trim();
-  const notes = (document.getElementById('notes').value || '').trim();
+  function openCamera() {
+    camWrap.style.display = 'flex';
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+      .then(function(s) {
+        stream = s;
+        video.srcObject = stream;
+      })
+      .catch(function(err) {
+        camWrap.style.display = 'none';
+        alert('Camera not available. Try uploading a clear VIN photo instead.');
+      });
+  }
 
-  const msg = `VIN: ${v}\nMileage: ${miles || '(n/a)'}\nCondition: ${cond || '(n/a)'}\nNotes: ${notes || '(n/a)'}`;
-  const sms = `Hello, I am submitting my car for an offer.%0A%0A${encodeURIComponent(msg)}`;
-  location.href = `sms:+14244256211?&body=${sms}`;
-});
+  function closeCamera() {
+    if (stream) {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      stream = null;
+    }
+    camWrap.style.display = 'none';
+  }
+
+  scanBtn.addEventListener('click', openCamera);
+  closeCamBtn.addEventListener('click', closeCamera);
+
+  captureBtn.addEventListener('click', function() {
+    if (!video.videoWidth) {
+      alert('Camera not ready. Try again in a second.');
+      return;
+    }
+    var vw = video.videoWidth, vh = video.videoHeight;
+    var cropX = vw * 0.08, cropY = vh * 0.28, cw = vw * 0.84, ch = vh * 0.36;
+    var canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, cropX, cropY, cw, ch, 0, 0, cw, ch);
+
+    setStatus('Reading VIN from camera…');
+    Tesseract.recognize(canvas, 'eng', {
+      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ'
+    }).then(function(result) {
+      var text = (result.data && result.data.text) ? result.data.text : '';
+      var v = normalizeVIN(text);
+      if (isVIN17(v)) {
+        vinEl.value = v;
+        setStatus('VIN captured from camera ✔', true);
+        closeCamera();
+      } else {
+        setStatus('Couldn't read a clear 17-char VIN. Try again or upload a photo.');
+      }
+    }).catch(function(e) {
+      setStatus('Scanner error. Try again or upload a photo.');
+    });
+  });
+
+  vinPhoto.addEventListener('change', function(e) {
+    var f = e.target.files && e.target.files[0];
+    if (!f) return;
+    setStatus('Reading VIN from photo…');
+    var img = new Image();
+    img.onload = function() {
+      Tesseract.recognize(img, 'eng', {
+        tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ'
+      }).then(function(result) {
+        var text = (result.data && result.data.text) ? result.data.text : '';
+        var v = normalizeVIN(text);
+        if (isVIN17(v)) {
+          vinEl.value = v;
+          setStatus('VIN captured from photo ✔', true);
+        } else {
+          setStatus('No clear VIN found in this photo. Try a closer, sharper shot.');
+        }
+      }).catch(function(err) {
+        setStatus('Couldn't process the photo. Please try a clearer shot.');
+      });
+    };
+    img.onerror = function() {
+      setStatus('Bad image file. Try another photo.');
+    };
+    img.src = URL.createObjectURL(f);
+  });
+
+  submitBtn.addEventListener('click', function() {
+    var v = vinEl.value.trim().toUpperCase();
+    if (!isVIN17(v)) {
+      alert('Please enter a valid 17-character VIN.');
+      return;
+    }
+    var miles = (document.getElementById('miles').value || '').trim();
+    var cond = (document.getElementById('cond').value || '').trim();
+    var notes = (document.getElementById('notes').value || '').trim();
+    var msg = 'VIN: ' + v + '\nMileage: ' + (miles || '(n/a)') + '\nCondition: ' + (cond || '(n/a)') + '\nNotes: ' + (notes || '(n/a)');
+    var sms = 'Hello, I am submitting my car for an offer.%0A%0A' + encodeURIComponent(msg);
+    location.href = 'sms:+14244256211?&body=' + sms;
+  });
+})();
+
+document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 
 <!-- Footer -->
@@ -288,7 +306,6 @@ document.getElementById('submitBtn').addEventListener('click', ()=>{
     <div>© <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a></div>
   </div>
 </footer>
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 
 </body>
 </html>
