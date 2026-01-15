@@ -9,6 +9,13 @@
 <link rel="stylesheet" href="./styles.css">
 
 <style>
+/* Force sticky header even with dynamic load */
+#header-placeholder {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
 /* Page width */
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 
@@ -61,21 +68,8 @@ video{width:100%;border-radius:8px}
 </head>
 <body data-page="sell">
 
-<!-- Header - directly embedded -->
-<header>
-  <div class="header-inner">
-    <a href="/" class="logo-link">
-      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
-    </a>
-    <nav class="nav">
-      <a href="./sell.html" class="nav-btn">Sell Your Car</a>
-      <a href="./share.html" class="nav-btn">Browse Inventory</a>
-      <a href="./about.html" class="nav-btn">How it Works</a>
-      <a href="./about.html" class="nav-btn">Why EV Time</a>
-      <a href="#" class="nav-btn">Live Chat</a>
-    </nav>
-  </div>
-</header>
+<!-- Header placeholder - loaded dynamically -->
+<div id="header-placeholder"></div>
 
 <main class="wrap">
   <div class="card">
@@ -154,6 +148,14 @@ video{width:100%;border-radius:8px}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
+// Load header dynamically
+fetch('./header.html')
+  .then(response => response.text())
+  .then(html => {
+    document.getElementById('header-placeholder').innerHTML = html;
+  })
+  .catch(error => console.error('Error loading header:', error));
+
 /* ===== Helpers ===== */
 function normalizeVIN(raw){
   if(!raw) return '';
