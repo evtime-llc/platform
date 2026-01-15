@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DMV Services — E.V.Time</title>
+<meta name="theme-color" content="#0b0a09"/>
+
+<link rel="stylesheet" href="./styles.css">
+
+<style>
+#header-placeholder{position:sticky;top:0;z-index:100}
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+.hero{padding:16px 12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+.hlite{background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));border:1px solid rgba(201,140,91,.55);box-shadow:0 6px 22px rgba(201,140,91,.25)}
+h1{margin:6px 0 8px;font-size:24px}
+h2{margin:4px 0 8px;font-size:18px}
+p{margin:6px 0 8px}
+.muted{color:#78716c}
+.list{list-style:none;padding:0;margin:8px 0}
+.list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
+.check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
+.service-box{background:#f8f7f6;border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+.service-box h3{margin:0 0 6px;font-size:16px;color:var(--copper-dark)}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800;color:#111}
+.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+.btn.primary:hover{background:var(--copperDark);color:#fff}
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a:hover{border-bottom-style:solid}
+.badge{display:inline-block;background:var(--copper-soft);border:1px solid var(--copper);color:var(--copper-dark);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-top:8px}
+@media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
+</style>
+</head>
+<body data-page="dmv">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap hero">
+  <div class="card hlite">
+    <h1>DMV Services</h1>
+    <p class="muted">Skip the lines. We handle all your DMV paperwork with licensed professionals.</p>
+    <span class="badge">✓ Licensed DMV Specialist on Staff</span>
+  </div>
+
+  <div class="card">
+    <h2>Why Use Our DMV Services?</h2>
+    <p>Buying or selling a car comes with a mountain of paperwork — title transfers, registration, lien releases, temp tags, and more. One mistake can delay your transaction for weeks.</p>
+    <p><strong>We take care of it all.</strong> Our licensed DMV specialist handles every form, stamp, and signature so you don't have to visit the DMV or worry about errors.</p>
+    <ul class="list">
+      <li><span class="check"></span><div><strong>Licensed Professional.</strong> Our DMV specialist is fully licensed and experienced in vehicle documentation.</div></li>
+      <li><span class="check"></span><div><strong>No DMV Visits.</strong> We handle everything remotely or in-office — you never have to stand in line.</div></li>
+      <li><span class="check"></span><div><strong>Fast Processing.</strong> We expedite paperwork and catch errors before they become problems.</div></li>
+      <li><span class="check"></span><div><strong>Out-of-State Transfers.</strong> Moving from another state? We handle the complexity so you don't have to.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>What We Handle</h2>
+    
+    <div class="service-box">
+      <h3>Title Transfers</h3>
+      <p class="muted">Complete title transfer from seller to buyer, including lien releases and out-of-state titles.</p>
+    </div>
+
+    <div class="service-box">
+      <h3>Registration & Plates</h3>
+      <p class="muted">New registration, renewals, temporary tags, and permanent license plates.</p>
+    </div>
+
+    <div class="service-box">
+      <h3>Out-of-State Transfers</h3>
+      <p class="muted">Moving to or from another state? We manage the entire interstate transfer process.</p>
+    </div>
+
+    <div class="service-box">
+      <h3>Lien Releases & Payoffs</h3>
+      <p class="muted">Coordinate with lenders to release liens and ensure clean title transfer.</p>
+    </div>
+
+    <div class="service-box">
+      <h3>Bill of Sale & Documentation</h3>
+      <p class="muted">Properly executed bills of sale, odometer disclosures, and all required forms.</p>
+    </div>
+
+    <div class="service-box">
+      <h3>Smog & Inspection Coordination</h3>
+      <p class="muted">We coordinate required inspections and ensure compliance with state regulations.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>How It Works</h2>
+    <p><strong>1. Tell us about your transaction.</strong> Buying or selling? In-state or out-of-state?</p>
+    <p><strong>2. We collect the necessary documents.</strong> VINs, titles, IDs, payoff information — we guide you through what's needed.</p>
+    <p><strong>3. Our licensed specialist processes everything.</strong> Forms are filed, fees paid, and documentation completed.</p>
+    <p><strong>4. You receive your clean title and registration.</strong> Fast, accurate, stress-free.</p>
+  </div>
+
+  <div class="card">
+    <h2>Pricing</h2>
+    <p>DMV service fees vary based on the complexity of your transaction (in-state vs. out-of-state, lien releases, etc.).</p>
+    <p><strong>Contact us for a quote</strong> — we'll walk you through exactly what's needed and the cost.</p>
+    <p class="muted"><strong>Coming Soon:</strong> All-inclusive transaction package at $499, covering DMV services, escrow, and full documentation support.</p>
+  </div>
+
+  <div class="card">
+    <h2>Get Started</h2>
+    <p>Ready to simplify your DMV paperwork? Reach out to our team.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn primary" href="./support.html">Contact Us</a>
+      <a class="btn" href="./sell.html">Sell Your Car</a>
+      <a class="btn" href="./share.html">Browse Inventory</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    &copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a>
+  </div>
+</footer>
+
+<script>
+fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+
+</body>
+</html>
