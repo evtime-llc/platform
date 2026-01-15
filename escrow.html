@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Escrow Services — E.V.Time</title>
+<meta name="theme-color" content="#0b0a09"/>
+
+<link rel="stylesheet" href="./styles.css">
+
+<style>
+#header-placeholder{position:sticky;top:0;z-index:100}
+.wrap{max-width:880px;margin:0 auto;padding:12px}
+.hero{padding:16px 12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+.hlite{background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));border:1px solid rgba(201,140,91,.55);box-shadow:0 6px 22px rgba(201,140,91,.25)}
+h1{margin:6px 0 8px;font-size:24px}
+h2{margin:4px 0 8px;font-size:18px}
+p{margin:6px 0 8px}
+.muted{color:#78716c}
+.list{list-style:none;padding:0;margin:8px 0}
+.list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
+.check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
+.step{background:#f8f7f6;border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+.step-num{display:inline-block;width:28px;height:28px;border-radius:50%;background:var(--copper);color:#fff;text-align:center;line-height:28px;font-weight:900;margin-right:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800;color:#111}
+.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+.btn.primary:hover{background:var(--copperDark);color:#fff}
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a:hover{border-bottom-style:solid}
+@media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
+</style>
+</head>
+<body data-page="escrow">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap hero">
+  <div class="card hlite">
+    <h1>Escrow Services</h1>
+    <p class="muted">Safe transactions, every time. Protect your money until the deal is done right.</p>
+  </div>
+
+  <div class="card">
+    <h2>What is Escrow?</h2>
+    <p>Escrow is a secure payment method where funds are held by a trusted third party until all conditions of the sale are met. Think of it as a safety net for both buyer and seller.</p>
+    <p>Instead of sending money directly to a stranger, your payment is protected until you verify the vehicle, complete the inspection, and sign off on the deal.</p>
+  </div>
+
+  <div class="card">
+    <h2>Why Use Escrow?</h2>
+    <ul class="list">
+      <li><span class="check"></span><div><strong>Buyer Protection.</strong> Your funds are secured until you receive the vehicle and confirm it matches the listing.</div></li>
+      <li><span class="check"></span><div><strong>Seller Protection.</strong> You're guaranteed payment once the buyer accepts the vehicle — no bounced checks or payment disputes.</div></li>
+      <li><span class="check"></span><div><strong>Peace of Mind.</strong> No risk of fraud, scams, or misunderstandings. A neutral third party manages the entire process.</div></li>
+      <li><span class="check"></span><div><strong>Professional Handling.</strong> We coordinate inspections, title transfer, and release of funds so you don't have to worry.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>How It Works</h2>
+    
+    <div class="step">
+      <span class="step-num">1</span>
+      <strong>Agree on Terms</strong><br>
+      <span class="muted">Buyer and seller agree on price, vehicle condition, and inspection timeline.</span>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <strong>Buyer Deposits Funds</strong><br>
+      <span class="muted">Buyer securely transfers payment to the escrow account. Seller is notified funds are secured.</span>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <strong>Vehicle Inspection</strong><br>
+      <span class="muted">Buyer inspects the vehicle (in person or via trusted mechanic) to verify condition and authenticity.</span>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <strong>Title & Documentation</strong><br>
+      <span class="muted">Our DMV-licensed team verifies title, completes paperwork, and ensures legal transfer.</span>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span>
+      <strong>Funds Released</strong><br>
+      <span class="muted">Once buyer approves and paperwork is complete, funds are released to the seller. Deal done.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pricing</h2>
+    <p><strong>Current:</strong> Escrow is an optional service, available for a fee based on transaction value. Contact us for a quote.</p>
+    <p class="muted"><strong>Coming Soon:</strong> We're launching an all-inclusive transaction package at $499 — covering escrow, DMV services, title transfer, and full documentation support in one transparent fee.</p>
+  </div>
+
+  <div class="card">
+    <h2>Questions?</h2>
+    <p>Want to learn more or add escrow to your transaction? Reach out to our team.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn primary" href="./support.html">Contact Support</a>
+      <a class="btn" href="./about.html">How It Works</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    &copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a>
+  </div>
+</footer>
+
+<script>
+fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+
+</body>
+</html>
