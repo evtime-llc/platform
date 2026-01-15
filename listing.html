@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,67 +9,24 @@
 <link rel="stylesheet" href="./styles.css">
 
 <style>
+#header-placeholder{position:sticky;top:0;z-index:100}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
-
-  
-/* Card */
-.card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;overflow:visible;
-  box-shadow:0 4px 20px rgba(0,0,0,.06);
-}
-
-/* HERO + CAROUSEL */
-.hero{
-  position:relative;background:#000;border-top-left-radius:14px;border-top-right-radius:14px;
-  overflow:hidden;border-bottom:1px solid var(--line);
-}
-.hero-frame{
-  position:relative;background:#000;
-  border:1px solid var(--copper);
-  border-radius:12px;margin:12px;
-  overflow:hidden;
-}
-.slide{
-  width:100%;height:60vh;max-height:72vh;min-height:320px;
-  display:flex;align-items:center;justify-content:center;background:#000;
-}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:visible;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.hero{position:relative;background:#000;border-top-left-radius:14px;border-top-right-radius:14px;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero-frame{position:relative;background:#000;border:1px solid var(--copper);border-radius:12px;margin:12px;overflow:hidden}
+.slide{width:100%;height:60vh;max-height:72vh;min-height:320px;display:flex;align-items:center;justify-content:center;background:#000}
 .slide img,.slide video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
-
-/* Play overlay for video */
-.play-overlay{
-  position:absolute;inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:74px;height:74px;border-radius:999px;background:rgba(0,0,0,.55);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.9);
-}
-.play-overlay:after{
-  content:""; display:block;
-  border-style:solid; border-width:12px 0 12px 18px; border-color:transparent transparent transparent #fff;
-  margin-left:4px;
-}
-
-/* Carousel controls */
-.carousel-btn{
-  position:absolute;top:50%;transform:translateY(-50%);
-  width:42px;height:42px;border:none;border-radius:999px;cursor:pointer;
-  background:rgba(255,255,255,.14);color:#fff;font-size:22px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 10px rgba(0,0,0,.25);
-}
+.play-overlay{position:absolute;inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:999px;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.9)}
+.play-overlay:after{content:"";display:block;border-style:solid;border-width:12px 0 12px 18px;border-color:transparent transparent transparent #fff;margin-left:4px}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border:none;border-radius:999px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 .carousel-btn:hover{background:rgba(255,255,255,.22)}
 .nav-prev{left:16px}
 .nav-next{right:16px}
-
-/* Dots */
 .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
 .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
 .dot.active{background:#fff}
-@media (hover:hover){ .dot:hover{background:rgba(255,255,255,.6)} }
-
-/* SOLD badge */
-.sold{position:absolute;top:18px;left:18px;background:rgba(0,0,0,.75);color:#fff;
-  padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.03em}
-
-/* Body */
+@media(hover:hover){.dot:hover{background:rgba(255,255,255,.6)}}
+.sold{position:absolute;top:18px;left:18px;background:rgba(0,0,0,.75);color:#fff;padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.03em}
 .body{padding:14px 16px 18px}
 .title{font-weight:900;font-size:20px}
 .price{font-weight:900;color:#0b0a09;background:var(--copper);padding:2px 10px;border-radius:999px;display:inline-block;margin-top:6px}
@@ -78,25 +34,15 @@
 .badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#f8f8f8}
 .meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
 .desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
-
-/* Actions */
 .actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;
-  border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer;transition:.15s
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer;transition:.15s}
 .btn.primary{background:var(--copper);border-color:transparent;color:#0b0a09}
 .btn.primary:hover{background:var(--copper-dark);color:#fff}
-
-/* Footer */
 .footer{border-top:1px solid #333;padding:16px 14px;color:#fff;text-align:center;background:#0b0a09;margin-top:24px}
 .footer a{color:var(--copper);text-decoration:none}
 .footer a:hover{text-decoration:underline}
-
-/* Concierge Drawer */
 .drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998}
-.drawer{position:fixed;top:0;right:-420px;width:380px;max-width:92vw;height:100%;
-  background:#fff;box-shadow:-6px 0 28px rgba(0,0,0,.18);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.drawer{position:fixed;top:0;right:-420px;width:380px;max-width:92vw;height:100%;background:#fff;box-shadow:-6px 0 28px rgba(0,0,0,.18);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;border-left:1px solid var(--line)}
 .drawer.open{right:0}
 .drawer-backdrop.open{display:block}
 .drawer-header{padding:16px;border-bottom:1px solid var(--line)}
@@ -118,31 +64,14 @@ form textarea{resize:vertical}
 .financing{display:flex;align-items:center;gap:8px;margin-top:12px}
 .financing input{width:auto}
 .success{color:#0a7;margin-top:8px;font-weight:700}
-.back{margin:10px 0 0}.back a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-
-@media (max-width: 768px) {
-  .title { font-size: 18px; }
-  .price { font-size: 16px; }
-}
+.back{margin:10px 0 0}
+.back a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+@media(max-width:768px){.title{font-size:18px}.price{font-size:16px}}
 </style>
 </head>
 <body data-page="listing">
 
-<!-- Header - directly embedded -->
-<header>
-  <div class="header-inner">
-    <a href="/" class="logo-link">
-      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
-    </a>
-    <nav class="nav">
-      <a href="./sell.html" class="nav-btn">Sell Your Car</a>
-      <a href="./share.html" class="nav-btn">Browse Inventory</a>
-      <a href="./about.html" class="nav-btn">How it Works</a>
-      <a href="./about.html" class="nav-btn">Why EV Time</a>
-      <a href="#" class="nav-btn">Live Chat</a>
-    </nav>
-  </div>
-</header>
+<div id="header-placeholder"></div>
 
 <div class="wrap">
   <div class="back"><a href="./share.html">← Back to inventory</a></div>
@@ -150,10 +79,9 @@ form textarea{resize:vertical}
 </div>
 
 <footer class="footer">
-  <div>© <span id="yr"></span> EV TIME · <a href="./legal.html">Legal</a></div>
+  <div>&copy; <span id="yr"></span> EV TIME &middot; <a href="./legal.html">Legal</a></div>
 </footer>
 
-<!-- Concierge Drawer -->
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-header">
@@ -171,315 +99,7 @@ form textarea{resize:vertical}
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-(function(){
-  const SUPABASE_URL=(window.SUPABASE_URL||"https://tgkvhmxrftcegpryptwq.supabase.co").trim();
-  const SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||"").trim();
-  const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-
-  const $=id=>document.getElementById(id);
-  document.getElementById('yr').textContent=new Date().getFullYear();
-
-  // ----- Helpers
-  const esc=(s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function parseImages(images){
-    if(!images) return [];
-    if(Array.isArray(images)) return images;
-    const s=String(images||'').trim();
-    if(s.startsWith('[')){ try{ return JSON.parse(s)||[] }catch{ return [] } }
-    return s.split(',').map(v=>v.trim()).filter(Boolean);
-  }
-  function normalize(path){
-    return String(path||'').trim().replace(/^\/+/, '').replace(/^(images\/)+/i,'');
-  }
-  function publicImageUrls(path){
-    let s=String(path||'').trim().replace(/^\/+/, '');
-    if(!s) return [];
-    const candidates=[];
-    if(/^images\/images\//i.test(s)) candidates.push(s.replace(/^images\/images\//i,'images/'));
-    candidates.push(s);
-    candidates.push(s.replace(/^images\//i,''));
-    if(!/^images\//i.test(s)) candidates.push('images/'+s);
-    const uniq=[...new Set(candidates)];
-    return uniq.map(p=>supabase.storage.from('images').getPublicUrl(p).data?.publicUrl||null).filter(Boolean);
-  }
-  function preload(url){ if(!url) return; const im=new Image(); im.decoding='async'; im.loading='eager'; im.src=url; }
-
-  // Pause any playing video
-  function pauseAllVideos(){ document.querySelectorAll('video').forEach(v=>{ try{ v.pause(); }catch{} }); }
-
-  // ----- Load listing
-  const mount=$('mount');
-  const id=new URLSearchParams(location.search).get('id');
-  if(!id){ mount.innerHTML = `<div class="card body" style="padding:16px">Missing listing id.</div>`; return; }
-
-  (async () => {
-    const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
-    if(error || !data){ mount.innerHTML = `<div class="card body" style="padding:16px">Listing not found.</div>`; return; }
-
-    const title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');
-    document.title = `EVTime — ${title}`;
-
-    // Build media list: all images, then (optional) video LAST
-    const paths=parseImages(data.images).map(normalize);
-    const imageUrls=paths.map(p=>publicImageUrls(p)[0]||null).filter(Boolean);
-    const heroUrl=imageUrls[0] || 'og-card.png';
-    if(imageUrls[1]) preload(imageUrls[1]);
-
-    const hasVideo = !!data.video;
-    const posterCandidate = data.video_poster || imageUrls[0] || null;
-
-    const media = imageUrls.map(u=>({ kind:'img', src:u }));
-    if(hasVideo){
-      media.push({
-        kind:'video',
-        src: data.video,
-        poster: posterCandidate
-      });
-    }
-
-    const leftMeta=[
-      data.mileage ? `${Number(data.mileage).toLocaleString()} mi` : null,
-      data.title_status ? `Title: ${data.title_status}` : null,
-      data.condition ? `Cond: ${data.condition}` : null
-    ].filter(Boolean).join(' • ');
-    const priceText=(data.price!=null && data.price!=='') ? `$${Number(data.price).toLocaleString()}` : '';
-    const sold = String(data.status||'').toLowerCase()==='sold' ? `<div class="sold">SOLD</div>` : '';
-
-    // Page HTML
-    mount.innerHTML = `
-      <div class="card">
-        <div class="hero">
-          ${sold}
-          <div class="hero-frame">
-            <div class="slide" id="slideHost">
-              <img id="heroImg" src="${esc(heroUrl)}" alt="${esc(title)}" decoding="async">
-            </div>
-            ${media.length>1 ? `
-              <button class="carousel-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button>
-              <button class="carousel-btn nav-next" id="nextBtn" aria-label="Next image">›</button>
-              <div class="dots" id="dots"></div>
-            `:``}
-          </div>
-        </div>
-        <div class="body">
-          <div class="title">${esc(title)}</div>
-          ${priceText ? `<div class="price">${esc(priceText)}</div>` : ``}
-          <div class="badges">
-            ${data.vehicle_type ? `<div class="badge">${esc(String(data.vehicle_type).toUpperCase())}</div>` : ``}
-            ${data.city ? `<div class="badge">${esc(data.city)}</div>` : ``}
-            ${data.vin ? `<div class="badge">VIN: ${esc(data.vin)}</div>` : ``}
-          </div>
-          <div class="meta">${esc(leftMeta)}</div>
-          ${data.special_features ? `<div class="desc"><strong>Features:</strong> ${esc(data.special_features)}</div>` : ``}
-          ${data.description ? `<div class="desc">${esc(data.description)}</div>` : ``}
-
-          <div class="actions">
-            <button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button>
-            <a class="btn" href="./share.html">Back</a>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // ----- Carousel logic with mixed media
-    let idx = 0;
-    const slideHost = document.getElementById('slideHost');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const dotsEl = document.getElementById('dots');
-
-    function renderDots(){
-      if(!dotsEl) return;
-      dotsEl.innerHTML = media.map((m,i)=>`
-        <div class="dot${i===idx?' active':''}" data-i="${i}" title="${m.kind==='video'?'Video':'Photo'}"></div>
-      `).join('');
-    }
-
-    function buildSlide(item){
-      pauseAllVideos();
-      slideHost.innerHTML = '';
-      if(item.kind === 'img'){
-        const im = document.createElement('img');
-        im.alt = title;
-        im.decoding = 'async';
-        im.src = item.src;
-        slideHost.appendChild(im);
-      }else{
-        const wrap = document.createElement('div');
-        wrap.style.position='relative';
-        wrap.style.width='100%';
-        wrap.style.height='100%';
-
-        const vid = document.createElement('video');
-        vid.setAttribute('playsinline','');
-        vid.setAttribute('muted','');
-        vid.muted = true;
-        vid.volume = 0;
-        vid.preload = 'metadata';
-        vid.poster = item.poster || '';
-        vid.src = item.src;
-        vid.controls = false;
-
-        vid.addEventListener('volumechange', ()=>{ if(vid.volume !== 0) vid.volume = 0; if(!vid.muted) vid.muted = true; });
-
-        const play = document.createElement('div');
-        play.className = 'play-overlay';
-        play.addEventListener('click', async ()=>{
-          try{
-            vid.controls = true;
-            await vid.play();
-            play.style.display = 'none';
-          }catch(e){}
-        });
-
-        wrap.appendChild(vid);
-        wrap.appendChild(play);
-        slideHost.appendChild(wrap);
-      }
-    }
-
-    function show(i){
-      if(!media.length) return;
-      idx = (i + media.length) % media.length;
-      const item=media[idx];
-      slideHost.style.opacity='0';
-      setTimeout(()=>{
-        buildSlide(item);
-        slideHost.style.opacity='1';
-      }, 120);
-
-      const nextItem = media[(idx+1)%media.length];
-      if(nextItem?.kind==='img') preload(nextItem.src);
-
-      renderDots();
-    }
-
-    if(media.length){
-      if(media[0].kind==='img'){
-      } else {
-        buildSlide(media[0]);
-      }
-    }
-
-    if(dotsEl){
-      renderDots();
-      dotsEl.addEventListener('click', (e)=>{
-        const d=e.target.closest('.dot');
-        if(!d) return;
-        show(Number(d.getAttribute('data-i')||0));
-      });
-    }
-    if(prevBtn) prevBtn.onclick=()=>show(idx-1);
-    if(nextBtn) nextBtn.onclick=()=>show(idx+1);
-
-    let sx=null, sy=null;
-    slideHost.addEventListener('touchstart',(e)=>{
-      const t=e.touches[0]; sx=t.clientX; sy=t.clientY;
-    },{passive:true});
-    slideHost.addEventListener('touchend',(e)=>{
-      if(sx==null) return;
-      const dx=e.changedTouches[0].clientX - sx;
-      const dy=e.changedTouches[0].clientY - sy;
-      if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
-        if(dx<0) show(idx+1); else show(idx-1);
-      }
-      sx=sy=null;
-    },{passive:true});
-
-    // ----- Concierge Drawer
-    const drawer=$('drawer'), backdrop=$('drawerBackdrop'), body=$('drawerBody');
-    const tabs=[...drawer.querySelectorAll('.drawer-tab')];
-
-    function openDrawer(tab='contact'){
-      drawer.classList.add('open');
-      backdrop.classList.add('open');
-      setTab(tab);
-    }
-    function closeDrawer(){
-      drawer.classList.remove('open');
-      backdrop.classList.remove('open');
-      pauseAllVideos();
-    }
-    backdrop.onclick=closeDrawer;
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeDrawer(); });
-
-    function setTab(tabName){
-      tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===tabName));
-      if(tabName==='contact') renderContact(); else renderForm();
-    }
-    tabs.forEach(t=>t.onclick=()=>setTab(t.dataset.tab));
-
-    function renderContact(){
-      const phone='+14244256211';
-      const smsBody=encodeURIComponent('Hi! I am interested in ' + title);
-      const email='welcome.evtime@gmail.com';
-
-      body.innerHTML = `
-        <div class="contact-buttons">
-          <a class="call" href="tel:${phone}">Call Now</a>
-          <a class="text" href="sms:${phone}?body=${smsBody}">Text Now</a>
-          <a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=EVTime%20Inquiry" target="_blank"
-             onclick="if(!window.location.hostname.includes('mail.google.com')){navigator.clipboard.writeText('${email}'); alert('Email address copied!');}">
-             Email Concierge
-          </a>
-        </div>
-        <div class="copy-links">
-          <button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button>
-        </div>
-      `;
-      $('copyEmail').onclick=()=>{ navigator.clipboard.writeText(email); alert('Email copied.'); };
-      $('copyMsg').onclick=()=>{ navigator.clipboard.writeText('Hi! I am interested in '+title); alert('Message copied.'); };
-    }
-
-    function renderForm(){
-      body.innerHTML = `
-        <form id="advisorForm">
-          <label>Name</label><input id="name" autocomplete="name" required>
-          <label>Phone</label><input id="phone" autocomplete="tel">
-          <label>Email</label><input id="email" type="email" autocomplete="email">
-          <label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I am interested in ${esc(title)}"></textarea>
-          <div class="financing">
-            <input type="checkbox" id="financeChk">
-            <label for="financeChk">I am interested in Financing</label>
-          </div>
-          <button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button>
-          <div id="formMsg" class="success" role="status" aria-live="polite"></div>
-        </form>
-      `;
-      $('advisorForm').onsubmit=async(e)=>{
-        e.preventDefault();
-        const name=$('name').value.trim();
-        const phone=$('phone').value.trim();
-        const email=$('email').value.trim();
-        const message=$('msg').value.trim();
-        const financing=$('financeChk').checked;
-
-        if(!phone && !email){
-          $('formMsg').textContent='Please enter a phone or email so we can reach you.';
-          $('formMsg').style.color='#b00020';
-          return;
-        }
-        const combinedMessage=(financing? '[Financing: Yes] ' : '[Financing: No] ') + message;
-
-        const { error } = await supabase.from('leads').insert({
-          listing_id:id, name, phone, email, message: combinedMessage
-        }, { returning:'minimal' });
-
-        if(error){
-          $('formMsg').textContent='Could not send. Please try again.';
-          $('formMsg').style.color='#b00020';
-        } else {
-          $('formMsg').textContent='Thanks! We received your note.';
-          $('formMsg').style.color='#0a7';
-          setTimeout(closeDrawer, 1200);
-          e.target.reset();
-        }
-      };
-    }
-
-    document.getElementById('advisorBtn').onclick=()=>openDrawer('form');
-  })();
-})();
+fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});(function(){var SUPABASE_URL=(window.SUPABASE_URL||'https://tgkvhmxrftcegpryptwq.supabase.co').trim(),SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||'').trim(),supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),$=function(id){return document.getElementById(id)};document.getElementById('yr').textContent=new Date().getFullYear();var esc=function(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};function parseImages(images){if(!images)return[];if(Array.isArray(images))return images;var s=String(images||'').trim();if(s.startsWith('[')){try{return JSON.parse(s)||[]}catch(e){return[]}}return s.split(',').map(function(v){return v.trim()}).filter(Boolean)}function normalize(path){return String(path||'').trim().replace(/^\/+/,'').replace(/^(images\/)+/i,'')}function publicImageUrls(path){var s=String(path||'').trim().replace(/^\/+/,'');if(!s)return[];var candidates=[];if(/^images\/images\//i.test(s))candidates.push(s.replace(/^images\/images\//i,'images/'));candidates.push(s);candidates.push(s.replace(/^images\//i,''));if(!/^images\//i.test(s))candidates.push('images/'+s);var uniq=[...new Set(candidates)];return uniq.map(function(p){var result=supabase.storage.from('images').getPublicUrl(p);return(result.data&&result.data.publicUrl)||null}).filter(Boolean)}function preload(url){if(!url)return;var im=new Image();im.decoding='async';im.loading='eager';im.src=url}function pauseAllVideos(){document.querySelectorAll('video').forEach(function(v){try{v.pause()}catch(e){}})}var mount=$('mount'),id=new URLSearchParams(location.search).get('id');if(!id){mount.innerHTML='<div class="card body" style="padding:16px">Missing listing id.</div>';return}(async function(){var result=await supabase.from('listing').select('*').eq('id',id).single(),data=result.data,error=result.error;if(error||!data){mount.innerHTML='<div class="card body" style="padding:16px">Listing not found.</div>';return}var title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');document.title='EVTime — '+title;var paths=parseImages(data.images).map(normalize),imageUrls=paths.map(function(p){return publicImageUrls(p)[0]||null}).filter(Boolean),heroUrl=imageUrls[0]||'og-card.png';if(imageUrls[1])preload(imageUrls[1]);var hasVideo=!!data.video,posterCandidate=data.video_poster||imageUrls[0]||null,media=imageUrls.map(function(u){return{kind:'img',src:u}});if(hasVideo)media.push({kind:'video',src:data.video,poster:posterCandidate});var leftMeta=[data.mileage?Number(data.mileage).toLocaleString()+' mi':null,data.title_status?'Title: '+data.title_status:null,data.condition?'Cond: '+data.condition:null].filter(Boolean).join(' • '),priceText=(data.price!=null&&data.price!=='')?'$'+Number(data.price).toLocaleString():'',sold=String(data.status||'').toLowerCase()==='sold'?'<div class="sold">SOLD</div>':'';mount.innerHTML='<div class="card"><div class="hero">'+sold+'<div class="hero-frame"><div class="slide" id="slideHost"><img id="heroImg" src="'+esc(heroUrl)+'" alt="'+esc(title)+'" decoding="async"></div>'+(media.length>1?'<button class="carousel-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button><button class="carousel-btn nav-next" id="nextBtn" aria-label="Next image">›</button><div class="dots" id="dots"></div>':'')+'</div></div><div class="body"><div class="title">'+esc(title)+'</div>'+(priceText?'<div class="price">'+esc(priceText)+'</div>':'')+'<div class="badges">'+(data.vehicle_type?'<div class="badge">'+esc(String(data.vehicle_type).toUpperCase())+'</div>':'')+(data.city?'<div class="badge">'+esc(data.city)+'</div>':'')+(data.vin?'<div class="badge">VIN: '+esc(data.vin)+'</div>':'')+'</div><div class="meta">'+esc(leftMeta)+'</div>'+(data.special_features?'<div class="desc"><strong>Features:</strong> '+esc(data.special_features)+'</div>':'')+(data.description?'<div class="desc">'+esc(data.description)+'</div>':'')+'<div class="actions"><button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button><a class="btn" href="./share.html">Back</a></div></div></div>';var idx=0,slideHost=document.getElementById('slideHost'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),dotsEl=document.getElementById('dots');function renderDots(){if(!dotsEl)return;dotsEl.innerHTML=media.map(function(m,i){return'<div class="dot'+(i===idx?' active':'')+'" data-i="'+i+'" title="'+(m.kind==='video'?'Video':'Photo')+'"></div>'}).join('')}function buildSlide(item){pauseAllVideos();slideHost.innerHTML='';if(item.kind==='img'){var im=document.createElement('img');im.alt=title;im.decoding='async';im.src=item.src;slideHost.appendChild(im)}else{var wrap=document.createElement('div');wrap.style.position='relative';wrap.style.width='100%';wrap.style.height='100%';var vid=document.createElement('video');vid.setAttribute('playsinline','');vid.setAttribute('muted','');vid.muted=true;vid.volume=0;vid.preload='metadata';vid.poster=item.poster||'';vid.src=item.src;vid.controls=false;vid.addEventListener('volumechange',function(){if(vid.volume!==0)vid.volume=0;if(!vid.muted)vid.muted=true});var play=document.createElement('div');play.className='play-overlay';play.addEventListener('click',async function(){try{vid.controls=true;await vid.play();play.style.display='none'}catch(e){}});wrap.appendChild(vid);wrap.appendChild(play);slideHost.appendChild(wrap)}}function show(i){if(!media.length)return;idx=(i+media.length)%media.length;var item=media[idx];slideHost.style.opacity='0';setTimeout(function(){buildSlide(item);slideHost.style.opacity='1'},120);var nextItem=media[(idx+1)%media.length];if(nextItem&&nextItem.kind==='img')preload(nextItem.src);renderDots()}if(media.length){if(media[0].kind==='img'){}else buildSlide(media[0])}if(dotsEl){renderDots();dotsEl.addEventListener('click',function(e){var d=e.target.closest('.dot');if(!d)return;show(Number(d.getAttribute('data-i')||0))})}if(prevBtn)prevBtn.onclick=function(){show(idx-1)};if(nextBtn)nextBtn.onclick=function(){show(idx+1)};var sx=null,sy=null;slideHost.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});slideHost.addEventListener('touchend',function(e){if(sx==null)return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){if(dx<0)show(idx+1);else show(idx-1)}sx=sy=null},{passive:true});var drawer=$('drawer'),backdrop=$('drawerBackdrop'),body=$('drawerBody'),tabs=[...drawer.querySelectorAll('.drawer-tab')];function openDrawer(tab){tab=tab||'contact';drawer.classList.add('open');backdrop.classList.add('open');setTab(tab)}function closeDrawer(){drawer.classList.remove('open');backdrop.classList.remove('open');pauseAllVideos()}backdrop.onclick=closeDrawer;document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});function setTab(tabName){tabs.forEach(function(t){t.classList.toggle('active',t.dataset.tab===tabName)});if(tabName==='contact')renderContact();else renderForm()}tabs.forEach(function(t){t.onclick=function(){setTab(t.dataset.tab)}});function renderContact(){var phone='+14244256211',smsBody=encodeURIComponent('Hi! I am interested in '+title),email='welcome.evtime@gmail.com';body.innerHTML='<div class="contact-buttons"><a class="call" href="tel:'+phone+'">Call Now</a><a class="text" href="sms:'+phone+'?body='+smsBody+'">Text Now</a><a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to='+email+'&su=EVTime%20Inquiry" target="_blank" onclick="if(!window.location.hostname.includes(\'mail.google.com\')){navigator.clipboard.writeText(\''+email+'\'); alert(\'Email address copied!\')}">Email Concierge</a></div><div class="copy-links"><button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button></div>';$('copyEmail').onclick=function(){navigator.clipboard.writeText(email);alert('Email copied.')};$('copyMsg').onclick=function(){navigator.clipboard.writeText('Hi! I am interested in '+title);alert('Message copied.')}}function renderForm(){body.innerHTML='<form id="advisorForm"><label>Name</label><input id="name" autocomplete="name" required><label>Phone</label><input id="phone" autocomplete="tel"><label>Email</label><input id="email" type="email" autocomplete="email"><label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I am interested in '+esc(title)+'"></textarea><div class="financing"><input type="checkbox" id="financeChk"><label for="financeChk">I am interested in Financing</label></div><button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button><div id="formMsg" class="success" role="status" aria-live="polite"></div></form>';$('advisorForm').onsubmit=async function(e){e.preventDefault();var name=$('name').value.trim(),phone=$('phone').value.trim(),email=$('email').value.trim(),message=$('msg').value.trim(),financing=$('financeChk').checked;if(!phone&&!email){$('formMsg').textContent='Please enter a phone or email so we can reach you.';$('formMsg').style.color='#b00020';return}var combinedMessage=(financing?'[Financing: Yes] ':'[Financing: No] ')+message;var result=await supabase.from('leads').insert({listing_id:id,name:name,phone:phone,email:email,message:combinedMessage},{returning:'minimal'});if(result.error){$('formMsg').textContent='Could not send. Please try again.';$('formMsg').style.color='#b00020'}else{$('formMsg').textContent='Thanks! We received your note.';$('formMsg').style.color='#0a7';setTimeout(closeDrawer,1200);e.target.reset()}}}document.getElementById('advisorBtn').onclick=function(){openDrawer('form')}})()})();
 </script>
 
 </body>
