@@ -9,71 +9,36 @@
 <link rel="stylesheet" href="./styles.css">
 
 <style>
-/* Page width */
+#header-placeholder{position:sticky;top:0;z-index:100}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
-
-/* Hero card */
 .hero{padding:16px 12px}
-.card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0
-}
-.hlite{
-  background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));
-  border:1px solid rgba(201,140,91,.55);
-  box-shadow:0 6px 22px rgba(201,140,91,.25);
-}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+.hlite{background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));border:1px solid rgba(201,140,91,.55);box-shadow:0 6px 22px rgba(201,140,91,.25)}
 h1{margin:6px 0 8px;font-size:24px}
 h2{margin:4px 0 8px;font-size:18px}
 p{margin:6px 0 8px}
 .muted{color:#78716c}
-
-/* Check bullets */
 .list{list-style:none;padding:0;margin:8px 0}
 .list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
 .check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
 .check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
-
-/* Placeholder image blocks (no external links) */
 .ph{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px dashed #d6d3d1;background:#f8f7f6;display:flex;align-items:center;justify-content:center;color:#9a948f;font-size:14px}
-
-/* Buttons/links */
 .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800}
 .btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
 .btn.primary:hover{background:var(--copperDark);color:#fff}
 a.link{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 a.link:hover{border-bottom-style:solid}
-
-/* Footer */
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
 .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 .footer a:hover{border-bottom-style:solid}
-
-@media (max-width: 768px) {
-  h1 { font-size: 20px; }
-  h2 { font-size: 16px; }
-}
+@media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
 </style>
 </head>
 <body data-page="about">
 
-<!-- Header - directly embedded -->
-<header>
-  <div class="header-inner">
-    <a href="/" class="logo-link">
-      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
-    </a>
-    <nav class="nav">
-      <a href="./sell.html" class="nav-btn">Sell Your Car</a>
-      <a href="./share.html" class="nav-btn">Browse Inventory</a>
-      <a href="./about.html" class="nav-btn">How it Works</a>
-      <a href="./about.html" class="nav-btn">Why EV Time</a>
-      <a href="#" class="nav-btn">Live Chat</a>
-    </nav>
-  </div>
-</header>
+<div id="header-placeholder"></div>
 
-<!-- Hero -->
 <div class="wrap hero">
   <div class="card hlite">
     <h1>How it works / Why E.V.Time</h1>
@@ -110,14 +75,15 @@ a.link:hover{border-bottom-style:solid}
   </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer">
   <div class="wrap">
-    © <span id="yr"></span> E.V.Time · <a href="./legal.html">Legal &amp; Disclosures</a>
+    &copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a>
   </div>
 </footer>
 
-<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
 
 </body>
 </html>
