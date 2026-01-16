@@ -1,6 +1,5 @@
-// search.js - Smart Search for EVTime
+// search.js - Smart Search for EVTime (Fixed for dynamic header loading)
 (function() {
-  // Page index with keywords
   const pageIndex = {
     '/sell.html': {
       title: 'Sell Your Car',
@@ -44,7 +43,6 @@
     }
   };
 
-  // Supabase config
   const SUPABASE_URL = (window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co').trim();
   const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || '').trim();
   let supabase = null;
@@ -53,7 +51,6 @@
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
 
-  // Create search modal HTML
   const modalHTML = `
     <div id="searchModal" class="search-modal">
       <div class="search-modal-content">
@@ -68,7 +65,6 @@
     </div>
   `;
 
-  // CSS styles
   const styles = `
     <style>
       .search-modal {
@@ -171,8 +167,9 @@
     </style>
   `;
 
-  // Inject HTML and CSS
-  document.addEventListener('DOMContentLoaded', function() {
+  function initSearch() {
+    if (document.getElementById('searchModal')) return;
+
     document.head.insertAdjacentHTML('beforeend', styles);
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
@@ -181,13 +178,11 @@
     const results = document.getElementById('searchResults');
     const closeBtn = document.getElementById('closeSearch');
 
-    // Open search
     window.openSearch = function() {
       modal.classList.add('open');
       input.focus();
     };
 
-    // Close search
     function closeSearch() {
       modal.classList.remove('open');
       input.value = '';
@@ -206,7 +201,6 @@
       }
     });
 
-    // Search function
     let searchTimeout;
     input.addEventListener('input', function() {
       clearTimeout(searchTimeout);
@@ -308,5 +302,11 @@
         return [];
       }
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearch);
+  } else {
+    initSearch();
+  }
 })();
