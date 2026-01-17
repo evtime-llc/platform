@@ -1,4 +1,4 @@
-// search.js - restyled (vertical + nicer) + no new global colors
+// search.js - Smart Search for EVTime (vertical + copper-matched)
 (function () {
   const pageIndex = {
     "/sell.html": { title: "Sell Your Car", desc: "Get an honest offer for your vehicle", keywords: ["sell","selling","offer","vin","trade in","my car","cash","quote"] },
@@ -26,7 +26,7 @@
 
         <div class="search-stack">
           <input type="text" id="searchInput" placeholder="Search vehicles, pages, services..." autocomplete="off">
-          <div class="search-subhint">Tip: try “Model Y”, “registration”, “sell my car”</div>
+          <div class="search-subhint">Try: “Model Y”, “registration”, “sell my car”</div>
         </div>
 
         <div id="searchResults" class="search-results">
@@ -46,19 +46,20 @@
       align-items:flex-start;
       justify-content:center;
       padding:84px 14px 24px;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(7px);
     }
     .search-modal.open{display:flex}
 
     .search-modal-content{
       width:92%;
-      max-width:720px;
+      max-width:760px;
       max-height:72vh;
       border-radius:18px;
       overflow:hidden;
-      background: #e9e9e9; /* 3rd color: light surface (only here) */
+      /* new light surface (warm) just for search */
+      background:#f2efea;
       box-shadow: 0 26px 80px rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.18);
+      border:1px solid rgba(201,140,91,.28);
       display:flex;
       flex-direction:column;
     }
@@ -68,20 +69,20 @@
       align-items:center;
       justify-content:space-between;
       padding:14px 16px;
-      background: rgba(11,10,9,.92);
-      border-bottom: 1px solid rgba(201,140,91,.25);
+      background: rgba(11,10,9,.96);
+      border-bottom: 1px solid rgba(201,140,91,.28);
     }
     .search-title{
       color:#fff;
-      font-weight:800;
-      letter-spacing:.02em;
-      font-size:14px;
+      font-weight:900;
+      letter-spacing:.10em;
+      font-size:12px;
       text-transform:uppercase;
     }
     .search-close{
       width:36px;height:36px;
       border:none;
-      border-radius:10px;
+      border-radius:12px;
       background: rgba(255,255,255,.08);
       color:#fff;
       font-size:22px;
@@ -91,11 +92,11 @@
     .search-close:hover{ background: rgba(255,255,255,.14); }
 
     .search-stack{
-      padding:14px 16px 10px;
+      padding:14px 16px 12px;
       display:flex;
       flex-direction:column;
-      gap:8px;
-      background: #e9e9e9; /* same surface */
+      gap:10px;
+      background:#f2efea;
     }
 
     #searchInput{
@@ -104,8 +105,8 @@
       padding:14px 14px;
       font-size:16px;
       outline:none;
-      border:1px solid rgba(0,0,0,.18);
-      background:#f7f7f7;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fbfaf8;
       color:#111;
       box-shadow: 0 10px 24px rgba(0,0,0,.10);
     }
@@ -116,30 +117,30 @@
 
     .search-subhint{
       font-size:12px;
-      color:#555;
+      color:#6b625b;
     }
 
     .search-results{
       padding:10px 10px 14px;
       overflow:auto;
-      background:#e9e9e9;
+      background:#f2efea;
     }
 
     .search-hint{
       padding:18px 10px;
       text-align:center;
-      color:#666;
+      color:#6b625b;
       font-size:13px;
     }
 
     .search-category{
       font-size:12px;
       font-weight:900;
-      color:#111;
-      opacity:.75;
+      color:#0b0a09;
+      opacity:.78;
       padding:10px 10px 6px;
       text-transform:uppercase;
-      letter-spacing:.08em;
+      letter-spacing:.10em;
     }
 
     .search-result{
@@ -147,14 +148,14 @@
       border-radius:14px;
       cursor:pointer;
       border:1px solid rgba(0,0,0,.10);
-      background:#f7f7f7;
+      background:#fbfaf8;
       margin:8px 6px;
       box-shadow: 0 10px 18px rgba(0,0,0,.08);
       transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
     }
     .search-result:hover{
       transform: translateY(-1px);
-      border-color: rgba(201,140,91,.55);
+      border-color: rgba(201,140,91,.60);
       box-shadow: 0 14px 26px rgba(0,0,0,.12);
     }
 
@@ -166,7 +167,7 @@
     }
     .search-result-desc{
       font-size:13px;
-      color:#444;
+      color:#4a3f37;
     }
 
     .search-result-type{
@@ -174,12 +175,12 @@
       margin-top:8px;
       font-size:11px;
       font-weight:900;
-      letter-spacing:.06em;
+      letter-spacing:.10em;
       padding:4px 10px;
       border-radius:999px;
       background:#0b0a09;
       color:#fff;
-      border:1px solid rgba(201,140,91,.35);
+      border:1px solid rgba(201,140,91,.40);
     }
 
     @media (max-width: 520px){
@@ -215,6 +216,7 @@
 
     closeBtn.onclick = closeSearch;
     modal.onclick = function (e) { if (e.target === modal) closeSearch(); };
+
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeSearch();
       if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); window.openSearch(); }
@@ -247,7 +249,7 @@
         html += '<div class="search-category">Pages</div>';
         pageResults.forEach(function (r) {
           html +=
-            '<div class="search-result" onclick="location.href=\'' + r.url + '\'">' +
+            '<div class="search-result" onclick="location.href=\\'' + r.url + '\\'">' +
               '<div class="search-result-title">' + r.title + '</div>' +
               '<div class="search-result-desc">' + r.desc + '</div>' +
               '<span class="search-result-type">PAGE</span>' +
@@ -259,7 +261,7 @@
         html += '<div class="search-category">Vehicles</div>';
         inventoryResults.forEach(function (r) {
           html +=
-            '<div class="search-result" onclick="location.href=\'' + r.url + '\'">' +
+            '<div class="search-result" onclick="location.href=\\'' + r.url + '\\'">' +
               '<div class="search-result-title">' + r.title + '</div>' +
               '<div class="search-result-desc">' + r.desc + '</div>' +
               '<span class="search-result-type">VEHICLE</span>' +
