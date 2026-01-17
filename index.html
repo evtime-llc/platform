@@ -12,130 +12,54 @@
   <link rel="stylesheet" href="./styles.css">
 
   <style>
-    /* Force sticky header even with dynamic load */
-    #header-placeholder {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    #header-placeholder{position:sticky;top:0;z-index:100}
 
-    /* Hero Section - Minimal top padding */
-    .hero{
-      background:var(--bg);
-      padding:15px 0 80px;
-    }
-    .hero-inner{
-      max-width:1280px;
-      margin:0 auto;
-    }
+    .hero{background:var(--bg);padding:15px 0 80px}
+    .hero-inner{max-width:1280px;margin:0 auto}
 
-    /* Hero Image - Now on top */
     .hero-image-wrap{
-      border-radius:24px;
-      overflow:hidden;
+      border-radius:24px;overflow:hidden;
       box-shadow:0 24px 60px rgba(0,0,0,0.5);
       margin-bottom:15px;
     }
-    .hero-image{
-      display:block;
-      width:100%;
-      height:auto;
-    }
+    .hero-image{display:block;width:100%;height:auto}
 
-    /* Hero Content Card */
     .hero-card{
       background:var(--card);
       border-radius:20px;
       padding:40px 48px;
       box-shadow:0 20px 60px rgba(0,0,0,0.4);
     }
-    .hero-title{
-      font-size:48px;
-      font-weight:900;
-      margin:0 0 12px;
-      color:var(--text);
-      line-height:1.2;
-    }
-    .hero-subtitle{
-      font-size:20px;
-      font-weight:700;
-      color:var(--copper);
-      margin:0 0 24px;
-    }
-    .hero-text{
-      font-size:18px;
-      line-height:1.7;
-      color:#292524;
-      margin:0 0 16px;
-    }
-    .hero-punch{
-      font-size:20px;
-      font-weight:700;
-      color:#1f2933;
-      margin-top:24px;
-    }
+    .hero-title{font-size:48px;font-weight:900;margin:0 0 12px;color:var(--text);line-height:1.2}
+    .hero-subtitle{font-size:20px;font-weight:700;color:var(--copper);margin:0 0 24px}
+    .hero-text{font-size:18px;line-height:1.7;color:#292524;margin:0 0 16px}
+    .hero-punch{font-size:20px;font-weight:700;color:#1f2933;margin-top:24px}
 
-    /* Footer */
-    .footer{
-      background:#fff;
-      border-top:1px solid var(--line);
-      padding:24px 0;
-    }
+    .footer{background:#fff;border-top:1px solid var(--line);padding:24px 0}
     .footer-inner{
-      max-width:1280px;
-      margin:0 auto;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:20px;
-      flex-wrap:wrap;
-      font-size:14px;
-      color:#44403c;
+      max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;
+      align-items:center;gap:20px;flex-wrap:wrap;font-size:14px;color:#44403c
     }
-    .footer a{
-      color:var(--copper);
-      text-decoration:none;
-      border-bottom:1px dotted var(--copper);
-    }
-    .footer a:hover{
-      border-bottom-style:solid;
-    }
+    .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+    .footer a:hover{border-bottom-style:solid}
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero{
-        padding:20px 16px 60px;
-      }
-      .hero-card{
-        padding:28px 24px;
-      }
-      .hero-image-wrap{
-        margin-bottom:20px;
-      }
-      .hero-title{
-        font-size:32px;
-      }
-      .hero-subtitle{
-        font-size:18px;
-      }
-      .hero-text{
-        font-size:16px;
-      }
-      .hero-punch{
-        font-size:18px;
-      }
+    @media (max-width: 768px){
+      .hero{padding:20px 16px 60px}
+      .hero-card{padding:28px 24px}
+      .hero-image-wrap{margin-bottom:20px}
+      .hero-title{font-size:32px}
+      .hero-subtitle{font-size:18px}
+      .hero-text{font-size:16px}
+      .hero-punch{font-size:18px}
     }
   </style>
 </head>
 <body>
 
-  <!-- Header placeholder - loaded dynamically -->
   <div id="header-placeholder"></div>
 
-  <!-- Hero Section -->
   <section class="hero">
     <div class="hero-inner">
-      <!-- Hero Image - Now on top -->
       <div class="hero-image-wrap">
         <img
           class="hero-image"
@@ -144,28 +68,19 @@
         />
       </div>
 
-      <!-- Hero Content Card -->
       <div class="hero-card">
-        <h1 class="hero-title">
-          Finally, A Car Marketplace Built on Trust
-        </h1>
-        <p class="hero-subtitle">
-          Friendly. Honest. Secure.
-        </p>
+        <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
+        <p class="hero-subtitle">Friendly. Honest. Secure.</p>
+        <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
         <p class="hero-text">
-          Buying or selling a car shouldn't feel stressful, confusing, or risky.
+          At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
+          using escrow-grade structure to manage documentation, verification, and transfer with precision.
         </p>
-        <p class="hero-text">
-          At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel — using escrow-grade structure to manage documentation, verification, and transfer with precision.
-        </p>
-        <p class="hero-punch">
-          You're in good hands, start to finish.
-        </p>
+        <p class="hero-punch">You're in good hands, start to finish.</p>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner">
       <div>© <span id="yr"></span> E.V.Time</div>
@@ -173,16 +88,15 @@
     </div>
   </footer>
 
-  <script>
-    // Load header dynamically
-    fetch('./header.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('header-placeholder').innerHTML = html;
-      })
-      .catch(error => console.error('Error loading header:', error));
+  <!-- Load search.js on the PAGE (not in header.html) -->
+  <script src="./search.js"></script>
 
-    // Set year
+  <script>
+    fetch('./header.html')
+      .then(r => r.text())
+      .then(html => { document.getElementById('header-placeholder').innerHTML = html; })
+      .catch(err => console.error('Error loading header:', err));
+
     document.getElementById('yr').textContent = new Date().getFullYear();
   </script>
 </body>
