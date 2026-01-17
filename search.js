@@ -241,7 +241,16 @@
       input.focus();
     };
 
-    function closeSearch() {
+   function closeSearch() {
+  // move focus out of the modal BEFORE hiding it (prevents aria-hidden warning)
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  input.value = "";
+  results.innerHTML = '<div class="search-hint">Start typing to search...</div>';
+}
+
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
       input.value = "";
