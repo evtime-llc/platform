@@ -79,28 +79,11 @@ header {
 }
 
 @media (max-width: 768px) {
-  #site-logo {
-    height: 40px;
-  }
-  
-  .header-inner {
-    height: 40px;
-    padding: 0 16px;
-  }
-  
-  .nav {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  
-  .nav-btn {
-    font-size: 11px;
-  }
-  
-  .search-icon {
-    width: 16px;
-    height: 16px;
-  }
+  #site-logo { height: 40px; }
+  .header-inner { height: 40px; padding: 0 16px; }
+  .nav { flex-wrap: wrap; gap: 12px; }
+  .nav-btn { font-size: 11px; }
+  .search-icon { width: 16px; height: 16px; }
 }
 </style>
 
@@ -109,7 +92,7 @@ header {
     <a href="/" class="logo-link">
       <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
     </a>
-    
+
     <nav class="nav">
       <a href="./sell.html" class="nav-btn">Sell</a>
       <a href="./share.html" class="nav-btn">Inventory</a>
@@ -118,12 +101,11 @@ header {
       <a href="./about.html" class="nav-btn">About</a>
       <a href="./support.html" class="nav-btn">Support</a>
       <a href="#" class="nav-btn">Chat</a>
-      <svg class="search-icon" onclick="typeof openSearch === 'function' && openSearch()" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
 
-        <circle cx="11" cy="11" r="8"/>
-        <path d="m21 21-4.35-4.35"/>
+      <svg class="search-icon" onclick="typeof openSearch==='function'&&openSearch()" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
       </svg>
     </nav>
   </div>
 </header>
-<script src="./search.js"></script>
