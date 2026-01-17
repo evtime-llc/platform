@@ -41,8 +41,8 @@
     :root{
       --ev-black:#0b0a09;
       --ev-copper:#c98c5b;
-      --ev-surface:#f2efea;   /* warm light */
-      --ev-card:#fbfaf8;      /* slightly brighter card */
+      --ev-surface:#f2efea;
+      --ev-card:#fbfaf8;
       --ev-ink:#14110f;
       --ev-muted:#6b625b;
       --ev-line:rgba(20,17,15,.12);
@@ -61,7 +61,6 @@
     }
     .search-modal.open{display:flex}
 
-    /* Make it FEEL vertical: narrower, taller */
     .search-modal-content{
       width:92%;
       max-width:560px;
@@ -155,7 +154,6 @@
       letter-spacing:.14em;
     }
 
-    /* TRUE vertical card layout */
     .search-result{
       display:flex;
       flex-direction:column;
@@ -241,16 +239,9 @@
       input.focus();
     };
 
-   function closeSearch() {
-  // move focus out of the modal BEFORE hiding it (prevents aria-hidden warning)
-  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden", "true");
-  input.value = "";
-  results.innerHTML = '<div class="search-hint">Start typing to search...</div>';
-}
-
+    function closeSearch() {
+      // blur focus BEFORE hiding to avoid aria-hidden warning (safe even if minified)
+      try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(e){}
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
       input.value = "";
@@ -331,7 +322,7 @@
       results.innerHTML = html;
     }
 
-    // FIXED: better page matching (tokens + scoring)
+    // better page matching (tokens + scoring)
     function searchPages(query) {
       const q = (query || "").toLowerCase().trim();
       if (!q) return [];
