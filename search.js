@@ -56,7 +56,6 @@
       max-height:72vh;
       border-radius:18px;
       overflow:hidden;
-      /* new light surface (warm) just for search */
       background:#f2efea;
       box-shadow: 0 26px 80px rgba(0,0,0,.55);
       border:1px solid rgba(201,140,91,.28);
@@ -115,10 +114,7 @@
       box-shadow: 0 0 0 3px rgba(201,140,91,.22), 0 10px 24px rgba(0,0,0,.10);
     }
 
-    .search-subhint{
-      font-size:12px;
-      color:#6b625b;
-    }
+    .search-subhint{ font-size:12px; color:#6b625b; }
 
     .search-results{
       padding:10px 10px 14px;
@@ -165,10 +161,7 @@
       margin-bottom:4px;
       font-size:14px;
     }
-    .search-result-desc{
-      font-size:13px;
-      color:#4a3f37;
-    }
+    .search-result-desc{ font-size:13px; color:#4a3f37; }
 
     .search-result-type{
       display:inline-block;
@@ -233,6 +226,16 @@
       searchTimeout = setTimeout(function () { performSearch(query); }, 180);
     });
 
+    // NEW: one safe click handler (no inline onclick quoting)
+    results.addEventListener("click", function (e) {
+      var el = e.target;
+      while (el && el !== results && !el.classList.contains("search-result")) el = el.parentNode;
+      if (el && el.classList && el.classList.contains("search-result")) {
+        var u = el.getAttribute("data-url");
+        if (u) location.href = u;
+      }
+    });
+
     async function performSearch(query) {
       results.innerHTML = '<div class="search-hint">Searching...</div>';
 
@@ -249,7 +252,7 @@
         html += '<div class="search-category">Pages</div>';
         pageResults.forEach(function (r) {
           html +=
-            '<div class="search-result" onclick="location.href=\\'' + r.url + '\\'">' +
+            '<div class="search-result" data-url="' + r.url + '">' +
               '<div class="search-result-title">' + r.title + '</div>' +
               '<div class="search-result-desc">' + r.desc + '</div>' +
               '<span class="search-result-type">PAGE</span>' +
@@ -261,7 +264,7 @@
         html += '<div class="search-category">Vehicles</div>';
         inventoryResults.forEach(function (r) {
           html +=
-            '<div class="search-result" onclick="location.href=\\'' + r.url + '\\'">' +
+            '<div class="search-result" data-url="' + r.url + '">' +
               '<div class="search-result-title">' + r.title + '</div>' +
               '<div class="search-result-desc">' + r.desc + '</div>' +
               '<span class="search-result-type">VEHICLE</span>' +
