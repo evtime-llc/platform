@@ -226,10 +226,10 @@
       searchTimeout = setTimeout(function () { performSearch(query); }, 180);
     });
 
-    // NEW: one safe click handler (no inline onclick quoting)
+    // Safe result clicking (no inline onclick strings)
     results.addEventListener("click", function (e) {
       var el = e.target;
-      while (el && el !== results && !el.classList.contains("search-result")) el = el.parentNode;
+      while (el && el !== results && (!el.classList || !el.classList.contains("search-result"))) el = el.parentNode;
       if (el && el.classList && el.classList.contains("search-result")) {
         var u = el.getAttribute("data-url");
         if (u) location.href = u;
@@ -275,14 +275,33 @@
       results.innerHTML = html;
     }
 
+    // FIXED: better page matching (tokens + scoring)
     function searchPages(query) {
-      const matches = [];
+      const q = (query || "").toLowerCase().trim();
+      if (!q) return [];
+      const tokens = q.split(/\s+/).filter(Boolean);
+
+      const scored = [];
       for (const url in pageIndex) {
         const page = pageIndex[url];
-        const searchText = (page.title + " " + page.desc + " " + page.keywords.join(" ")).toLowerCase();
-        if (searchText.includes(query)) matches.push({ url, title: page.title, desc: page.desc });
+        const hay = (page.title + " " + page.desc + " " + page.keywords.join(" ")).toLowerCase();
+
+        let score = 0;
+        if (hay.includes(q)) score += 6;
+
+        tokens.forEach(function (t) {
+          if (t.length < 2) return;
+          if (hay.includes(t)) score += 2;
+        });
+
+        if (q === "dmv" && url === "/dmv.html") score += 5;
+        if ((q === "help" || q === "support") && url === "/support.html") score += 3;
+
+        if (score > 0) scored.push({ url: url, title: page.title, desc: page.desc, score: score });
       }
-      return matches.slice(0, 6);
+
+      scored.sort(function (a, b) { return b.score - a.score; });
+      return scored.slice(0, 6).map(function (r) { return { url: r.url, title: r.title, desc: r.desc }; });
     }
 
     async function searchInventory(query) {
