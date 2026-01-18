@@ -67,6 +67,11 @@ header {
   transform: scale(1.05);
 }
 
+/* Active link support (works even if body[data-page] CSS is missing) */
+.nav-btn.is-active {
+  color: #c98c5b;
+}
+
 .search-icon {
   width: 18px;
   height: 18px;
@@ -94,18 +99,40 @@ header {
     </a>
 
     <nav class="nav">
-      <a href="./sell.html" class="nav-btn">Sell</a>
-      <a href="./share.html" class="nav-btn">Inventory</a>
-      <a href="./escrow.html" class="nav-btn">Escrow</a>
-      <a href="./dmv.html" class="nav-btn">DMV</a>
-      <a href="./about.html" class="nav-btn">About</a>
-      <a href="./support.html" class="nav-btn">Support</a>
-      <a href="#" class="nav-btn">Chat</a>
+      <a href="./sell.html" class="nav-btn" data-page="sell">Sell</a>
+      <a href="./share.html" class="nav-btn" data-page="share">Inventory</a>
+      <a href="./escrow.html" class="nav-btn" data-page="escrow">Escrow</a>
+      <a href="./dmv.html" class="nav-btn" data-page="dmv">DMV</a>
+      <a href="./about.html" class="nav-btn" data-page="about">About</a>
+      <a href="./support.html" class="nav-btn" data-page="support">Support</a>
+      <a href="#" class="nav-btn" data-page="chat" onclick="return false;">Chat</a>
 
-      <svg class="search-icon" onclick="typeof openSearch==='function'&&openSearch()" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
+      <svg class="search-icon"
+           role="button"
+           tabindex="0"
+           aria-label="Search"
+           onclick="typeof window.openSearch==='function'&&window.openSearch()"
+           onkeydown="if(event.key==='Enter'){typeof window.openSearch==='function'&&window.openSearch()}"
+           fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="8"></circle>
         <path d="m21 21-4.35-4.35"></path>
       </svg>
     </nav>
   </div>
 </header>
+
+<script>
+/* Ensure active copper highlight on every page */
+(function(){
+  try{
+    var dp = (document.body && document.body.getAttribute('data-page')) || '';
+    if(!dp) return;
+    var links = document.querySelectorAll('.nav .nav-btn[data-page]');
+    for(var i=0;i<links.length;i++){
+      if(links[i].getAttribute('data-page') === dp){
+        links[i].classList.add('is-active');
+      }
+    }
+  }catch(e){}
+})();
+</script>
