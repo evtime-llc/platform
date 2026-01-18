@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Support — E.V.Time</title>
 <meta name="theme-color" content="#0b0a09"/>
-
 <link rel="stylesheet" href="./styles.css">
 
 <style>
@@ -32,4 +31,173 @@ form textarea{resize:vertical;min-height:100px}
 .faq-q{font-weight:700;color:#292524;margin-bottom:6px}
 .faq-a{color:#57534e;font-size:14px}
 .contact-methods{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.contact-methods a{display:inline-flex;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:#111
+.contact-methods a{display:inline-flex;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:#111;background:#fff;font-size:14px}
+.contact-methods a:hover{background:#f8f7f6}
+.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
+.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
+.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.footer a:hover{border-bottom-style:solid}
+@media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
+</style>
+</head>
+
+<body data-page="support">
+<div id="header-placeholder"></div>
+
+<div class="wrap hero">
+  <div class="card hlite">
+    <h1>Support Center</h1>
+    <p class="muted">We're here to help, 24/7. Get answers fast or open a support ticket.</p>
+    <span class="badge">✓ 24/7 Support Available</span>
+  </div>
+
+  <div class="card">
+    <h2>Quick Help</h2>
+    <p>Need instant answers? Try <strong>Live Chat</strong> — our AI assistant is available 24/7 and can help with most questions immediately.</p>
+    <div class="contact-methods">
+      <a href="#" onclick="alert('Chat widget will open here'); return false;">💬 Open Live Chat</a>
+      <a href="tel:+14244256211">📞 Call Us</a>
+      <a href="mailto:welcome.evtime@gmail.com">✉️ Email Us</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Open a Support Ticket</h2>
+    <p>For complex issues or detailed inquiries, submit a ticket and our team will respond within 24 hours.</p>
+
+    <form id="ticketForm">
+      <label for="name">Name *</label>
+      <input id="name" type="text" required autocomplete="name">
+
+      <label for="email">Email *</label>
+      <input id="email" type="email" required autocomplete="email">
+
+      <label for="phone">Phone (optional)</label>
+      <input id="phone" type="tel" autocomplete="tel">
+
+      <label for="category">Category *</label>
+      <select id="category" required>
+        <option value="">Select a category...</option>
+        <option value="buying">Buying a Vehicle</option>
+        <option value="selling">Selling a Vehicle</option>
+        <option value="escrow">Escrow Services</option>
+        <option value="dmv">DMV Services</option>
+        <option value="listing">Listing Issue</option>
+        <option value="account">Account / Login</option>
+        <option value="payment">Payment / Billing</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="subject">Subject *</label>
+      <input id="subject" type="text" required placeholder="Brief description of your issue">
+
+      <label for="message">Message *</label>
+      <textarea id="message" required placeholder="Provide as much detail as possible..."></textarea>
+
+      <button type="submit" class="btn primary" style="margin-top:14px;width:100%">Submit Ticket</button>
+      <div id="formMsg" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq">
+      <div class="faq-q">How long does it take to get an offer on my car?</div>
+      <div class="faq-a">Usually within 1–2 business hours. A real specialist reviews your info and texts you a number — no computer-generated quotes.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">What is escrow and do I need it?</div>
+      <div class="faq-a">Escrow is a secure payment method where funds are held until the deal is complete. It’s optional but recommended. <a href="./escrow.html" style="color:var(--copper)">Learn more</a>.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">How do DMV services work?</div>
+      <div class="faq-a">Our licensed DMV specialist handles title transfers, registration, and paperwork. <a href="./dmv.html" style="color:var(--copper)">Learn more</a>.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">Is my personal information safe?</div>
+      <div class="faq-a">Yes. We never sell your data. <a href="./legal.html" style="color:var(--copper)">Read our privacy policy</a>.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Still Have Questions?</h2>
+    <p>Can’t find what you’re looking for? Our team is standing by.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <a class="btn primary" href="tel:+14244256211">Call Us Now</a>
+      <a class="btn" href="mailto:welcome.evtime@gmail.com">Send Email</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    &copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a>
+  </div>
+</footer>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+fetch('./header.html')
+  .then(function(r){ return r.text(); })
+  .then(function(h){ document.getElementById('header-placeholder').innerHTML = h; });
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+var SUPABASE_URL = (window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co').trim();
+var SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || '').trim();
+
+var supabase = null;
+if (window.supabase && SUPABASE_ANON_KEY) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+document.getElementById('ticketForm').onsubmit = async function(e){
+  e.preventDefault();
+  var formMsg = document.getElementById('formMsg');
+
+  var name = document.getElementById('name').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var category = document.getElementById('category').value;
+  var subject = document.getElementById('subject').value.trim();
+  var message = document.getElementById('message').value.trim();
+
+  if(!name || !email || !category || !subject || !message){
+    formMsg.textContent = 'Please fill in all required fields.';
+    formMsg.className = 'error';
+    return;
+  }
+
+  var combinedMessage = '[SUPPORT TICKET]\nCategory: ' + category + '\nSubject: ' + subject + '\n\n' + message;
+
+  if(!supabase){
+    formMsg.textContent = 'Ticket system is not configured yet. Please use phone or email.';
+    formMsg.className = 'error';
+    return;
+  }
+
+  var result = await supabase.from('leads').insert(
+    { listing_id: null, name: name, phone: phone, email: email, message: combinedMessage },
+    { returning: 'minimal' }
+  );
+
+  if(result.error){
+    formMsg.textContent = 'Could not submit ticket. Please try email or phone instead.';
+    formMsg.className = 'error';
+  } else {
+    formMsg.textContent = 'Ticket submitted! We will respond within 24 hours.';
+    formMsg.className = 'success';
+    e.target.reset();
+  }
+};
+</script>
+
+<script src="/search.js"></script>
+</body>
+</html>
