@@ -62,7 +62,7 @@ p{margin:6px 0 8px}
 
   <div class="card">
     <h2>How It Works</h2>
-    
+
     <div class="step">
       <span class="step-num">1</span>
       <strong>Agree on Terms</strong><br>
@@ -117,8 +117,10 @@ p{margin:6px 0 8px}
 </footer>
 
 <script>
-fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});document.getElementById('yr').textContent=new Date().getFullYear();
+fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});
+document.getElementById('yr').textContent=new Date().getFullYear();
 </script>
 
+<script src="/search.js"></script>
 </body>
 </html>
