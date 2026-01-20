@@ -19,24 +19,23 @@ h3{margin:12px 0 6px;font-size:16px;color:var(--copper-dark)}
 p{margin:6px 0 8px}
 .muted{color:#78716c}
 .badge{display:inline-block;background:var(--copper-soft);border:1px solid var(--copper);color:var(--copper-dark);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-top:8px}
-form label{display:block;margin-top:12px;font-weight:700;font-size:14px}
-form input,form textarea,form select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
-form textarea{resize:vertical;min-height:100px}
+.faq{background:#f8f7f6;border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+.faq-q{font-weight:700;color:#292524;margin-bottom:6px}
+.faq-a{color:#57534e;font-size:14px;line-height:1.5}
+.faq-a a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
+.faq-a a:hover{border-bottom-style:solid}
+.contact-methods{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.contact-methods a{display:inline-flex;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:#111;background:#fff;font-size:14px;transition:.15s}
+.contact-methods a:hover{background:#f8f7f6}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800;color:#111;transition:.15s}
 .btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
 .btn.primary:hover{background:var(--copperDark);color:#fff}
-.success{color:#16a34a;margin-top:8px;font-weight:700}
-.error{color:#b91c1c;margin-top:8px;font-weight:700}
-.faq{background:#f8f7f6;border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
-.faq-q{font-weight:700;color:#292524;margin-bottom:6px}
-.faq-a{color:#57534e;font-size:14px}
-.contact-methods{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.contact-methods a{display:inline-flex;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:#111;background:#fff;font-size:14px}
-.contact-methods a:hover{background:#f8f7f6}
 .footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
 .footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
 .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 .footer a:hover{border-bottom-style:solid}
+.hours{background:#fef3c7;border:1px solid #fbbf24;border-radius:10px;padding:12px;margin:12px 0;font-size:14px}
+.hours strong{color:#92400e}
 @media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
 </style>
 </head>
@@ -47,56 +46,21 @@ form textarea{resize:vertical;min-height:100px}
 <div class="wrap hero">
   <div class="card hlite">
     <h1>Support Center</h1>
-    <p class="muted">We're here to help, 24/7. Get answers fast or open a support ticket.</p>
-    <span class="badge">✓ 24/7 Support Available</span>
+    <p class="muted">We're here to help. Get answers fast or reach out directly.</p>
+    <span class="badge">✓ Real People, Real Help</span>
   </div>
 
   <div class="card">
-    <h2>Quick Help</h2>
-    <p>Need instant answers? Try <strong>Live Chat</strong> — our AI assistant is available 24/7 and can help with most questions immediately.</p>
-    <div class="contact-methods">
-      <a href="#" onclick="alert('Chat widget will open here'); return false;">💬 Open Live Chat</a>
-      <a href="tel:+14244256211">📞 Call Us</a>
-      <a href="mailto:welcome.evtime@gmail.com">✉️ Email Us</a>
+    <h2>Contact Us</h2>
+    <div class="hours">
+      <strong>Support Hours:</strong> Monday–Friday, 9:00 AM – 6:00 PM PST<br>
+      <strong>After Hours:</strong> Use Chat or email — we'll respond next business day
     </div>
-  </div>
-
-  <div class="card">
-    <h2>Open a Support Ticket</h2>
-    <p>For complex issues or detailed inquiries, submit a ticket and our team will respond within 24 hours.</p>
-
-    <form id="ticketForm">
-      <label for="name">Name *</label>
-      <input id="name" type="text" required autocomplete="name">
-
-      <label for="email">Email *</label>
-      <input id="email" type="email" required autocomplete="email">
-
-      <label for="phone">Phone (optional)</label>
-      <input id="phone" type="tel" autocomplete="tel">
-
-      <label for="category">Category *</label>
-      <select id="category" required>
-        <option value="">Select a category...</option>
-        <option value="buying">Buying a Vehicle</option>
-        <option value="selling">Selling a Vehicle</option>
-        <option value="escrow">Escrow Services</option>
-        <option value="dmv">DMV Services</option>
-        <option value="listing">Listing Issue</option>
-        <option value="account">Account / Login</option>
-        <option value="payment">Payment / Billing</option>
-        <option value="other">Other</option>
-      </select>
-
-      <label for="subject">Subject *</label>
-      <input id="subject" type="text" required placeholder="Brief description of your issue">
-
-      <label for="message">Message *</label>
-      <textarea id="message" required placeholder="Provide as much detail as possible..."></textarea>
-
-      <button type="submit" class="btn primary" style="margin-top:14px;width:100%">Submit Ticket</button>
-      <div id="formMsg" role="status" aria-live="polite"></div>
-    </form>
+    <div class="contact-methods">
+      <a href="tel:+14244256211">📞 (424) 425-6211</a>
+      <a href="mailto:welcome.evtime@gmail.com">✉️ welcome.evtime@gmail.com</a>
+    </div>
+    <p style="margin-top:12px;font-size:14px;color:#78716c">Need instant help? Click <strong>Chat</strong> in the header to talk with our AI assistant 24/7.</p>
   </div>
 
   <div class="card">
@@ -109,23 +73,48 @@ form textarea{resize:vertical;min-height:100px}
 
     <div class="faq">
       <div class="faq-q">What is escrow and do I need it?</div>
-      <div class="faq-a">Escrow is a secure payment method where funds are held until the deal is complete. It’s optional but recommended. <a href="./escrow.html" style="color:var(--copper)">Learn more</a>.</div>
+      <div class="faq-a">Escrow is a secure payment method where funds are held by a third party until the deal is complete. It's optional but highly recommended for buyer and seller protection. <a href="./escrow.html">Learn more about our escrow services</a>.</div>
     </div>
 
     <div class="faq">
       <div class="faq-q">How do DMV services work?</div>
-      <div class="faq-a">Our licensed DMV specialist handles title transfers, registration, and paperwork. <a href="./dmv.html" style="color:var(--copper)">Learn more</a>.</div>
+      <div class="faq-a">Our licensed DMV specialist handles title transfers, registration, plates, lien releases, and all documentation. We streamline the entire process so you don't have to wait in line or deal with confusing paperwork. <a href="./dmv.html">Learn more about DMV services</a>.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">Can I buy or sell a car from out of state?</div>
+      <div class="faq-a">Yes! We handle out-of-state transfers, including title work, registration, and compliance with both states' requirements.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">How much does it cost to list my car?</div>
+      <div class="faq-a">Listing on E.V.Time is 100% free. We only take a small commission when your car sells.</div>
     </div>
 
     <div class="faq">
       <div class="faq-q">Is my personal information safe?</div>
-      <div class="faq-a">Yes. We never sell your data. <a href="./legal.html" style="color:var(--copper)">Read our privacy policy</a>.</div>
+      <div class="faq-a">Yes. We never sell your data or share it with third parties. All transactions use secure, encrypted connections. <a href="./legal.html">Read our privacy policy</a>.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">What if I have an issue with a buyer or seller?</div>
+      <div class="faq-a">Contact us immediately at <a href="tel:+14244256211">(424) 425-6211</a> or <a href="mailto:welcome.evtime@gmail.com">welcome.evtime@gmail.com</a>. Our team will mediate and help resolve disputes fairly.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">Do you offer financing?</div>
+      <div class="faq-a">Not directly, but we can connect you with trusted lending partners. Contact us for details.</div>
+    </div>
+
+    <div class="faq">
+      <div class="faq-q">Can I cancel a transaction?</div>
+      <div class="faq-a">It depends on the stage. Before funds are released via escrow, cancellations are typically possible. Contact us ASAP if you need to cancel.</div>
     </div>
   </div>
 
   <div class="card">
     <h2>Still Have Questions?</h2>
-    <p>Can’t find what you’re looking for? Our team is standing by.</p>
+    <p>Can't find what you're looking for? Our team is standing by.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
       <a class="btn primary" href="tel:+14244256211">Call Us Now</a>
       <a class="btn" href="mailto:welcome.evtime@gmail.com">Send Email</a>
@@ -139,66 +128,15 @@ form textarea{resize:vertical;min-height:100px}
   </div>
 </footer>
 
-<script src="/config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 fetch('./header.html')
   .then(function(r){ return r.text(); })
   .then(function(h){ document.getElementById('header-placeholder').innerHTML = h; });
 
 document.getElementById('yr').textContent = new Date().getFullYear();
-
-var SUPABASE_URL = (window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co').trim();
-var SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || '').trim();
-
-var supabase = null;
-if (window.supabase && SUPABASE_ANON_KEY) {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-
-document.getElementById('ticketForm').onsubmit = async function(e){
-  e.preventDefault();
-  var formMsg = document.getElementById('formMsg');
-
-  var name = document.getElementById('name').value.trim();
-  var email = document.getElementById('email').value.trim();
-  var phone = document.getElementById('phone').value.trim();
-  var category = document.getElementById('category').value;
-  var subject = document.getElementById('subject').value.trim();
-  var message = document.getElementById('message').value.trim();
-
-  if(!name || !email || !category || !subject || !message){
-    formMsg.textContent = 'Please fill in all required fields.';
-    formMsg.className = 'error';
-    return;
-  }
-
-  var combinedMessage = '[SUPPORT TICKET]\nCategory: ' + category + '\nSubject: ' + subject + '\n\n' + message;
-
-  if(!supabase){
-    formMsg.textContent = 'Ticket system is not configured yet. Please use phone or email.';
-    formMsg.className = 'error';
-    return;
-  }
-
-  var result = await supabase.from('leads').insert(
-    { listing_id: null, name: name, phone: phone, email: email, message: combinedMessage },
-    { returning: 'minimal' }
-  );
-
-  if(result.error){
-    formMsg.textContent = 'Could not submit ticket. Please try email or phone instead.';
-    formMsg.className = 'error';
-  } else {
-    formMsg.textContent = 'Ticket submitted! We will respond within 24 hours.';
-    formMsg.className = 'success';
-    e.target.reset();
-  }
-};
 </script>
 
 <script src="/search.js"></script>
-  <script src="/app.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>
