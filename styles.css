@@ -91,10 +91,17 @@ header {
   transform: scale(1.05);
 }
 
-/* Active page highlighting */
+/* Active page highlighting - ALL PAGES */
 body[data-page="sell"] .nav-btn[href="./sell.html"],
 body[data-page="share"] .nav-btn[href="./share.html"],
-body[data-page="about"] .nav-btn[href="./about.html"] {
+body[data-page="about"] .nav-btn[href="./about.html"],
+body[data-page="escrow"] .nav-btn[href="./escrow.html"],
+body[data-page="dmv"] .nav-btn[href="./dmv.html"],
+body[data-page="support"] .nav-btn[href="./support.html"],
+body[data-page="legal"] .nav-btn[href="./legal.html"],
+body[data-page="listing"] .nav-btn[href="./listing.html"],
+body[data-page="home"] .nav-btn[href="/"],
+body[data-page="index"] .nav-btn[href="/"] {
   color: #c98c5b;
 }
 
