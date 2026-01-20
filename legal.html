@@ -25,7 +25,7 @@ footer a:hover{text-decoration:underline}
 @media(max-width:768px){h1{font-size:24px}h2{font-size:18px}}
 </style>
 </head>
-<body>
+<body data-page="legal">
 
 <div id="header-placeholder"></div>
 
@@ -97,6 +97,8 @@ footer a:hover{text-decoration:underline}
 <script>
 fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});document.getElementById('yr').textContent=new Date().getFullYear();
 </script>
+
+<script src="/search.js"></script>
 
 </body>
 </html>
