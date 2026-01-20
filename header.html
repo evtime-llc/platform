@@ -1,138 +1,122 @@
-<style>
-header {
-  background: #0b0a09;
-  padding: 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 50px;
-  padding: 0 24px;
-}
-
-.logo-link {
-  position: relative;
-  overflow: hidden;
-  display: block;
-  flex-shrink: 0;
-}
-
-.logo-link::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
-  animation: logoGlow 30s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes logoGlow {
-  0% { left: -100%; }
-  10% { left: 100%; }
-  100% { left: 100%; }
-}
-
-#site-logo {
-  height: 50px;
-  display: block;
-}
-
-.nav {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-
-.nav-btn {
-  color: #fff;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 400;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.nav-btn:hover {
-  color: #c98c5b;
-  transform: scale(1.05);
-}
-
-/* Active link support (works even if body[data-page] CSS is missing) */
-.nav-btn.is-active {
-  color: #c98c5b;
-}
-
-.search-icon {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.search-icon:hover {
-  transform: scale(1.1);
-}
-
-@media (max-width: 768px) {
-  #site-logo { height: 40px; }
-  .header-inner { height: 40px; padding: 0 16px; }
-  .nav { flex-wrap: wrap; gap: 12px; }
-  .nav-btn { font-size: 11px; }
-  .search-icon { width: 16px; height: 16px; }
-}
-</style>
-
-<header>
+<!-- header.html -->
+<header class="site-header">
   <div class="header-inner">
-    <a href="/" class="logo-link">
-      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime">
+    <a href="/" class="logo-link" aria-label="E.V.Time Home">
+      <img id="site-logo" src="mainlogo.png?v=415" alt="EVTime" />
     </a>
 
-    <nav class="nav">
-      <a href="./sell.html" class="nav-btn" data-page="sell">Sell</a>
-      <a href="./share.html" class="nav-btn" data-page="share">Inventory</a>
-      <a href="./escrow.html" class="nav-btn" data-page="escrow">Escrow</a>
-      <a href="./dmv.html" class="nav-btn" data-page="dmv">DMV</a>
-      <a href="./about.html" class="nav-btn" data-page="about">About</a>
-      <a href="./support.html" class="nav-btn" data-page="support">Support</a>
-      <a href="#" class="nav-btn" data-page="chat" onclick="return false;">Chat</a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav-btn" href="./sell.html">Sell</a>
+      <a class="nav-btn" href="./share.html">Inventory</a>
+      <a class="nav-btn" href="./escrow.html">Escrow</a>
+      <a class="nav-btn" href="./dmv.html">DMV</a>
+      <a class="nav-btn" href="./about.html">About</a>
+      <a class="nav-btn" href="./support.html">Support</a>
 
-      <svg class="search-icon"
-           role="button"
-           tabindex="0"
-           aria-label="Search"
-           onclick="typeof window.openSearch==='function'&&window.openSearch()"
-           onkeydown="if(event.key==='Enter'){typeof window.openSearch==='function'&&window.openSearch()}"
-           fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.35-4.35"></path>
+      <!-- Chat: opens Crisp (sitewide) -->
+      <a class="nav-btn" href="#" onclick="if(window.$crisp){$crisp.push(['do','chat:open']);} return false;">Chat</a>
+
+      <!-- Search icon -->
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" role="button" tabindex="0"
+        aria-label="Search"
+        onclick="window.openSearch && window.openSearch()"
+        onkeydown="if(event.key==='Enter'){window.openSearch && window.openSearch()}">
+        <circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"></circle>
+        <path d="M21 21l-4.35-4.35" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
       </svg>
     </nav>
   </div>
-</header>
 
-<script>
-/* Ensure active copper highlight on every page */
-(function(){
-  try{
-    var dp = (document.body && document.body.getAttribute('data-page')) || '';
-    if(!dp) return;
-    var links = document.querySelectorAll('.nav .nav-btn[data-page]');
-    for(var i=0;i<links.length;i++){
-      if(links[i].getAttribute('data-page') === dp){
-        links[i].classList.add('is-active');
-      }
+  <style>
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #0b0a09;
+      border-bottom: 1px solid rgba(201, 140, 91, 0.18);
     }
-  }catch(e){}
-})();
-</script>
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      padding: 0 24px;
+    }
+
+    .logo-link {
+      position: relative;
+      overflow: hidden;
+      display: block;
+      flex-shrink: 0;
+    }
+    #site-logo {
+      height: 50px;
+      display: block;
+    }
+    .logo-link::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 30% 30%, rgba(201,140,91,0.18), transparent 55%),
+                  radial-gradient(circle at 70% 70%, rgba(255,255,255,0.08), transparent 55%);
+      animation: logoGlow 30s linear infinite;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    @keyframes logoGlow {
+      0% { transform: translate(-6%, -6%) rotate(0deg); }
+      50% { transform: translate(6%, 6%) rotate(180deg); }
+      100% { transform: translate(-6%, -6%) rotate(360deg); }
+    }
+
+    .nav {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-btn {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      white-space: nowrap;
+      transition: transform .15s ease, color .15s ease;
+    }
+    .nav-btn:hover {
+      color: #c98c5b;
+      transform: scale(1.05);
+    }
+
+    .search-icon {
+      color: #fff;
+      cursor: pointer;
+      transition: transform .15s ease, color .15s ease;
+    }
+    .search-icon:hover {
+      color: #c98c5b;
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      .header-inner { height: 40px; padding: 0 16px; }
+      #site-logo { height: 40px; }
+      .nav { flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
+      .nav-btn { font-size: 11px; }
+      .search-icon { width: 16px; height: 16px; }
+    }
+  </style>
+
+  <!-- Crisp (FREE) embed -->
+  <script type="text/javascript">
+    window.$crisp = [];
+    window.CRISP_WEBSITE_ID = "782a825d-c11b-4dcf-8a44-656bd6ddc5ad";
+    (function () {
+      var d = document, s = d.createElement("script");
+      s.src = "https://client.crisp.chat/l.js";
+      s.async = 1;
+      d.getElementsByTagName("head")[0].appendChild(s);
+    })();
+  </script>
+</header>
