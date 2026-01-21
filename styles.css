@@ -1,6 +1,7 @@
 :root {
   --bg: #3a3a3a;
-  --card: #ffffff;
+  --bg-light: #f8f7f5; /* NEW: warm off-white for light backgrounds */
+  --card: #fbfaf8; /* UPDATED: slightly warmer card color */
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
@@ -16,7 +17,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg-light); /* CHANGED: now uses warm light bg instead of dark gray */
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
