@@ -25,7 +25,7 @@
     .hero-image{display:block;width:100%;height:auto}
 
     .hero-card{
-      background:var(--card);
+      background:var(--bg-light); /* CHANGED: cream instead of white */
       border-radius:20px;
       padding:40px 48px;
       box-shadow:0 20px 60px rgba(0,0,0,0.4);
@@ -35,7 +35,7 @@
     .hero-text{font-size:18px;line-height:1.7;color:#292524;margin:0 0 16px}
     .hero-punch{font-size:20px;font-weight:700;color:#1f2933;margin-top:24px}
 
-    .footer{background:#fff;border-top:1px solid var(--line);padding:24px 0}
+    .footer{background:var(--bg-light);border-top:1px solid var(--line);padding:24px 0} /* CHANGED: cream footer */
     .footer-inner{
       max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;
       align-items:center;gap:20px;flex-wrap:wrap;font-size:14px;color:#44403c
@@ -88,7 +88,6 @@
     </div>
   </footer>
 
-  <!-- Load search.js on the PAGE (not in header.html) -->
   <script src="./search.js"></script>
 
   <script>
