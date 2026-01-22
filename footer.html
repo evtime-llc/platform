@@ -1,0 +1,154 @@
+<!-- footer.html -->
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-columns">
+      
+      <div class="footer-column">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./about.html">How It Works</a></li>
+          <li><a href="./support.html">Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="./sell.html">Sell Your Car</a></li>
+          <li><a href="./share.html">Browse Inventory</a></li>
+          <li><a href="./escrow.html">Escrow Services</a></li>
+          <li><a href="./dmv.html">DMV Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="./support.html">FAQ</a></li>
+          <li><a href="./support.html">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Legal & Trust</h3>
+        <ul>
+          <li><a href="./legal.html">Terms & Privacy</a></li>
+          <li class="trust-badge">✓ Licensed DMV Specialist</li>
+          <li class="trust-badge">✓ Secure Transactions</li>
+          <li class="trust-badge">✓ Privacy Protected</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div>© <span class="footer-year"></span> E.V.Time</div>
+      <div><a href="mailto:welcome.evtime@gmail.com">welcome.evtime@gmail.com</a></div>
+    </div>
+  </div>
+
+  <style>
+    .site-footer {
+      background: var(--bg-light);
+      border-top: 1px solid var(--line);
+      padding: 48px 24px 24px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .footer-columns {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 32px;
+    }
+
+    .footer-column h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 16px 0;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-column li {
+      margin-bottom: 10px;
+    }
+
+    .footer-column a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color .15s ease;
+    }
+
+    .footer-column a:hover {
+      color: var(--copper);
+    }
+
+    .footer-column .trust-badge {
+      color: var(--copper-dark);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-bottom a {
+      color: var(--copper);
+      text-decoration: none;
+    }
+
+    .footer-bottom a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .site-footer {
+        padding: 32px 16px 24px;
+      }
+
+      .footer-columns {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px 24px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-columns {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+    }
+  </style>
+
+  <script>
+    document.querySelector('.footer-year').textContent = new Date().getFullYear();
+  </script>
+</footer>
