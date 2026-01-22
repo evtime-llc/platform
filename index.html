@@ -35,6 +35,30 @@
     .hero-text{font-size:18px;line-height:1.7;color:#292524;margin:0 0 16px}
     .hero-punch{font-size:20px;font-weight:700;color:#1f2933;margin-top:24px}
 
+    /* Testimonials Section */
+    .testimonials{background:var(--bg);padding:60px 24px}
+    .testimonials-inner{max-width:1280px;margin:0 auto}
+    .testimonials-title{
+      font-size:36px;font-weight:900;color:#fff;text-align:center;
+      margin:0 0 48px
+    }
+    .testimonials-grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:24px
+    }
+    .testimonial-card{
+      background:var(--bg-light);border-radius:16px;padding:28px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.3)
+    }
+    .testimonial-stars{color:var(--copper);font-size:18px;margin-bottom:12px}
+    .testimonial-quote{
+      font-size:16px;line-height:1.6;color:#292524;margin:0 0 16px;
+      font-style:italic
+    }
+    .testimonial-author{
+      font-size:14px;font-weight:700;color:var(--copper-dark)
+    }
+
     @media (max-width: 768px){
       .hero{padding:20px 16px 60px}
       .hero-card{padding:28px 24px}
@@ -43,6 +67,10 @@
       .hero-subtitle{font-size:18px}
       .hero-text{font-size:16px}
       .hero-punch{font-size:18px}
+      
+      .testimonials{padding:40px 16px}
+      .testimonials-title{font-size:28px;margin-bottom:32px}
+      .testimonials-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -69,6 +97,40 @@
           using escrow-grade structure to manage documentation, verification, and transfer with precision.
         </p>
         <p class="hero-punch">You're in good hands, start to finish.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <div class="testimonials-inner">
+      <h2 class="testimonials-title">What Our Customers Say</h2>
+      <div class="testimonials-grid">
+        
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
+          <div class="testimonial-author">— Sarah M.</div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
+          <div class="testimonial-author">— James T.</div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
+          <div class="testimonial-author">— Maria G.</div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
+          <div class="testimonial-author">— David K.</div>
+        </div>
+
       </div>
     </div>
   </section>
