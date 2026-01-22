@@ -11,23 +11,23 @@
 <style>
 #header-placeholder{position:sticky;top:0;z-index:100}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
-h1{margin:6px 0 8px;font-size:22px}
+.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:14px}
+h1{margin:6px 0 8px;font-size:22px;color:var(--text)}
 .muted{color:#78716c;font-size:13px}
 .bullets{margin:8px 0 12px;padding-left:0;list-style:none}
 .bullets li{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
 .check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
 .check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-button,.btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s}
-button.primary,.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;font-weight:800;box-shadow:0 3px 10px rgba(201,140,91,.28)}
-button.primary:hover{background:var(--copperDark);color:#fff}
+button,.btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s;font-size:14px;font-weight:600}
+button.primary,.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;font-weight:800;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+button.primary:hover,.btn.primary:hover{background:var(--copper-dark);color:#fff}
 .btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
-.btn.ghost:hover{background:var(--copperSoft)}
+.btn.ghost:hover{background:var(--copper-soft)}
 input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text)}
 textarea{min-height:90px;padding:10px 12px}
 label{display:block;font-size:13px;color:#44403c;margin:10px 0 4px}
-.sheet{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.sheet{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:14px}
 .small{font-size:12px;color:#6b7280}
 .success{color:#16a34a;font-weight:600}
 .error{color:#b91c1c}
@@ -37,10 +37,6 @@ video{width:100%;border-radius:8px}
 .scanBox{position:absolute;left:8%;right:8%;top:28%;bottom:36%;border:2px dashed rgba(255,255,255,.8);border-radius:10px}
 .camBtns{display:flex;gap:8px;margin-top:10px}
 .camBtns button{background:#fff}
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-.footer a:hover{border-bottom-style:solid}
 </style>
 </head>
 <body data-page="sell">
@@ -68,6 +64,16 @@ video{width:100%;border-radius:8px}
     <label for="vin">VIN</label>
     <input id="vin" type="text" placeholder="17 characters" inputmode="latin" maxlength="23" autocomplete="off" spellcheck="false">
     <div id="vinStatus" class="small" style="margin-top:6px"></div>
+    
+    <label for="name">Name *</label>
+    <input id="name" type="text" placeholder="Your name" required>
+    
+    <label for="phone">Phone *</label>
+    <input id="phone" type="text" placeholder="Your phone number" required>
+    
+    <label for="email">Email *</label>
+    <input id="email" type="text" placeholder="Your email" required>
+    
     <div class="row">
       <div style="flex:1">
         <label for="miles">Mileage</label>
@@ -84,6 +90,7 @@ video{width:100%;border-radius:8px}
       <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
       <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
     </div>
+    <div id="formMsg" class="small" style="margin-top:8px"></div>
     <div class="small" style="margin-top:8px">
       Privacy: We only use your info to evaluate your car and contact you. We do not sell personal information.
     </div>
@@ -110,19 +117,92 @@ video{width:100%;border-radius:8px}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<div id="footer-placeholder"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 
 <script>
-fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});function normalizeVIN(r){if(!r)return '';var s=r.toUpperCase().replace(/[^A-Z0-9]/g,'');s=s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');var m=s.match(/[A-HJ-NPR-Z0-9]{17,25}/);if(m)s=m[0];if(s.length>17)s=s.substring(0,17);return s}function isVIN17(s){return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||'')}function setStatus(m,o){var e=document.getElementById('vinStatus');e.textContent=m||'';e.className='small '+(o?'success':m?'error':'')}var vinEl=document.getElementById('vin'),scanBtn=document.getElementById('scanBtn'),vinPhoto=document.getElementById('vinPhoto'),submitBtn=document.getElementById('submitBtn'),camWrap=document.getElementById('camWrap'),video=document.getElementById('video'),captureBtn=document.getElementById('captureBtn'),closeCamBtn=document.getElementById('closeCamBtn'),stream=null;vinEl.addEventListener('input',function(){var v=normalizeVIN(vinEl.value);vinEl.value=v;if(v.length===17&&isVIN17(v))setStatus('Looks like a valid VIN.',true);else if(v.length>0)setStatus('VIN must be 17 characters (A-Z, 0-9; no I, O, Q).');else setStatus('')});function openCamera(){camWrap.style.display='flex';navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){stream=s;video.srcObject=stream}).catch(function(){camWrap.style.display='none';alert('Camera not available. Try uploading a clear VIN photo instead.')})}function closeCamera(){if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}camWrap.style.display='none'}scanBtn.addEventListener('click',openCamera);closeCamBtn.addEventListener('click',closeCamera);captureBtn.addEventListener('click',function(){if(!video.videoWidth){alert('Camera not ready. Try again in a second.');return}var vw=video.videoWidth,vh=video.videoHeight,cropX=vw*0.08,cropY=vh*0.28,cw=vw*0.84,ch=vh*0.36,canvas=document.createElement('canvas');canvas.width=cw;canvas.height=ch;var ctx=canvas.getContext('2d');ctx.drawImage(video,cropX,cropY,cw,ch,0,0,cw,ch);setStatus('Reading VIN from camera...');Tesseract.recognize(canvas,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'}).then(function(result){var text=result.data&&result.data.text?result.data.text:'',v=normalizeVIN(text);if(isVIN17(v)){vinEl.value=v;setStatus('VIN captured from camera',true);closeCamera()}else setStatus('Could not read a clear 17-char VIN. Try again or upload a photo.')}).catch(function(){setStatus('Scanner error. Try again or upload a photo.')})});vinPhoto.addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(!f)return;setStatus('Reading VIN from photo...');var img=new Image();img.onload=function(){Tesseract.recognize(img,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'}).then(function(result){var text=result.data&&result.data.text?result.data.text:'',v=normalizeVIN(text);if(isVIN17(v)){vinEl.value=v;setStatus('VIN captured from photo',true)}else setStatus('No clear VIN found in this photo. Try a closer, sharper shot.')}).catch(function(){setStatus('Could not process the photo. Please try a clearer shot.')})};img.onerror=function(){setStatus('Bad image file. Try another photo.')};img.src=URL.createObjectURL(f)});submitBtn.addEventListener('click',function(){var v=vinEl.value.trim().toUpperCase();if(!isVIN17(v)){alert('Please enter a valid 17-character VIN.');return}var miles=(document.getElementById('miles').value||'').trim(),cond=(document.getElementById('cond').value||'').trim(),notes=(document.getElementById('notes').value||'').trim(),msg='VIN: '+v+'\nMileage: '+(miles||'(n/a)')+'\nCondition: '+(cond||'(n/a)')+'\nNotes: '+(notes||'(n/a)'),sms='Hello, I am submitting my car for an offer.%0A%0A'+encodeURIComponent(msg);location.href='sms:+14244256211?&body='+sms});document.getElementById('yr').textContent=new Date().getFullYear();
-</script>
+fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
+fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
 
-<footer class="footer">
-  <div class="wrap">
-    <div>&copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a></div>
-  </div>
-</footer>
+var SUPABASE_URL = (window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co').trim();
+var SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || '').trim();
+var supabase = null;
+if (window.supabase && SUPABASE_ANON_KEY) {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+function normalizeVIN(r){if(!r)return '';var s=r.toUpperCase().replace(/[^A-Z0-9]/g,'');s=s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');var m=s.match(/[A-HJ-NPR-Z0-9]{17,25}/);if(m)s=m[0];if(s.length>17)s=s.substring(0,17);return s}
+function isVIN17(s){return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||'')}
+function setStatus(m,o){var e=document.getElementById('vinStatus');e.textContent=m||'';e.className='small '+(o?'success':m?'error':'')}
+
+var vinEl=document.getElementById('vin'),scanBtn=document.getElementById('scanBtn'),vinPhoto=document.getElementById('vinPhoto'),submitBtn=document.getElementById('submitBtn'),camWrap=document.getElementById('camWrap'),video=document.getElementById('video'),captureBtn=document.getElementById('captureBtn'),closeCamBtn=document.getElementById('closeCamBtn'),stream=null;
+
+vinEl.addEventListener('input',function(){var v=normalizeVIN(vinEl.value);vinEl.value=v;if(v.length===17&&isVIN17(v))setStatus('Looks like a valid VIN.',true);else if(v.length>0)setStatus('VIN must be 17 characters (A-Z, 0-9; no I, O, Q).');else setStatus('')});
+
+function openCamera(){camWrap.style.display='flex';navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){stream=s;video.srcObject=stream}).catch(function(){camWrap.style.display='none';alert('Camera not available. Try uploading a clear VIN photo instead.')})}
+function closeCamera(){if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}camWrap.style.display='none'}
+
+scanBtn.addEventListener('click',openCamera);
+closeCamBtn.addEventListener('click',closeCamera);
+
+captureBtn.addEventListener('click',function(){if(!video.videoWidth){alert('Camera not ready. Try again in a second.');return}var vw=video.videoWidth,vh=video.videoHeight,cropX=vw*0.08,cropY=vh*0.28,cw=vw*0.84,ch=vh*0.36,canvas=document.createElement('canvas');canvas.width=cw;canvas.height=ch;var ctx=canvas.getContext('2d');ctx.drawImage(video,cropX,cropY,cw,ch,0,0,cw,ch);setStatus('Reading VIN from camera...');Tesseract.recognize(canvas,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'}).then(function(result){var text=result.data&&result.data.text?result.data.text:'',v=normalizeVIN(text);if(isVIN17(v)){vinEl.value=v;setStatus('VIN captured from camera',true);closeCamera()}else setStatus('Could not read a clear 17-char VIN. Try again or upload a photo.')}).catch(function(){setStatus('Scanner error. Try again or upload a photo.')})});
+
+vinPhoto.addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(!f)return;setStatus('Reading VIN from photo...');var img=new Image();img.onload=function(){Tesseract.recognize(img,'eng',{tessedit_char_whitelist:'0123456789ABCDEFGHJKLMNPRSTUVWXYZ'}).then(function(result){var text=result.data&&result.data.text?result.data.text:'',v=normalizeVIN(text);if(isVIN17(v)){vinEl.value=v;setStatus('VIN captured from photo',true)}else setStatus('No clear VIN found in this photo. Try a closer, sharper shot.')}).catch(function(){setStatus('Could not process the photo. Please try a clearer shot.')})};img.onerror=function(){setStatus('Bad image file. Try another photo.')};img.src=URL.createObjectURL(f)});
+
+submitBtn.addEventListener('click',async function(){
+  var formMsg = document.getElementById('formMsg');
+  var v = vinEl.value.trim().toUpperCase();
+  var name = document.getElementById('name').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var miles = document.getElementById('miles').value.trim();
+  var cond = document.getElementById('cond').value.trim();
+  var notes = document.getElementById('notes').value.trim();
+  
+  if(!isVIN17(v)){
+    formMsg.textContent = 'Please enter a valid 17-character VIN.';
+    formMsg.className = 'small error';
+    return;
+  }
+  if(!name || !phone || !email){
+    formMsg.textContent = 'Please fill in Name, Phone, and Email.';
+    formMsg.className = 'small error';
+    return;
+  }
+  
+  if(!supabase){
+    formMsg.textContent = 'Submission system not configured. Please email us instead.';
+    formMsg.className = 'small error';
+    return;
+  }
+  
+  var msg = '[SELL CAR]\nVIN: ' + v + '\nMileage: ' + (miles||'n/a') + '\nCondition: ' + (cond||'n/a') + '\nNotes: ' + (notes||'none');
+  
+  var result = await supabase.from('leads').insert(
+    { listing_id: null, name: name, phone: phone, email: email, message: msg },
+    { returning: 'minimal' }
+  );
+  
+  if(result.error){
+    formMsg.textContent = 'Could not submit. Please email us at welcome.evtime@gmail.com';
+    formMsg.className = 'small error';
+  } else {
+    formMsg.textContent = 'Submitted! We will review your car and text you an offer within 24 hours.';
+    formMsg.className = 'small success';
+    document.getElementById('vin').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('miles').value = '';
+    document.getElementById('cond').value = '';
+    document.getElementById('notes').value = '';
+  }
+});
+</script>
 <script src="/app.js"></script>
 </body>
 </html>
