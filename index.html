@@ -25,7 +25,7 @@
     .hero-image{display:block;width:100%;height:auto}
 
     .hero-card{
-      background:var(--bg-light); /* CHANGED: cream instead of white */
+      background:var(--bg-light);
       border-radius:20px;
       padding:40px 48px;
       box-shadow:0 20px 60px rgba(0,0,0,0.4);
@@ -34,14 +34,6 @@
     .hero-subtitle{font-size:20px;font-weight:700;color:var(--copper);margin:0 0 24px}
     .hero-text{font-size:18px;line-height:1.7;color:#292524;margin:0 0 16px}
     .hero-punch{font-size:20px;font-weight:700;color:#1f2933;margin-top:24px}
-
-    .footer{background:var(--bg-light);border-top:1px solid var(--line);padding:24px 0} /* CHANGED: cream footer */
-    .footer-inner{
-      max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;
-      align-items:center;gap:20px;flex-wrap:wrap;font-size:14px;color:#44403c
-    }
-    .footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-    .footer a:hover{border-bottom-style:solid}
 
     @media (max-width: 768px){
       .hero{padding:20px 16px 60px}
@@ -81,22 +73,23 @@
     </div>
   </section>
 
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© <span id="yr"></span> E.V.Time</div>
-      <div><a href="./legal.html">Legal &amp; Disclosures</a></div>
-    </div>
-  </footer>
+  <!-- Footer placeholder -->
+  <div id="footer-placeholder"></div>
 
   <script src="./search.js"></script>
 
   <script>
+    // Load header
     fetch('./header.html')
       .then(r => r.text())
       .then(html => { document.getElementById('header-placeholder').innerHTML = html; })
       .catch(err => console.error('Error loading header:', err));
 
-    document.getElementById('yr').textContent = new Date().getFullYear();
+    // Load footer
+    fetch('./footer.html')
+      .then(r => r.text())
+      .then(html => { document.getElementById('footer-placeholder').innerHTML = html; })
+      .catch(err => console.error('Error loading footer:', err));
   </script>
   <script src="/app.js"></script>
 </body>
