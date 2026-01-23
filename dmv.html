@@ -12,10 +12,10 @@
 #header-placeholder{position:sticky;top:0;z-index:100}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 .hero{padding:16px 12px}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
 .hlite{background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));border:1px solid rgba(201,140,91,.55);box-shadow:0 6px 22px rgba(201,140,91,.25)}
-h1{margin:6px 0 8px;font-size:24px}
-h2{margin:4px 0 8px;font-size:18px}
+h1{margin:6px 0 8px;font-size:24px;color:var(--text)}
+h2{margin:4px 0 8px;font-size:18px;color:var(--text)}
 p{margin:6px 0 8px}
 .muted{color:#78716c}
 .list{list-style:none;padding:0;margin:8px 0}
@@ -26,11 +26,7 @@ p{margin:6px 0 8px}
 .service-box h3{margin:0 0 6px;font-size:16px;color:var(--copper-dark)}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800;color:#111}
 .btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
-.btn.primary:hover{background:var(--copperDark);color:#fff}
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-.footer a:hover{border-bottom-style:solid}
+.btn.primary:hover{background:var(--copper-dark);color:#fff}
 .badge{display:inline-block;background:var(--copper-soft);border:1px solid var(--copper);color:var(--copper-dark);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-top:8px}
 @media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
 </style>
@@ -118,17 +114,14 @@ p{margin:6px 0 8px}
   </div>
 </div>
 
-<footer class="footer">
-  <div class="wrap">
-    &copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a>
-  </div>
-</footer>
+<div id="footer-placeholder"></div>
 
 <script>
-fetch('./header.html').then(function(r){return r.text()}).then(function(h){document.getElementById('header-placeholder').innerHTML=h});document.getElementById('yr').textContent=new Date().getFullYear();
+fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
+fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
 </script>
 
 <script src="./search.js"></script>
-  <script src="/app.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>
