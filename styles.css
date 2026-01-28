@@ -1,5 +1,5 @@
 :root {
-  --bg: #3a3a3a; /* Gray main background */
+ --bg: #000000; /* Gray main background */
   --bg-light: #f5f0e8; /* UPDATED: warmer cream for cards/content boxes */
   --card: #fbfaf8; /* Slightly warmer card color */
   --text: #1c1917;
