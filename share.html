@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>it's E.V.Time — Browse Inventory</title>
 <meta name="theme-color" content="#0b0a09"/>
+<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 
 <meta property="og:title" content="it's E.V.Time — Browse Inventory"/>
 <meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles."/>
@@ -23,7 +24,7 @@ h1{font-size:32px;margin:24px 0 12px;color:#fff}
 .card{background:var(--bg-light);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);width:280px;position:relative;transition:transform 0.2s}
 .card:hover{transform:translateY(-4px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
 .card-link{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2}
-.card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.card-img{width:100%;aspect-ratio:4/3;object-fit:contain;display:block;background:#f5f0e8}
 .card-body{padding:14px}
 .card-title{font-size:16px;font-weight:600;margin-bottom:6px;color:var(--text)}
 .card-meta{font-size:13px;color:#666;margin-bottom:8px}
@@ -66,17 +67,17 @@ function cardHTML(item){var title=(item.year||'')+' '+(item.make||'')+' '+(item.
 
 async function fetchOrdered(statusVal){var result=await sb.from('listing').select('id, year, make, model, trim, mileage, special_features, title_status, condition, description, city, vin, price, images, status, vehicle_type, position, updated_at, created_at').eq('status',statusVal).order('position',{ascending:false}).order('updated_at',{ascending:false}).limit(1000);if(result.error){console.error(result.error);return[]}return result.data||[]}
 
+function isElectric(item){var make=(item.make||'').toLowerCase();var model=(item.model||'').toLowerCase();var vt=(item.vehicle_type||'').toLowerCase();return make==='tesla'||vt.includes('ev')||vt.includes('electric')||model.includes('model 3')||model.includes('model s')||model.includes('model x')||model.includes('model y')}
+
 (async function(){
   var inv=document.getElementById('inventory');
   var live=await fetchOrdered('live');
   var sold=await fetchOrdered('sold');
-  var tesla=live.filter(function(c){return(c.vehicle_type||'').toLowerCase().includes('tesla')});
-  var otherEV=live.filter(function(c){var vt=(c.vehicle_type||'').toLowerCase();return vt.includes('ev')&&!vt.includes('tesla')});
-  var other=live.filter(function(c){var vt=(c.vehicle_type||'').toLowerCase();return!vt.includes('tesla')&&!vt.includes('ev')});
+  var electric=live.filter(isElectric);
+  var other=live.filter(function(c){return!isElectric(c)});
   var html='';
-  if(tesla.length)html+=tesla.map(cardHTML).join('');
-  if(otherEV.length){html+='<div class="divider">Other vehicles</div>';html+=otherEV.map(cardHTML).join('')}
-  if(other.length)html+=other.map(cardHTML).join('');
+  if(electric.length){html+='<div class="divider">Electric Vehicles</div>';html+=electric.map(cardHTML).join('')}
+  if(other.length){html+='<div class="divider">Other Vehicles</div>';html+=other.map(cardHTML).join('')}
   if(sold.length){html+='<div class="divider">Sold</div>';html+=sold.map(cardHTML).join('')}
   inv.innerHTML=html||'<p style="color:#fff;">No vehicles available at the moment.</p>'
 })();
