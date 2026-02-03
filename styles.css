@@ -1,7 +1,7 @@
 :root {
   --bg: #f5f5f7; /* Apple light gray main background */
-  --bg-light: #e8f0e8; /* Soft sage green - natural, premium, interesting */
-  --card: #e8f0e8; /* Soft sage green card color */
+  --bg-light: #ffd4cc; /* Light coral - bold, warm, interesting, alive */
+  --card: #ffd4cc; /* Light coral card color */
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
