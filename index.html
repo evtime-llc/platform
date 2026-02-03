@@ -8,69 +8,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime — A Car Marketplace Built on Trust</title>
   <meta name="theme-color" content="#0b0a09"/>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 
   <link rel="stylesheet" href="./styles.css">
 
   <style>
     #header-placeholder{position:sticky;top:0;z-index:100}
 
-    .hero{background:var(--bg);padding:15px 0 80px}
-    .hero-inner{max-width:1280px;margin:0 auto}
+    .hero{background:var(--bg);padding:60px 48px 80px;width:100%}
 
     .hero-image-wrap{
       border-radius:24px;overflow:hidden;
       box-shadow:0 24px 60px rgba(0,0,0,0.5);
-      margin-bottom:15px;
+      margin-bottom:48px;
     }
     .hero-image{display:block;width:100%;height:auto}
 
     .hero-card{
       background:var(--bg-light);
       border-radius:20px;
-      padding:40px 48px;
+      padding:60px 80px;
       box-shadow:0 20px 60px rgba(0,0,0,0.4);
     }
-    .hero-title{font-size:48px;font-weight:900;margin:0 0 12px;color:var(--text);line-height:1.2}
-    .hero-subtitle{font-size:20px;font-weight:700;color:var(--copper);margin:0 0 24px}
-    .hero-text{font-size:18px;line-height:1.7;color:#292524;margin:0 0 16px}
-    .hero-punch{font-size:20px;font-weight:700;color:#1f2933;margin-top:24px}
+    .hero-title{font-size:56px;font-weight:900;margin:0 0 16px;color:var(--text);line-height:1.1}
+    .hero-subtitle{font-size:24px;font-weight:700;color:var(--copper);margin:0 0 32px}
+    .hero-text{font-size:20px;line-height:1.7;color:#292524;margin:0 0 20px}
+    .hero-punch{font-size:24px;font-weight:700;color:#1f2933;margin-top:32px}
 
     /* Testimonials Section */
-    .testimonials{background:var(--bg);padding:60px 24px}
-    .testimonials-inner{max-width:1280px;margin:0 auto}
+    .testimonials{background:var(--bg);padding:80px 48px;width:100%}
     .testimonials-title{
-      font-size:36px;font-weight:900;color:#fff;text-align:center;
-      margin:0 0 48px
+      font-size:48px;font-weight:900;color:#fff;text-align:center;
+      margin:0 0 60px
     }
     .testimonials-grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-      gap:24px
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:32px
     }
     .testimonial-card{
-      background:var(--bg-light);border-radius:16px;padding:28px;
+      background:var(--bg-light);border-radius:16px;padding:32px;
       box-shadow:0 8px 24px rgba(0,0,0,0.3)
     }
-    .testimonial-stars{color:var(--copper);font-size:18px;margin-bottom:12px}
+    .testimonial-stars{color:var(--copper);font-size:20px;margin-bottom:16px}
     .testimonial-quote{
-      font-size:16px;line-height:1.6;color:#292524;margin:0 0 16px;
+      font-size:18px;line-height:1.6;color:#292524;margin:0 0 20px;
       font-style:italic
     }
     .testimonial-author{
-      font-size:14px;font-weight:700;color:var(--copper-dark)
+      font-size:15px;font-weight:700;color:var(--copper-dark)
     }
 
     @media (max-width: 768px){
-      .hero{padding:20px 16px 60px}
-      .hero-card{padding:28px 24px}
-      .hero-image-wrap{margin-bottom:20px}
-      .hero-title{font-size:32px}
-      .hero-subtitle{font-size:18px}
-      .hero-text{font-size:16px}
-      .hero-punch{font-size:18px}
+      .hero{padding:40px 24px 60px}
+      .hero-card{padding:32px 24px}
+      .hero-image-wrap{margin-bottom:32px}
+      .hero-title{font-size:36px}
+      .hero-subtitle{font-size:20px}
+      .hero-text{font-size:17px}
+      .hero-punch{font-size:20px}
       
-      .testimonials{padding:40px 16px}
-      .testimonials-title{font-size:28px;margin-bottom:32px}
-      .testimonials-grid{grid-template-columns:1fr}
+      .testimonials{padding:60px 24px}
+      .testimonials-title{font-size:32px;margin-bottom:40px}
+      .testimonials-grid{grid-template-columns:1fr;gap:24px}
     }
   </style>
 </head>
@@ -79,59 +78,55 @@
   <div id="header-placeholder"></div>
 
   <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-image-wrap">
-        <img
-          class="hero-image"
-          src="EVTime_hero_with_borders.png"
-          alt="EVTime process collage: selling your EV, marketplace selection, verification, escrow and DMV handling, and a happy owner with their Tesla."
-        />
-      </div>
+    <div class="hero-image-wrap">
+      <img
+        class="hero-image"
+        src="EVTime_hero_with_borders.png"
+        alt="EVTime process collage: selling your EV, marketplace selection, verification, escrow and DMV handling, and a happy owner with their Tesla."
+      />
+    </div>
 
-      <div class="hero-card">
-        <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
-        <p class="hero-subtitle">Friendly. Honest. Secure.</p>
-        <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
-        <p class="hero-text">
-          At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
-          using escrow-grade structure to manage documentation, verification, and transfer with precision.
-        </p>
-        <p class="hero-punch">You're in good hands, start to finish.</p>
-      </div>
+    <div class="hero-card">
+      <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
+      <p class="hero-subtitle">Friendly. Honest. Secure.</p>
+      <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
+      <p class="hero-text">
+        At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
+        using escrow-grade structure to manage documentation, verification, and transfer with precision.
+      </p>
+      <p class="hero-punch">You're in good hands, start to finish.</p>
     </div>
   </section>
 
   <!-- Testimonials Section -->
   <section class="testimonials">
-    <div class="testimonials-inner">
-      <h2 class="testimonials-title">What Our Customers Say</h2>
-      <div class="testimonials-grid">
-        
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
-          <div class="testimonial-author">— Sarah M.</div>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
-          <div class="testimonial-author">— James T.</div>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
-          <div class="testimonial-author">— Maria G.</div>
-        </div>
-
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
-          <div class="testimonial-author">— David K.</div>
-        </div>
-
+    <h2 class="testimonials-title">What Our Customers Say</h2>
+    <div class="testimonials-grid">
+      
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
+        <div class="testimonial-author">— Sarah M.</div>
       </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
+        <div class="testimonial-author">— James T.</div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
+        <div class="testimonial-author">— Maria G.</div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
+        <div class="testimonial-author">— David K.</div>
+      </div>
+
     </div>
   </section>
 
