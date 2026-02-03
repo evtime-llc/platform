@@ -1,7 +1,7 @@
 :root {
   --bg: #f5f5f7; /* Apple light gray main background */
-  --bg-light: #ede8e0; /* Richer light bronze/champagne for cards */
-  --card: #ede8e0; /* Richer light bronze/champagne card color */
+  --bg-light: #e8dcc8; /* TRUE light bronze/champagne - more visible */
+  --card: #e8dcc8; /* TRUE light bronze/champagne card color */
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
