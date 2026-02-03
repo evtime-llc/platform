@@ -1,7 +1,7 @@
 :root {
- --bg: #f5f5f7; /* Gray main background */
-  --bg-light: #d2e7f7; /* UPDATED: warmer cream for cards/content boxes */
-  --card: #d2e7f7; /* Slightly warmer card color */
+  --bg: #f5f5f7; /* Apple light gray main background */
+  --bg-light: #e8e5f3; /* Light purple/lavender for cards */
+  --card: #e8e5f3; /* Light purple/lavender card color */
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
