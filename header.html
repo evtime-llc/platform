@@ -34,9 +34,20 @@
       margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center; /* Center everything like Apple */
+      gap: 32px; /* Space between logo and nav */
       height: 50px;
       padding: 0 24px;
+    }
+    
+    .logo-link {
+      flex-shrink: 0;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 32px;
+      align-items: center;
     }
     
     .nav-btn {
@@ -74,7 +85,8 @@
     @media (max-width: 768px) {
       .header-inner { 
         height: 40px; 
-        padding: 0 16px; 
+        padding: 0 16px;
+        gap: 16px;
       }
       
       #site-logo { 
