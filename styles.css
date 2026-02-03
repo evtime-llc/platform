@@ -1,5 +1,5 @@
 :root {
-  --bg: #f9f7f5; /* Very light beige - WARMER, complements coral */
+  --bg: #fff5f3; /* Very soft blush - WARM, matches coral perfectly */
   --bg-light: #ffd4cc; /* Light coral - bold, warm, interesting */
   --card: #ffd4cc; /* Light coral card color */
   --text: #1c1917;
@@ -28,7 +28,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #0b0a09;
+  background: #ffd4cc; /* Coral header to match cards */
   border-bottom: 1px solid rgba(201, 140, 91, 0.18);
 }
 
@@ -78,7 +78,7 @@ body {
 }
 
 .nav-btn {
-  color: #fff;
+  color: #1c1917; /* Dark text on coral header */
   text-decoration: none;
   font-size: 14px;
   font-weight: 400;
@@ -92,7 +92,7 @@ body {
 }
 
 .search-icon {
-  color: #fff;
+  color: #1c1917; /* Dark icon on coral header */
   cursor: pointer;
   transition: transform .15s ease, color .15s ease;
 }
