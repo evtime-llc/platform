@@ -1,7 +1,7 @@
 :root {
  --bg: #f5f5f7; /* Gray main background */
-  --bg-light: #f5f0e8; /* UPDATED: warmer cream for cards/content boxes */
-  --card: #fbfaf8; /* Slightly warmer card color */
+  --bg-light: #d2e7f7; /* UPDATED: warmer cream for cards/content boxes */
+  --card: #d2e7f7; /* Slightly warmer card color */
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
