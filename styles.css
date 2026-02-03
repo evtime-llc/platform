@@ -1,7 +1,7 @@
 :root {
   --bg: #f5f5f7; /* Apple light gray main background */
-  --bg-light: #e3f4f4; /* Light mint/cyan - futuristic, cool, trusting */
-  --card: #e3f4f4; /* Light mint/cyan card color */
+  --bg-light: #ffe8df; /* Soft peach - warm, interesting, bold but elegant */
+  --card: #ffe8df; /* Soft peach card color */
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
