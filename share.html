@@ -2,86 +2,177 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>it's E.V.Time — Browse Inventory</title>
-<meta name="description" content="Browse electric vehicles and used cars for sale. Teslas, EVs, and quality pre-owned vehicles. Licensed DMV services and secure escrow available."/>
+<meta name="description" content="Browse electric vehicles and quality used cars. Licensed DMV specialist on staff. Secure escrow available. Honest marketplace."/>
 <meta name="theme-color" content="#0b0a09"/>
-<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 
-<meta property="og:title" content="it's E.V.Time — Browse Inventory"/>
-<meta property="og:description" content="Teslas first, then other EVs, then Other Vehicles."/>
+<!-- Open Graph -->
+<meta property="og:title" content="Browse Inventory — E.V.Time"/>
+<meta property="og:description" content="Browse electric vehicles and quality used cars. Licensed DMV specialist on staff. Secure escrow available."/>
 <meta property="og:image" content="https://itsevtime.com/og-card.png"/>
 <meta property="og:url" content="https://itsevtime.com/share.html"/>
+<meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
 
-<link rel="stylesheet" href="./styles.css">
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="./styles.css"/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8KQ638R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Q8KQ638R');
+</script>
 
 <style>
-#header-placeholder{position:sticky;top:0;z-index:100}
-.wrap{max-width:1200px;margin:0 auto;padding:24px 12px}
-h1{font-size:32px;margin:24px 0 12px;color:#fff}
-.divider{font-size:20px;font-weight:600;margin:32px 0 16px;color:var(--copper);width:100%}
-#inventory{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:40px}
-.card{background:var(--bg-light);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);width:280px;position:relative;transition:transform 0.2s}
-.card:hover{transform:translateY(-4px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
-.card-link{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2}
-.card-img{width:100%;aspect-ratio:4/3;object-fit:contain;display:block;background:#f5f0e8}
-.card-body{padding:14px}
-.card-title{font-size:16px;font-weight:600;margin-bottom:6px;color:var(--text)}
-.card-meta{font-size:13px;color:#666;margin-bottom:8px}
-.card-price{font-size:18px;font-weight:700;color:var(--copper);margin-bottom:10px}
-.card-btn{display:inline-block;background:var(--copper);color:#0b0a09;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;position:relative;z-index:3;transition:background 0.2s}
-.card-btn:hover{background:var(--copper-dark);color:#fff}
-.sold-badge{position:absolute;top:12px;right:12px;background:rgba(220,38,38,0.9);color:white;padding:6px 12px;border-radius:6px;font-weight:700;font-size:12px;z-index:4}
-@media(max-width:768px){h1{font-size:24px}.wrap{padding:16px 12px}.card{width:100%}}
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.card { background: var(--bg-light); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin: 12px 0; }
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; margin: 18px 0; }
+.card-img { width: 100%; aspect-ratio: 4/3; object-fit: contain; background: #f5f0e8; border-radius: 8px; }
+.card-title { font-size: 18px; font-weight: 600; margin: 12px 0 6px; }
+.card-meta { font-size: 14px; color: var(--text-muted); margin: 4px 0; }
+.card-price { font-size: 20px; font-weight: 700; color: var(--text); margin: 8px 0; }
+.card-btn { display: inline-block; background: var(--copper); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 8px; }
+.card-btn:hover { opacity: 0.9; }
+.divider { font-size: 22px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--copper); }
+.sold-badge { display: inline-block; background: #666; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; margin-left: 8px; }
 </style>
 </head>
-
 <body data-page="share">
 
 <div id="header-placeholder"></div>
 
 <div class="wrap">
-  <h1>Browse Inventory</h1>
-  <div id="inventory"></div>
+  <div id="mount"></div>
 </div>
 
 <div id="footer-placeholder"></div>
 
-<script src="/config.js"></script>
+<script src="./config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="./search.js"></script>
-
 <script>
-fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
-fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
+const url = window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co';
+const anonKey = window.SUPABASE_ANON_KEY || '';
+const sb = supabase.createClient(url, anonKey);
 
-var url=window.SUPABASE_URL||'https://tgkvhmxrftcegpryptwq.supabase.co',anonKey=window.SUPABASE_ANON_KEY||'',sb=supabase.createClient(url,anonKey);
+const esc = s => {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+};
 
-function esc(s){if(!s)return '';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function parseImages(v){if(!v)return[];if(Array.isArray(v))return v;if(typeof v==='string'){try{var p=JSON.parse(v);if(Array.isArray(p))return p}catch(e){}return v.split(',').map(function(s){return s.trim()}).filter(Boolean)}return[]}
-function normalize(p){if(!p)return '';p=p.trim();if(p.startsWith('http://')||p.startsWith('https://'))return p;if(p.startsWith('/'))p=p.slice(1);return p}
-function publicImageUrls(path){var n=normalize(path);if(n.startsWith('http://')||n.startsWith('https://'))return[n];var base=url.replace(/\/+$/,'');return[base+'/storage/v1/object/public/images/'+n,'https://tgkvhmxrftcegpryptwq.supabase.co/storage/v1/object/public/images/'+n]}
-function chooseUrl(path){var arr=parseImages(path);if(!arr.length)return 'og-card.png';return publicImageUrls(arr[0])[0]}
-function cardHTML(item){var title=(item.year||'')+' '+(item.make||'')+' '+(item.model||'')+' '+(item.trim||'');title=title.trim();var leftMeta=[item.mileage?item.mileage.toLocaleString()+' mi':'',item.title_status?'Title: '+item.title_status:'',item.condition?'Cond: '+item.condition:''].filter(Boolean).join(' • ');var priceStr=item.price?'$'+item.price.toLocaleString():'';var soldBadge=item.status==='sold'?'<div class="sold-badge">SOLD</div>':'';var imgSrc=chooseUrl(item.images);return '<div class="card"><a href="./listing.html?id='+item.id+'" class="card-link"></a>'+soldBadge+'<img class="card-img" src="'+esc(imgSrc)+'" alt="'+esc(title)+'" loading="lazy"><div class="card-body"><div class="card-title">'+esc(title)+'</div><div class="card-meta">'+esc(leftMeta)+'</div><div class="card-price">'+esc(priceStr)+'</div><a href="./listing.html?id='+item.id+'" class="card-btn">View details</a></div></div>'}
+const parseImages = (raw) => {
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'string') {
+    try { return JSON.parse(raw); } catch { return []; }
+  }
+  return [];
+};
 
-async function fetchOrdered(statusVal){var result=await sb.from('listing').select('id, year, make, model, trim, mileage, special_features, title_status, condition, description, city, vin, price, images, status, vehicle_type, position, updated_at, created_at').eq('status',statusVal).order('position',{ascending:false}).order('updated_at',{ascending:false}).limit(1000);if(result.error){console.error(result.error);return[]}return result.data||[]}
+const normalize = p => (p && p.startsWith('/')) ? p.substring(1) : (p || '');
 
-function isElectric(item){var make=(item.make||'').toLowerCase();var model=(item.model||'').toLowerCase();var vt=(item.vehicle_type||'').toLowerCase();return make==='tesla'||vt.includes('ev')||vt.includes('electric')||model.includes('model 3')||model.includes('model s')||model.includes('model x')||model.includes('model y')}
+const publicImageUrls = (images) => {
+  if (!images || images.length === 0) return [];
+  return images.map(p => {
+    if (p.startsWith('http')) return p;
+    const clean = normalize(p);
+    return `${url}/storage/v1/object/public/images/${clean}`;
+  });
+};
 
-(async function(){
-  var inv=document.getElementById('inventory');
-  var live=await fetchOrdered('live');
-  var sold=await fetchOrdered('sold');
-  var electric=live.filter(isElectric);
-  var other=live.filter(function(c){return!isElectric(c)});
-  var html='';
-  if(electric.length){html+='<div class="divider">Electric Vehicles</div>';html+=electric.map(cardHTML).join('')}
-  if(other.length){html+='<div class="divider">Other Vehicles</div>';html+=other.map(cardHTML).join('')}
-  if(sold.length){html+='<div class="divider">Sold</div>';html+=sold.map(cardHTML).join('')}
-  inv.innerHTML=html||'<p style="color:#fff;">No vehicles available at the moment.</p>'
+const chooseUrl = (images) => {
+  const urls = publicImageUrls(parseImages(images));
+  return urls.length > 0 ? urls[0] : 'https://itsevtime.com/og-card.png';
+};
+
+const cardHTML = (item) => {
+  const img = chooseUrl(item.images);
+  const title = [item.year, item.make, item.model, item.trim].filter(Boolean).join(' ');
+  const leftMeta = [
+    item.mileage ? `${item.mileage.toLocaleString()} mi` : '',
+    item.title_status ? `Title: ${item.title_status}` : '',
+    item.condition ? `Cond: ${item.condition}` : ''
+  ].filter(Boolean).join(' • ');
+  const price = item.price ? `$${item.price.toLocaleString()}` : 'Contact';
+  const soldBadge = item.status === 'sold' ? '<span class="sold-badge">SOLD</span>' : '';
+  
+  return `
+    <div class="card">
+      <img src="${esc(img)}" alt="${esc(title)}" class="card-img"/>
+      <div class="card-title">${esc(title)} ${soldBadge}</div>
+      <div class="card-meta">${esc(leftMeta)}</div>
+      <div class="card-price">${esc(price)}</div>
+      <a href="./listing.html?id=${item.id}" class="card-btn">View details</a>
+    </div>
+  `;
+};
+
+const isElectric = (item) => {
+  const make = (item.make || '').toLowerCase();
+  const vtype = (item.vehicle_type || '').toLowerCase();
+  const model = (item.model || '').toLowerCase();
+  
+  if (make === 'tesla') return true;
+  if (vtype.includes('ev') || vtype.includes('electric')) return true;
+  if (model.includes('model 3') || model.includes('model s') || 
+      model.includes('model x') || model.includes('model y')) return true;
+  return false;
+};
+
+const fetchOrdered = async (statusVal) => {
+  const { data, error } = await sb
+    .from('listing')
+    .select('id, year, make, model, trim, mileage, title_status, condition, price, images, status, vehicle_type, position, updated_at, created_at')
+    .eq('status', statusVal)
+    .order('position', { ascending: false })
+    .order('updated_at', { ascending: false })
+    .limit(1000);
+  if (error) { console.error(error); return []; }
+  return data || [];
+};
+
+(async () => {
+  const live = await fetchOrdered('live');
+  const sold = await fetchOrdered('sold');
+  
+  const electric = live.filter(isElectric);
+  const other = live.filter(i => !isElectric(i));
+  
+  let html = '';
+  
+  if (electric.length > 0) {
+    html += '<div class="divider">Electric Vehicles</div><div class="list">';
+    electric.forEach(item => { html += cardHTML(item); });
+    html += '</div>';
+  }
+  
+  if (other.length > 0) {
+    html += '<div class="divider">Other Vehicles</div><div class="list">';
+    other.forEach(item => { html += cardHTML(item); });
+    html += '</div>';
+  }
+  
+  if (sold.length > 0) {
+    html += '<div class="divider">Sold</div><div class="list">';
+    sold.forEach(item => { html += cardHTML(item); });
+    html += '</div>';
+  }
+  
+  if (html === '') {
+    html = '<div class="card">No vehicles available at the moment.</div>';
+  }
+  
+  document.getElementById('mount').innerHTML = html;
 })();
+
+// Load header/footer
+fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
 </script>
 <script src="/app.js"></script>
 </body>
