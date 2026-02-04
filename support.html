@@ -4,243 +4,237 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Support — E.V.Time</title>
-<meta name="description" content="Contact EVTime support. 24/7 chat available. Email response within 24 hours. FAQ covering buying, selling, escrow, DMV services, and account questions."/>
+<meta name="description" content="Get help with buying, selling, escrow, DMV services, and account questions. 24/7 chat available. Email response within 24 hours."/>
 <meta name="theme-color" content="#0b0a09"/>
 
-<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-
+<!-- Open Graph -->
 <meta property="og:title" content="Support — E.V.Time"/>
-<meta property="og:description" content="We're here to help. Get answers fast or reach out directly. 24/7 chat support available."/>
+<meta property="og:description" content="Get help with buying, selling, escrow, DMV services, and account questions. 24/7 chat available."/>
 <meta property="og:image" content="https://itsevtime.com/og-card.png"/>
 <meta property="og:url" content="https://itsevtime.com/support.html"/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
 
-<link rel="stylesheet" href="./styles.css">
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="./styles.css"/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8KQ638R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Q8KQ638R');
+</script>
 
 <style>
-#header-placeholder{position:sticky;top:0;z-index:100}
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-.hero{padding:16px 12px}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
-.hlite{background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));border:1px solid rgba(201,140,91,.55);box-shadow:0 6px 22px rgba(201,140,91,.25)}
-h1{margin:6px 0 8px;font-size:24px}
-h2{margin:4px 0 8px;font-size:18px}
-h3{margin:12px 0 6px;font-size:16px;color:var(--copper-dark)}
-p{margin:6px 0 8px}
-.muted{color:#78716c}
-.badge{display:inline-block;background:var(--copper-soft);border:1px solid var(--copper);color:var(--copper-dark);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-top:8px}
-form label{display:block;margin-top:12px;font-weight:700;font-size:14px}
-form input,form textarea,form select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px}
-form textarea{resize:vertical;min-height:100px}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800;color:#111;transition:.15s}
-.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
-.btn.primary:hover{background:var(--copperDark);color:#fff}
-.success{color:#16a34a;margin-top:8px;font-weight:700}
-.error{color:#b91c1c;margin-top:8px;font-weight:700}
-.faq{background:#f8f7f6;border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
-.faq-q{font-weight:700;color:#292524;margin-bottom:6px}
-.faq-a{color:#57534e;font-size:14px;line-height:1.5}
-.faq-a a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-.faq-a a:hover{border-bottom-style:solid}
-.contact-methods{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.contact-methods a{display:inline-flex;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:#111;background:#fff;font-size:14px;transition:.15s}
-.contact-methods a:hover{background:#f8f7f6}
-.footer{border-top:1px solid var(--line);background:#fff;margin-top:12px}
-.footer .wrap{padding:16px 12px;color:#44403c;font-size:13px}
-.footer a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-.footer a:hover{border-bottom-style:solid}
-.hours{background:#fef3c7;border:1px solid #fbbf24;border-radius:10px;padding:12px;margin:12px 0;font-size:14px}
-.hours strong{color:#92400e}
-@media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 24px; }
+.card { background: var(--bg-light); border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin: 12px 0; }
+h1 { font-size: 32px; font-weight: 700; color: var(--text); margin: 16px 0; }
+h2 { font-size: 24px; font-weight: 700; color: var(--text); margin: 16px 0; }
+h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0 8px; }
+.hero { text-align: center; padding: 40px 20px; }
+.hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+.badge { display: inline-block; background: #4CAF50; color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 600; margin: 12px 0; }
+.contact-info { background: #f5f0e8; padding: 20px; border-radius: 12px; margin: 20px 0; }
+.contact-info a { color: var(--copper); text-decoration: none; font-weight: 600; }
+.contact-info a:hover { text-decoration: underline; }
+input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+textarea { min-height: 120px; resize: vertical; }
+label { display: block; font-weight: 600; margin-top: 16px; }
+.required { color: #c98c5b; }
+.btn-submit { width: 100%; background: var(--copper); color: #fff; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+.btn-submit:hover { opacity: 0.9; }
+.form-msg { padding: 14px; border-radius: 8px; margin: 16px 0; display: none; }
+.form-msg.success { background: #d4edda; color: #155724; display: block; }
+.form-msg.error { background: #f8d7da; color: #721c24; display: block; }
+.faq-item { margin: 20px 0; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.faq-item:last-child { border-bottom: none; }
+.faq-question { font-weight: 600; margin-bottom: 8px; }
+.cta-center { text-align: center; margin: 32px 0; }
+.btn-email { display: inline-block; background: var(--copper); color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+.btn-email:hover { opacity: 0.9; }
+@media (max-width: 768px) {
+  .hero-title { font-size: 28px; }
+}
 </style>
 </head>
-
 <body data-page="support">
 
 <div id="header-placeholder"></div>
 
-<div class="wrap hero">
-  <div class="card hlite">
-    <h1>Support Center</h1>
-    <p class="muted">We're here to help. Get answers fast or reach out directly.</p>
-    <span class="badge">✓ 24/7 Chat Available</span>
+<div class="wrap">
+  <div class="card hero">
+    <h1 class="hero-title">Support Center</h1>
+    <p style="font-size: 18px; color: var(--text-muted);">We're here to help</p>
+    <div class="badge">💬 24/7 Live Chat Available</div>
   </div>
 
   <div class="card">
     <h2>Contact Us</h2>
-    <div class="hours">
-      <strong>Email Response Time:</strong> Within 24 hours (usually much faster)<br>
-      <strong>Live Chat:</strong> Available 24/7 — click <strong>Chat</strong> in the header
+    <div class="contact-info">
+      <p><strong>Email:</strong> <a href="mailto:welcome.evtime@gmail.com">welcome.evtime@gmail.com</a></p>
+      <p><strong>Response Time:</strong> Within 24 hours</p>
+      <p><strong>Live Chat:</strong> Available 24/7 (see chat widget)</p>
     </div>
-    <div class="contact-methods">
-      <a href="mailto:welcome.evtime@gmail.com">✉️ welcome.evtime@gmail.com</a>
-    </div>
-    <p style="margin-top:12px;font-size:14px;color:#78716c">Need instant help? Click <strong>Chat</strong> in the header to talk with our AI assistant 24/7.</p>
   </div>
 
   <div class="card">
     <h2>Send Us a Message</h2>
-    <p>For detailed inquiries, use the form below. We'll get back to you within 24 hours.</p>
-
     <form id="contactForm">
-      <label for="name">Name *</label>
-      <input id="name" type="text" required autocomplete="name">
-
-      <label for="email">Email *</label>
-      <input id="email" type="email" required autocomplete="email">
-
-      <label for="phone">Phone (optional)</label>
-      <input id="phone" type="tel" autocomplete="tel">
-
-      <label for="category">Category *</label>
+      <label>Name <span class="required">*</span></label>
+      <input type="text" id="name" required placeholder="Your name"/>
+      
+      <label>Email <span class="required">*</span></label>
+      <input type="email" id="email" required placeholder="your@email.com"/>
+      
+      <label>Phone</label>
+      <input type="tel" id="phone" placeholder="Optional"/>
+      
+      <label>Category <span class="required">*</span></label>
       <select id="category" required>
-        <option value="">Select a category...</option>
+        <option value="">Select a category</option>
         <option value="buying">Buying a Vehicle</option>
         <option value="selling">Selling a Vehicle</option>
         <option value="escrow">Escrow Services</option>
         <option value="dmv">DMV Services</option>
-        <option value="listing">Listing Issue</option>
+        <option value="listing">Listing Question</option>
         <option value="account">Account / Login</option>
-        <option value="payment">Payment / Billing</option>
+        <option value="payment">Payment Issue</option>
         <option value="other">Other</option>
       </select>
-
-      <label for="subject">Subject *</label>
-      <input id="subject" type="text" required placeholder="Brief description of your issue">
-
-      <label for="message">Message *</label>
-      <textarea id="message" required placeholder="Provide as much detail as possible..."></textarea>
-
-      <button type="submit" class="btn primary" style="margin-top:14px;width:100%">Send Message</button>
-      <div id="formMsg" role="status" aria-live="polite"></div>
+      
+      <label>Subject <span class="required">*</span></label>
+      <input type="text" id="subject" required placeholder="Brief summary"/>
+      
+      <label>Message <span class="required">*</span></label>
+      <textarea id="message" required placeholder="Tell us how we can help..."></textarea>
+      
+      <button type="submit" class="btn-submit">Send Message</button>
+      <div id="formMsg" class="form-msg" role="alert" aria-live="polite"></div>
     </form>
   </div>
 
   <div class="card">
     <h2>Frequently Asked Questions</h2>
-
-    <div class="faq">
-      <div class="faq-q">How long does it take to get an offer on my car?</div>
-      <div class="faq-a">Usually within 1–2 business hours. A real specialist reviews your info and texts you a number — no computer-generated quotes.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">How long does it take to get an offer?</div>
+      <p>Usually 1–2 business hours. We use real specialists, not automated quotes, so you get an honest evaluation.</p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">What is escrow and do I need it?</div>
-      <div class="faq-a">Escrow is a secure payment method where funds are held by a third party until the deal is complete. It's optional but highly recommended for buyer and seller protection. <a href="./escrow.html">Learn more about our escrow services</a>.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">What is escrow and do I need it?</div>
+      <p>Escrow is a secure third-party service that holds funds until both parties meet agreed terms. It's optional but highly recommended for safe transactions. <a href="./escrow.html">Learn more about escrow →</a></p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">How do DMV services work?</div>
-      <div class="faq-a">Our licensed DMV specialist handles title transfers, registration, plates, lien releases, and all documentation. We streamline the entire process so you don't have to wait in line or deal with confusing paperwork. <a href="./dmv.html">Learn more about DMV services</a>.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Do you handle DMV paperwork?</div>
+      <p>Yes! We have a licensed DMV specialist on staff who handles title transfers, registration, plates, lien releases, and more. <a href="./dmv.html">See DMV services →</a></p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">Can I buy or sell a car from out of state?</div>
-      <div class="faq-a">Yes! We handle out-of-state transfers, including title work, registration, and compliance with both states' requirements.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Can I buy or sell a car from out of state?</div>
+      <p>Absolutely. We coordinate out-of-state transfers regularly and handle all multi-state documentation.</p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">How much does it cost to list my car?</div>
-      <div class="faq-a">Listing on E.V.Time is 100% free. We only take a small commission when your car sells.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">How much does it cost to list my car?</div>
+      <p>Listing is 100% free. We only take a small commission when your vehicle sells.</p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">Is my personal information safe?</div>
-      <div class="faq-a">Yes. We never sell your data or share it with third parties. All transactions use secure, encrypted connections. <a href="./legal.html">Read our privacy policy</a>.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Is my data safe?</div>
+      <p>Yes. We do not sell personal information. All connections are encrypted. <a href="./legal.html">Read our privacy policy →</a></p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">What if I have an issue with a buyer or seller?</div>
-      <div class="faq-a">Contact us immediately at <a href="mailto:welcome.evtime@gmail.com">welcome.evtime@gmail.com</a> or use the contact form above. Our team will mediate and help resolve disputes fairly.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">What if there's a dispute?</div>
+      <p>Contact us immediately at <a href="mailto:welcome.evtime@gmail.com">welcome.evtime@gmail.com</a> or use this form. Our team will mediate and work toward a fair resolution.</p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">Do you offer financing?</div>
-      <div class="faq-a">Not directly, but we can connect you with trusted lending partners. Contact us for details.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Do you offer financing?</div>
+      <p>We don't provide financing directly, but we can connect you with trusted lending partners.</p>
     </div>
-
-    <div class="faq">
-      <div class="faq-q">Can I cancel a transaction?</div>
-      <div class="faq-a">It depends on the stage. Before funds are released via escrow, cancellations are typically possible. Contact us ASAP if you need to cancel.</div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Can I cancel a transaction?</div>
+      <p>Yes, before funds are released from escrow. Contact us ASAP if you need to cancel.</p>
     </div>
   </div>
 
   <div class="card">
-    <h2>Still Have Questions?</h2>
-    <p>Can't find what you're looking for? Our team is standing by.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-      <a class="btn primary" href="mailto:welcome.evtime@gmail.com">Send Email</a>
+    <div class="cta-center">
+      <h2>Still Have Questions?</h2>
+      <p style="margin: 16px 0;">Our team is standing by to help.</p>
+      <a href="mailto:welcome.evtime@gmail.com" class="btn-email">📧 Send Email</a>
     </div>
   </div>
 </div>
 
-<footer class="footer">
-  <div class="wrap">
-    &copy; <span id="yr"></span> E.V.Time &middot; <a href="./legal.html">Legal &amp; Disclosures</a>
-  </div>
-</footer>
+<div id="footer-placeholder"></div>
 
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<script src="./search.js"></script>
 <script>
-fetch('./header.html')
-  .then(function(r){ return r.text(); })
-  .then(function(h){ document.getElementById('header-placeholder').innerHTML = h; });
+const url = window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co';
+const anonKey = window.SUPABASE_ANON_KEY || '';
+const sb = anonKey ? supabase.createClient(url, anonKey) : null;
 
-document.getElementById('yr').textContent = new Date().getFullYear();
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const category = document.getElementById('category').value;
+  const subject = document.getElementById('subject').value.trim();
+  const message = document.getElementById('message').value.trim();
+  
+  if (!name || !email || !category || !subject || !message) {
+    showMsg('Please fill all required fields.', 'error');
+    return;
+  }
+  
+  const combinedMessage = `[SUPPORT CONTACT]\nCategory: ${category}\nSubject: ${subject}\n\n${message}`;
+  
+  if (!sb) {
+    showMsg('Supabase not configured. Please email welcome.evtime@gmail.com directly.', 'error');
+    return;
+  }
+  
+  try {
+    const { error } = await sb.from('leads').insert([{
+      listing_id: null,
+      name,
+      phone,
+      email,
+      message: combinedMessage
+    }], { returning: 'minimal' });
+    
+    if (error) throw error;
+    
+    showMsg('Message sent! We will respond within 24 hours.', 'success');
+    document.getElementById('contactForm').reset();
+  } catch (err) {
+    console.error(err);
+    showMsg('Error sending message. Please email welcome.evtime@gmail.com', 'error');
+  }
+});
 
-var SUPABASE_URL = (window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co').trim();
-var SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || '').trim();
-
-var supabase = null;
-if (window.supabase && SUPABASE_ANON_KEY) {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+function showMsg(msg, type) {
+  const el = document.getElementById('formMsg');
+  el.textContent = msg;
+  el.className = 'form-msg ' + type;
 }
 
-document.getElementById('contactForm').onsubmit = async function(e){
-  e.preventDefault();
-  var formMsg = document.getElementById('formMsg');
-
-  var name = document.getElementById('name').value.trim();
-  var email = document.getElementById('email').value.trim();
-  var phone = document.getElementById('phone').value.trim();
-  var category = document.getElementById('category').value;
-  var subject = document.getElementById('subject').value.trim();
-  var message = document.getElementById('message').value.trim();
-
-  if(!name || !email || !category || !subject || !message){
-    formMsg.textContent = 'Please fill in all required fields.';
-    formMsg.className = 'error';
-    return;
-  }
-
-  var combinedMessage = '[SUPPORT CONTACT]\nCategory: ' + category + '\nSubject: ' + subject + '\n\n' + message;
-
-  if(!supabase){
-    formMsg.textContent = 'Contact form is not configured yet. Please use email instead.';
-    formMsg.className = 'error';
-    return;
-  }
-
-  var result = await supabase.from('leads').insert(
-    { listing_id: null, name: name, phone: phone, email: email, message: combinedMessage },
-    { returning: 'minimal' }
-  );
-
-  if(result.error){
-    formMsg.textContent = 'Could not submit. Please try email instead.';
-    formMsg.className = 'error';
-  } else {
-    formMsg.textContent = 'Message sent! We will respond within 24 hours.';
-    formMsg.className = 'success';
-    e.target.reset();
-  }
-};
+// Load header/footer
+fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
 </script>
-
-<script src="/search.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>
