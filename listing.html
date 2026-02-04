@@ -3,106 +3,376 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>EVTime — Vehicle Details</title>
-<meta name="description" content="View vehicle details, photos, pricing, and contact our team. Licensed DMV services and secure escrow available for all purchases."/>
+<title>Vehicle Details — E.V.Time</title>
+<meta name="description" content="View vehicle details, photos, and contact our team for more information."/>
 <meta name="theme-color" content="#0b0a09"/>
-<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 
-<link rel="stylesheet" href="./styles.css">
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="./styles.css"/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q8KQ638R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Q8KQ638R');
+</script>
 
 <style>
-#header-placeholder{position:sticky;top:0;z-index:100}
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;overflow:visible;box-shadow:0 4px 20px rgba(0,0,0,.06)}
-.hero{position:relative;background:#000;border-top-left-radius:14px;border-top-right-radius:14px;overflow:hidden;border-bottom:1px solid var(--line)}
-.hero-frame{position:relative;background:#000;border:1px solid var(--copper);border-radius:12px;margin:12px;overflow:hidden}
-.slide{width:100%;height:60vh;max-height:72vh;min-height:320px;display:flex;align-items:center;justify-content:center;background:#000}
-.slide img,.slide video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
-.play-overlay{position:absolute;inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:999px;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid rgba(255,255,255,.9)}
-.play-overlay:after{content:"";display:block;border-style:solid;border-width:12px 0 12px 18px;border-color:transparent transparent transparent #fff;margin-left:4px}
-.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border:none;border-radius:999px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.25)}
-.carousel-btn:hover{background:rgba(255,255,255,.22)}
-.nav-prev{left:16px}
-.nav-next{right:16px}
-.dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;justify-content:center;align-items:center}
-.dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer}
-.dot.active{background:#fff}
-@media(hover:hover){.dot:hover{background:rgba(255,255,255,.6)}}
-.sold{position:absolute;top:18px;left:18px;background:rgba(0,0,0,.75);color:#fff;padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px;letter-spacing:.03em}
-.body{padding:14px 16px 18px}
-.title{font-weight:900;font-size:20px;color:var(--text)}
-.price{font-weight:900;color:#0b0a09;background:var(--copper);padding:2px 10px;border-radius:999px;display:inline-block;margin-top:6px}
-.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.badge{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 8px;background:#f8f8f8}
-.meta{margin-top:8px;color:#57534e;font-weight:700;font-size:13px;display:flex;gap:14px;flex-wrap:wrap}
-.desc{margin-top:10px;color:#44403c;font-size:14px;white-space:pre-wrap}
-.actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;text-decoration:none;color:#111;cursor:pointer;transition:.15s}
-.btn.primary{background:var(--copper);border-color:transparent;color:#0b0a09}
-.btn.primary:hover{background:var(--copper-dark);color:#fff}
-.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;z-index:9998}
-.drawer{position:fixed;top:0;right:-420px;width:380px;max-width:92vw;height:100%;background:var(--bg-light);box-shadow:-6px 0 28px rgba(0,0,0,.18);transition:right .3s ease;z-index:9999;display:flex;flex-direction:column;border-left:1px solid var(--line)}
-.drawer.open{right:0}
-.drawer-backdrop.open{display:block}
-.drawer-header{padding:16px;border-bottom:1px solid var(--line)}
-.drawer-header h3{margin:0;font-size:18px;color:var(--text)}
-.drawer-sub{color:var(--muted);font-size:13px}
-.drawer-tabs{display:flex;border-bottom:1px solid var(--line)}
-.drawer-tab{flex:1;padding:12px;text-align:center;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
-.drawer-tab.active{border-color:var(--copper);color:var(--copper-dark)}
-.drawer-body{flex:1;overflow:auto;padding:16px}
-.drawer-footer{border-top:1px solid var(--line);padding:12px;text-align:center;font-size:13px;color:var(--muted)}
-.contact-buttons{display:flex;flex-direction:column;gap:10px}
-.contact-buttons a{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:800;border:1px solid var(--line);color:#111;background:#fff}
-.contact-buttons a.call{background:var(--copper);color:#0b0a09;border-color:transparent}
-.copy-links{margin-top:8px;text-align:center}
-.copy-links button{border:none;background:none;color:var(--copper-dark);cursor:pointer;font-size:13px}
-form label{display:block;margin-top:12px;font-weight:700;color:var(--text)}
-form input,form textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px}
-form textarea{resize:vertical}
-.financing{display:flex;align-items:center;gap:8px;margin-top:12px}
-.financing input{width:auto}
-.success{color:#0a7;margin-top:8px;font-weight:700}
-.back{margin:10px 0 0}
-.back a{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
-@media(max-width:768px){.title{font-size:18px}.price{font-size:16px}}
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 24px; }
+.card { background: var(--bg-light); border: 1px solid var(--line); border-radius: 14px; padding: 24px; margin: 12px 0; }
+.back-link { display: inline-block; color: var(--copper); text-decoration: none; margin-bottom: 16px; font-weight: 600; }
+.back-link:hover { text-decoration: underline; }
+.hero { width: 100%; max-height: 500px; object-fit: contain; background: #f5f0e8; border-radius: 12px; margin-bottom: 16px; }
+.video-player { width: 100%; border-radius: 12px; margin-bottom: 16px; }
+.title { font-size: 32px; font-weight: 700; margin: 16px 0; color: var(--text); }
+.price { font-size: 28px; font-weight: 700; color: var(--copper); margin: 8px 0; }
+.badge { display: inline-block; background: #e8e5f3; color: #333; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; margin: 4px 8px 4px 0; }
+.sold-badge { background: #666; color: #fff; }
+.meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+.meta-item { font-size: 14px; }
+.meta-label { font-weight: 600; color: var(--text-muted); }
+.meta-value { color: var(--text); margin-top: 4px; }
+.description { line-height: 1.6; margin: 16px 0; white-space: pre-wrap; }
+.btn-primary { display: inline-block; background: var(--copper); color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 16px; cursor: pointer; border: none; font-size: 16px; }
+.btn-primary:hover { opacity: 0.9; }
+.drawer { position: fixed; top: 0; right: -100%; width: 400px; max-width: 90%; height: 100vh; background: #fff; box-shadow: -2px 0 12px rgba(0,0,0,0.2); transition: right 0.3s ease; z-index: 1000; overflow-y: auto; }
+.drawer.open { right: 0; }
+.drawer-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); z-index: 999; display: none; }
+.drawer-overlay.open { display: block; }
+.drawer-header { padding: 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.drawer-close { background: none; border: none; font-size: 24px; cursor: pointer; }
+.drawer-content { padding: 20px; }
+.tabs { display: flex; border-bottom: 2px solid var(--line); margin-bottom: 20px; }
+.tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 600; border-bottom: 3px solid transparent; }
+.tab.active { border-bottom-color: var(--copper); color: var(--copper); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.quick-contact { display: flex; flex-direction: column; gap: 12px; }
+.contact-btn { padding: 12px; text-align: center; border-radius: 8px; font-weight: 600; text-decoration: none; display: block; }
+.contact-call { background: #4CAF50; color: #fff; }
+.contact-text { background: #2196F3; color: #fff; }
+.contact-email { background: var(--copper); color: #fff; }
+input, textarea, select { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px; margin: 8px 0; font-size: 14px; font-family: inherit; }
+textarea { min-height: 100px; resize: vertical; }
+label { display: block; font-weight: 600; margin-top: 12px; }
+.checkbox-label { display: flex; align-items: center; gap: 8px; font-weight: normal; }
+.checkbox-label input { width: auto; }
+.form-msg { padding: 12px; border-radius: 6px; margin: 12px 0; }
+.form-msg.success { background: #d4edda; color: #155724; }
+.form-msg.error { background: #f8d7da; color: #721c24; }
+.gallery { position: relative; }
+.gallery-controls { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); padding: 0 12px; pointer-events: none; }
+.gallery-btn { background: rgba(0,0,0,0.5); color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; pointer-events: all; font-size: 20px; }
+.gallery-btn:hover { background: rgba(0,0,0,0.7); }
+.gallery-dots { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; cursor: pointer; }
+.dot.active { background: var(--copper); }
+@media (max-width: 768px) {
+  .drawer { width: 100%; }
+  .title { font-size: 24px; }
+  .price { font-size: 22px; }
+}
 </style>
 </head>
-<body data-page="listing">
+<body>
 
 <div id="header-placeholder"></div>
 
 <div class="wrap">
-  <div class="back"><a href="./share.html">← Back to inventory</a></div>
+  <a href="./share.html" class="back-link">← Back to inventory</a>
   <div id="mount"></div>
 </div>
 
 <div id="footer-placeholder"></div>
 
-<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<!-- Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-header">
-    <h3>EVTime Concierge</h3>
-    <div class="drawer-sub">Real humans. Fast replies.</div>
+    <h3>Contact Concierge</h3>
+    <button class="drawer-close" id="drawerClose">×</button>
   </div>
-  <div class="drawer-tabs">
-    <div class="drawer-tab active" data-tab="contact">Quick Contact</div>
-    <div class="drawer-tab" data-tab="form">Contact an Advisor</div>
+  <div class="drawer-content">
+    <div class="tabs">
+      <div class="tab active" data-tab="quick">Quick Contact</div>
+      <div class="tab" data-tab="advisor">Contact an Advisor</div>
+    </div>
+    
+    <div class="tab-panel active" id="quickPanel">
+      <div class="quick-contact">
+        <a href="tel:+1234567890" class="contact-btn contact-call">📞 Call Now</a>
+        <a href="sms:+1234567890" class="contact-btn contact-text">💬 Text Now</a>
+        <button class="contact-btn contact-email" id="copyEmail">📧 Email Concierge</button>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
+          Email: welcome.evtime@gmail.com<br/>
+          <button id="copyMessage" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Copy Message Template</button>
+        </p>
+      </div>
+    </div>
+    
+    <div class="tab-panel" id="advisorPanel">
+      <form id="advisorForm">
+        <label>Name *</label>
+        <input type="text" id="advName" required/>
+        
+        <label>Phone</label>
+        <input type="tel" id="advPhone"/>
+        
+        <label>Email</label>
+        <input type="email" id="advEmail"/>
+        
+        <label>Message *</label>
+        <textarea id="advMessage" required placeholder="I'm interested in this vehicle..."></textarea>
+        
+        <label class="checkbox-label">
+          <input type="checkbox" id="advFinancing"/>
+          I need financing assistance
+        </label>
+        
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 16px;">Send Message</button>
+        <div id="advFormMsg" class="form-msg" style="display: none;"></div>
+      </form>
+    </div>
   </div>
-  <div class="drawer-body" id="drawerBody"></div>
-  <div class="drawer-footer">We usually respond within 1 business hour.</div>
 </div>
 
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="./search.js"></script>
-
 <script>
-fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
-fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
+const url = window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co';
+const anonKey = window.SUPABASE_ANON_KEY || '';
+const sb = supabase.createClient(url, anonKey);
 
-(function(){var SUPABASE_URL=(window.SUPABASE_URL||'https://tgkvhmxrftcegpryptwq.supabase.co').trim(),SUPABASE_ANON_KEY=(window.SUPABASE_ANON_KEY||'').trim(),supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),$=function(id){return document.getElementById(id)};var esc=function(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};function parseImages(images){if(!images)return[];if(Array.isArray(images))return images;var s=String(images||'').trim();if(s.startsWith('[')){try{return JSON.parse(s)||[]}catch(e){return[]}}return s.split(',').map(function(v){return v.trim()}).filter(Boolean)}function normalize(path){return String(path||'').trim().replace(/^\/+/,'').replace(/^(images\/)+/i,'')}function publicImageUrls(path){var s=String(path||'').trim().replace(/^\/+/,'');if(!s)return[];var candidates=[];if(/^images\/images\//i.test(s))candidates.push(s.replace(/^images\/images\//i,'images/'));candidates.push(s);candidates.push(s.replace(/^images\//i,''));if(!/^images\//i.test(s))candidates.push('images/'+s);var uniq=[...new Set(candidates)];return uniq.map(function(p){var result=supabase.storage.from('images').getPublicUrl(p);return(result.data&&result.data.publicUrl)||null}).filter(Boolean)}function preload(url){if(!url)return;var im=new Image();im.decoding='async';im.loading='eager';im.src=url}function pauseAllVideos(){document.querySelectorAll('video').forEach(function(v){try{v.pause()}catch(e){}})}var mount=$('mount'),id=new URLSearchParams(location.search).get('id');if(!id){mount.innerHTML='<div class="card body" style="padding:16px">Missing listing id.</div>';return}(async function(){var result=await supabase.from('listing').select('*').eq('id',id).single(),data=result.data,error=result.error;if(error||!data){mount.innerHTML='<div class="card body" style="padding:16px">Listing not found.</div>';return}var title=[data.year,data.make,data.model,data.trim].filter(Boolean).join(' ');document.title='EVTime — '+title;var paths=parseImages(data.images).map(normalize),imageUrls=paths.map(function(p){return publicImageUrls(p)[0]||null}).filter(Boolean),heroUrl=imageUrls[0]||'og-card.png';if(imageUrls[1])preload(imageUrls[1]);var hasVideo=!!data.video,posterCandidate=data.video_poster||imageUrls[0]||null,media=imageUrls.map(function(u){return{kind:'img',src:u}});if(hasVideo)media.push({kind:'video',src:data.video,poster:posterCandidate});var leftMeta=[data.mileage?Number(data.mileage).toLocaleString()+' mi':null,data.title_status?'Title: '+data.title_status:null,data.condition?'Cond: '+data.condition:null].filter(Boolean).join(' • '),priceText=(data.price!=null&&data.price!=='')?'$'+Number(data.price).toLocaleString():'',sold=String(data.status||'').toLowerCase()==='sold'?'<div class="sold">SOLD</div>':'';mount.innerHTML='<div class="card"><div class="hero">'+sold+'<div class="hero-frame"><div class="slide" id="slideHost"><img id="heroImg" src="'+esc(heroUrl)+'" alt="'+esc(title)+'" decoding="async"></div>'+(media.length>1?'<button class="carousel-btn nav-prev" id="prevBtn" aria-label="Previous image">‹</button><button class="carousel-btn nav-next" id="nextBtn" aria-label="Next image">›</button><div class="dots" id="dots"></div>':'')+'</div></div><div class="body"><div class="title">'+esc(title)+'</div>'+(priceText?'<div class="price">'+esc(priceText)+'</div>':'')+'<div class="badges">'+(data.vehicle_type?'<div class="badge">'+esc(String(data.vehicle_type).toUpperCase())+'</div>':'')+(data.city?'<div class="badge">'+esc(data.city)+'</div>':'')+(data.vin?'<div class="badge">VIN: '+esc(data.vin)+'</div>':'')+'</div><div class="meta">'+esc(leftMeta)+'</div>'+(data.special_features?'<div class="desc"><strong>Features:</strong> '+esc(data.special_features)+'</div>':'')+(data.description?'<div class="desc">'+esc(data.description)+'</div>':'')+'<div class="actions"><button class="btn primary" id="advisorBtn" type="button">Contact an Advisor</button><a class="btn" href="./share.html">Back</a></div></div></div>';var idx=0,slideHost=document.getElementById('slideHost'),prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn'),dotsEl=document.getElementById('dots');function renderDots(){if(!dotsEl)return;dotsEl.innerHTML=media.map(function(m,i){return'<div class="dot'+(i===idx?' active':'')+'" data-i="'+i+'" title="'+(m.kind==='video'?'Video':'Photo')+'"></div>'}).join('')}function buildSlide(item){pauseAllVideos();slideHost.innerHTML='';if(item.kind==='img'){var im=document.createElement('img');im.alt=title;im.decoding='async';im.src=item.src;slideHost.appendChild(im)}else{var wrap=document.createElement('div');wrap.style.position='relative';wrap.style.width='100%';wrap.style.height='100%';var vid=document.createElement('video');vid.setAttribute('playsinline','');vid.setAttribute('muted','');vid.muted=true;vid.volume=0;vid.preload='metadata';vid.poster=item.poster||'';vid.src=item.src;vid.controls=false;vid.addEventListener('volumechange',function(){if(vid.volume!==0)vid.volume=0;if(!vid.muted)vid.muted=true});var play=document.createElement('div');play.className='play-overlay';play.addEventListener('click',async function(){try{vid.controls=true;await vid.play();play.style.display='none'}catch(e){}});wrap.appendChild(vid);wrap.appendChild(play);slideHost.appendChild(wrap)}}function show(i){if(!media.length)return;idx=(i+media.length)%media.length;var item=media[idx];slideHost.style.opacity='0';setTimeout(function(){buildSlide(item);slideHost.style.opacity='1'},120);var nextItem=media[(idx+1)%media.length];if(nextItem&&nextItem.kind==='img')preload(nextItem.src);renderDots()}if(media.length){if(media[0].kind==='img'){}else buildSlide(media[0])}if(dotsEl){renderDots();dotsEl.addEventListener('click',function(e){var d=e.target.closest('.dot');if(!d)return;show(Number(d.getAttribute('data-i')||0))})}if(prevBtn)prevBtn.onclick=function(){show(idx-1)};if(nextBtn)nextBtn.onclick=function(){show(idx+1)};var sx=null,sy=null;slideHost.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});slideHost.addEventListener('touchend',function(e){if(sx==null)return;var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){if(dx<0)show(idx+1);else show(idx-1)}sx=sy=null},{passive:true});var drawer=$('drawer'),backdrop=$('drawerBackdrop'),body=$('drawerBody'),tabs=[...drawer.querySelectorAll('.drawer-tab')];function openDrawer(tab){tab=tab||'contact';drawer.classList.add('open');backdrop.classList.add('open');setTab(tab)}function closeDrawer(){drawer.classList.remove('open');backdrop.classList.remove('open');pauseAllVideos()}backdrop.onclick=closeDrawer;document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});function setTab(tabName){tabs.forEach(function(t){t.classList.toggle('active',t.dataset.tab===tabName)});if(tabName==='contact')renderContact();else renderForm()}tabs.forEach(function(t){t.onclick=function(){setTab(t.dataset.tab)}});function renderContact(){var phone='+14244256211',smsBody=encodeURIComponent('Hi! I am interested in '+title),email='welcome.evtime@gmail.com';body.innerHTML='<div class="contact-buttons"><a class="call" href="tel:'+phone+'">Call Now</a><a class="text" href="sms:'+phone+'?body='+smsBody+'">Text Now</a><a class="email" href="https://mail.google.com/mail/?view=cm&fs=1&to='+email+'&su=EVTime%20Inquiry" target="_blank" onclick="if(!window.location.hostname.includes(\'mail.google.com\')){navigator.clipboard.writeText(\''+email+'\'); alert(\'Email address copied!\')}">Email Concierge</a></div><div class="copy-links"><button id="copyEmail">Copy email</button> • <button id="copyMsg">Copy message</button></div>';$('copyEmail').onclick=function(){navigator.clipboard.writeText(email);alert('Email copied.')};$('copyMsg').onclick=function(){navigator.clipboard.writeText('Hi! I am interested in '+title);alert('Message copied.')}}function renderForm(){body.innerHTML='<form id="advisorForm"><label>Name</label><input id="name" autocomplete="name" required><label>Phone</label><input id="phone" autocomplete="tel"><label>Email</label><input id="email" type="email" autocomplete="email"><label>Message</label><textarea id="msg" rows="4" placeholder="Hi! I am interested in '+esc(title)+'"></textarea><div class="financing"><input type="checkbox" id="financeChk"><label for="financeChk">I am interested in Financing</label></div><button class="btn primary" type="submit" style="margin-top:14px;">Send to Concierge</button><div id="formMsg" class="success" role="status" aria-live="polite"></div></form>';$('advisorForm').onsubmit=async function(e){e.preventDefault();var name=$('name').value.trim(),phone=$('phone').value.trim(),email=$('email').value.trim(),message=$('msg').value.trim(),financing=$('financeChk').checked;if(!phone&&!email){$('formMsg').textContent='Please enter a phone or email so we can reach you.';$('formMsg').style.color='#b00020';return}var combinedMessage=(financing?'[Financing: Yes] ':'[Financing: No] ')+message;var result=await supabase.from('leads').insert({listing_id:id,name:name,phone:phone,email:email,message:combinedMessage},{returning:'minimal'});if(result.error){$('formMsg').textContent='Could not send. Please try again.';$('formMsg').style.color='#b00020'}else{$('formMsg').textContent='Thanks! We received your note.';$('formMsg').style.color='#0a7';setTimeout(closeDrawer,1200);e.target.reset()}}}document.getElementById('advisorBtn').onclick=function(){openDrawer('form')}})()})();
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+
+if (!id) {
+  document.getElementById('mount').innerHTML = '<div class="card">Missing listing id.</div>';
+} else {
+  (async () => {
+    const { data, error } = await sb.from('listing').select('*').eq('id', id).single();
+    if (error || !data) {
+      document.getElementById('mount').innerHTML = '<div class="card">Listing not found.</div>';
+      return;
+    }
+    
+    const item = data;
+    const title = [item.year, item.make, item.model, item.trim].filter(Boolean).join(' ');
+    const price = item.price ? `$${item.price.toLocaleString()}` : 'Contact for price';
+    const soldBadge = item.status === 'sold' ? '<span class="badge sold-badge">SOLD</span>' : '';
+    
+    const parseImages = (raw) => {
+      if (Array.isArray(raw)) return raw;
+      if (typeof raw === 'string') {
+        try { return JSON.parse(raw); } catch { return []; }
+      }
+      return [];
+    };
+    
+    const normalize = p => (p && p.startsWith('/')) ? p.substring(1) : (p || '');
+    
+    const publicImageUrls = (images) => {
+      if (!images || images.length === 0) return [];
+      return images.map(p => {
+        if (p.startsWith('http')) return p;
+        const clean = normalize(p);
+        return `${url}/storage/v1/object/public/images/${clean}`;
+      });
+    };
+    
+    const imageUrls = publicImageUrls(parseImages(item.images));
+    let mediaHTML = '';
+    
+    if (imageUrls.length > 0) {
+      const hero = imageUrls[0];
+      mediaHTML = `<div class="gallery"><img src="${hero}" alt="${title}" class="hero" id="heroImg"/>`;
+      
+      if (imageUrls.length > 1) {
+        mediaHTML += `
+          <div class="gallery-controls">
+            <button class="gallery-btn" id="prevBtn">‹</button>
+            <button class="gallery-btn" id="nextBtn">›</button>
+          </div>
+          <div class="gallery-dots" id="dots"></div>
+        `;
+      }
+      mediaHTML += '</div>';
+      
+      // Preload second image
+      if (imageUrls.length > 1) {
+        const preload = new Image();
+        preload.src = imageUrls[1];
+      }
+    }
+    
+    const meta = `
+      <div class="meta-grid">
+        ${item.mileage ? `<div class="meta-item"><div class="meta-label">Mileage</div><div class="meta-value">${item.mileage.toLocaleString()} mi</div></div>` : ''}
+        ${item.title_status ? `<div class="meta-item"><div class="meta-label">Title Status</div><div class="meta-value">${item.title_status}</div></div>` : ''}
+        ${item.condition ? `<div class="meta-item"><div class="meta-label">Condition</div><div class="meta-value">${item.condition}</div></div>` : ''}
+        ${item.vehicle_type ? `<div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${item.vehicle_type}</div></div>` : ''}
+        ${item.city ? `<div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${item.city}</div></div>` : ''}
+        ${item.vin ? `<div class="meta-item"><div class="meta-label">VIN</div><div class="meta-value">${item.vin}</div></div>` : ''}
+      </div>
+    `;
+    
+    const description = item.description ? `<div class="description">${item.description}</div>` : '';
+    
+    const html = `
+      <div class="card">
+        ${mediaHTML}
+        <h1 class="title">${title} ${soldBadge}</h1>
+        <div class="price">${price}</div>
+        ${item.vehicle_type ? `<span class="badge">${item.vehicle_type}</span>` : ''}
+        ${item.city ? `<span class="badge">${item.city}</span>` : ''}
+        ${meta}
+        ${description}
+        <button class="btn-primary" id="contactBtn">Contact an Advisor</button>
+      </div>
+    `;
+    
+    document.getElementById('mount').innerHTML = html;
+    
+    // Gallery navigation
+    if (imageUrls.length > 1) {
+      let currentIndex = 0;
+      const heroImg = document.getElementById('heroImg');
+      const dotsContainer = document.getElementById('dots');
+      
+      imageUrls.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => showImage(i));
+        dotsContainer.appendChild(dot);
+      });
+      
+      const showImage = (index) => {
+        currentIndex = index;
+        heroImg.src = imageUrls[index];
+        document.querySelectorAll('.dot').forEach((d, i) => {
+          d.classList.toggle('active', i === index);
+        });
+      };
+      
+      document.getElementById('prevBtn').addEventListener('click', () => {
+        showImage((currentIndex - 1 + imageUrls.length) % imageUrls.length);
+      });
+      
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        showImage((currentIndex + 1) % imageUrls.length);
+      });
+      
+      // Touch swipe
+      let touchStartX = 0;
+      heroImg.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+      heroImg.addEventListener('touchend', e => {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) showImage((currentIndex + 1) % imageUrls.length);
+        if (touchEndX - touchStartX > 50) showImage((currentIndex - 1 + imageUrls.length) % imageUrls.length);
+      });
+    }
+    
+    // Drawer
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    
+    document.getElementById('contactBtn').addEventListener('click', () => {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+    });
+    
+    document.getElementById('drawerClose').addEventListener('click', () => {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+    
+    overlay.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+    
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(target + 'Panel').classList.add('active');
+      });
+    });
+    
+    // Copy email
+    document.getElementById('copyEmail').addEventListener('click', () => {
+      navigator.clipboard.writeText('welcome.evtime@gmail.com');
+      alert('Email copied!');
+    });
+    
+    document.getElementById('copyMessage').addEventListener('click', () => {
+      const msg = `Hi, I'm interested in the ${title}. Can you provide more details?`;
+      navigator.clipboard.writeText(msg);
+      alert('Message template copied!');
+    });
+    
+    // Form submission
+    document.getElementById('advisorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('advName').value.trim();
+      const phone = document.getElementById('advPhone').value.trim();
+      const email = document.getElementById('advEmail').value.trim();
+      const message = document.getElementById('advMessage').value.trim();
+      const financing = document.getElementById('advFinancing').checked;
+      
+      if (!name || !message) {
+        showMsg('Please fill all required fields.', 'error');
+        return;
+      }
+      
+      if (!phone && !email) {
+        showMsg('Please provide either phone or email.', 'error');
+        return;
+      }
+      
+      const combinedMessage = `${message}${financing ? '\n\n[Financing needed]' : ''}`;
+      
+      try {
+        const { error } = await sb.from('leads').insert([{
+          listing_id: id,
+          name,
+          phone,
+          email,
+          message: combinedMessage
+        }]);
+        
+        if (error) throw error;
+        
+        showMsg('Message sent! We will respond within 24 hours.', 'success');
+        document.getElementById('advisorForm').reset();
+        setTimeout(() => {
+          drawer.classList.remove('open');
+          overlay.classList.remove('open');
+        }, 2000);
+      } catch (err) {
+        showMsg('Error sending message. Please email welcome.evtime@gmail.com', 'error');
+      }
+    });
+    
+    function showMsg(msg, type) {
+      const el = document.getElementById('advFormMsg');
+      el.textContent = msg;
+      el.className = 'form-msg ' + type;
+      el.style.display = 'block';
+    }
+  })();
+}
+
+// Load header/footer
+fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
 </script>
 <script src="/app.js"></script>
 </body>
