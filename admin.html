@@ -38,6 +38,7 @@
     .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 10px; border:1px solid #ddd; border-radius:8px; background:#fff; cursor:pointer; }
     .btn:disabled { opacity:.5; cursor:not-allowed; }
     .btn.danger { border-color:#f3c; color:#a00 }
+    .btn.ai { border-color:#1d4ed8; color:#1d4ed8; background:#f0f7ff; }
     .badge { padding:2px 8px; border-radius:999px; font-size:11px; font-weight:800; display:inline-block; }
     .badge.live { background:#e6f7ef; color:#0a7; border:1px solid #bfead3; }
     .badge.sold { background:#f7e6e6; color:#a00; border:1px solid #f0caca; }
@@ -118,7 +119,58 @@
       color:#fff;
       box-shadow:0 2px 6px rgba(0,0,0,0.14);
     }
-    @media (max-width:600px){
+
+    /* Mobile card layout for inventory */
+    .card-item {
+      display: none; /* Hidden by default, shown on mobile */
+      background: #fff;
+      border: 1px solid #e7e5e4;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .card-item .card-thumb {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      background: #f8f8f8;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .card-item .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .card-item .card-meta {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .card-item .card-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    .card-item .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .card-item .card-actions .btn {
+      width: 100%;
+    }
+
+    @media (max-width:768px){
+      /* Hide table, show cards on mobile */
+      #tblWrap table { display: none; }
+      .card-item { display: block; }
+      
+      /* Stack form grids vertically */
+      .row3 { grid-template-columns: 1fr; }
+      
       .admin-header{
         align-items:flex-start;
       }
@@ -126,6 +178,12 @@
         width:100%;
         justify-content:flex-start;
       }
+    }
+
+    @media (min-width:769px){
+      /* Show table, hide cards on desktop */
+      #tblWrap table { display: table; }
+      .card-item { display: none; }
     }
   </style>
 </head>
@@ -135,7 +193,7 @@
   <div class="topbar">
     <div class="logo-wrap">
       <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin">
+        <img id="site-logo" src="mainlogo.png" alt="EVTime Admin">
       </a>
     </div>
   </div>
@@ -260,6 +318,7 @@
         </thead>
         <tbody id="tbl"></tbody>
       </table>
+      <div id="cardList"></div>
       <div id="emptyMsg" class="muted" style="display:none">No rows.</div>
     </div>
   </fieldset>
@@ -512,6 +571,7 @@
       if (liveRes.error || soldRes.error){
         diag(`<span class="err">Load error: ${esc((liveRes.error || soldRes.error).message)}</span>`);
         $("tbl").innerHTML = "";
+        $("cardList").innerHTML = "";
         $("emptyMsg").style.display = "block";
         return;
       }
@@ -532,6 +592,7 @@
 
       const rows = [...live_tesla, ...live_other_ev, ...live_other, ...sold];
       renderTable(rows);
+      renderCards(rows);
     }
 
     function renderTable(rows){
@@ -587,9 +648,62 @@
               <button class="btn" data-act="up">↑ Up</button>
               <button class="btn" data-act="down">↓ Down</button>
               <button class="btn" data-act="edit">✎ Edit</button>
+              <button class="btn ai" data-act="analyze">🤖 Analyze</button>
               <button class="btn danger" data-act="delete">🗑 Delete</button>
             </td>
           </tr>
+        `;
+      }).join("");
+    }
+
+    function renderCards(rows){
+      const cardList = $("cardList");
+      if (!rows.length){ cardList.innerHTML = ""; return; }
+      cardList.innerHTML = rows.map(r=>{
+        const status = String(r.status||'').toLowerCase();
+        const vt = String(r.vehicle_type||'ev').toLowerCase();
+        const badgeS = `<span class="badge ${esc(status)}">${esc(status.toUpperCase())}</span>`;
+        const badgeT = `<span class="badge ${esc(vt)}">${esc(vt.toUpperCase())}</span>`;
+        const title = `${r.year||''} ${r.make||''} ${r.model||''} ${r.trim||''}`.trim();
+        const price = (r.price!=null && r.price!=='') ? `$${Number(r.price).toLocaleString()}` : '';
+        const vinTxt = r.vin ? `VIN: ${esc(r.vin)}` : '';
+        const vidBadge = r.video ? `<span class="badge" style="background:#e6f0ff;color:#1d4ed8;border:1px solid #c7dcff;">🎥 VIDEO</span>` : '';
+
+        const paths = parseImages(r.images).map(normalize);
+        const firstPath = paths[0] || "";
+        const coverUrl = firstPath ? (chooseUrl(firstPath) || 'og-card.png') : 'og-card.png';
+
+        const aiStatusRaw = String(r.ai_status || '').trim().toLowerCase();
+        const aiStatus = aiStatusRaw ? aiStatusRaw.toUpperCase() : 'PENDING';
+        const aiScore = (typeof r.ai_score === 'number') ? r.ai_score : null;
+        const trust = (typeof r.trust_score === 'number') ? r.trust_score : null;
+
+        const aiLine = [
+          `AI: ${aiStatus}`,
+          aiScore != null ? `Score ${aiScore}` : null,
+          trust != null ? `Trust ${trust}` : null
+        ].filter(Boolean).join(' • ');
+
+        return `
+          <div class="card-item" data-id="${escAttr(r.id)}">
+            <img class="card-thumb" src="${esc(coverUrl)}" alt="cover photo">
+            <div class="card-title">${esc(title || '(no title)')}${vidBadge}</div>
+            <div class="card-meta">${esc(r.city||'')}</div>
+            <div class="card-meta">${esc(price)}</div>
+            <div class="card-meta">${vinTxt}</div>
+            <div class="card-badges">
+              ${badgeS}
+              ${badgeT}
+            </div>
+            <div class="card-meta" style="margin-top:8px;">${esc(aiLine)}</div>
+            <div class="card-actions">
+              <button class="btn" data-act="up">↑ Up</button>
+              <button class="btn" data-act="down">↓ Down</button>
+              <button class="btn" data-act="edit">✎ Edit</button>
+              <button class="btn ai" data-act="analyze">🤖 Analyze</button>
+              <button class="btn danger" data-act="delete">🗑 Delete</button>
+            </div>
+          </div>
         `;
       }).join("");
     }
@@ -630,9 +744,36 @@
       await refreshListings();
     }
 
+    // ---------- AI Analysis Trigger
+    async function runAIAnalysis(id){
+      try{
+        diag(`Starting AI analysis for ${id}...`);
+        // Placeholder: Call your AI gateway endpoint or function here
+        // For now, just update ai_status to show it's running
+        const { error } = await supabase.from('listing').update({ 
+          ai_status: 'running',
+          ai_last_run: new Date().toISOString()
+        }).eq('id', id);
+        if (error) throw error;
+        
+        diag(`<span class="ok">AI analysis started for ${id}</span>`);
+        await refreshListings();
+        
+        // TODO: Implement actual AI analysis call to admin-ai-gateway.html logic
+        // or trigger a serverless function that does the analysis
+      }catch(e){
+        diag(`<span class="err">AI analysis failed: ${esc(e.message)}</span>`);
+      }
+    }
+
     // ---------- Delete (hard delete)
     async function deleteListing(id){
-      if (!confirm("Delete this listing and all its photos? This cannot be undone.")) return;
+      // Get listing data first for confirmation
+      const { data: listing } = await supabase.from('listing').select('year,make,model,trim').eq('id', id).single();
+      const vehicleName = listing ? `${listing.year||''} ${listing.make||''} ${listing.model||''} ${listing.trim||''}`.trim() : 'this listing';
+      
+      if (!confirm(`Delete ${vehicleName}?\n\nThis will remove all photos/videos. Cannot be undone.`)) return;
+      
       try{
         // remove image assets
         const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
@@ -827,11 +968,11 @@
             images = [...images, ...newGalleryPaths];
           }
 
-          // --- Video upload (optional)
+          // --- Video upload with size check
           const vFile = document.getElementById('e_video').files[0] || null;
           const pFile = document.getElementById('e_video_poster').files[0] || null;
 
-          const maxVideoBytes = 50 * 1024 * 1024; // 50 MB practical limit
+          const maxVideoBytes = 50 * 1024 * 1024; // 50 MB
           const isMp4 = f => f && (f.type === 'video/mp4' || f.name?.toLowerCase().endsWith('.mp4'));
           const isImage = f => f && f.type?.startsWith('image/');
 
@@ -839,7 +980,10 @@
 
           if (vFile){
             if (!isMp4(vFile)) throw new Error('Video must be .mp4');
-            if (vFile.size > maxVideoBytes) throw new Error('Video over 50 MB');
+            if (vFile.size > maxVideoBytes) {
+              const sizeMB = (vFile.size / (1024*1024)).toFixed(1);
+              throw new Error(`Video is ${sizeMB} MB (limit: 50 MB). Please compress it first.`);
+            }
             const { error: vErr } = await supabase.storage.from('videos').upload(`${id}/main.mp4`, vFile, { upsert: true, cacheControl: '3600' });
             if (vErr) throw vErr;
             videoUrl = supabase.storage.from('videos').getPublicUrl(`${id}/main.mp4`).data?.publicUrl || null;
@@ -887,25 +1031,26 @@
       };
     }
 
-    // ---------- Table actions
-    $("tbl").addEventListener('click', async (e)=>{
+    // ---------- Table/Card actions
+    document.addEventListener('click', async (e)=>{
       const btn = e.target.closest('button[data-act]');
       if (!btn) return;
-      const tr = e.target.closest('tr[data-id]');
-      if (!tr) return;
-      const id = tr.getAttribute('data-id');
+      const container = e.target.closest('tr[data-id], .card-item[data-id]');
+      if (!container) return;
+      const id = container.getAttribute('data-id');
       const act = btn.getAttribute('data-act');
       try{
         if (act === 'up') { await moveWithinBlock(id, 'up'); }
         else if (act === 'down') { await moveWithinBlock(id, 'down'); }
         else if (act === 'edit') { await openEdit(id); }
+        else if (act === 'analyze') { await runAIAnalysis(id); }
         else if (act === 'delete') { await deleteListing(id); }
       }catch(err){
         diag(`<span class="err">Action error: ${esc(err.message)}</span>`);
       }
     });
 
-    // ---------- Basic diagnostics (kept simple)
+    // ---------- Basic diagnostics
     (async () => {
       diag("Testing anon read from 'listing'…");
       const { error } = await supabase.from("listing").select("id").limit(1);
