@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin</title>
   <style>
-    /* Logo header styles */
     .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
@@ -28,7 +27,6 @@
     .bar { height: 6px; background:#eee; border-radius: 999px; overflow:hidden; margin-top:6px; }
     .bar > div { height: 100%; width: 0; background: #4a8; transition: width .2s; }
 
-    /* Manage table */
     table { width:100%; border-collapse: collapse; }
     th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: middle; }
     th { text-align:left; font-size:13px; color:#555; }
@@ -45,7 +43,6 @@
     .badge.ev { background:#e8f0ff; color:#1d4ed8; border:1px solid #c7dcff; }
     .badge.other { background:#fff7e6; color:#b45309; border:1px solid #ffe5b4; }
 
-    /* Cover thumbnail */
     .thumb{
       width: 120px;
       height: 90px;
@@ -56,7 +53,6 @@
       display:block;
     }
 
-    /* Modal */
     .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:9999; }
     .modal.open { display:flex; }
     .modal-card { background:#fff; width: min(860px, 95vw); max-height: 90vh; overflow:auto; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.2) }
@@ -71,12 +67,10 @@
     .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
     @media (max-width:800px){ .two { grid-template-columns:1fr; } }
 
-    /* Small inline status */
     .inline { display:inline-flex; align-items:center; gap:8px; }
     .tiny { font-size:11px; color:#666; }
     .link { color:#0366d6; text-decoration:none; }
 
-    /* Admin header + nav (Inventory / Leads / AI Debug) */
     .admin-header{
       display:flex;
       justify-content:space-between;
@@ -120,7 +114,6 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.14);
     }
 
-    /* Mobile card layout for inventory */
     .card-item {
       display: none;
       background: #fff;
@@ -193,7 +186,7 @@
   </div>
 
   <div class="admin-header">
-    <h1>EVTime — Admin</h1>
+    <h1>EVTime Admin</h1>
     <nav class="admin-nav">
       <a href="/admin.html" class="nav-btn active">Inventory</a>
       <a href="/admin-leads.html" class="nav-btn">Leads</a>
@@ -203,7 +196,7 @@
 
   <fieldset id="authBox">
     <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session…</div>
+    <div id="sessionInfo" class="muted">Checking session</div>
     <div id="signinBox">
       <label>Email for magic link</label>
       <input id="email" type="email" value="vahehr@gmail.com" required/>
@@ -275,7 +268,7 @@
     </div>
 
     <label>Description</label>
-    <textarea id="c_description" rows="4" placeholder="Clean SoCal car, one owner…"></textarea>
+    <textarea id="c_description" rows="4" placeholder="Clean SoCal car, one owner"></textarea>
 
     <div class="two">
       <div>
@@ -325,7 +318,7 @@
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title">Edit Listing</div>
-        <button class="close" id="editClose" aria-label="Close">✕</button>
+        <button class="close" id="editClose" aria-label="Close">×</button>
       </div>
       <div id="editBody"></div>
     </div>
@@ -337,21 +330,16 @@
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-    let supabase;
-    if (window.supabaseClient) {
-      supabase = window.supabaseClient;
-    } else {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-          flowType: 'pkce',
-          storageKey: 'evtime-auth'
-        }
-      });
-      window.supabaseClient = supabase;
-    }
+    const supabase = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: 'evtime-auth'
+      }
+    });
+    if (!window.supabaseClient) window.supabaseClient = supabase;
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
@@ -610,7 +598,7 @@
           `AI: ${aiStatus}`,
           aiScore != null ? `Score ${aiScore}` : null,
           trust != null ? `Trust ${trust}` : null
-        ].filter(Boolean).join(' • ');
+        ].filter(Boolean).join('  ');
 
         const lastLine = lastRun ? `Ran: ${lastRun}` : 'Not run yet';
 
@@ -669,7 +657,7 @@
           `AI: ${aiStatus}`,
           aiScore != null ? `Score ${aiScore}` : null,
           trust != null ? `Trust ${trust}` : null
-        ].filter(Boolean).join(' • ');
+        ].filter(Boolean).join('  ');
 
         return `
           <div class="card-item" data-id="${escAttr(r.id)}">
@@ -694,6 +682,20 @@
         `;
       }).join("");
     }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn[data-act]');
+      if (!btn) return;
+      const act = btn.dataset.act;
+      const row = btn.closest('[data-id]');
+      if (!row) return;
+      const id = row.dataset.id;
+      if (act === 'up') moveWithinBlock(id, 'up');
+      else if (act === 'down') moveWithinBlock(id, 'down');
+      else if (act === 'edit') openEdit(id);
+      else if (act === 'analyze') runAIAnalysis(id);
+      else if (act === 'delete') deleteListing(id);
+    });
 
     async function moveWithinBlock(id, dir){
       const { data, error } = await supabase.from('listing').select(baseSelect).limit(1000);
@@ -862,7 +864,7 @@
         <fieldset style="margin-top:14px">
           <legend>Listing Video (MP4 ≤ 50 MB, 1080p OK)</legend>
           <div class="tiny" style="margin-bottom:8px;">
-            ${row.video ? `<span class="inline">Status: <span class="ok">has video</span> • <a class="link" href="${esc(row.video)}" target="_blank" rel="noopener">open</a></span>` : `Status: no video`}
+            ${row.video ? `<span class="inline">Status: <span class="ok">has video</span>  <a class="link" href="${esc(row.video)}" target="_blank" rel="noopener">open</a></span>` : `Status: no video`}
           </div>
           <div class="two">
             <div>
@@ -870,7 +872,7 @@
               <input id="e_video" type="file" accept="video/mp4"/>
             </div>
             <div>
-              <label>Poster (optional .jpg/.png)</label>
+              <label>Poster (optional .jpg/.png ≤ 10 MB)</label>
               <input id="e_video_poster" type="file" accept="image/*"/>
             </div>
           </div>
@@ -896,136 +898,112 @@
       body.innerHTML = editFormHTML(data);
       editModal.classList.add('open');
 
-      const setVidMsg = (t, ok=false) => { const el=$("e_video_msg"); if(!el) return; el.textContent=t; el.style.color = ok ? '#0a7' : '#666'; };
+      const setVidMsg = (t, ok=false) => { const el=$("e_video_msg"); if(!el) return; el.textContent=t; el.style.color = ok?'#0a7':'#c00'; };
 
-      $("e_cancel").onclick = ()=> editModal.classList.remove('open');
-
-      $("e_video_remove").onclick = async () => {
-        try{
-          setVidMsg('Removing…');
-          await supabase.storage.from('videos').remove([`${id}/main.mp4`, `${id}/poster.jpg`]);
-          const { error: upErr } = await supabase.from('listing').update({ video: null, video_poster: null }).eq('id', id);
-          if (upErr) throw upErr;
-          setVidMsg('Video removed.', true);
-        }catch(e){
-          setVidMsg(e.message || 'Remove failed.');
-          diag(`<span class="err">${esc(e.stack || e)}</span>`);
+      $("e_video").onchange = () => {
+        const f = $("e_video").files?.[0];
+        if (f && f.size > 50*1024*1024) {
+          setVidMsg(`Video is ${(f.size/1024/1024).toFixed(1)} MB (limit: 50 MB). Please compress it.`);
+          $("e_video").value = "";
+        } else {
+          setVidMsg("", true);
         }
       };
 
+      $("e_video_poster").onchange = () => {
+        const f = $("e_video_poster").files?.[0];
+        if (f && f.size > 10*1024*1024) {
+          setVidMsg(`Poster is ${(f.size/1024/1024).toFixed(1)} MB (limit: 10 MB).`);
+          $("e_video_poster").value = "";
+        } else {
+          setVidMsg("", true);
+        }
+      };
+
+      $("e_video_remove").onclick = async () => {
+        if (!data.video) { setVidMsg("No video to remove."); return; }
+        if (!confirm("Remove video from this listing?")) return;
+        setVidMsg("Removing...", true);
+        try {
+          const vidPath = data.video.split('/videos/').pop();
+          if (vidPath) await supabase.storage.from('videos').remove([vidPath]);
+          await supabase.from('listing').update({ video: null }).eq('id', id);
+          setVidMsg("Video removed.", true);
+          data.video = null;
+          body.innerHTML = editFormHTML(data);
+          await refreshListings();
+        } catch(e) {
+          setVidMsg(`Error: ${e.message}`);
+        }
+      };
+
+      $("e_cancel").onclick = () => editModal.classList.remove('open');
+
       $("e_save").onclick = async () => {
-        $("e_msg").textContent = "Saving…";
-        try{
-          const cover = $("e_cover").files?.[0] || null;
-          const galFiles = Array.from($("e_gallery").files || []);
+        lock($("e_save"), true);
+        $("e_msg").textContent = "";
+        try {
+          const newCover = $("e_cover").files?.[0];
+          const newGallery = Array.from($("e_gallery").files || []);
+          const newVideo = $("e_video").files?.[0];
+          const newPoster = $("e_video_poster").files?.[0];
 
-          let newCoverPath = null;
-          let newGalleryPaths = [];
-          if (cover){
-            const up = await uploadFilesTo(id, [cover], $("uProgEdit"), $("uListEdit"));
-            newCoverPath = up[0] || null;
-          }
-          if (galFiles.length){
-            newGalleryPaths = await uploadFilesTo(id, galFiles, $("uProgEdit"), $("uListEdit"));
-          }
-
-          let images = Array.isArray(data.images)
-            ? data.images.slice()
-            : (typeof data.images === 'string' && data.images.trim().startsWith('[') ? (JSON.parse(data.images)||[]) : (data.images||'').split(',').map(s=>s.trim()).filter(Boolean));
-
-          if (!Array.isArray(images)) images = [];
-          if (newCoverPath){
-            images = [newCoverPath, ...images.filter(p => p !== newCoverPath)];
-          }
-          if (newGalleryPaths.length){
-            images = [...images, ...newGalleryPaths];
+          let videoUrl = data.video || null;
+          if (newVideo) {
+            if (newVideo.size > 50*1024*1024) throw new Error("Video exceeds 50 MB.");
+            const vPath = `${id}/${Date.now()}_${newVideo.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+            const { error: vErr } = await supabase.storage.from("videos").upload(vPath, newVideo, { upsert: false });
+            if (vErr) throw new Error(`Video upload failed: ${vErr.message}`);
+            videoUrl = supabase.storage.from('videos').getPublicUrl(vPath).data.publicUrl;
           }
 
-          const vFile = document.getElementById('e_video').files[0] || null;
-          const pFile = document.getElementById('e_video_poster').files[0] || null;
-
-          const maxVideoBytes = 50 * 1024 * 1024;
-          const isMp4 = f => f && (f.type === 'video/mp4' || f.name?.toLowerCase().endsWith('.mp4'));
-          const isImage = f => f && f.type?.startsWith('image/');
-
-          let videoUrl = null, posterUrl = null;
-
-          if (vFile){
-            if (!isMp4(vFile)) throw new Error('Video must be .mp4');
-            if (vFile.size > maxVideoBytes) {
-              const sizeMB = (vFile.size / (1024*1024)).toFixed(1);
-              throw new Error(`Video is ${sizeMB} MB (limit: 50 MB). Please compress it first.`);
-            }
-            const { error: vErr } = await supabase.storage.from('videos').upload(`${id}/main.mp4`, vFile, { upsert: true, cacheControl: '3600' });
-            if (vErr) throw vErr;
-            videoUrl = supabase.storage.from('videos').getPublicUrl(`${id}/main.mp4`).data?.publicUrl || null;
+          let coverPaths = [];
+          if (newCover) {
+            coverPaths = await uploadFilesTo(id, [newCover], $("uProgEdit"), $("uListEdit"));
           }
-          if (pFile){
-            if (!isImage(pFile)) throw new Error('Poster must be an image');
-            if (pFile.size > 10 * 1024 * 1024) throw new Error('Poster over 10 MB');
-            const { error: pErr } = await supabase.storage.from('videos').upload(`${id}/poster.jpg`, pFile, { upsert: true, cacheControl: '3600' });
-            if (pErr) throw pErr;
-            posterUrl = supabase.storage.from('videos').getPublicUrl(`${id}/poster.jpg`).data?.publicUrl || null;
+
+          let galleryPaths = [];
+          if (newGallery.length) {
+            galleryPaths = await uploadFilesTo(id, newGallery, $("uProgEdit"), $("uListEdit"));
           }
+
+          const existingImages = parseImages(data.images).map(normalize);
+          const finalImages = [...(coverPaths.length ? coverPaths : [existingImages[0]]), ...existingImages.slice(1), ...galleryPaths].filter(Boolean);
 
           const patch = {
-            status: document.querySelector('input[name="e_status"]:checked')?.value || data.status,
-            vehicle_type: document.querySelector('input[name="e_vehicle_type"]:checked')?.value || data.vehicle_type,
-            price: Number.isFinite(parseInt($("e_price").value,10)) ? parseInt($("e_price").value,10) : data.price,
-            year: Number.isFinite(parseInt($("e_year").value,10)) ? parseInt($("e_year").value,10) : data.year,
-            make: $("e_make").value.trim() || data.make,
-            model: $("e_model").value.trim() || data.model,
-            trim: $("e_trim").value.trim() || data.trim,
-            powertrain: $("e_powertrain").value.trim() || data.powertrain,
-            mileage: Number.isFinite(parseInt($("e_mileage").value,10)) ? parseInt($("e_mileage").value,10) : data.mileage,
-            title_status: document.querySelector('input[name="e_title_status"]:checked')?.value || data.title_status,
-            condition: document.querySelector('input[name="e_condition"]:checked')?.value || data.condition,
-            city: $("e_city").value.trim() || data.city,
-            vin: $("e_vin").value.trim() || data.vin,
-            special_features: $("e_special_features").value.trim() || data.special_features,
-            description: $("e_description").value.trim() || data.description,
-            images: images
+            status: document.querySelector('input[name="e_status"]:checked')?.value || "live",
+            vehicle_type: document.querySelector('input[name="e_vehicle_type"]:checked')?.value || "ev",
+            year: parseInt($("e_year").value || "0", 10),
+            make: $("e_make").value.trim(),
+            model: $("e_model").value.trim(),
+            trim: $("e_trim").value.trim(),
+            powertrain: $("e_powertrain").value.trim(),
+            mileage: parseInt($("e_mileage").value || "0", 10),
+            title_status: document.querySelector('input[name="e_title_status"]:checked')?.value || "Clean",
+            condition: document.querySelector('input[name="e_condition"]:checked')?.value || "Excellent",
+            city: $("e_city").value.trim(),
+            vin: $("e_vin")?.value?.trim?.() || "",
+            price: parseInt($("e_price").value || "0", 10),
+            special_features: $("e_special_features").value.trim(),
+            description: $("e_description").value.trim(),
+            images: finalImages,
+            video: videoUrl,
+            updated_at: new Date().toISOString()
           };
 
-          if (videoUrl){ patch.video = videoUrl; patch.video_provider = 'supabase'; }
-          if (posterUrl){ patch.video_poster = posterUrl; }
-
-          const { error: upErr } = await supabase.from('listing').update(patch).eq('id', id);
-          if (upErr) throw upErr;
+          const { error } = await supabase.from('listing').update(patch).eq('id', id);
+          if (error) throw error;
 
           $("e_msg").innerHTML = `<span class="ok">Saved.</span>`;
-          editModal.classList.remove('open');
           await refreshListings();
-        }catch(e){
+          setTimeout(() => editModal.classList.remove('open'), 800);
+        } catch(e) {
           $("e_msg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
-          diag(`<span class="err">${esc(e.stack || e)}</span>`);
+        } finally {
+          lock($("e_save"), false);
         }
       };
     }
-
-    document.addEventListener('click', async (e)=>{
-      const btn = e.target.closest('button[data-act]');
-      if (!btn) return;
-      const container = e.target.closest('tr[data-id], .card-item[data-id]');
-      if (!container) return;
-      const id = container.getAttribute('data-id');
-      const act = btn.getAttribute('data-act');
-      try{
-        if (act === 'up') { await moveWithinBlock(id, 'up'); }
-        else if (act === 'down') { await moveWithinBlock(id, 'down'); }
-        else if (act === 'edit') { await openEdit(id); }
-        else if (act === 'analyze') { await runAIAnalysis(id); }
-        else if (act === 'delete') { await deleteListing(id); }
-      }catch(err){
-        diag(`<span class="err">Action error: ${esc(err.message)}</span>`);
-      }
-    });
-
-    (async () => {
-      diag("Testing anon read from 'listing'…");
-      const { error } = await supabase.from("listing").select("id").limit(1);
-      if (error) diag(`<span class="err">Read error: ${esc(error.message)}</span>`); else diag("Read OK.");
-    })();
   </script>
 </body>
 </html>
