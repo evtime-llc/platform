@@ -349,7 +349,22 @@
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+   let supabase;
+if (window.supabaseClient) {
+  supabase = window.supabaseClient;
+} else {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
+      storageKey: 'evtime-auth'
+    }
+  });
+  window.supabaseClient = supabase;
+}
+
       auth: {
         persistSession: true,
         autoRefreshToken: true,
