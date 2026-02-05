@@ -377,66 +377,6 @@
       return urls[0] || null;
     }
 
-    async function setSessionUI() {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
-      if (session) {
-        const email = session.user?.email || "";
-        if (email.toLowerCase() !== "vahehr@gmail.com") {
-          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
-          await supabase.auth.signOut();
-          $("signinBox").style.display = "block";
-          $("signout").style.display = "none";
-          $("createBox").style.display = "none";
-          $("manageBox").style.display = "none";
-          return;
-        }
-        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
-        $("signinBox").style.display = "none";
-        $("signout").style.display = "inline-block";
-        $("createBox").style.display = "block";
-        $("manageBox").style.display = "block";
-        await refreshListings();
-      } else {
-        $("sessionInfo").textContent = "Not signed in.";
-        $("signinBox").style.display = "block";
-        $("signout").style.display = "none";
-        $("createBox").style.display = "none";
-        $("manageBox").style.display = "none";
-      }
-    }
-
-    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
-
-    $("sendLink").onclick = async () => {
-      const email = $("email").value.trim();
-      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
-      $("authMsg").textContent = "Sending magic link...";
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
-      });
-      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
-    };
-
-    $("signout").onclick = async () => {
-      await supabase.auth.signOut();
-      await setSessionUI();
-    };
-
-    (async () => {
-      const qs = window.location.search;
-      if (qs && qs.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-      const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
-        || !!localStorage.getItem('evtime-auth');
-      diag('Local session present: ' + hasLocal);
-      await setSessionUI();
-    })();
-
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
       if (status === 'sold') return 'sold';
@@ -472,62 +412,6 @@
       }
       return uploaded;
     }
-
-    $("create").onclick = async () => {
-      $("createMsg").textContent = "";
-      lock($("create"), true);
-      try {
-        const cover = $("c_cover").files?.[0];
-        if (!cover) { $("createMsg").textContent = "Please add a cover photo."; return; }
-
-        const listingId = crypto.randomUUID();
-
-        const coverPaths = await uploadFilesTo(listingId, [cover], $("uProgCreate"), $("uListCreate"));
-        const galleryFiles = Array.from($("c_gallery").files || []).slice(0, 9);
-        const galleryPaths = galleryFiles.length ? await uploadFilesTo(listingId, galleryFiles, $("uProgCreate"), $("uListCreate")) : [];
-
-        const payload = {
-          id: listingId,
-          status: document.querySelector('input[name="c_status"]:checked')?.value || "live",
-          vehicle_type: document.querySelector('input[name="c_vehicle_type"]:checked')?.value || "ev",
-          year: parseInt($("c_year").value || "0", 10),
-          make: $("c_make").value.trim(),
-          model: $("c_model").value.trim(),
-          trim: $("c_trim").value.trim(),
-          powertrain: $("c_powertrain").value.trim(),
-          mileage: parseInt($("c_mileage").value || "0", 10),
-          title_status: document.querySelector('input[name="c_title_status"]:checked')?.value || "Clean",
-          condition: document.querySelector('input[name="c_condition"]:checked')?.value || "Excellent",
-          city: $("c_city").value.trim(),
-          vin: $("c_vin")?.value?.trim?.() || "",
-          price: parseInt($("c_price").value || "0", 10),
-          special_features: $("c_special_features").value.trim(),
-          description: $("c_description").value.trim(),
-          images: [ ...coverPaths, ...galleryPaths ],
-          position: Date.now()
-        };
-
-        const { error } = await supabase.from("listing").insert(payload);
-        if (error) throw error;
-
-        $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${esc(listingId)}</code>`;
-
-        ["c_price","c_year","c_make","c_model","c_trim","c_powertrain","c_mileage","c_city","c_special_features","c_description","c_vin"]
-          .forEach(id=>{ const el=$(id); if(el) el.value=""; });
-        document.querySelector('input[name="c_status"][value="live"]').checked = true;
-        document.querySelector('input[name="c_vehicle_type"][value="ev"]').checked = true;
-        document.querySelector('input[name="c_title_status"][value="Clean"]').checked = true;
-        document.querySelector('input[name="c_condition"][value="Excellent"]').checked = true;
-        $("c_cover").value = ""; $("c_gallery").value = "";
-        $("uProgCreate").style.width = "0%"; $("uListCreate").innerHTML = "";
-        await refreshListings();
-      } catch (e) {
-        $("createMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
-        diag(`<span class="err">${esc(e.stack || e)}</span>`);
-      } finally {
-        lock($("create"), false);
-      }
-    };
 
     const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_status,ai_score,trust_score,ai_last_run';
 
@@ -682,6 +566,122 @@
         `;
       }).join("");
     }
+
+    async function setSessionUI() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
+      if (session) {
+        const email = session.user?.email || "";
+        if (email.toLowerCase() !== "vahehr@gmail.com") {
+          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
+          await supabase.auth.signOut();
+          $("signinBox").style.display = "block";
+          $("signout").style.display = "none";
+          $("createBox").style.display = "none";
+          $("manageBox").style.display = "none";
+          return;
+        }
+        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
+        $("signinBox").style.display = "none";
+        $("signout").style.display = "inline-block";
+        $("createBox").style.display = "block";
+        $("manageBox").style.display = "block";
+        await refreshListings();
+      } else {
+        $("sessionInfo").textContent = "Not signed in.";
+        $("signinBox").style.display = "block";
+        $("signout").style.display = "none";
+        $("createBox").style.display = "none";
+        $("manageBox").style.display = "none";
+      }
+    }
+
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+
+    $("sendLink").onclick = async () => {
+      const email = $("email").value.trim();
+      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
+      $("authMsg").textContent = "Sending magic link...";
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
+      });
+      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
+    };
+
+    $("signout").onclick = async () => {
+      await supabase.auth.signOut();
+      await setSessionUI();
+    };
+
+    (async () => {
+      const qs = window.location.search;
+      if (qs && qs.includes("code=")) {
+        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
+        || !!localStorage.getItem('evtime-auth');
+      diag('Local session present: ' + hasLocal);
+      await setSessionUI();
+    })();
+
+    $("create").onclick = async () => {
+      $("createMsg").textContent = "";
+      lock($("create"), true);
+      try {
+        const cover = $("c_cover").files?.[0];
+        if (!cover) { $("createMsg").textContent = "Please add a cover photo."; return; }
+
+        const listingId = crypto.randomUUID();
+
+        const coverPaths = await uploadFilesTo(listingId, [cover], $("uProgCreate"), $("uListCreate"));
+        const galleryFiles = Array.from($("c_gallery").files || []).slice(0, 9);
+        const galleryPaths = galleryFiles.length ? await uploadFilesTo(listingId, galleryFiles, $("uProgCreate"), $("uListCreate")) : [];
+
+        const payload = {
+          id: listingId,
+          status: document.querySelector('input[name="c_status"]:checked')?.value || "live",
+          vehicle_type: document.querySelector('input[name="c_vehicle_type"]:checked')?.value || "ev",
+          year: parseInt($("c_year").value || "0", 10),
+          make: $("c_make").value.trim(),
+          model: $("c_model").value.trim(),
+          trim: $("c_trim").value.trim(),
+          powertrain: $("c_powertrain").value.trim(),
+          mileage: parseInt($("c_mileage").value || "0", 10),
+          title_status: document.querySelector('input[name="c_title_status"]:checked')?.value || "Clean",
+          condition: document.querySelector('input[name="c_condition"]:checked')?.value || "Excellent",
+          city: $("c_city").value.trim(),
+          vin: $("c_vin")?.value?.trim?.() || "",
+          price: parseInt($("c_price").value || "0", 10),
+          special_features: $("c_special_features").value.trim(),
+          description: $("c_description").value.trim(),
+          images: [ ...coverPaths, ...galleryPaths ],
+          position: Date.now()
+        };
+
+        const { error } = await supabase.from("listing").insert(payload);
+        if (error) throw error;
+
+        $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${esc(listingId)}</code>`;
+
+        ["c_price","c_year","c_make","c_model","c_trim","c_powertrain","c_mileage","c_city","c_special_features","c_description","c_vin"]
+          .forEach(id=>{ const el=$(id); if(el) el.value=""; });
+        document.querySelector('input[name="c_status"][value="live"]').checked = true;
+        document.querySelector('input[name="c_vehicle_type"][value="ev"]').checked = true;
+        document.querySelector('input[name="c_title_status"][value="Clean"]').checked = true;
+        document.querySelector('input[name="c_condition"][value="Excellent"]').checked = true;
+        $("c_cover").value = ""; $("c_gallery").value = "";
+        $("uProgCreate").style.width = "0%"; $("uListCreate").innerHTML = "";
+        await refreshListings();
+      } catch (e) {
+        $("createMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+        diag(`<span class="err">${esc(e.stack || e)}</span>`);
+      } finally {
+        lock($("create"), false);
+      }
+    };
 
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.btn[data-act]');
