@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin — Leads</title>
   <style>
-    /* Logo header styles */
     .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
@@ -39,7 +38,6 @@
     .tiny { font-size:11px; color:#666; }
     .diag-line { font-size:11px; }
 
-    /* Admin header + nav (Inventory / Leads / AI Debug) */
     .admin-header{
       display:flex;
       justify-content:space-between;
@@ -67,7 +65,7 @@
       font-size:13px;
       font-weight:700;
       text-decoration:none;
-      border:1px solid #b87333; /* copper */
+      border:1px solid #b87333;
       color:#b87333;
       background:#fff;
       transition:background .15s ease, color .15s ease, box-shadow .15s ease, transform .08s ease;
@@ -95,18 +93,16 @@
 </head>
 <body>
 
-  <!-- Topbar / Logo -->
   <div class="topbar">
     <div class="logo-wrap">
       <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin">
+        <img id="site-logo" src="mainlogo.png" alt="EVTime Admin">
       </a>
     </div>
   </div>
 
-  <!-- Admin title + nav -->
   <div class="admin-header">
-    <h1>EVTime — Admin</h1>
+    <h1>EVTime Admin</h1>
     <nav class="admin-nav">
       <a href="/admin.html" class="nav-btn">Inventory</a>
       <a href="/admin-leads.html" class="nav-btn active">Leads</a>
@@ -116,7 +112,7 @@
 
   <fieldset id="authBox">
     <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session…</div>
+    <div id="sessionInfo" class="muted">Checking session</div>
     <div id="signinBox">
       <label>Email for magic link</label>
       <input id="email" type="email" value="vahehr@gmail.com" required/>
@@ -148,14 +144,13 @@
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Config + Supabase client -->
   <script src="/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabase = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -164,67 +159,12 @@
         storageKey: 'evtime-auth'
       }
     });
+    if (!window.supabaseClient) window.supabaseClient = supabase;
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div class="diag-line">${m}</div>`; };
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    // ---------- Auth UI
-    async function setSessionUI() {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
-      if (session) {
-        const email = session.user?.email || "";
-        if (email.toLowerCase() !== "vahehr@gmail.com") {
-          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
-          await supabase.auth.signOut();
-          $("signinBox").style.display = "block";
-          $("signout").style.display = "none";
-          $("leadsBox").style.display = "none";
-          return;
-        }
-        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
-        $("signinBox").style.display = "none";
-        $("signout").style.display = "inline-block";
-        $("leadsBox").style.display = "block";
-        await refreshLeads();
-      } else {
-        $("sessionInfo").textContent = "Not signed in.";
-        $("signinBox").style.display = "block";
-        $("signout").style.display = "none";
-        $("leadsBox").style.display = "none";
-      }
-    }
-
-    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
-
-    $("sendLink").onclick = async () => {
-      const email = $("email").value.trim();
-      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
-      $("authMsg").textContent = "Sending magic link...";
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: "https://itsevtime.com/admin-leads.html" }
-      });
-      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
-    };
-
-    $("signout").onclick = async () => {
-      await supabase.auth.signOut();
-      await setSessionUI();
-    };
-
-    (async () => {
-      const qs = window.location.search;
-      if (qs && qs.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-      await setSessionUI();
-    })();
-
-    // ---------- Leads
     const leadsSelect = 'id,created_at,listing_id,name,phone,email,message,ai_notes,ai_status,ai_last_run,ai_summary';
 
     async function refreshLeads(){
@@ -293,7 +233,60 @@
       }).join("");
     }
 
-    // Optional: periodic refresh while you have page open
+    async function setSessionUI() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
+      if (session) {
+        const email = session.user?.email || "";
+        if (email.toLowerCase() !== "vahehr@gmail.com") {
+          $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
+          await supabase.auth.signOut();
+          $("signinBox").style.display = "block";
+          $("signout").style.display = "none";
+          $("leadsBox").style.display = "none";
+          return;
+        }
+        $("sessionInfo").innerHTML = `<span class="ok">Signed in:</span> <span class="pill">${esc(email)}</span>`;
+        $("signinBox").style.display = "none";
+        $("signout").style.display = "inline-block";
+        $("leadsBox").style.display = "block";
+        await refreshLeads();
+      } else {
+        $("sessionInfo").textContent = "Not signed in.";
+        $("signinBox").style.display = "block";
+        $("signout").style.display = "none";
+        $("leadsBox").style.display = "none";
+      }
+    }
+
+    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+
+    $("sendLink").onclick = async () => {
+      const email = $("email").value.trim();
+      if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
+      $("authMsg").textContent = "Sending magic link...";
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: "https://itsevtime.com/admin-leads.html" }
+      });
+      $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
+    };
+
+    $("signout").onclick = async () => {
+      await supabase.auth.signOut();
+      await setSessionUI();
+    };
+
+    (async () => {
+      const qs = window.location.search;
+      if (qs && qs.includes("code=")) {
+        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      await setSessionUI();
+    })();
+
     setInterval(()=>{ refreshLeads().catch(()=>{}); }, 60000);
   </script>
 </body>
