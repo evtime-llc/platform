@@ -110,7 +110,7 @@
   <div class="topbar">
     <div class="logo-wrap">
       <a href="/" aria-label="Go to Home">
-        <img id="site-logo" src="mainlogo.svg?v=402" alt="EVTime Admin — AI Gateway Debug">
+        <img id="site-logo" src="mainlogo.png" alt="EVTime Admin — AI Gateway Debug">
       </a>
     </div>
   </div>
@@ -164,15 +164,22 @@
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storageKey: 'evtime-auth'
-      }
-    });
+    // Check if supabase client already exists (avoid duplicate declaration)
+    let supabase;
+    if (window.supabaseClient) {
+      supabase = window.supabaseClient;
+    } else {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce',
+          storageKey: 'evtime-auth'
+        }
+      });
+      window.supabaseClient = supabase;
+    }
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div class="diag-line">${m}</div>`; };
@@ -213,7 +220,7 @@
       $("authMsg").textContent = "Sending magic link...";
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: "https://itsevtime.com/admin-ai-gateway.html" } // adjust path if different
+        options: { emailRedirectTo: "https://itsevtime.com/admin-ai-gateway.html" }
       });
       $("authMsg").textContent = error ? `Error: ${error.message}` : "Check your email.";
     };
