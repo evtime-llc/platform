@@ -330,7 +330,7 @@
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-    const supabase = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const sbClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -339,7 +339,7 @@
         storageKey: 'evtime-auth'
       }
     });
-    if (!window.supabaseClient) window.supabaseClient = supabase;
+    if (!window.supabaseClient) window.supabaseClient = sbClient;
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
@@ -370,7 +370,7 @@
       candidates.push(s.replace(/^images\//i,''));
       if (!/^images\//i.test(s)) candidates.push('images/' + s);
       const uniq = [...new Set(candidates)];
-      return uniq.map(p => supabase.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
+      return uniq.map(p => sbClient.storage.from('images').getPublicUrl(p).data?.publicUrl || null).filter(Boolean);
     }
     function chooseUrl(path){
       const urls = publicImageUrls(path);
@@ -403,7 +403,7 @@
       for (const file of files) {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
         const relPath = `${listingId}/${Date.now()}_${safeName}`;
-        const { error } = await supabase.storage.from("images").upload(relPath, file, { upsert: false });
+        const { error } = await sbClient.storage.from("images").upload(relPath, file, { upsert: false });
         if (error) throw new Error(`Upload failed: ${error.message}`);
         uploaded.push(relPath);
         done++;
@@ -416,7 +416,7 @@
     const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_status,ai_score,trust_score,ai_last_run';
 
     async function fetchOrdered(statusVal){
-      return supabase
+      return sbClient
         .from('listing')
         .select(baseSelect)
         .eq('status', statusVal)
@@ -568,13 +568,13 @@
     }
 
     async function setSessionUI() {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data: { session }, error } = await sbClient.auth.getSession();
       if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
       if (session) {
         const email = session.user?.email || "";
         if (email.toLowerCase() !== "vahehr@gmail.com") {
           $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
-          await supabase.auth.signOut();
+          await sbClient.auth.signOut();
           $("signinBox").style.display = "block";
           $("signout").style.display = "none";
           $("createBox").style.display = "none";
@@ -596,13 +596,13 @@
       }
     }
 
-    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+    sbClient.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
       if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
       $("authMsg").textContent = "Sending magic link...";
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await sbClient.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: "https://itsevtime.com/admin.html" }
       });
@@ -610,14 +610,14 @@
     };
 
     $("signout").onclick = async () => {
-      await supabase.auth.signOut();
+      await sbClient.auth.signOut();
       await setSessionUI();
     };
 
     (async () => {
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        const { error } = await sbClient.auth.exchangeCodeForSession(window.location.href);
         if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -661,7 +661,7 @@
           position: Date.now()
         };
 
-        const { error } = await supabase.from("listing").insert(payload);
+        const { error } = await sbClient.from("listing").insert(payload);
         if (error) throw error;
 
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${esc(listingId)}</code>`;
@@ -698,7 +698,7 @@
     });
 
     async function moveWithinBlock(id, dir){
-      const { data, error } = await supabase.from('listing').select(baseSelect).limit(1000);
+      const { data, error } = await sbClient.from('listing').select(baseSelect).limit(1000);
       if (error) throw error;
 
       const blocks = { live_tesla:[], live_other_ev:[], live_other:[], sold:[] };
@@ -723,7 +723,7 @@
       const posA = Number(a.position ?? 0);
       const posN = Number(neighbor.position ?? 0);
 
-      const { error: upErr } = await supabase.from('listing').upsert([
+      const { error: upErr } = await sbClient.from('listing').upsert([
         { id: a.id, position: posN },
         { id: neighbor.id, position: posA }
       ]);
@@ -735,7 +735,7 @@
     async function runAIAnalysis(id){
       try{
         diag(`Starting AI analysis for ${id}...`);
-        const { error } = await supabase.from('listing').update({ 
+        const { error } = await sbClient.from('listing').update({ 
           ai_status: 'running',
           ai_last_run: new Date().toISOString()
         }).eq('id', id);
@@ -749,26 +749,26 @@
     }
 
     async function deleteListing(id){
-      const { data: listing } = await supabase.from('listing').select('year,make,model,trim').eq('id', id).single();
+      const { data: listing } = await sbClient.from('listing').select('year,make,model,trim').eq('id', id).single();
       const vehicleName = listing ? `${listing.year||''} ${listing.make||''} ${listing.model||''} ${listing.trim||''}`.trim() : 'this listing';
       
       if (!confirm(`Delete ${vehicleName}?\n\nThis will remove all photos/videos. Cannot be undone.`)) return;
       
       try{
-        const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
+        const { data: files, error: listErr } = await sbClient.storage.from('images').list(id, { limit: 1000 });
         if (listErr) diag(`<span class="err">List files error: ${esc(listErr.message)}</span>`);
         if (files?.length){
           const paths = files.map(f => `${id}/${f.name}`);
-          const { error: delErr } = await supabase.storage.from('images').remove(paths);
+          const { error: delErr } = await sbClient.storage.from('images').remove(paths);
           if (delErr) diag(`<span class="err">Remove files error: ${esc(delErr.message)}</span>`);
         }
-        const { data: vfiles } = await supabase.storage.from('videos').list(id, { limit: 100 });
+        const { data: vfiles } = await sbClient.storage.from('videos').list(id, { limit: 100 });
         if (vfiles?.length){
           const vpaths = vfiles.map(f => `${id}/${f.name}`);
-          await supabase.storage.from('videos').remove(vpaths);
+          await sbClient.storage.from('videos').remove(vpaths);
         }
 
-        const { error } = await supabase.from('listing').delete().eq('id', id);
+        const { error } = await sbClient.from('listing').delete().eq('id', id);
         if (error) throw error;
       } catch(e){
         diag(`<span class="err">Delete failed: ${esc(e.message)}</span>`);
@@ -892,7 +892,7 @@
     }
 
     async function openEdit(id){
-      const { data, error } = await supabase.from('listing').select('*').eq('id', id).single();
+      const { data, error } = await sbClient.from('listing').select('*').eq('id', id).single();
       if (error){ diag(`<span class="err">Load row error: ${esc(error.message)}</span>`); return; }
       const body = $("editBody");
       body.innerHTML = editFormHTML(data);
@@ -926,8 +926,8 @@
         setVidMsg("Removing...", true);
         try {
           const vidPath = data.video.split('/videos/').pop();
-          if (vidPath) await supabase.storage.from('videos').remove([vidPath]);
-          await supabase.from('listing').update({ video: null }).eq('id', id);
+          if (vidPath) await sbClient.storage.from('videos').remove([vidPath]);
+          await sbClient.from('listing').update({ video: null }).eq('id', id);
           setVidMsg("Video removed.", true);
           data.video = null;
           body.innerHTML = editFormHTML(data);
@@ -946,15 +946,14 @@
           const newCover = $("e_cover").files?.[0];
           const newGallery = Array.from($("e_gallery").files || []);
           const newVideo = $("e_video").files?.[0];
-          const newPoster = $("e_video_poster").files?.[0];
 
           let videoUrl = data.video || null;
           if (newVideo) {
             if (newVideo.size > 50*1024*1024) throw new Error("Video exceeds 50 MB.");
             const vPath = `${id}/${Date.now()}_${newVideo.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
-            const { error: vErr } = await supabase.storage.from("videos").upload(vPath, newVideo, { upsert: false });
+            const { error: vErr } = await sbClient.storage.from("videos").upload(vPath, newVideo, { upsert: false });
             if (vErr) throw new Error(`Video upload failed: ${vErr.message}`);
-            videoUrl = supabase.storage.from('videos').getPublicUrl(vPath).data.publicUrl;
+            videoUrl = sbClient.storage.from('videos').getPublicUrl(vPath).data.publicUrl;
           }
 
           let coverPaths = [];
@@ -991,7 +990,7 @@
             updated_at: new Date().toISOString()
           };
 
-          const { error } = await supabase.from('listing').update(patch).eq('id', id);
+          const { error } = await sbClient.from('listing').update(patch).eq('id', id);
           if (error) throw error;
 
           $("e_msg").innerHTML = `<span class="ok">Saved.</span>`;
