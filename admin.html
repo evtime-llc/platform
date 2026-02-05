@@ -104,7 +104,7 @@
       font-size:13px;
       font-weight:700;
       text-decoration:none;
-      border:1px solid #b87333; /* copper */
+      border:1px solid #b87333;
       color:#b87333;
       background:#fff;
       transition:background .15s ease, color .15s ease, box-shadow .15s ease, transform .08s ease;
@@ -122,7 +122,7 @@
 
     /* Mobile card layout for inventory */
     .card-item {
-      display: none; /* Hidden by default, shown on mobile */
+      display: none;
       background: #fff;
       border: 1px solid #e7e5e4;
       border-radius: 12px;
@@ -164,13 +164,9 @@
     }
 
     @media (max-width:768px){
-      /* Hide table, show cards on mobile */
       #tblWrap table { display: none; }
       .card-item { display: block; }
-      
-      /* Stack form grids vertically */
       .row3 { grid-template-columns: 1fr; }
-      
       .admin-header{
         align-items:flex-start;
       }
@@ -181,7 +177,6 @@
     }
 
     @media (min-width:769px){
-      /* Show table, hide cards on desktop */
       #tblWrap table { display: table; }
       .card-item { display: none; }
     }
@@ -189,7 +184,6 @@
 </head>
 <body>
 
-  <!-- Topbar / Logo -->
   <div class="topbar">
     <div class="logo-wrap">
       <a href="/" aria-label="Go to Home">
@@ -198,7 +192,6 @@
     </div>
   </div>
 
-  <!-- Admin title + nav -->
   <div class="admin-header">
     <h1>EVTime — Admin</h1>
     <nav class="admin-nav">
@@ -328,51 +321,37 @@
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Edit Modal -->
   <div id="editModal" class="modal" aria-modal="true" role="dialog">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title">Edit Listing</div>
         <button class="close" id="editClose" aria-label="Close">✕</button>
       </div>
-      <div id="editBody">
-        <!-- Filled dynamically -->
-      </div>
+      <div id="editBody"></div>
     </div>
   </div>
 
-  <!-- Config + Supabase client -->
   <script src="/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // ---------- Helpers
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-   let supabase;
-if (window.supabaseClient) {
-  supabase = window.supabaseClient;
-} else {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: 'pkce',
-      storageKey: 'evtime-auth'
+    let supabase;
+    if (window.supabaseClient) {
+      supabase = window.supabaseClient;
+    } else {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce',
+          storageKey: 'evtime-auth'
+        }
+      });
+      window.supabaseClient = supabase;
     }
-  });
-  window.supabaseClient = supabase;
-}
-
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storageKey: 'evtime-auth'
-      }
-    });
 
     const $ = id => document.getElementById(id);
     const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
@@ -381,7 +360,6 @@ if (window.supabaseClient) {
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const escAttr = esc;
 
-    // ---------- Image helpers
     function parseImages(images){
       if (!images) return [];
       if (Array.isArray(images)) return images;
@@ -411,7 +389,6 @@ if (window.supabaseClient) {
       return urls[0] || null;
     }
 
-    // ---------- Auth UI
     async function setSessionUI() {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
@@ -472,7 +449,6 @@ if (window.supabaseClient) {
       await setSessionUI();
     })();
 
-    // ---------- Grouping & ordering
     function blockKey(row){
       const status = String(row.status||'').toLowerCase();
       if (status === 'sold') return 'sold';
@@ -492,7 +468,6 @@ if (window.supabaseClient) {
       return bd - ad;
     }
 
-    // ---------- Uploads
     async function uploadFilesTo(listingId, files, progEl, listEl){
       if (!files || files.length === 0) return [];
       const uploaded = [];
@@ -510,7 +485,6 @@ if (window.supabaseClient) {
       return uploaded;
     }
 
-    // ---------- CREATE
     $("create").onclick = async () => {
       $("createMsg").textContent = "";
       lock($("create"), true);
@@ -550,7 +524,6 @@ if (window.supabaseClient) {
 
         $("createMsg").innerHTML = `<span class="ok">Listing created:</span> <code>${esc(listingId)}</code>`;
 
-        // Reset create form
         ["c_price","c_year","c_make","c_model","c_trim","c_powertrain","c_mileage","c_city","c_special_features","c_description","c_vin"]
           .forEach(id=>{ const el=$(id); if(el) el.value=""; });
         document.querySelector('input[name="c_status"][value="live"]').checked = true;
@@ -568,7 +541,6 @@ if (window.supabaseClient) {
       }
     };
 
-    // ---------- ADMIN TABLE
     const baseSelect = 'id,status,vehicle_type,year,make,model,trim,mileage,city,vin,price,images,position,updated_at,created_at,video,ai_status,ai_score,trust_score,ai_last_run';
 
     async function fetchOrdered(statusVal){
@@ -723,7 +695,6 @@ if (window.supabaseClient) {
       }).join("");
     }
 
-    // ---------- Move (swap positions within block)
     async function moveWithinBlock(id, dir){
       const { data, error } = await supabase.from('listing').select(baseSelect).limit(1000);
       if (error) throw error;
@@ -759,12 +730,9 @@ if (window.supabaseClient) {
       await refreshListings();
     }
 
-    // ---------- AI Analysis Trigger
     async function runAIAnalysis(id){
       try{
         diag(`Starting AI analysis for ${id}...`);
-        // Placeholder: Call your AI gateway endpoint or function here
-        // For now, just update ai_status to show it's running
         const { error } = await supabase.from('listing').update({ 
           ai_status: 'running',
           ai_last_run: new Date().toISOString()
@@ -773,24 +741,18 @@ if (window.supabaseClient) {
         
         diag(`<span class="ok">AI analysis started for ${id}</span>`);
         await refreshListings();
-        
-        // TODO: Implement actual AI analysis call to admin-ai-gateway.html logic
-        // or trigger a serverless function that does the analysis
       }catch(e){
         diag(`<span class="err">AI analysis failed: ${esc(e.message)}</span>`);
       }
     }
 
-    // ---------- Delete (hard delete)
     async function deleteListing(id){
-      // Get listing data first for confirmation
       const { data: listing } = await supabase.from('listing').select('year,make,model,trim').eq('id', id).single();
       const vehicleName = listing ? `${listing.year||''} ${listing.make||''} ${listing.model||''} ${listing.trim||''}`.trim() : 'this listing';
       
       if (!confirm(`Delete ${vehicleName}?\n\nThis will remove all photos/videos. Cannot be undone.`)) return;
       
       try{
-        // remove image assets
         const { data: files, error: listErr } = await supabase.storage.from('images').list(id, { limit: 1000 });
         if (listErr) diag(`<span class="err">List files error: ${esc(listErr.message)}</span>`);
         if (files?.length){
@@ -798,7 +760,6 @@ if (window.supabaseClient) {
           const { error: delErr } = await supabase.storage.from('images').remove(paths);
           if (delErr) diag(`<span class="err">Remove files error: ${esc(delErr.message)}</span>`);
         }
-        // remove video assets
         const { data: vfiles } = await supabase.storage.from('videos').list(id, { limit: 100 });
         if (vfiles?.length){
           const vpaths = vfiles.map(f => `${id}/${f.name}`);
@@ -813,7 +774,6 @@ if (window.supabaseClient) {
       await refreshListings();
     }
 
-    // ---------- Edit modal
     const editModal = $("editModal");
     const editClose = $("editClose");
     editClose.onclick = ()=> editModal.classList.remove('open');
@@ -899,7 +859,6 @@ if (window.supabaseClient) {
         <div class="bar"><div id="uProgEdit"></div></div>
         <div id="uListEdit" class="muted" style="margin-top:6px;"></div>
 
-        <!-- Video section -->
         <fieldset style="margin-top:14px">
           <legend>Listing Video (MP4 ≤ 50 MB, 1080p OK)</legend>
           <div class="tiny" style="margin-bottom:8px;">
@@ -941,7 +900,6 @@ if (window.supabaseClient) {
 
       $("e_cancel").onclick = ()=> editModal.classList.remove('open');
 
-      // Remove video handler
       $("e_video_remove").onclick = async () => {
         try{
           setVidMsg('Removing…');
@@ -983,11 +941,10 @@ if (window.supabaseClient) {
             images = [...images, ...newGalleryPaths];
           }
 
-          // --- Video upload with size check
           const vFile = document.getElementById('e_video').files[0] || null;
           const pFile = document.getElementById('e_video_poster').files[0] || null;
 
-          const maxVideoBytes = 50 * 1024 * 1024; // 50 MB
+          const maxVideoBytes = 50 * 1024 * 1024;
           const isMp4 = f => f && (f.type === 'video/mp4' || f.name?.toLowerCase().endsWith('.mp4'));
           const isImage = f => f && f.type?.startsWith('image/');
 
@@ -1046,7 +1003,6 @@ if (window.supabaseClient) {
       };
     }
 
-    // ---------- Table/Card actions
     document.addEventListener('click', async (e)=>{
       const btn = e.target.closest('button[data-act]');
       if (!btn) return;
@@ -1065,7 +1021,6 @@ if (window.supabaseClient) {
       }
     });
 
-    // ---------- Basic diagnostics
     (async () => {
       diag("Testing anon read from 'listing'…");
       const { error } = await supabase.from("listing").select("id").limit(1);
