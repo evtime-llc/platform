@@ -7,6 +7,20 @@
 <meta name="description" content="View vehicle details, photos, and contact our team for more information."/>
 <meta name="theme-color" content="#0b0a09"/>
 
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://itsevtime.com/listing.html"/>
+<meta property="og:title" content="Vehicle Details — E.V.Time"/>
+<meta property="og:description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:url" content="https://itsevtime.com/listing.html"/>
+<meta property="twitter:title" content="Vehicle Details — E.V.Time"/>
+<meta property="twitter:description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers."/>
+<meta property="twitter:image" content="https://itsevtime.com/og-card.png"/>
+
 <link rel="icon" href="/favicon.ico"/>
 <link rel="stylesheet" href="./styles.css"/>
 
@@ -77,7 +91,7 @@ label { display: block; font-weight: 600; margin-top: 12px; }
 }
 </style>
 </head>
-<body>
+<body data-page="listing">
 
 <div id="header-placeholder"></div>
 
@@ -107,7 +121,7 @@ label { display: block; font-weight: 600; margin-top: 12px; }
         <a href="sms:+1234567890" class="contact-btn contact-text">💬 Text Now</a>
         <button class="contact-btn contact-email" id="copyEmail">📧 Email Concierge</button>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-          Email: welcome.evtime@gmail.com<br/>
+          Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="addac8c1cec2c0c883c8dbd9c4c0c8edcac0ccc4c183cec2c0">[email&#160;protected]</a><br/>
           <button id="copyMessage" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Copy Message Template</button>
         </p>
       </div>
@@ -139,7 +153,7 @@ label { display: block; font-weight: 600; margin-top: 12px; }
   </div>
 </div>
 
-<script src="/config.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 <script>
