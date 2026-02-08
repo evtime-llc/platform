@@ -8,105 +8,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime Admin — AI Gateway Debug</title>
   <style>
-    /* Logo header styles (same as index/admin) */
     .topbar { background:#fff; border-bottom:1px solid #e7e5e4; }
     .logo-wrap { max-width:880px; margin:0 auto; padding:0 12px; }
     #site-logo { display:block; width:100%; height:auto; max-height:200px; object-fit:contain; }
     @media (max-width:600px){ #site-logo { max-height:220px; } }
 
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      padding: 24px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; max-width: 1000px; margin: 0 auto; }
     fieldset { border: 1px solid #ddd; padding: 16px; margin-bottom: 16px; border-radius: 8px; }
     legend { font-weight: 800; }
     label { display:block; margin: 8px 0 4px; font-weight: 600; }
-    input, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    input, textarea, select, button { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
     .muted { color:#666; font-size: 12px; }
     .ok { color: #0a7; }
     .err { color: #c00; white-space: pre-wrap; }
     .pill { display:inline-block; background:#f4f4f4; padding:4px 8px; border-radius:999px; margin-right:6px; font-size:12px; }
-    .diag-line { font-size:11px; }
 
-    table { width:100%; border-collapse: collapse; font-size:13px; }
-    th, td { padding:8px 6px; border-bottom:1px solid #eee; vertical-align: top; }
-    th { text-align:left; font-size:12px; color:#555; }
-    td .title { font-weight:800; }
-    td .sub { font-size:11px; color:#666; }
-
-    .badge {
-      padding:2px 8px;
-      border-radius:999px;
-      font-size:11px;
-      font-weight:800;
-      display:inline-block;
-    }
-    .badge.status-ok {
-      background:#e6f7ef; color:#0a7; border:1px solid #bfead3;
-    }
-    .badge.status-pending {
-      background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe;
-    }
-    .badge.status-error {
-      background:#f7e6e6; color:#a00; border:1px solid #f0caca;
-    }
-
+    table { width:100%; border-collapse: collapse; margin-top:12px; }
+    th, td { padding:10px 8px; border-bottom:1px solid #eee; vertical-align: top; text-align:left; }
+    th { font-size:13px; color:#555; }
     .tiny { font-size:11px; color:#666; }
 
-    /* Simple inline code style for JSON preview */
-    .code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:11px;
-      background:#f9fafb;
-      padding:4px 6px;
-      border-radius:4px;
-      display:inline-block;
-      max-width:100%;
-      white-space:pre-wrap;
-      word-break:break-word;
-    }
+    .status-error, .status-failed { background:#fee2e2; color:#b91c1c; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+    .status-ok, .status-done, .status-completed { background:#d1fae5; color:#065f46; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
+    .status-pending, .status-queued, .status-running { background:#dbeafe; color:#1e40af; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; }
 
-    /* Admin nav (3 tabs: Inventory / Leads / AI Debug) */
-    .admin-nav{
-      margin:16px 0 8px;
+    .admin-header{
       display:flex;
-      justify-content:center;
-      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin:18px 0 12px;
       flex-wrap:wrap;
     }
-    .nav-tab{
+    .admin-header h1{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+    }
+    .admin-nav{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .nav-btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      padding:10px 24px;
+      padding:8px 16px;
       border-radius:999px;
-      border:1px solid #c68a3a;
-      background:#fff8ee;
-      color:#8a5a1f;
-      font-weight:800;
-      font-size:14px;
+      font-size:13px;
+      font-weight:700;
       text-decoration:none;
-      min-width:150px;
-      cursor:pointer;
-      box-shadow:0 1px 3px rgba(0,0,0,.06);
+      border:1px solid #b87333;
+      color:#b87333;
+      background:#fff;
+      transition:background .15s ease, color .15s ease, box-shadow .15s ease, transform .08s ease;
     }
-    .nav-tab:hover{
-      background:#fbe1ba;
+    .nav-btn:hover{
+      background:#fff4e8;
+      box-shadow:0 1px 3px rgba(0,0,0,0.08);
+      transform:translateY(-1px);
     }
-    .nav-tab.active{
-      background:#c68a3a;
+    .nav-btn.active{
+      background:#b87333;
       color:#fff;
-      border-color:#c68a3a;
-      cursor:default;
-      box-shadow:0 2px 6px rgba(0,0,0,.12);
+      box-shadow:0 2px 6px rgba(0,0,0,0.14);
+    }
+    @media (max-width:600px){
+      .admin-header{
+        align-items:flex-start;
+      }
+      .admin-nav{
+        width:100%;
+        justify-content:flex-start;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Topbar / Logo (link to home) -->
   <div class="topbar">
     <div class="logo-wrap">
       <a href="/" aria-label="Go to Home">
@@ -115,18 +95,18 @@
     </div>
   </div>
 
-  <h1>EVTime — Admin</h1>
-
-  <!-- Copper nav tabs (3 pages) -->
-  <div class="admin-nav">
-    <a class="nav-tab" href="/admin.html">Inventory</a>
-    <a class="nav-tab" href="/admin-leads.html">Leads</a>
-    <span class="nav-tab active">AI Debug</span>
+  <div class="admin-header">
+    <h1>EVTime Admin</h1>
+    <nav class="admin-nav">
+      <a href="/admin.html" class="nav-btn">Inventory</a>
+      <a href="/admin-leads.html" class="nav-btn">Leads</a>
+      <a href="/admin-ai-gateway.html" class="nav-btn active">AI Debug</a>
+    </nav>
   </div>
 
   <fieldset id="authBox">
     <legend>Authentication</legend>
-    <div id="sessionInfo" class="muted">Checking session…</div>
+    <div id="sessionInfo" class="muted">Checking session</div>
     <div id="signinBox">
       <label>Email for magic link</label>
       <input id="email" type="email" value="vahehr@gmail.com" required/>
@@ -149,7 +129,7 @@
       </thead>
       <tbody id="gwTbl"></tbody>
     </table>
-    <div id="gwEmpty" class="muted" style="display:none">No tasks yet.</div>
+    <div id="gwEmpty" class="muted" style="display:none;margin-top:10px">No tasks yet.</div>
   </fieldset>
 
   <fieldset>
@@ -157,43 +137,35 @@
     <div id="diag"></div>
   </fieldset>
 
-  <!-- Config + Supabase client -->
   <script src="/config.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
     const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
 
-    // Check if supabase client already exists (avoid duplicate declaration)
-    let supabase;
-    if (window.supabaseClient) {
-      supabase = window.supabaseClient;
-    } else {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-          flowType: 'pkce',
-          storageKey: 'evtime-auth'
-        }
-      });
-      window.supabaseClient = supabase;
-    }
+    const sbClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        storageKey: 'evtime-auth'
+      }
+    });
+    if (!window.supabaseClient) window.supabaseClient = sbClient;
 
     const $ = id => document.getElementById(id);
-    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div class="diag-line">${m}</div>`; };
+    const diag = (m) => { const d = $("diag"); d.innerHTML += `<div>${m}</div>`; };
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    // ---------- Auth UI
     async function setSessionUI() {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const { data: { session }, error } = await sbClient.auth.getSession();
       if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
       if (session) {
         const email = session.user?.email || "";
         if (email.toLowerCase() !== "vahehr@gmail.com") {
           $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
-          await supabase.auth.signOut();
+          await sbClient.auth.signOut();
           $("signinBox").style.display = "block";
           $("signout").style.display = "none";
           $("gatewayBox").style.display = "none";
@@ -212,13 +184,13 @@
       }
     }
 
-    supabase.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
+    sbClient.auth.onAuthStateChange((event)=>{ diag(`Auth event: ${esc(event)}`); setSessionUI(); });
 
     $("sendLink").onclick = async () => {
       const email = $("email").value.trim();
       if (!email) { $("authMsg").textContent = "Enter your email first."; return; }
       $("authMsg").textContent = "Sending magic link...";
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await sbClient.auth.signInWithOtp({
         email,
         options: { emailRedirectTo: "https://itsevtime.com/admin-ai-gateway.html" }
       });
@@ -226,59 +198,31 @@
     };
 
     $("signout").onclick = async () => {
-      await supabase.auth.signOut();
+      await sbClient.auth.signOut();
       await setSessionUI();
     };
 
     (async () => {
       const qs = window.location.search;
       if (qs && qs.includes("code=")) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        const { error } = await sbClient.auth.exchangeCodeForSession(window.location.href);
         if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       await setSessionUI();
     })();
 
-    // ---------- AI Gateway table
-    const gwSelect = `
-      id,
-      api_name,
-      target_table,
-      target_id,
-      status,
-      created_at,
-      processed_at,
-      finished_at,
-      retries,
-      attempts,
-      claimed_by,
-      claimed_at,
-      last_error,
-      error_message,
-      last_error_at
-    `;
-
-    function statusBadge(status, hasError){
-      const s = String(status || '').toLowerCase();
-      if (hasError || s === 'error' || s === 'failed'){
-        return { cls:'status-error', label:(s || 'ERROR').toUpperCase() };
-      }
-      if (s === 'done' || s === 'completed'){
-        return { cls:'status-ok', label:(s || 'OK').toUpperCase() };
-      }
-      return { cls:'status-pending', label:(s || 'PENDING').toUpperCase() };
-    }
+    const gwSelect = 'id,api_name,target_table,target_id,status,created_at,processed_at,finished_at,retries,attempts,claimed_by,claimed_at,last_error,error_message,last_error_at';
 
     async function refreshGateway(){
-      const { data, error } = await supabase
+      const { data, error } = await sbClient
         .from('ai_gateway')
         .select(gwSelect)
         .order('created_at', { ascending:false })
-        .limit(200);
+        .limit(100);
 
       if (error){
-        diag(`<span class="err">ai_gateway load error: ${esc(error.message)}</span>`);
+        diag(`<span class="err">Gateway load error: ${esc(error.message)}</span>`);
         $("gwTbl").innerHTML = "";
         $("gwEmpty").style.display = "block";
         return;
@@ -294,51 +238,56 @@
       $("gwEmpty").style.display = "none";
 
       tb.innerHTML = rows.map(r=>{
+        const apiName = r.api_name || 'unknown';
+        const targetTable = r.target_table || '';
+        const targetId = r.target_id || '';
+        const status = String(r.status || '').trim().toLowerCase();
+
+        let statusClass = 'status-pending';
+        if (status === 'error' || status === 'failed') statusClass = 'status-error';
+        else if (status === 'done' || status === 'completed') statusClass = 'status-ok';
+
         const created = r.created_at ? new Date(r.created_at).toLocaleString() : '';
-        const processed = r.processed_at ? new Date(r.processed_at).toLocaleString() : '';
-        const finished = r.finished_at ? new Date(r.finished_at).toLocaleString() : '';
-        const lastErrAt = r.last_error_at ? new Date(r.last_error_at).toLocaleString() : '';
+        const processed = r.processed_at ? new Date(r.processed_at).toLocaleString() : null;
+        const finished = r.finished_at ? new Date(r.finished_at).toLocaleString() : null;
 
-        const hasError = !!(r.last_error || r.error_message);
-        const badge = statusBadge(r.status, hasError);
+        const errorMsg = r.error_message || r.last_error || '';
+        const lastErrorAt = r.last_error_at ? new Date(r.last_error_at).toLocaleString() : null;
 
-        const metaLines = [];
-        if (r.target_table) metaLines.push(`Table: ${r.target_table}`);
-        if (r.target_id) metaLines.push(`Target: ${r.target_id}`);
-        if (r.claimed_by) metaLines.push(`Claimed by: ${r.claimed_by}`);
-        if (r.claimed_at) metaLines.push(`Claimed at: ${new Date(r.claimed_at).toLocaleString()}`);
-        if (typeof r.retries === 'number') metaLines.push(`Retries: ${r.retries}`);
-        if (typeof r.attempts === 'number') metaLines.push(`Attempts: ${r.attempts}`);
+        const timingLines = [
+          `Created: ${created}`,
+          processed ? `Processed: ${processed}` : null,
+          finished ? `Finished: ${finished}` : null
+        ].filter(Boolean);
 
-        const errLines = [];
-        if (r.last_error) errLines.push(r.last_error);
-        if (r.error_message && r.error_message !== r.last_error) errLines.push(r.error_message);
-        if (lastErrAt) errLines.push(`Last error at: ${lastErrAt}`);
+        const errorLines = [
+          errorMsg ? `Error: ${esc(errorMsg)}` : null,
+          lastErrorAt ? `Last error at: ${lastErrorAt}` : null,
+          r.retries ? `Retries: ${r.retries}` : null,
+          r.attempts ? `Attempts: ${r.attempts}` : null
+        ].filter(Boolean);
 
         return `
           <tr>
             <td>
-              <div class="title">${esc(r.api_name || '(no api_name)')}</div>
-              <div class="sub tiny">${esc(r.id)}</div>
-              ${metaLines.length ? `<div class="tiny">${esc(metaLines.join(' • '))}</div>` : ''}
+              <div><strong>${esc(apiName)}</strong></div>
+              <div class="tiny">${esc(targetTable)} / ${esc(targetId)}</div>
+              <div class="tiny">ID: ${esc(r.id)}</div>
             </td>
             <td>
-              <div><span class="badge ${badge.cls}">${esc(badge.label)}</span></div>
+              <span class="${statusClass}">${esc(status.toUpperCase())}</span>
             </td>
             <td>
-              <div class="tiny">Created: ${esc(created)}</div>
-              ${processed ? `<div class="tiny">Processed: ${esc(processed)}</div>` : ''}
-              ${finished ? `<div class="tiny">Finished: ${esc(finished)}</div>` : ''}
+              ${timingLines.map(l => `<div class="tiny">${l}</div>`).join('')}
             </td>
             <td>
-              ${errLines.length ? `<div class="tiny">${esc(errLines.join(' | '))}</div>` : '<div class="tiny">No errors recorded.</div>'}
+              ${errorLines.length ? errorLines.map(l => `<div class="tiny">${l}</div>`).join('') : '<div class="tiny">—</div>'}
             </td>
           </tr>
         `;
       }).join("");
     }
 
-    // Optional: periodic refresh
     setInterval(()=>{ refreshGateway().catch(()=>{}); }, 60000);
   </script>
 </body>
