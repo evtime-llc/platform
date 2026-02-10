@@ -131,6 +131,12 @@ label { display: block; font-weight: 600; margin-top: 12px; }
         <label>Name *</label>
         <input type="text" id="advName" required/>
         
+        <!-- Honeypot: hidden from real users, bots fill this in -->
+        <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+          <label>Company</label>
+          <input type="text" id="advCompany" name="company" tabindex="-1" autocomplete="off"/>
+        </div>
+        
         <label>Phone</label>
         <input type="tel" id="advPhone"/>
         
@@ -341,6 +347,14 @@ if (!id) {
     // Form submission
     document.getElementById('advisorForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Honeypot check — if filled, silently reject (bot detected)
+      if (document.getElementById('advCompany').value) {
+        showMsg('Message sent! We will respond within 24 hours.', 'success');
+        document.getElementById('advisorForm').reset();
+        return;
+      }
+      
       const name = document.getElementById('advName').value.trim();
       const phone = document.getElementById('advPhone').value.trim();
       const email = document.getElementById('advEmail').value.trim();
