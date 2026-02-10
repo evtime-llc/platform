@@ -117,11 +117,10 @@ label { display: block; font-weight: 600; margin-top: 12px; }
     
     <div class="tab-panel active" id="quickPanel">
       <div class="quick-contact">
-        <a href="tel:+1234567890" class="contact-btn contact-call">📞 Call Now</a>
-        <a href="sms:+1234567890" class="contact-btn contact-text">💬 Text Now</a>
+        <!-- Phone/SMS buttons removed — will be restored when 800 number + AI answering service is ready -->
         <button class="contact-btn contact-email" id="copyEmail">📧 Email Concierge</button>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-          Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="addac8c1cec2c0c883c8dbd9c4c0c8edcac0ccc4c183cec2c0">[email&#160;protected]</a><br/>
+          Email: welcome.evtime@gmail.com<br/>
           <button id="copyMessage" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Copy Message Template</button>
         </p>
       </div>
@@ -153,13 +152,19 @@ label { display: block; font-weight: 600; margin-top: 12px; }
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/config.js"></script>
+<script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 <script>
 const url = window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co';
 const anonKey = window.SUPABASE_ANON_KEY || '';
 const sb = supabase.createClient(url, anonKey);
+
+const esc = s => {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+};
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
@@ -175,7 +180,8 @@ if (!id) {
     }
     
     const item = data;
-    const title = [item.year, item.make, item.model, item.trim].filter(Boolean).join(' ');
+    const titleRaw = [item.year, item.make, item.model, item.trim].filter(Boolean).join(' ');
+    const title = esc(titleRaw);
     const price = item.price ? `$${item.price.toLocaleString()}` : 'Contact for price';
     const soldBadge = item.status === 'sold' ? '<span class="badge sold-badge">SOLD</span>' : '';
     
@@ -225,24 +231,24 @@ if (!id) {
     
     const meta = `
       <div class="meta-grid">
-        ${item.mileage ? `<div class="meta-item"><div class="meta-label">Mileage</div><div class="meta-value">${item.mileage.toLocaleString()} mi</div></div>` : ''}
-        ${item.title_status ? `<div class="meta-item"><div class="meta-label">Title Status</div><div class="meta-value">${item.title_status}</div></div>` : ''}
-        ${item.condition ? `<div class="meta-item"><div class="meta-label">Condition</div><div class="meta-value">${item.condition}</div></div>` : ''}
-        ${item.vehicle_type ? `<div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${item.vehicle_type}</div></div>` : ''}
-        ${item.city ? `<div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${item.city}</div></div>` : ''}
-        ${item.vin ? `<div class="meta-item"><div class="meta-label">VIN</div><div class="meta-value">${item.vin}</div></div>` : ''}
+        ${item.mileage ? `<div class="meta-item"><div class="meta-label">Mileage</div><div class="meta-value">${esc(item.mileage.toLocaleString())} mi</div></div>` : ''}
+        ${item.title_status ? `<div class="meta-item"><div class="meta-label">Title Status</div><div class="meta-value">${esc(item.title_status)}</div></div>` : ''}
+        ${item.condition ? `<div class="meta-item"><div class="meta-label">Condition</div><div class="meta-value">${esc(item.condition)}</div></div>` : ''}
+        ${item.vehicle_type ? `<div class="meta-item"><div class="meta-label">Type</div><div class="meta-value">${esc(item.vehicle_type)}</div></div>` : ''}
+        ${item.city ? `<div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">${esc(item.city)}</div></div>` : ''}
+        ${item.vin ? `<div class="meta-item"><div class="meta-label">VIN</div><div class="meta-value">${esc(item.vin)}</div></div>` : ''}
       </div>
     `;
     
-    const description = item.description ? `<div class="description">${item.description}</div>` : '';
+    const description = item.description ? `<div class="description">${esc(item.description)}</div>` : '';
     
     const html = `
       <div class="card">
         ${mediaHTML}
         <h1 class="title">${title} ${soldBadge}</h1>
         <div class="price">${price}</div>
-        ${item.vehicle_type ? `<span class="badge">${item.vehicle_type}</span>` : ''}
-        ${item.city ? `<span class="badge">${item.city}</span>` : ''}
+        ${item.vehicle_type ? `<span class="badge">${esc(item.vehicle_type)}</span>` : ''}
+        ${item.city ? `<span class="badge">${esc(item.city)}</span>` : ''}
         ${meta}
         ${description}
         <button class="btn-primary" id="contactBtn">Contact an Advisor</button>
@@ -327,7 +333,7 @@ if (!id) {
     });
     
     document.getElementById('copyMessage').addEventListener('click', () => {
-      const msg = `Hi, I'm interested in the ${title}. Can you provide more details?`;
+      const msg = `Hi, I'm interested in the ${titleRaw}. Can you provide more details?`;
       navigator.clipboard.writeText(msg);
       alert('Message template copied!');
     });
