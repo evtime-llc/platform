@@ -85,6 +85,12 @@ label { display: block; font-weight: 600; margin-top: 16px; }
     <form id="contactForm">
       <label>Name <span class="required">*</span></label>
       <input type="text" id="name" required placeholder="Your name"/>
+
+      <!-- Honeypot: hidden from real users, bots fill this in -->
+      <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+        <label>Company</label>
+        <input type="text" id="company" name="company" tabindex="-1" autocomplete="off"/>
+      </div>
       
       <label>Email <span class="required">*</span></label>
       <input type="email" id="email" required placeholder="your@email.com"/>
@@ -186,6 +192,13 @@ const sb = anonKey ? supabase.createClient(url, anonKey) : null;
 
 document.getElementById('contactForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  // Honeypot check — if filled, silently reject (bot detected)
+  if (document.getElementById('company').value) {
+    showMsg('Message sent! We will respond within 24 hours.', 'success');
+    document.getElementById('contactForm').reset();
+    return;
+  }
   
   const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
