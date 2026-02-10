@@ -84,6 +84,12 @@ video{width:100%;border-radius:8px}
     
     <label for="name">Name *</label>
     <input id="name" type="text" placeholder="Your name" required>
+
+    <!-- Honeypot: hidden from real users, bots fill this in -->
+    <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+      <label>Company</label>
+      <input id="company" type="text" name="company" tabindex="-1" autocomplete="off">
+    </div>
     
     <label for="phone">Phone *</label>
     <input id="phone" type="text" placeholder="Your phone number" required>
@@ -172,6 +178,14 @@ vinPhoto.addEventListener('change',function(e){var f=e.target.files&&e.target.fi
 
 submitBtn.addEventListener('click',async function(){
   var formMsg = document.getElementById('formMsg');
+
+  // Honeypot check — if filled, silently reject (bot detected)
+  if (document.getElementById('company').value) {
+    formMsg.textContent = 'Submitted! We will review your car and text you an offer within 24 hours.';
+    formMsg.className = 'small success';
+    return;
+  }
+
   var v = vinEl.value.trim().toUpperCase();
   var name = document.getElementById('name').value.trim();
   var phone = document.getElementById('phone').value.trim();
