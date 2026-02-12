@@ -153,9 +153,14 @@ fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('foote
 
 var SUPABASE_URL = (window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co').trim();
 var SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || '').trim();
-var supabase = null;
-if (window.supabase && SUPABASE_ANON_KEY) {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function getSb() {
+  if (window._sbClient) return window._sbClient;
+  if (window.supabase && window.supabase.createClient && SUPABASE_ANON_KEY) {
+    window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return window._sbClient;
+  }
+  return null;
 }
 
 function normalizeVIN(r){if(!r)return '';var s=r.toUpperCase().replace(/[^A-Z0-9]/g,'');s=s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');var m=s.match(/[A-HJ-NPR-Z0-9]{17,25}/);if(m)s=m[0];if(s.length>17)s=s.substring(0,17);return s}
@@ -205,7 +210,8 @@ submitBtn.addEventListener('click',async function(){
     return;
   }
   
-  if(!supabase){
+  var sb = getSb();
+  if(!sb){
     formMsg.textContent = 'Submission system not configured. Please email us instead.';
     formMsg.className = 'small error';
     return;
@@ -213,7 +219,7 @@ submitBtn.addEventListener('click',async function(){
   
   var msg = '[SELL CAR]\nVIN: ' + v + '\nMileage: ' + (miles||'n/a') + '\nCondition: ' + (cond||'n/a') + '\nNotes: ' + (notes||'none');
   
-  var result = await supabase.from('leads').insert(
+  var result = await sb.from('leads').insert(
     { listing_id: null, name: name, phone: phone, email: email, message: msg },
     { returning: 'minimal' }
   );
