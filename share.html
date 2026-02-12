@@ -32,11 +32,14 @@
 .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
 .card { background: var(--bg-light); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin: 12px 0; }
 .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; margin: 18px 0; }
+.card-link { text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease, box-shadow 0.15s ease; border-radius: 14px; }
+.card-link:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.card-link:hover .card { border-color: var(--copper); }
 .card-img { width: 100%; aspect-ratio: 4/3; object-fit: contain; background: #f5f0e8; border-radius: 8px; }
 .card-title { font-size: 18px; font-weight: 600; margin: 12px 0 6px; }
 .card-meta { font-size: 14px; color: var(--text-muted); margin: 4px 0; }
 .card-price { font-size: 20px; font-weight: 700; color: var(--text); margin: 8px 0; }
-.card-btn { display: inline-block; background: var(--copper); color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 8px; }
+.card-btn { display: inline-block; background: var(--copper); color: #fff; padding: 10px 20px; border-radius: 8px; font-weight: 600; margin-top: 8px; }
 .card-btn:hover { opacity: 0.9; }
 .divider { font-size: 22px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--copper); }
 .sold-badge { display: inline-block; background: #666; color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; margin-left: 8px; }
@@ -102,13 +105,15 @@ const cardHTML = (item) => {
   const soldBadge = item.status === 'sold' ? '<span class="sold-badge">SOLD</span>' : '';
   
   return `
-    <div class="card">
-      <img src="${esc(img)}" alt="${esc(title)}" class="card-img"/>
-      <div class="card-title">${esc(title)} ${soldBadge}</div>
-      <div class="card-meta">${esc(leftMeta)}</div>
-      <div class="card-price">${esc(price)}</div>
-      <a href="./listing.html?id=${item.id}" class="card-btn">View details</a>
-    </div>
+    <a href="./listing.html?id=${item.id}" class="card-link">
+      <div class="card">
+        <img src="${esc(img)}" alt="${esc(title)}" class="card-img"/>
+        <div class="card-title">${esc(title)} ${soldBadge}</div>
+        <div class="card-meta">${esc(leftMeta)}</div>
+        <div class="card-price">${esc(price)}</div>
+        <span class="card-btn">View details</span>
+      </div>
+    </a>
   `;
 };
 
