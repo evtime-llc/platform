@@ -170,3 +170,97 @@ function setStatus(m,o){var e=document.getElementById('vinStatus');e.textContent
 var vinEl=document.getElementById('vin'),scanBtn=document.getElementById('scanBtn'),vinPhoto=document.getElementById('vinPhoto'),submitBtn=document.getElementById('submitBtn'),camWrap=document.getElementById('camWrap'),video=document.getElementById('video'),captureBtn=document.getElementById('captureBtn'),closeCamBtn=document.getElementById('closeCamBtn'),stream=null;
 
 vinEl.addEventListener('input',function(){var v=normalizeVIN(vinEl.value);vinEl.value=v;if(v.length===17&&isVIN17(v))setStatus('Looks like a valid VIN.',true);else if(v.length>0)setStatus('VIN must be 17 characters (A-Z, 0-9; no I, O, Q).');else setStatus('')});
+
+/* ── Camera scan ── */
+scanBtn.addEventListener('click',function(){
+  camWrap.style.display='flex';
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}}}).then(function(s){stream=s;video.srcObject=s}).catch(function(){setStatus('Camera not available. Upload a photo instead.');camWrap.style.display='none'})
+});
+closeCamBtn.addEventListener('click',function(){camWrap.style.display='none';if(stream){stream.getTracks().forEach(function(t){t.stop()});stream=null}});
+captureBtn.addEventListener('click',function(){
+  var c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;c.getContext('2d').drawImage(video,0,0);
+  setStatus('Reading VIN…');
+  Tesseract.recognize(c,'eng',{tessedit_char_whitelist:'ABCDEFGHJKLMNPRSTUVWXYZ0123456789'}).then(function(r){
+    var v=normalizeVIN(r.data.text);if(isVIN17(v)){vinEl.value=v;setStatus('VIN captured!',true);closeCamBtn.click()}else{setStatus('Could not read VIN. Try again or type it manually.')}
+  }).catch(function(){setStatus('OCR failed. Try uploading a photo instead.')})
+});
+
+/* ── Photo upload OCR ── */
+vinPhoto.addEventListener('change',function(){
+  var f=this.files[0];if(!f)return;setStatus('Reading VIN from photo…');
+  var img=new Image();img.onload=function(){
+    var c=document.createElement('canvas');c.width=img.width;c.height=img.height;c.getContext('2d').drawImage(img,0,0);
+    Tesseract.recognize(c,'eng',{tessedit_char_whitelist:'ABCDEFGHJKLMNPRSTUVWXYZ0123456789'}).then(function(r){
+      var v=normalizeVIN(r.data.text);if(isVIN17(v)){vinEl.value=v;setStatus('VIN captured from photo!',true)}else{setStatus('Could not read VIN from photo. Try a closer, sharper shot.')}
+    }).catch(function(){setStatus('Could not process the photo. Please try a clearer shot.')})
+  };img.onerror=function(){setStatus('Bad image file. Try another photo.')};img.src=URL.createObjectURL(f)
+});
+
+/* ── Submit form ── */
+submitBtn.addEventListener('click',async function(){
+  var formMsg = document.getElementById('formMsg');
+
+  // Honeypot check
+  if (document.getElementById('company').value) {
+    formMsg.textContent = 'Received — One of our specialists will reach out shortly.';
+    formMsg.className = 'small success';
+    return;
+  }
+
+  var v = vinEl.value.trim().toUpperCase();
+  var name = document.getElementById('name').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var miles = document.getElementById('miles').value.trim();
+  var cond = document.getElementById('cond').value.trim();
+  var notes = document.getElementById('notes').value.trim();
+  
+  if(!isVIN17(v)){
+    formMsg.textContent = 'Please enter a valid 17-character VIN.';
+    formMsg.className = 'small error';
+    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(!name || !phone || !email){
+    formMsg.textContent = 'Please fill in Name, Phone, and Email.';
+    formMsg.className = 'small error';
+    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  
+  var sb = getSb();
+  if(!sb){
+    formMsg.textContent = 'Submission system loading — please wait a moment and try again.';
+    formMsg.className = 'small error';
+    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  
+  var msg = '[SELL CAR]\nVIN: ' + v + '\nMileage: ' + (miles||'n/a') + '\nCondition: ' + (cond||'n/a') + '\nNotes: ' + (notes||'none');
+  
+  var result = await sb.from('leads').insert(
+    { listing_id: null, name: name, phone: phone, email: email, message: msg },
+    { returning: 'minimal' }
+  );
+  
+  if(result.error){
+    formMsg.textContent = 'Could not submit. Please email us at welcome.evtime@gmail.com';
+    formMsg.className = 'small error';
+  } else {
+    formMsg.textContent = 'Received — One of our specialists will reach out shortly.';
+    formMsg.className = 'small success';
+    document.getElementById('vin').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('miles').value = '';
+    document.getElementById('cond').value = '';
+    document.getElementById('notes').value = '';
+    setStatus('');
+  }
+  formMsg.scrollIntoView({behavior:'smooth',block:'center'});
+});
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
