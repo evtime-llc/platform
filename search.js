@@ -11,11 +11,6 @@
     "/": { title: "Home", desc: "EVTime - Car marketplace built on trust", keywords: ["home","main","start","evtime"] }
   };
 
-  const SUPABASE_URL = (window.SUPABASE_URL || "https://tgkvhmxrftcegpryptwq.supabase.co").trim();
-  const SUPABASE_ANON_KEY = (window.SUPABASE_ANON_KEY || "").trim();
-  let supabase = null;
-  if (window.supabase && SUPABASE_ANON_KEY) supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
   const modalHTML = `
     <div id="searchModal" class="search-modal" aria-hidden="true">
       <div class="search-modal-content" role="dialog" aria-modal="true" aria-label="Search">
@@ -26,7 +21,7 @@
 
         <div class="search-stack">
           <input type="text" id="searchInput" placeholder="Search vehicles, pages, services..." autocomplete="off">
-          <div class="search-subhint">Try: “Model Y”, “registration”, “sell my car”</div>
+          <div class="search-subhint">Try: "Model Y", "registration", "sell my car"</div>
         </div>
 
         <div id="searchResults" class="search-results">
@@ -240,7 +235,6 @@
     };
 
     function closeSearch() {
-      // blur focus BEFORE hiding to avoid aria-hidden warning (safe even if minified)
       try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(e){}
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
@@ -267,7 +261,6 @@
       searchTimeout = setTimeout(function () { performSearch(query); }, 180);
     });
 
-    // Safe result clicking (no inline onclick strings)
     results.addEventListener("click", function (e) {
       var el = e.target;
       while (el && el !== results && (!el.classList || !el.classList.contains("search-result"))) el = el.parentNode;
@@ -322,7 +315,6 @@
       results.innerHTML = html;
     }
 
-    // better page matching (tokens + scoring)
     function searchPages(query) {
       const q = (query || "").toLowerCase().trim();
       if (!q) return [];
@@ -352,9 +344,10 @@
     }
 
     async function searchInventory(query) {
-      if (!supabase) return [];
+      const sb = getSb();
+      if (!sb) return [];
       try {
-        const res = await supabase
+        const res = await sb
           .from("listing")
           .select("id, year, make, model, trim, price, city, vin")
           .eq("status", "live")
