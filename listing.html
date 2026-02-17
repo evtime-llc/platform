@@ -162,9 +162,7 @@ label { display: block; font-weight: 600; margin-top: 12px; }
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 <script>
-const url = window.SUPABASE_URL || 'https://tgkvhmxrftcegpryptwq.supabase.co';
-const anonKey = window.SUPABASE_ANON_KEY || '';
-const sb = supabase.createClient(url, anonKey);
+const sb = getSb();
 
 const esc = s => {
   const d = document.createElement('div');
@@ -177,6 +175,8 @@ const id = params.get('id');
 
 if (!id) {
   document.getElementById('mount').innerHTML = '<div class="card">Missing listing id.</div>';
+} else if (!sb) {
+  document.getElementById('mount').innerHTML = '<div class="card">System loading — please refresh the page.</div>';
 } else {
   (async () => {
     const { data, error } = await sb.from('listing').select('*').eq('id', id).single();
@@ -206,7 +206,7 @@ if (!id) {
       return images.map(p => {
         if (p.startsWith('http')) return p;
         const clean = normalize(p);
-        return `${url}/storage/v1/object/public/images/${clean}`;
+        return `${window.SUPABASE_URL}/storage/v1/object/public/images/${clean}`;
       });
     };
     
