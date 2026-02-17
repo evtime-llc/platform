@@ -1,14 +1,27 @@
-// app.js - Global header functionality for EVTime
+// app.js - Global functionality for EVTime
 (function() {
   'use strict';
 
+  // Load Google Analytics (correct ID, loads once, works on every page)
+  function loadGA() {
+    if (window._gaLoaded) return;
+    window._gaLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-GGBQKG3B3G';
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-GGBQKG3B3G');
+  }
+
   // Load Crisp chat widget
   function loadCrispChat() {
-    if (window.$crisp) return; // Already loaded
-    
+    if (window.$crisp) return;
     window.$crisp = [];
     window.CRISP_WEBSITE_ID = "782a825d-c11b-4dcf-8a44-656bd6ddc5ad";
-    
     (function() {
       var d = document, s = d.createElement("script");
       s.src = "https://client.crisp.chat/l.js";
@@ -44,8 +57,6 @@
         }
       }
     });
-
-    // Also handle Enter key on search icon
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && e.target.closest('.search-icon')) {
         if (window.openSearch && typeof window.openSearch === 'function') {
@@ -60,13 +71,10 @@
     try {
       var page = document.body.getAttribute('data-page');
       if (!page) return;
-      
       var links = document.querySelectorAll('.nav .nav-btn');
       links.forEach(function(link) {
         var href = link.getAttribute('href');
         if (!href) return;
-        
-        // Simple matching logic
         if ((href === './' + page + '.html') || 
             (page === 'home' && href === '/') ||
             (page === 'index' && href === '/')) {
@@ -80,23 +88,20 @@
 
   // Main initialization
   function init() {
+    loadGA();
     loadCrispChat();
     initChatButton();
     initSearch();
     initActivePage();
-    
-    // Dispatch event that header is ready
     window.dispatchEvent(new CustomEvent('header-ready'));
   }
 
-  // Run when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  // Make functions available globally for edge cases
   window.evtimeHeader = {
     loadCrispChat: loadCrispChat,
     openChat: function() {
