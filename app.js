@@ -2,7 +2,7 @@
 (function() {
   'use strict';
 
-  // Load Google Analytics (correct ID, loads once, works on every page)
+  // Load Google Analytics
   function loadGA() {
     if (window._gaLoaded) return;
     window._gaLoaded = true;
@@ -15,6 +15,16 @@
     window.gtag = gtag;
     gtag('js', new Date());
     gtag('config', 'G-GGBQKG3B3G');
+  }
+
+  // Load Microsoft Clarity
+  function loadClarity() {
+    if (window.clarity) return;
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "viz1414e67");
   }
 
   // Load Crisp chat widget
@@ -89,6 +99,7 @@
   // Main initialization
   function init() {
     loadGA();
+    loadClarity();
     loadCrispChat();
     initChatButton();
     initSearch();
