@@ -1,7 +1,7 @@
 :root {
-  --bg: #fff5f3; /* Very soft blush - WARM, matches coral perfectly */
-  --bg-light: #ffd4cc; /* Light coral - bold, warm, interesting */
-  --card: #ffd4cc; /* Light coral card color */
+  --bg: #fff5f3;
+  --bg-light: #ffd4cc;
+  --card: #ffd4cc;
   --text: #1c1917;
   --muted: #78716c;
   --line: #e7e5e4;
@@ -10,11 +10,9 @@
   --copper-light: #d4a574;
   --copper-soft: #f5eae0;
 }
-
 * {
   box-sizing: border-box;
 }
-
 body {
   margin: 0;
   background: var(--bg);
@@ -22,33 +20,30 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
 }
-
 /* Header */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #ffd4cc; /* Coral header to match cards */
+  background: #ffd4cc;
   border-bottom: 1px solid rgba(201, 140, 91, 0.18);
 }
-
 .header-inner {
   max-width: 1280px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 32px;
   height: 50px;
   padding: 0 24px;
 }
-
 .logo-link {
   position: relative;
   overflow: hidden;
   display: block;
   flex-shrink: 0;
 }
-
 .logo-link::after {
   content: "";
   position: absolute;
@@ -59,50 +54,42 @@ body {
   pointer-events: none;
   mix-blend-mode: screen;
 }
-
 @keyframes logoGlow {
   0% { transform: translate(-6%, -6%) rotate(0deg); }
   50% { transform: translate(6%, 6%) rotate(180deg); }
   100% { transform: translate(-6%, -6%) rotate(360deg); }
 }
-
 #site-logo {
   height: 50px;
   display: block;
 }
-
 .nav {
   display: flex;
   gap: 32px;
   align-items: center;
 }
-
 .nav-btn {
-  color: #1c1917; /* Dark text on coral header */
+  color: #1c1917;
   text-decoration: none;
   font-size: 14px;
   font-weight: 400;
   white-space: nowrap;
   transition: transform .15s ease, color .15s ease;
 }
-
 .nav-btn:hover {
   color: #c98c5b;
   transform: scale(1.05);
 }
-
 .search-icon {
-  color: #1c1917; /* Dark icon on coral header */
+  color: #1c1917;
   cursor: pointer;
   transition: transform .15s ease, color .15s ease;
 }
-
 .search-icon:hover {
   color: #c98c5b;
   transform: scale(1.1);
 }
-
-/* Active page highlighting - ALL PAGES */
+/* Active page highlighting */
 body[data-page="sell"] .nav-btn[href="./sell.html"],
 body[data-page="share"] .nav-btn[href="./share.html"],
 body[data-page="about"] .nav-btn[href="./about.html"],
@@ -115,29 +102,25 @@ body[data-page="home"] .nav-btn[href="/"],
 body[data-page="index"] .nav-btn[href="/"] {
   color: #c98c5b;
 }
-
 @media (max-width: 768px) {
-  .header-inner { 
-    height: 40px; 
-    padding: 0 16px; 
+  .header-inner {
+    height: 40px;
+    padding: 0 16px;
+    gap: 16px;
   }
-  
-  #site-logo { 
-    height: 40px; 
+  #site-logo {
+    height: 40px;
   }
-  
-  .nav { 
-    flex-wrap: wrap; 
-    gap: 12px; 
-    justify-content: flex-end; 
+  .nav {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-end;
   }
-  
-  .nav-btn { 
-    font-size: 11px; 
+  .nav-btn {
+    font-size: 11px;
   }
-  
-  .search-icon { 
-    width: 16px; 
-    height: 16px; 
+  .search-icon {
+    width: 16px;
+    height: 16px;
   }
 }
