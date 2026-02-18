@@ -44,7 +44,7 @@ label { display: block; font-weight: 600; margin-top: 16px; }
 .faq-item:last-child { border-bottom: none; }
 .faq-question { font-weight: 600; margin-bottom: 8px; }
 .cta-center { text-align: center; margin: 32px 0; }
-.btn-email { display: inline-block; background: var(--copper); color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+.btn-email { display: inline-block; background: var(--copper); color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; cursor: pointer; }
 .btn-email:hover { opacity: 0.9; }
 @media (max-width: 768px) {
   .hero-title { font-size: 28px; }
@@ -166,7 +166,7 @@ label { display: block; font-weight: 600; margin-top: 16px; }
     <div class="cta-center">
       <h2>Still Have Questions?</h2>
       <p style="margin: 16px 0;">Our team is standing by to help.</p>
-      <a href="mailto:welcome.evtime@gmail.com" class="btn-email">📧 Send Email</a>
+      <a href="#" class="btn-email" onclick="navigator.clipboard.writeText('welcome.evtime@gmail.com').then(()=>{this.textContent='✅ Email Copied!'});return false;">📧 Copy Our Email</a>
     </div>
   </div>
 </div>
