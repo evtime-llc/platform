@@ -10,71 +10,80 @@
   <meta name="description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers. Professional team handles paperwork start to finish."/>
   <meta name="theme-color" content="#0b0a09"/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-
   <link rel="stylesheet" href="./styles.css">
 
   <style>
     #header-placeholder{position:sticky;top:0;z-index:100}
 
-    .hero{
-      background: var(--bg);
-      padding: 72px 0 88px;
+    /* ===== Full-width page frame (Apple-style) ===== */
+    .page{
       width: 100%;
-    }
-
-    .hero-inner{
-      width: 100%;
-      padding: 0 72px;
+      margin: 0;
+      padding: 0 clamp(18px, 4vw, 84px); /* edge-to-edge with responsive gutters */
       box-sizing: border-box;
     }
 
-    .hero-text-block{
-      max-width: 1200px;
-      margin: 0 auto 48px;
+    /* ===== HERO ===== */
+    .hero{
+      background: var(--bg);
+      width: 100%;
+      padding: 64px 0 72px;
+    }
+
+    /* Make hero copy truly wide so it doesn't orphan-wrap */
+    .hero-copy{
+      width: min(1400px, 100%);
+      margin: 0 auto;
+      padding: 0;
     }
 
     .hero-title{
-      font-size: 64px;
+      font-size: clamp(40px, 4.2vw, 72px);
       font-weight: 900;
-      margin: 0 0 18px;
+      margin: 0 0 16px;
       color: var(--text);
-      line-height: 1.05;
-      letter-spacing: -0.02em;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 26ch;  /* prevents ugly orphan lines */
     }
+
     .hero-subtitle{
       font-size: 22px;
       font-weight: 800;
       color: var(--copper-dark);
-      margin: 0 0 22px;
+      margin: 0 0 18px;
     }
+
     .hero-text{
       font-size: 18px;
       line-height: 1.8;
       color: #292524;
-      margin: 0 0 14px;
-      max-width: 72ch;
+      margin: 0 0 12px;
+      max-width: 78ch;
     }
+
     .hero-punch{
       font-size: 20px;
       font-weight: 800;
       color: #1f2933;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
-    .hero-lower{
+    /* ===== Row under hero: image 50% + trust panel ===== */
+    .hero-row{
+      width: min(1400px, 100%);
+      margin: 36px auto 0;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
+      grid-template-columns: 1fr 1fr; /* 50/50 */
+      gap: clamp(18px, 3vw, 54px);
       align-items: start;
-      max-width: 1400px;
-      margin: 0 auto;
     }
 
     .hero-image{
-      border-radius: 22px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 28px 80px rgba(0,0,0,0.18);
-      border: 1px solid rgba(201, 140, 91, 0.2);
+      border: 1px solid rgba(201, 140, 91, 0.18);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.16);
       background: rgba(255,255,255,0.35);
     }
     .hero-image img{
@@ -83,103 +92,103 @@
       display: block;
     }
 
+    /* Trust panel: stronger, cleaner, less "pill" */
     .trust-card{
-      background: rgba(255,255,255,0.55);
-      border-radius: 22px;
-      padding: 32px;
-      box-shadow: 0 28px 80px rgba(0,0,0,0.14);
+      background: rgba(255,255,255,0.60);
+      border: 1px solid rgba(201, 140, 91, 0.16);
+      border-radius: 20px;
+      padding: 26px 26px;
+      box-shadow: 0 22px 70px rgba(0,0,0,0.12);
       backdrop-filter: blur(6px);
     }
+
     .trust-title{
       font-size: 22px;
       font-weight: 900;
-      margin: 0 0 18px;
+      margin: 0 0 16px;
       color: var(--text);
+      letter-spacing: -0.01em;
     }
+
     .trust-list{
       list-style: none;
       padding: 0;
       margin: 0;
       display: grid;
-      gap: 14px;
+      gap: 0;
     }
+
     .trust-item{
       display: grid;
-      grid-template-columns: 22px 1fr;
+      grid-template-columns: 26px 1fr;
       gap: 12px;
-      align-items: start;
-      padding: 14px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.6);
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid rgba(0,0,0,0.06);
     }
+    .trust-item:first-child{ border-top: none; }
+
     .trust-dot{
-      width: 22px;
-      height: 22px;
-      border-radius: 7px;
-      background: var(--copper-soft);
-      border: 1px solid rgba(201, 140, 91, 0.28);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
-      margin-top: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--copper);
+      box-shadow: 0 0 0 6px rgba(201,140,91,0.12);
+      justify-self: center;
     }
+
     .trust-text{
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.35;
       color: #292524;
       margin: 0;
-      font-weight: 700;
+      font-weight: 800;
     }
 
+    /* ===== Testimonials ===== */
     .testimonials{
       background: var(--bg);
-      padding: 88px 72px 104px;
       width: 100%;
+      padding: 76px 0 104px;
     }
     .testimonials-inner{
-      max-width: 1400px;
+      width: min(1400px, 100%);
       margin: 0 auto;
     }
     .testimonials-title{
-      font-size: 44px;
+      font-size: clamp(28px, 2.6vw, 44px);
       font-weight: 900;
       color: var(--text);
       text-align: center;
-      margin: 0 0 48px;
+      margin: 0 0 44px;
+      letter-spacing: -0.01em;
     }
     .testimonials-grid{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-      gap:32px
+      gap:28px;
     }
     .testimonial-card{
-      background:rgba(255,255,255,0.55);
+      background:rgba(255,255,255,0.60);
+      border: 1px solid rgba(201, 140, 91, 0.14);
       border-radius:18px;
-      padding:32px;
-      box-shadow:0 20px 60px rgba(0,0,0,0.14);
+      padding:28px;
+      box-shadow:0 18px 55px rgba(0,0,0,0.12);
       backdrop-filter: blur(6px);
     }
-    .testimonial-stars{color:var(--copper-dark);font-size:18px;margin-bottom:12px}
-    .testimonial-quote{
-      font-size:18px;line-height:1.65;color:#292524;margin:0 0 16px;
-      font-style:italic
-    }
-    .testimonial-author{
-      font-size:14px;font-weight:800;color:var(--copper-dark)
-    }
+    .testimonial-stars{color:var(--copper-dark);font-size:18px;margin-bottom:10px}
+    .testimonial-quote{font-size:18px;line-height:1.65;color:#292524;margin:0 0 14px;font-style:italic}
+    .testimonial-author{font-size:14px;font-weight:900;color:var(--copper-dark)}
 
+    /* Mobile */
     @media (max-width: 900px){
-      .hero{padding:48px 0 64px}
-      .hero-inner{padding: 0 20px}
-      .hero-title{font-size:40px}
-      .hero-subtitle{font-size:18px}
+      .hero{padding: 44px 0 54px}
+      .hero-row{grid-template-columns:1fr; margin-top: 22px}
+      .hero-title{max-width: 18ch;} /* still avoids ugly wraps */
       .hero-text{font-size:16px}
       .hero-punch{font-size:18px}
-      .hero-lower{
-        grid-template-columns:1fr;
-        gap: 28px;
-      }
-      .testimonials{padding:60px 20px 80px}
-      .testimonials-title{font-size:32px;margin-bottom:36px}
-      .testimonials-grid{grid-template-columns:1fr;gap:22px}
+      .testimonials{padding: 56px 0 76px}
+      .testimonials-grid{grid-template-columns:1fr; gap:22px}
     }
   </style>
 </head>
@@ -188,10 +197,9 @@
   <div id="header-placeholder"></div>
 
   <section class="hero">
-    <div class="hero-inner">
+    <div class="page">
 
-      <!-- FULL-WIDTH HERO TEXT -->
-      <div class="hero-text-block">
+      <div class="hero-copy">
         <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
         <p class="hero-subtitle">Friendly. Honest. Secure.</p>
         <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
@@ -200,55 +208,56 @@
           using escrow-grade structure to manage documentation, verification, and transfer with precision.
         </p>
         <p class="hero-punch">You're in good hands, start to finish.</p>
-      </div>
 
-      <!-- IMAGE + TRUST PANEL ROW -->
-      <div class="hero-lower">
-        <div class="hero-image">
-          <img src="/hero-trust.png" alt="EV Time team helping a customer">
+        <div class="hero-row">
+          <div class="hero-image">
+            <img src="/hero-trust.png" alt="EV Time team helping a customer">
+          </div>
+
+          <aside class="trust-card">
+            <h2 class="trust-title">Why Choose EV Time?</h2>
+            <ul class="trust-list">
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Licensed DMV handling</p></li>
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Escrow-grade process</p></li>
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Verification & paperwork managed</p></li>
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Honest, fair offers</p></li>
+            </ul>
+          </aside>
         </div>
-
-        <aside class="trust-card">
-          <h2 class="trust-title">Why Choose EV Time?</h2>
-          <ul class="trust-list">
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Licensed DMV handling</p></li>
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Escrow-grade process</p></li>
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Verification & paperwork managed</p></li>
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Honest, fair offers</p></li>
-          </ul>
-        </aside>
       </div>
 
     </div>
   </section>
 
   <section class="testimonials">
-    <div class="testimonials-inner">
-      <h2 class="testimonials-title">What Our Customers Say</h2>
-      <div class="testimonials-grid">
+    <div class="page">
+      <div class="testimonials-inner">
+        <h2 class="testimonials-title">What Our Customers Say</h2>
 
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
-          <div class="testimonial-author">— Sarah M.</div>
-        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
+            <div class="testimonial-author">— Sarah M.</div>
+          </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
-          <div class="testimonial-author">— James T.</div>
-        </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
+            <div class="testimonial-author">— James T.</div>
+          </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
-          <div class="testimonial-author">— Maria G.</div>
-        </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
+            <div class="testimonial-author">— Maria G.</div>
+          </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
-          <div class="testimonial-author">— David K.</div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
+            <div class="testimonial-author">— David K.</div>
+          </div>
         </div>
 
       </div>
