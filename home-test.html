@@ -14,50 +14,44 @@
   <link rel="stylesheet" href="./styles.css">
 
   <style>
-    /* Keep your header sticky behavior */
     #header-placeholder{position:sticky;top:0;z-index:100}
 
-    /* ===== TEST HERO (Option C + image under text) ===== */
     .hero{
       background: var(--bg);
-      padding: 56px 48px 72px;
+      padding: 64px 0 80px;
       width: 100%;
     }
 
     .hero-wrap{
-      max-width: 1200px;
-      margin: 0 auto;
+      width: 100%;
+      margin: 0;
+      padding: 0 72px;
       display: grid;
-      grid-template-columns: 1.25fr 0.9fr;
-      gap: 40px;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 64px;
       align-items: start;
     }
 
-    .hero-left{
-      padding: 8px 4px;
-    }
-
-    /* Your existing text styling, tuned slightly for hierarchy */
     .hero-title{
-      font-size: 56px;
+      font-size: 64px;
       font-weight: 900;
-      margin: 0 0 14px;
+      margin: 0 0 16px;
       color: var(--text);
-      line-height: 1.06;
+      line-height: 1.05;
       letter-spacing: -0.02em;
     }
     .hero-subtitle{
       font-size: 22px;
       font-weight: 800;
       color: var(--copper-dark);
-      margin: 0 0 18px;
+      margin: 0 0 22px;
     }
     .hero-text{
       font-size: 18px;
-      line-height: 1.75;
+      line-height: 1.8;
       color: #292524;
       margin: 0 0 14px;
-      max-width: 62ch;
+      max-width: 70ch;
     }
     .hero-punch{
       font-size: 20px;
@@ -66,54 +60,48 @@
       margin-top: 18px;
     }
 
-    /* Image under left text */
     .hero-image{
-      margin-top: 22px;
-      border-radius: 18px;
+      margin-top: 28px;
+      border-radius: 22px;
       overflow: hidden;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.14);
-      border: 1px solid rgba(201, 140, 91, 0.18);
+      box-shadow: 0 24px 70px rgba(0,0,0,0.18);
+      border: 1px solid rgba(201, 140, 91, 0.2);
       background: rgba(255,255,255,0.35);
     }
     .hero-image img{
       width: 100%;
       height: auto;
       display: block;
-      transform: scale(1.01);
     }
 
-    /* Trust panel on the right */
     .trust-card{
       background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(201, 140, 91, 0.18);
-      border-radius: 18px;
-      padding: 26px 24px;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.10);
+      border-radius: 22px;
+      padding: 28px 28px;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.14);
       backdrop-filter: blur(6px);
     }
     .trust-title{
       font-size: 22px;
       font-weight: 900;
-      margin: 0 0 14px;
+      margin: 0 0 18px;
       color: var(--text);
-      letter-spacing: -0.01em;
     }
     .trust-list{
       list-style: none;
       padding: 0;
       margin: 0;
       display: grid;
-      gap: 12px;
+      gap: 14px;
     }
     .trust-item{
       display: grid;
       grid-template-columns: 22px 1fr;
       gap: 12px;
       align-items: start;
-      padding: 12px 12px;
+      padding: 14px 14px;
       border-radius: 14px;
-      background: rgba(255,255,255,0.50);
-      border: 1px solid rgba(0,0,0,0.04);
+      background: rgba(255,255,255,0.6);
     }
     .trust-dot{
       width: 22px;
@@ -132,46 +120,57 @@
       font-weight: 700;
     }
 
-    /* ===== Testimonials (your existing section, kept) ===== */
-    .testimonials{background:var(--bg);padding:70px 48px 90px;width:100%}
-    .testimonials-inner{max-width:1200px;margin:0 auto}
+    .testimonials{
+      background: var(--bg);
+      padding: 80px 72px 100px;
+      width: 100%;
+    }
+    .testimonials-inner{
+      max-width: 1400px;
+      margin: 0 auto;
+    }
     .testimonials-title{
-      font-size:42px;font-weight:900;color:var(--text);text-align:center;
-      margin:0 0 44px
+      font-size: 44px;
+      font-weight: 900;
+      color: var(--text);
+      text-align: center;
+      margin: 0 0 48px;
     }
     .testimonials-grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-      gap:28px
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:32px
     }
     .testimonial-card{
       background:rgba(255,255,255,0.55);
-      border:1px solid rgba(201,140,91,0.18);
-      border-radius:16px;padding:28px;
-      box-shadow:0 14px 38px rgba(0,0,0,0.10);
+      border-radius:18px;
+      padding:32px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.14);
       backdrop-filter: blur(6px);
     }
     .testimonial-stars{color:var(--copper-dark);font-size:18px;margin-bottom:12px}
     .testimonial-quote{
-      font-size:17px;line-height:1.65;color:#292524;margin:0 0 16px;
+      font-size:18px;line-height:1.65;color:#292524;margin:0 0 16px;
       font-style:italic
     }
     .testimonial-author{
       font-size:14px;font-weight:800;color:var(--copper-dark)
     }
 
-    /* Responsive */
     @media (max-width: 900px){
-      .hero{padding:42px 22px 56px}
-      .hero-wrap{grid-template-columns:1fr;gap:20px}
-      .hero-title{font-size:38px}
+      .hero{padding:42px 0 60px}
+      .hero-wrap{
+        grid-template-columns:1fr;
+        padding: 0 20px;
+        gap: 28px;
+      }
+      .hero-title{font-size:40px}
       .hero-subtitle{font-size:18px}
       .hero-text{font-size:16px}
       .hero-punch{font-size:18px}
-      .trust-card{order: 2}
-      .hero-left{order: 1}
-      .testimonials{padding:56px 22px 72px}
-      .testimonials-title{font-size:30px;margin-bottom:34px}
-      .testimonials-grid{grid-template-columns:1fr;gap:20px}
+      .testimonials{padding:60px 20px 80px}
+      .testimonials-title{font-size:32px;margin-bottom:36px}
+      .testimonials-grid{grid-template-columns:1fr;gap:22px}
     }
   </style>
 </head>
@@ -179,11 +178,9 @@
 <body data-page="home">
   <div id="header-placeholder"></div>
 
-  <!-- TEST HERO (Option C) -->
   <section class="hero">
     <div class="hero-wrap">
 
-      <!-- LEFT: your exact text + image underneath -->
       <div class="hero-left">
         <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
         <p class="hero-subtitle">Friendly. Honest. Secure.</p>
@@ -194,14 +191,12 @@
         </p>
         <p class="hero-punch">You're in good hands, start to finish.</p>
 
-        <!-- Image under text (use your uploaded file name here) -->
         <div class="hero-image">
-          <img src="./hero-trust.png" alt="EV Time team helping a customer">
+          <img src="/hero-trust.png" alt="EV Time team helping a customer">
         </div>
       </div>
 
-      <!-- RIGHT: trust panel -->
-      <aside class="trust-card" aria-label="Why Choose EV Time?">
+      <aside class="trust-card">
         <h2 class="trust-title">Why Choose EV Time?</h2>
         <ul class="trust-list">
           <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Licensed DMV handling</p></li>
@@ -214,7 +209,6 @@
     </div>
   </section>
 
-  <!-- Testimonials (your exact content preserved) -->
   <section class="testimonials">
     <div class="testimonials-inner">
       <h2 class="testimonials-title">What Our Customers Say</h2>
@@ -235,7 +229,7 @@
         <div class="testimonial-card">
           <div class="testimonial-stars">★★★★★</div>
           <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
-          <div class="testimonial-author">— Maria G."</div>
+          <div class="testimonial-author">— Maria G.</div>
         </div>
 
         <div class="testimonial-card">
