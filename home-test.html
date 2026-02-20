@@ -15,11 +15,11 @@
   <style>
     #header-placeholder{position:sticky;top:0;z-index:100}
 
-    /* One consistent Apple-style container for EVERYTHING */
-    .container{
-      width: min(1400px, 100%);
-      margin: 0 auto;
-      padding: 0 clamp(18px, 4vw, 84px);
+    /* TRUE EDGE-TO-EDGE (Apple-style gutters only) */
+    .wrap{
+      width: 100%;
+      margin: 0;
+      padding: 0 80px; /* change to 64 if you want tighter */
       box-sizing: border-box;
     }
 
@@ -29,15 +29,16 @@
       padding: 64px 0 72px;
     }
 
-    /* HERO COPY */
+    /* HERO COPY: FULL WIDTH, NO MAX-WIDTH CAPS */
     .hero-title{
-      font-size: clamp(44px, 4.6vw, 76px);
+      font-size: 68px;            /* chosen to avoid the orphan wrap */
       font-weight: 900;
       margin: 0 0 16px;
       color: var(--text);
       line-height: 1.02;
       letter-spacing: -0.03em;
-      max-width: 32ch;  /* prevents ugly wraps without forcing a “new grid” below */
+      max-width: none;            /* IMPORTANT */
+      text-wrap: balance;         /* modern browsers: prevents ugly last-word wrap */
     }
 
     .hero-subtitle{
@@ -52,7 +53,7 @@
       line-height: 1.8;
       color: #292524;
       margin: 0 0 12px;
-      max-width: 78ch;
+      max-width: none;            /* IMPORTANT */
     }
 
     .hero-punch{
@@ -62,12 +63,13 @@
       margin-top: 16px;
     }
 
-    /* ROW UNDER HERO: same container, same left edge */
+    /* IMAGE (50%) + TRUST (50%) */
     .hero-row{
       margin-top: 32px;
+      width: 100%;
       display: grid;
       grid-template-columns: 1fr 1fr; /* 50/50 */
-      gap: clamp(18px, 3vw, 54px);
+      gap: 56px;
       align-items: start;
     }
 
@@ -88,7 +90,7 @@
       background: rgba(255,255,255,0.60);
       border: 1px solid rgba(201, 140, 91, 0.16);
       border-radius: 20px;
-      padding: 26px 26px;
+      padding: 28px;
       box-shadow: 0 22px 70px rgba(0,0,0,0.12);
       backdrop-filter: blur(6px);
     }
@@ -142,7 +144,7 @@
     }
 
     .testimonials-title{
-      font-size: clamp(28px, 2.6vw, 44px);
+      font-size: 44px;
       font-weight: 900;
       color: var(--text);
       text-align: center;
@@ -168,12 +170,16 @@
     .testimonial-quote{font-size:18px;line-height:1.65;color:#292524;margin:0 0 14px;font-style:italic}
     .testimonial-author{font-size:14px;font-weight:900;color:var(--copper-dark)}
 
+    /* MOBILE */
     @media (max-width: 900px){
+      .wrap{padding: 0 20px;}
       .hero{padding: 44px 0 54px}
-      .hero-row{grid-template-columns:1fr; margin-top: 22px}
+      .hero-title{font-size: 40px;}
       .hero-text{font-size:16px}
       .hero-punch{font-size:18px}
+      .hero-row{grid-template-columns:1fr; gap: 24px; margin-top: 22px}
       .testimonials{padding: 56px 0 76px}
+      .testimonials-title{font-size:32px}
       .testimonials-grid{grid-template-columns:1fr; gap:22px}
     }
   </style>
@@ -183,7 +189,7 @@
   <div id="header-placeholder"></div>
 
   <section class="hero">
-    <div class="container">
+    <div class="wrap">
       <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
       <p class="hero-subtitle">Friendly. Honest. Secure.</p>
       <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
@@ -212,7 +218,7 @@
   </section>
 
   <section class="testimonials">
-    <div class="container">
+    <div class="wrap">
       <h2 class="testimonials-title">What Our Customers Say</h2>
 
       <div class="testimonials-grid">
