@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EV Forum — E.V.Time</title>
+<meta name="description" content="Learn about electric vehicles. Real talk about EVs — cost, batteries, charging, buying tips, and more."/>
+<meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="EV Forum — E.V.Time"/>
+<meta property="og:description" content="Real talk about EVs — cost, batteries, charging, buying tips, and more."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/forum.html"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="./styles.css"/>
+
+<style>
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 24px; }
+.forum-hero { text-align: center; padding: 48px 20px 32px; }
+.forum-hero h1 { font-size: 36px; font-weight: 900; margin-bottom: 12px; }
+.forum-hero p { font-size: 18px; color: var(--muted); max-width: 500px; margin: 0 auto; }
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+.article-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.article-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+  border-color: rgba(201,140,91,0.25);
+}
+.article-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--copper);
+  background: rgba(201,140,91,0.1);
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  width: fit-content;
+}
+.article-card h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+.article-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 16px;
+  flex-grow: 1;
+}
+.article-meta {
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+@media (max-width: 768px) {
+  .forum-hero h1 { font-size: 28px; }
+  .articles-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body data-page="forum">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap">
+  <div class="forum-hero">
+    <h1>EV Forum</h1>
+    <p>Real talk about electric vehicles — from cost to charging to what's actually worth buying.</p>
+  </div>
+
+  <div class="articles-grid">
+
+    <a class="article-card" href="./forum/ev-vs-gas.html">
+      <div class="article-tag">Cost</div>
+      <h2>EV vs Gas: The Real Cost of Ownership</h2>
+      <p>Forget the sticker price. Here's what it actually costs to own an EV versus a gas car over 5 years.</p>
+      <div class="article-meta">
+        <span>EV Time Team</span>
+        <span>5 min read</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="./forum/buying-used-ev.html">
+      <div class="article-tag">Buying</div>
+      <h2>How to Buy a Used EV (What to Check)</h2>
+      <p>Battery health, software updates, warranty — the checklist you need before buying a pre-owned electric car.</p>
+      <div class="article-meta">
+        <span>EV Time Team</span>
+        <span>6 min read</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="./forum/battery-health.html">
+      <div class="article-tag">Battery</div>
+      <h2>EV Battery Health: What You Need to Know</h2>
+      <p>How batteries degrade, what affects lifespan, and how to check health before you buy or sell.</p>
+      <div class="article-meta">
+        <span>EV Time Team</span>
+        <span>5 min read</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="./forum/home-vs-public-charging.html">
+      <div class="article-tag">Charging</div>
+      <h2>Charging at Home vs Public Charging</h2>
+      <p>Cost breakdown, speed comparison, and what setup you actually need at home.</p>
+      <div class="article-meta">
+        <span>EV Time Team</span>
+        <span>4 min read</span>
+      </div>
+    </a>
+
+    <a class="article-card" href="./forum/best-evs-under-30k.html">
+      <div class="article-tag">Picks</div>
+      <h2>Best EVs Under $30K in 2026</h2>
+      <p>The top affordable electric cars you can actually buy right now — ranked by value, range, and reliability.</p>
+      <div class="article-meta">
+        <span>EV Time Team</span>
+        <span>7 min read</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./search.js"></script>
+<script>
+fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
