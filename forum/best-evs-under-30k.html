@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Best EVs Under $30K in 2026 — E.V.Time</title>
+<meta name="description" content="The top affordable electric cars you can actually buy right now — ranked by value, range, and reliability."/>
+<meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="Best EVs Under $30K in 2026 — E.V.Time"/>
+<meta property="og:description" content="The top affordable electric cars you can actually buy right now — ranked by value, range, and reliability."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/forum/best-evs-under-30k.html"/>
+<meta property="og:type" content="article"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="../styles.css"/>
+
+<style>
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--copper); text-decoration: none; margin-bottom: 24px; }
+.back-link:hover { text-decoration: underline; }
+.article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper); background: rgba(201,140,91,0.1); padding: 4px 10px; border-radius: 6px; margin-bottom: 16px; }
+.article-title { font-size: 36px; font-weight: 900; line-height: 1.15; margin: 0 0 16px; }
+.article-meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.article-body h2 { font-size: 24px; font-weight: 800; margin: 36px 0 12px; }
+.article-body h3 { font-size: 20px; font-weight: 700; margin: 28px 0 10px; }
+.article-body p { font-size: 17px; line-height: 1.8; color: #292524; margin: 0 0 20px; }
+.article-body ul { margin: 0 0 20px; padding-left: 24px; }
+.article-body li { font-size: 17px; line-height: 1.8; color: #292524; margin-bottom: 8px; }
+.article-body strong { color: var(--text); }
+.callout { background: rgba(201,140,91,0.08); border-left: 4px solid var(--copper); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 28px 0; }
+.callout p { margin: 0; font-size: 16px; }
+.car-card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 28px 24px; margin: 24px 0; }
+.car-card h3 { margin-top: 0; color: var(--text); }
+.car-card .specs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.car-card .spec { text-align: center; padding: 12px; background: var(--bg); border-radius: 10px; }
+.car-card .spec-value { font-size: 20px; font-weight: 800; color: var(--copper); }
+.car-card .spec-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.rank-badge { display: inline-block; background: var(--copper); color: #fff; font-size: 13px; font-weight: 800; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; }
+.comments-section { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.comments-section h2 { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+.comment-form { margin-bottom: 32px; }
+.comment-form input, .comment-form textarea { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+.comment-form textarea { min-height: 100px; resize: vertical; }
+.comment-form label { display: block; font-weight: 600; margin-top: 12px; font-size: 14px; }
+.btn-comment { background: var(--copper); color: #fff; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+.btn-comment:hover { opacity: 0.9; }
+.comment-msg { padding: 10px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: none; }
+.comment-msg.success { background: #d4edda; color: #155724; display: block; }
+.comment-msg.error { background: #f8d7da; color: #721c24; display: block; }
+.comment-list { margin-top: 24px; }
+.comment-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+.comment-item.reply { margin-left: 32px; border-left: 3px solid rgba(201,140,91,0.2); }
+.comment-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.comment-author { font-weight: 700; font-size: 15px; color: var(--text); }
+.comment-date { font-size: 12px; color: var(--muted); }
+.comment-text { font-size: 15px; line-height: 1.7; color: #292524; margin-top: 8px; }
+.comment-actions { display: flex; gap: 12px; margin-top: 12px; }
+.react-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 20px; background: #fff; font-size: 13px; cursor: pointer; transition: all 0.2s ease; color: var(--muted); }
+.react-btn:hover { border-color: var(--copper); color: var(--copper); }
+.react-btn.active { border-color: var(--copper); color: var(--copper); background: rgba(201,140,91,0.06); }
+.react-btn .count { font-weight: 700; }
+.reply-form { margin-top: 12px; display: none; }
+.reply-form.open { display: block; }
+.reply-form input, .reply-form textarea { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin: 6px 0; font-size: 13px; font-family: inherit; box-sizing: border-box; }
+.reply-form textarea { min-height: 60px; resize: vertical; }
+.reply-form .btn-comment { font-size: 13px; padding: 8px 20px; }
+.no-comments { font-size: 15px; color: var(--muted); font-style: italic; }
+@media (max-width: 768px) {
+  .article-title { font-size: 28px; }
+  .comment-item.reply { margin-left: 16px; }
+  .car-card .specs { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body data-page="forum">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap">
+  <a href="../forum.html" class="back-link">← Back to Forum</a>
+
+  <div class="article-tag">Picks</div>
+  <h1 class="article-title">Best EVs Under $30K in 2026</h1>
+  <div class="article-meta">By EV Time Team · 7 min read</div>
+
+  <div class="article-body">
+    <p>You don't need $50,000 to drive electric. The used EV market has exploded with options, and even some new models now come in under $30K — especially after federal tax credits. Here are our top picks for the best value EVs you can buy right now.</p>
+
+    <div class="callout">
+      <p><strong>Note:</strong> Prices reflect real-world market prices as of early 2026, including used options and after applicable tax credits for new vehicles. Your price may vary by location and condition.</p>
+    </div>
+
+    <div class="car-card">
+      <div class="rank-badge">#1 Best Overall Value</div>
+      <h3>Tesla Model 3 (2021-2022 Used)</h3>
+      <div class="specs">
+        <div class="spec"><div class="spec-value">$22-28K</div><div class="spec-label">Price Range</div></div>
+        <div class="spec"><div class="spec-value">260-270</div><div class="spec-label">Miles Range</div></div>
+        <div class="spec"><div class="spec-value">4.8/5</div><div class="spec-label">Reliability</div></div>
+      </div>
+      <p>Still the king of used EVs. The Model 3 has the best charging network, strongest resale value, and gets better with every software update. A 2021 Standard Range Plus with 30-40K miles is the sweet spot — you're getting a car that cost $40K+ new for mid-$20s.</p>
+      <ul>
+        <li><strong>Why it wins:</strong> Supercharger network, OTA updates, low maintenance, excellent battery longevity</li>
+        <li><strong>Watch for:</strong> Check for FSD/Autopilot transfer, interior wear on white seats</li>
+      </ul>
+    </div>
+
+    <div class="car-card">
+      <div class="rank-badge">#2 Best New EV Under $30K</div>
+      <h3>Chevrolet Equinox EV (2025-2026 New)</h3>
+      <div class="specs">
+        <div class="spec"><div class="spec-value">$27-30K</div><div class="spec-label">After Tax Credit</div></div>
+        <div class="spec"><div class="spec-value">315</div><div class="spec-label">Miles Range</div></div>
+        <div class="spec"><div class="spec-value">New</div><div class="spec-label">Full Warranty</div></div>
+      </div>
+      <p>GM's game-changer. A brand new SUV with over 300 miles of range for under $30K after the federal tax credit. The Ultium platform is proven, the interior is surprisingly premium, and it comes with a full warranty. Hard to beat for a new vehicle.</p>
+      <ul>
+        <li><strong>Why it wins:</strong> New car warranty, SUV size, 315-mile range, great price after credits</li>
+        <li><strong>Watch for:</strong> Dealer markups — shop around, some dealers add $2-5K over MSRP</li>
+      </ul>
+    </div>
+
+    <div class="car-card">
+      <div class="rank-badge">#3 Best Budget Pick</div>
+      <h3>Chevrolet Bolt EV/EUV (2022-2023 Used)</h3>
+      <div class="specs">
+        <div class="spec"><div class="spec-value">$15-20K</div><div class="spec-label">Price Range</div></div>
+        <div class="spec"><div class="spec-value">247-259</div><div class="spec-label">Miles Range</div></div>
+        <div class="spec"><div class="spec-value">4.5/5</div><div class="spec-label">Reliability</div></div>
+      </div>
+      <p>The best bang-for-your-buck in the entire EV market. Post-recall Bolts (2022+) have brand new batteries with a lifetime warranty on the pack. You're getting a new battery in a used car for under $20K. The EUV adds a few inches of room and available Super Cruise.</p>
+      <ul>
+        <li><strong>Why it wins:</strong> Lowest price, new battery (post-recall), proven reliability, cheap to insure</li>
+        <li><strong>Watch for:</strong> No fast charging capability — Level 2 only. Best if you have home charging.</li>
+      </ul>
+    </div>
+
+    <div class="car-card">
+      <div class="rank-badge">#4 Best Range Per Dollar</div>
+      <h3>Hyundai Ioniq 6 (2023-2024 Used)</h3>
+      <div class="specs">
+        <div class="spec"><div class="spec-value">$25-30K</div><div class="spec-label">Price Range</div></div>
+        <div class="spec"><div class="spec-value">310-361</div><div class="spec-label">Miles Range</div></div>
+        <div class="spec"><div class="spec-value">4.7/5</div><div class="spec-label">Reliability</div></div>
+      </div>
+      <p>The Ioniq 6 is an efficiency monster — the aerodynamic sedan shape gives it up to 361 miles of range, the best in this price range. Ultra-fast 800V charging means 10-80% in about 18 minutes. It also comes with Hyundai's excellent 10-year/100K powertrain warranty.</p>
+      <ul>
+        <li><strong>Why it wins:</strong> Best range in class, fastest charging, excellent warranty</li>
+        <li><strong>Watch for:</strong> Polarizing design — you either love it or hate it. Interior space is sedan-tight.</li>
+      </ul>
+    </div>
+
+    <div class="car-card">
+      <div class="rank-badge">#5 Best for Families</div>
+      <h3>Volkswagen ID.4 (2023 Used)</h3>
+      <div class="specs">
+        <div class="spec"><div class="spec-value">$22-27K</div><div class="spec-label">Price Range</div></div>
+        <div class="spec"><div class="spec-value">275</div><div class="spec-label">Miles Range</div></div>
+        <div class="spec"><div class="spec-value">4.3/5</div><div class="spec-label">Reliability</div></div>
+      </div>
+      <p>A proper compact SUV with real cargo space, a comfortable ride, and solid range. The 2023 model year fixed most of the early software issues that plagued the launch. It drives like a VW — composed, quiet, and confident. Great family car.</p>
+      <ul>
+        <li><strong>Why it wins:</strong> Practical SUV size, comfortable ride, good value used</li>
+        <li><strong>Watch for:</strong> Infotainment can be laggy. Make sure it's been updated to the latest software.</li>
+      </ul>
+    </div>
+
+    <h2>The Bottom Line</h2>
+    <p>The sub-$30K EV market has never been better. Whether you want the tech and network of Tesla, the value of a Bolt, or the range of an Ioniq 6, there's a serious electric car waiting for you — at a price that makes financial sense.</p>
+    <p>The best strategy? Buy a 2-3 year old EV with low miles. Let someone else take the depreciation hit, then enjoy years of cheap, fun driving.</p>
+    <p>Ready to find yours? <a href="../share.html" style="color:var(--copper);font-weight:600;">Browse our inventory →</a></p>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="comments-section">
+    <h2>Comments</h2>
+    <div class="comment-form">
+      <label>Name</label>
+      <input type="text" id="commentName" placeholder="Your name" maxlength="50"/>
+      <label>Comment</label>
+      <textarea id="commentText" placeholder="Share your thoughts..." maxlength="1000"></textarea>
+      <button class="btn-comment" id="postComment">Post Comment</button>
+      <div id="commentMsg" class="comment-msg"></div>
+    </div>
+    <div class="comment-list" id="commentList">
+      <p class="no-comments">Loading comments...</p>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../search.js"></script>
+<script>
+const SLUG = 'best-evs-under-30k';
+const sb = getSb();
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getReacted(commentId, type) {
+  try { return JSON.parse(localStorage.getItem('evtime_reactions') || '{}')[commentId + '_' + type] || false; } catch { return false; }
+}
+
+function setReacted(commentId, type) {
+  try {
+    const store = JSON.parse(localStorage.getItem('evtime_reactions') || '{}');
+    store[commentId + '_' + type] = true;
+    localStorage.setItem('evtime_reactions', JSON.stringify(store));
+  } catch {}
+}
+
+function renderComment(c, replies) {
+  const isReply = !!c.parent_id;
+  const likedClass = getReacted(c.id, 'like') ? ' active' : '';
+  const lovedClass = getReacted(c.id, 'love') ? ' active' : '';
+  const childReplies = replies.filter(r => r.parent_id === c.id);
+
+  let html = `
+    <div class="comment-item${isReply ? ' reply' : ''}" data-id="${esc(c.id)}">
+      <div class="comment-header">
+        <span class="comment-author">${esc(c.author_name)}</span>
+        <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      </div>
+      <div class="comment-text">${esc(c.comment)}</div>
+      <div class="comment-actions">
+        <button class="react-btn${likedClass}" onclick="react('${c.id}','like',this)">👍 <span class="count">${c.likes || 0}</span></button>
+        <button class="react-btn${lovedClass}" onclick="react('${c.id}','love',this)">❤️ <span class="count">${c.loves || 0}</span></button>
+        <button class="react-btn" onclick="toggleReply('${c.id}')">💬 Reply</button>
+      </div>
+      <div class="reply-form" id="reply-${c.id}">
+        <input type="text" placeholder="Your name" maxlength="50" id="replyName-${c.id}"/>
+        <textarea placeholder="Write a reply..." maxlength="1000" id="replyText-${c.id}"></textarea>
+        <button class="btn-comment" onclick="postReply('${c.id}')">Post Reply</button>
+      </div>
+  `;
+
+  for (const reply of childReplies) {
+    html += renderComment(reply, replies);
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+async function loadComments() {
+  const list = document.getElementById('commentList');
+  if (!sb) { list.innerHTML = '<p class="no-comments">Comments unavailable.</p>'; return; }
+  const { data, error } = await sb.from('comments').select('*').eq('article_slug', SLUG).order('created_at', { ascending: true });
+  if (error) { list.innerHTML = '<p class="no-comments">Could not load comments.</p>'; return; }
+  if (!data.length) { list.innerHTML = '<p class="no-comments">No comments yet. Be the first!</p>'; return; }
+
+  const topLevel = data.filter(c => !c.parent_id);
+  const replies = data.filter(c => c.parent_id);
+
+  list.innerHTML = topLevel.map(c => renderComment(c, replies)).join('');
+}
+
+async function react(commentId, type, btn) {
+  if (getReacted(commentId, type)) return;
+  const column = type === 'like' ? 'likes' : 'loves';
+  const { data } = await sb.from('comments').select(column).eq('id', commentId).single();
+  if (!data) return;
+  const newVal = (data[column] || 0) + 1;
+  await sb.from('comments').update({ [column]: newVal }).eq('id', commentId);
+  setReacted(commentId, type);
+  btn.classList.add('active');
+  btn.querySelector('.count').textContent = newVal;
+}
+
+function toggleReply(commentId) {
+  const form = document.getElementById('reply-' + commentId);
+  form.classList.toggle('open');
+}
+
+async function postReply(parentId) {
+  const name = document.getElementById('replyName-' + parentId).value.trim();
+  const text = document.getElementById('replyText-' + parentId).value.trim();
+  if (!name || !text) return;
+  await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId }]);
+  document.getElementById('replyName-' + parentId).value = '';
+  document.getElementById('replyText-' + parentId).value = '';
+  document.getElementById('reply-' + parentId).classList.remove('open');
+  await loadComments();
+}
+
+document.getElementById('postComment').addEventListener('click', async () => {
+  const name = document.getElementById('commentName').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  const msg = document.getElementById('commentMsg');
+  if (!name || !text) { msg.textContent = 'Please enter your name and comment.'; msg.className = 'comment-msg error'; return; }
+  if (!sb) { msg.textContent = 'System loading — please refresh.'; msg.className = 'comment-msg error'; return; }
+  const { error } = await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text }]);
+  if (error) { msg.textContent = 'Error posting comment. Try again.'; msg.className = 'comment-msg error'; return; }
+  msg.textContent = 'Comment posted!'; msg.className = 'comment-msg success';
+  document.getElementById('commentName').value = '';
+  document.getElementById('commentText').value = '';
+  await loadComments();
+});
+
+loadComments();
+
+fetch('../header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('../footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
+</script>
+<script src="../app.js"></script>
+</body>
+</html>
