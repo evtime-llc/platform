@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EV Battery Health: What You Need to Know — E.V.Time</title>
+<meta name="description" content="How batteries degrade, what affects lifespan, and how to check health before you buy or sell."/>
+<meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="EV Battery Health: What You Need to Know — E.V.Time"/>
+<meta property="og:description" content="How batteries degrade, what affects lifespan, and how to check health before you buy or sell."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/forum/battery-health.html"/>
+<meta property="og:type" content="article"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="../styles.css"/>
+
+<style>
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--copper); text-decoration: none; margin-bottom: 24px; }
+.back-link:hover { text-decoration: underline; }
+.article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper); background: rgba(201,140,91,0.1); padding: 4px 10px; border-radius: 6px; margin-bottom: 16px; }
+.article-title { font-size: 36px; font-weight: 900; line-height: 1.15; margin: 0 0 16px; }
+.article-meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.article-body h2 { font-size: 24px; font-weight: 800; margin: 36px 0 12px; }
+.article-body p { font-size: 17px; line-height: 1.8; color: #292524; margin: 0 0 20px; }
+.article-body ul { margin: 0 0 20px; padding-left: 24px; }
+.article-body li { font-size: 17px; line-height: 1.8; color: #292524; margin-bottom: 8px; }
+.article-body strong { color: var(--text); }
+.callout { background: rgba(201,140,91,0.08); border-left: 4px solid var(--copper); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 28px 0; }
+.callout p { margin: 0; font-size: 16px; }
+.comparison-table { width: 100%; border-collapse: collapse; margin: 24px 0; border-radius: 12px; overflow: hidden; }
+.comparison-table th { background: var(--copper); color: #fff; padding: 14px 16px; text-align: left; font-size: 14px; font-weight: 700; }
+.comparison-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.comparison-table tr:last-child td { border-bottom: none; }
+.comparison-table tr:nth-child(even) td { background: rgba(201,140,91,0.04); }
+.comments-section { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.comments-section h2 { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+.comment-form { margin-bottom: 32px; }
+.comment-form input, .comment-form textarea { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+.comment-form textarea { min-height: 100px; resize: vertical; }
+.comment-form label { display: block; font-weight: 600; margin-top: 12px; font-size: 14px; }
+.btn-comment { background: var(--copper); color: #fff; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+.btn-comment:hover { opacity: 0.9; }
+.comment-msg { padding: 10px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: none; }
+.comment-msg.success { background: #d4edda; color: #155724; display: block; }
+.comment-msg.error { background: #f8d7da; color: #721c24; display: block; }
+.comment-list { margin-top: 24px; }
+.comment-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+.comment-item.reply { margin-left: 32px; border-left: 3px solid rgba(201,140,91,0.2); }
+.comment-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.comment-author { font-weight: 700; font-size: 15px; color: var(--text); }
+.comment-date { font-size: 12px; color: var(--muted); }
+.comment-text { font-size: 15px; line-height: 1.7; color: #292524; margin-top: 8px; }
+.comment-actions { display: flex; gap: 12px; margin-top: 12px; }
+.react-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 20px; background: #fff; font-size: 13px; cursor: pointer; transition: all 0.2s ease; color: var(--muted); }
+.react-btn:hover { border-color: var(--copper); color: var(--copper); }
+.react-btn.active { border-color: var(--copper); color: var(--copper); background: rgba(201,140,91,0.06); }
+.react-btn .count { font-weight: 700; }
+.reply-form { margin-top: 12px; display: none; }
+.reply-form.open { display: block; }
+.reply-form input, .reply-form textarea { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin: 6px 0; font-size: 13px; font-family: inherit; box-sizing: border-box; }
+.reply-form textarea { min-height: 60px; resize: vertical; }
+.reply-form .btn-comment { font-size: 13px; padding: 8px 20px; }
+.no-comments { font-size: 15px; color: var(--muted); font-style: italic; }
+@media (max-width: 768px) {
+  .article-title { font-size: 28px; }
+  .comment-item.reply { margin-left: 16px; }
+}
+</style>
+</head>
+<body data-page="forum">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap">
+  <a href="../forum.html" class="back-link">← Back to Forum</a>
+
+  <div class="article-tag">Battery</div>
+  <h1 class="article-title">EV Battery Health: What You Need to Know</h1>
+  <div class="article-meta">By EV Time Team · 5 min read</div>
+
+  <div class="article-body">
+    <p>The battery is the heart of every electric vehicle. It's the most expensive single component, and it's the one thing buyers worry about most. Here's what actually matters — no hype, no fear, just facts.</p>
+
+    <h2>How EV Batteries Degrade</h2>
+    <p>Every rechargeable battery loses capacity over time. Your phone does it, your laptop does it, and your EV does it. The question is how fast.</p>
+    <p>Here's the reality: most EV batteries degrade much slower than people expect. Studies show the average EV loses about <strong>2-3% of capacity per year</strong>. That means after 5 years, you're still at 85-90% of the original range.</p>
+
+    <div class="callout">
+      <p><strong>Key insight:</strong> Battery degradation is not linear. Most of the loss happens in the first 2 years, then the curve flattens significantly. A battery at 92% after year 2 might still be at 87% at year 6.</p>
+    </div>
+
+    <h2>What Kills Batteries Faster</h2>
+    <p>Not all EV batteries age the same. Here's what accelerates degradation:</p>
+    <ul>
+      <li><strong>Frequent DC fast charging.</strong> Using Superchargers or DC fast chargers regularly generates more heat, which stresses the battery. Occasional fast charging is fine — doing it daily is not ideal.</li>
+      <li><strong>Extreme heat.</strong> Batteries hate sustained high temperatures. An EV parked in Phoenix sun every day will degrade faster than one in Seattle. Thermal management systems help, but physics wins over time.</li>
+      <li><strong>Charging to 100% constantly.</strong> Keeping the battery at maximum charge puts stress on the cells. Most manufacturers recommend keeping daily charge at 80-90%.</li>
+      <li><strong>Letting it sit at 0%.</strong> Deep discharges are hard on lithium-ion cells. Avoid running it down to nothing regularly.</li>
+      <li><strong>High mileage at high speed.</strong> Constant highway driving at 80+ mph drains faster and generates more heat than mixed city/highway driving.</li>
+    </ul>
+
+    <h2>What Helps Batteries Last</h2>
+    <ul>
+      <li><strong>Charge to 80% for daily driving.</strong> This is the single best thing you can do for longevity.</li>
+      <li><strong>Use Level 2 (home) charging when possible.</strong> Slower charging is gentler on the battery.</li>
+      <li><strong>Park in shade or a garage.</strong> Reducing heat exposure helps significantly in warm climates.</li>
+      <li><strong>Don't let it sit at very low charge.</strong> If you're storing the car, keep it around 50%.</li>
+      <li><strong>Keep the software updated.</strong> Manufacturers optimize battery management through updates.</li>
+    </ul>
+
+    <h2>How to Check Battery Health</h2>
+    <p>This varies by brand:</p>
+
+    <table class="comparison-table">
+      <tr><th>Brand</th><th>How to Check</th></tr>
+      <tr><td><strong>Tesla</strong></td><td>Check range at 100% charge vs EPA rating. Use third-party apps like Tessie or Stats for detailed data.</td></tr>
+      <tr><td><strong>Chevy (Bolt)</strong></td><td>Dealer can run a battery health diagnostic. MyChevrolet app shows some data.</td></tr>
+      <tr><td><strong>Hyundai/Kia</strong></td><td>Dealer diagnostic or Bluelink app. Ask for State of Health (SoH) percentage.</td></tr>
+      <tr><td><strong>Ford (Mach-E)</strong></td><td>FordPass app shows battery health. Dealer can run full diagnostic.</td></tr>
+      <tr><td><strong>Any EV</strong></td><td>Recurrent Auto provides free battery health reports for most models.</td></tr>
+    </table>
+
+    <h2>Battery Warranties: What's Covered</h2>
+    <p>Federal law requires EV manufacturers to warranty batteries for at least <strong>8 years or 100,000 miles</strong>. Many states (California and the CARB states) require <strong>10 years or 150,000 miles</strong>.</p>
+    <p>Most warranties guarantee the battery will retain at least <strong>70% of original capacity</strong>. If it drops below that during the warranty period, the manufacturer replaces or repairs it for free.</p>
+
+    <div class="callout">
+      <p><strong>Real-world data:</strong> Tesla batteries average about 88% health at 200,000 miles according to large-scale studies. Battery failure requiring replacement is extremely rare — under 1% of vehicles.</p>
+    </div>
+
+    <h2>Should You Worry?</h2>
+    <p>Honestly? No. Modern EV batteries are far more durable than the market gives them credit for. The fear of battery degradation is the biggest myth in the EV space.</p>
+    <p>If you're buying used, check the health report. If it's above 85% and the car is under 5 years old, you're in great shape. If you're selling, a good battery health report is your strongest selling point — get one before listing.</p>
+    <p>Need help evaluating a battery before buying or selling? <a href="../support.html" style="color:var(--copper);font-weight:600;">Talk to our team →</a></p>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="comments-section">
+    <h2>Comments</h2>
+    <div class="comment-form">
+      <label>Name</label>
+      <input type="text" id="commentName" placeholder="Your name" maxlength="50"/>
+      <label>Comment</label>
+      <textarea id="commentText" placeholder="Share your thoughts..." maxlength="1000"></textarea>
+      <button class="btn-comment" id="postComment">Post Comment</button>
+      <div id="commentMsg" class="comment-msg"></div>
+    </div>
+    <div class="comment-list" id="commentList">
+      <p class="no-comments">Loading comments...</p>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../search.js"></script>
+<script>
+const SLUG = 'battery-health';
+const sb = getSb();
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getReacted(commentId, type) {
+  try { return JSON.parse(localStorage.getItem('evtime_reactions') || '{}')[commentId + '_' + type] || false; } catch { return false; }
+}
+
+function setReacted(commentId, type) {
+  try {
+    const store = JSON.parse(localStorage.getItem('evtime_reactions') || '{}');
+    store[commentId + '_' + type] = true;
+    localStorage.setItem('evtime_reactions', JSON.stringify(store));
+  } catch {}
+}
+
+function renderComment(c, replies) {
+  const isReply = !!c.parent_id;
+  const likedClass = getReacted(c.id, 'like') ? ' active' : '';
+  const lovedClass = getReacted(c.id, 'love') ? ' active' : '';
+  const childReplies = replies.filter(r => r.parent_id === c.id);
+
+  let html = `
+    <div class="comment-item${isReply ? ' reply' : ''}" data-id="${esc(c.id)}">
+      <div class="comment-header">
+        <span class="comment-author">${esc(c.author_name)}</span>
+        <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      </div>
+      <div class="comment-text">${esc(c.comment)}</div>
+      <div class="comment-actions">
+        <button class="react-btn${likedClass}" onclick="react('${c.id}','like',this)">👍 <span class="count">${c.likes || 0}</span></button>
+        <button class="react-btn${lovedClass}" onclick="react('${c.id}','love',this)">❤️ <span class="count">${c.loves || 0}</span></button>
+        <button class="react-btn" onclick="toggleReply('${c.id}')">💬 Reply</button>
+      </div>
+      <div class="reply-form" id="reply-${c.id}">
+        <input type="text" placeholder="Your name" maxlength="50" id="replyName-${c.id}"/>
+        <textarea placeholder="Write a reply..." maxlength="1000" id="replyText-${c.id}"></textarea>
+        <button class="btn-comment" onclick="postReply('${c.id}')">Post Reply</button>
+      </div>
+  `;
+
+  for (const reply of childReplies) {
+    html += renderComment(reply, replies);
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+async function loadComments() {
+  const list = document.getElementById('commentList');
+  if (!sb) { list.innerHTML = '<p class="no-comments">Comments unavailable.</p>'; return; }
+  const { data, error } = await sb.from('comments').select('*').eq('article_slug', SLUG).order('created_at', { ascending: true });
+  if (error) { list.innerHTML = '<p class="no-comments">Could not load comments.</p>'; return; }
+  if (!data.length) { list.innerHTML = '<p class="no-comments">No comments yet. Be the first!</p>'; return; }
+
+  const topLevel = data.filter(c => !c.parent_id);
+  const replies = data.filter(c => c.parent_id);
+
+  list.innerHTML = topLevel.map(c => renderComment(c, replies)).join('');
+}
+
+async function react(commentId, type, btn) {
+  if (getReacted(commentId, type)) return;
+  const column = type === 'like' ? 'likes' : 'loves';
+  const { data } = await sb.from('comments').select(column).eq('id', commentId).single();
+  if (!data) return;
+  const newVal = (data[column] || 0) + 1;
+  await sb.from('comments').update({ [column]: newVal }).eq('id', commentId);
+  setReacted(commentId, type);
+  btn.classList.add('active');
+  btn.querySelector('.count').textContent = newVal;
+}
+
+function toggleReply(commentId) {
+  const form = document.getElementById('reply-' + commentId);
+  form.classList.toggle('open');
+}
+
+async function postReply(parentId) {
+  const name = document.getElementById('replyName-' + parentId).value.trim();
+  const text = document.getElementById('replyText-' + parentId).value.trim();
+  if (!name || !text) return;
+  await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId }]);
+  document.getElementById('replyName-' + parentId).value = '';
+  document.getElementById('replyText-' + parentId).value = '';
+  document.getElementById('reply-' + parentId).classList.remove('open');
+  await loadComments();
+}
+
+document.getElementById('postComment').addEventListener('click', async () => {
+  const name = document.getElementById('commentName').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  const msg = document.getElementById('commentMsg');
+  if (!name || !text) { msg.textContent = 'Please enter your name and comment.'; msg.className = 'comment-msg error'; return; }
+  if (!sb) { msg.textContent = 'System loading — please refresh.'; msg.className = 'comment-msg error'; return; }
+  const { error } = await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text }]);
+  if (error) { msg.textContent = 'Error posting comment. Try again.'; msg.className = 'comment-msg error'; return; }
+  msg.textContent = 'Comment posted!'; msg.className = 'comment-msg success';
+  document.getElementById('commentName').value = '';
+  document.getElementById('commentText').value = '';
+  await loadComments();
+});
+
+loadComments();
+
+fetch('../header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('../footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
+</script>
+<script src="../app.js"></script>
+</body>
+</html>
