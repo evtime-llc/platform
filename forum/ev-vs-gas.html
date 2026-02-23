@@ -53,13 +53,26 @@
 .comment-msg.error { background: #f8d7da; color: #721c24; display: block; }
 .comment-list { margin-top: 24px; }
 .comment-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+.comment-item.reply { margin-left: 32px; border-left: 3px solid rgba(201,140,91,0.2); }
+.comment-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .comment-author { font-weight: 700; font-size: 15px; color: var(--text); }
-.comment-date { font-size: 12px; color: var(--muted); margin-left: 10px; }
+.comment-date { font-size: 12px; color: var(--muted); }
 .comment-text { font-size: 15px; line-height: 1.7; color: #292524; margin-top: 8px; }
+.comment-actions { display: flex; gap: 12px; margin-top: 12px; }
+.react-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 20px; background: #fff; font-size: 13px; cursor: pointer; transition: all 0.2s ease; color: var(--muted); }
+.react-btn:hover { border-color: var(--copper); color: var(--copper); }
+.react-btn.active { border-color: var(--copper); color: var(--copper); background: rgba(201,140,91,0.06); }
+.react-btn .count { font-weight: 700; }
+.reply-form { margin-top: 12px; display: none; }
+.reply-form.open { display: block; }
+.reply-form input, .reply-form textarea { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin: 6px 0; font-size: 13px; font-family: inherit; box-sizing: border-box; }
+.reply-form textarea { min-height: 60px; resize: vertical; }
+.reply-form .btn-comment { font-size: 13px; padding: 8px 20px; }
 .no-comments { font-size: 15px; color: var(--muted); font-style: italic; }
 
 @media (max-width: 768px) {
   .article-title { font-size: 28px; }
+  .comment-item.reply { margin-left: 16px; }
 }
 </style>
 </head>
@@ -162,19 +175,90 @@ function esc(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+function getReacted(commentId, type) {
+  try { return JSON.parse(localStorage.getItem('evtime_reactions') || '{}')[commentId + '_' + type] || false; } catch { return false; }
+}
+
+function setReacted(commentId, type) {
+  try {
+    const store = JSON.parse(localStorage.getItem('evtime_reactions') || '{}');
+    store[commentId + '_' + type] = true;
+    localStorage.setItem('evtime_reactions', JSON.stringify(store));
+  } catch {}
+}
+
+function renderComment(c, replies) {
+  const isReply = !!c.parent_id;
+  const likedClass = getReacted(c.id, 'like') ? ' active' : '';
+  const lovedClass = getReacted(c.id, 'love') ? ' active' : '';
+  const childReplies = replies.filter(r => r.parent_id === c.id);
+
+  let html = `
+    <div class="comment-item${isReply ? ' reply' : ''}" data-id="${esc(c.id)}">
+      <div class="comment-header">
+        <span class="comment-author">${esc(c.author_name)}</span>
+        <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      </div>
+      <div class="comment-text">${esc(c.comment)}</div>
+      <div class="comment-actions">
+        <button class="react-btn${likedClass}" onclick="react('${c.id}','like',this)">👍 <span class="count">${c.likes || 0}</span></button>
+        <button class="react-btn${lovedClass}" onclick="react('${c.id}','love',this)">❤️ <span class="count">${c.loves || 0}</span></button>
+        <button class="react-btn" onclick="toggleReply('${c.id}')">💬 Reply</button>
+      </div>
+      <div class="reply-form" id="reply-${c.id}">
+        <input type="text" placeholder="Your name" maxlength="50" id="replyName-${c.id}"/>
+        <textarea placeholder="Write a reply..." maxlength="1000" id="replyText-${c.id}"></textarea>
+        <button class="btn-comment" onclick="postReply('${c.id}')">Post Reply</button>
+      </div>
+  `;
+
+  for (const reply of childReplies) {
+    html += renderComment(reply, replies);
+  }
+
+  html += `</div>`;
+  return html;
+}
+
 async function loadComments() {
   const list = document.getElementById('commentList');
   if (!sb) { list.innerHTML = '<p class="no-comments">Comments unavailable.</p>'; return; }
-  const { data, error } = await sb.from('comments').select('*').eq('article_slug', SLUG).order('created_at', { ascending: false });
+  const { data, error } = await sb.from('comments').select('*').eq('article_slug', SLUG).order('created_at', { ascending: true });
   if (error) { list.innerHTML = '<p class="no-comments">Could not load comments.</p>'; return; }
   if (!data.length) { list.innerHTML = '<p class="no-comments">No comments yet. Be the first!</p>'; return; }
-  list.innerHTML = data.map(c => `
-    <div class="comment-item">
-      <span class="comment-author">${esc(c.author_name)}</span>
-      <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-      <div class="comment-text">${esc(c.comment)}</div>
-    </div>
-  `).join('');
+
+  const topLevel = data.filter(c => !c.parent_id);
+  const replies = data.filter(c => c.parent_id);
+
+  list.innerHTML = topLevel.map(c => renderComment(c, replies)).join('');
+}
+
+async function react(commentId, type, btn) {
+  if (getReacted(commentId, type)) return;
+  const column = type === 'like' ? 'likes' : 'loves';
+  const { data } = await sb.from('comments').select(column).eq('id', commentId).single();
+  if (!data) return;
+  const newVal = (data[column] || 0) + 1;
+  await sb.from('comments').update({ [column]: newVal }).eq('id', commentId);
+  setReacted(commentId, type);
+  btn.classList.add('active');
+  btn.querySelector('.count').textContent = newVal;
+}
+
+function toggleReply(commentId) {
+  const form = document.getElementById('reply-' + commentId);
+  form.classList.toggle('open');
+}
+
+async function postReply(parentId) {
+  const name = document.getElementById('replyName-' + parentId).value.trim();
+  const text = document.getElementById('replyText-' + parentId).value.trim();
+  if (!name || !text) return;
+  await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId }]);
+  document.getElementById('replyName-' + parentId).value = '';
+  document.getElementById('replyText-' + parentId).value = '';
+  document.getElementById('reply-' + parentId).classList.remove('open');
+  await loadComments();
 }
 
 document.getElementById('postComment').addEventListener('click', async () => {
