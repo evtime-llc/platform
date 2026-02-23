@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Charging at Home vs Public Charging — E.V.Time</title>
+<meta name="description" content="Cost breakdown, speed comparison, and what setup you actually need at home."/>
+<meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="Charging at Home vs Public Charging — E.V.Time"/>
+<meta property="og:description" content="Cost breakdown, speed comparison, and what setup you actually need at home."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/forum/home-vs-public-charging.html"/>
+<meta property="og:type" content="article"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="../styles.css"/>
+
+<style>
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--copper); text-decoration: none; margin-bottom: 24px; }
+.back-link:hover { text-decoration: underline; }
+.article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper); background: rgba(201,140,91,0.1); padding: 4px 10px; border-radius: 6px; margin-bottom: 16px; }
+.article-title { font-size: 36px; font-weight: 900; line-height: 1.15; margin: 0 0 16px; }
+.article-meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.article-body h2 { font-size: 24px; font-weight: 800; margin: 36px 0 12px; }
+.article-body p { font-size: 17px; line-height: 1.8; color: #292524; margin: 0 0 20px; }
+.article-body ul { margin: 0 0 20px; padding-left: 24px; }
+.article-body li { font-size: 17px; line-height: 1.8; color: #292524; margin-bottom: 8px; }
+.article-body strong { color: var(--text); }
+.callout { background: rgba(201,140,91,0.08); border-left: 4px solid var(--copper); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 28px 0; }
+.callout p { margin: 0; font-size: 16px; }
+.comparison-table { width: 100%; border-collapse: collapse; margin: 24px 0; border-radius: 12px; overflow: hidden; }
+.comparison-table th { background: var(--copper); color: #fff; padding: 14px 16px; text-align: left; font-size: 14px; font-weight: 700; }
+.comparison-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.comparison-table tr:last-child td { border-bottom: none; }
+.comparison-table tr:nth-child(even) td { background: rgba(201,140,91,0.04); }
+.comments-section { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.comments-section h2 { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+.comment-form { margin-bottom: 32px; }
+.comment-form input, .comment-form textarea { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+.comment-form textarea { min-height: 100px; resize: vertical; }
+.comment-form label { display: block; font-weight: 600; margin-top: 12px; font-size: 14px; }
+.btn-comment { background: var(--copper); color: #fff; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+.btn-comment:hover { opacity: 0.9; }
+.comment-msg { padding: 10px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: none; }
+.comment-msg.success { background: #d4edda; color: #155724; display: block; }
+.comment-msg.error { background: #f8d7da; color: #721c24; display: block; }
+.comment-list { margin-top: 24px; }
+.comment-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+.comment-item.reply { margin-left: 32px; border-left: 3px solid rgba(201,140,91,0.2); }
+.comment-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.comment-author { font-weight: 700; font-size: 15px; color: var(--text); }
+.comment-date { font-size: 12px; color: var(--muted); }
+.comment-text { font-size: 15px; line-height: 1.7; color: #292524; margin-top: 8px; }
+.comment-actions { display: flex; gap: 12px; margin-top: 12px; }
+.react-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 20px; background: #fff; font-size: 13px; cursor: pointer; transition: all 0.2s ease; color: var(--muted); }
+.react-btn:hover { border-color: var(--copper); color: var(--copper); }
+.react-btn.active { border-color: var(--copper); color: var(--copper); background: rgba(201,140,91,0.06); }
+.react-btn .count { font-weight: 700; }
+.reply-form { margin-top: 12px; display: none; }
+.reply-form.open { display: block; }
+.reply-form input, .reply-form textarea { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin: 6px 0; font-size: 13px; font-family: inherit; box-sizing: border-box; }
+.reply-form textarea { min-height: 60px; resize: vertical; }
+.reply-form .btn-comment { font-size: 13px; padding: 8px 20px; }
+.no-comments { font-size: 15px; color: var(--muted); font-style: italic; }
+@media (max-width: 768px) {
+  .article-title { font-size: 28px; }
+  .comment-item.reply { margin-left: 16px; }
+}
+</style>
+</head>
+<body data-page="forum">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap">
+  <a href="../forum.html" class="back-link">← Back to Forum</a>
+
+  <div class="article-tag">Charging</div>
+  <h1 class="article-title">Charging at Home vs Public Charging</h1>
+  <div class="article-meta">By EV Time Team · 4 min read</div>
+
+  <div class="article-body">
+    <p>One of the first questions every new EV owner asks: where do I charge this thing? The answer is simpler than you think — and cheaper than you expect.</p>
+
+    <h2>The Three Levels of Charging</h2>
+    <p>All EV charging falls into three categories. Here's the quick breakdown:</p>
+
+    <table class="comparison-table">
+      <tr><th>Level</th><th>Power</th><th>Speed</th><th>Where</th></tr>
+      <tr><td><strong>Level 1</strong></td><td>120V (standard outlet)</td><td>3-5 miles/hour</td><td>Any wall outlet</td></tr>
+      <tr><td><strong>Level 2</strong></td><td>240V (dryer outlet)</td><td>25-35 miles/hour</td><td>Home install or public stations</td></tr>
+      <tr><td><strong>DC Fast (Level 3)</strong></td><td>400-900V</td><td>150-200+ miles in 20 min</td><td>Tesla Supercharger, Electrify America, etc.</td></tr>
+    </table>
+
+    <h2>Home Charging: The Best Deal</h2>
+    <p>About 80% of EV charging happens at home. It's the cheapest and most convenient option by far.</p>
+
+    <h3>Level 1 — The "Just Plug It In" Option</h3>
+    <p>Every EV comes with a cable that plugs into a standard 120V outlet. No installation needed. You get about 3-5 miles of range per hour of charging.</p>
+    <ul>
+      <li><strong>Best for:</strong> Short commutes under 40 miles/day, plug-in hybrids</li>
+      <li><strong>Cost:</strong> $0 — you already have the outlet</li>
+      <li><strong>Reality check:</strong> For most pure EVs, this is too slow for daily use unless you drive very little</li>
+    </ul>
+
+    <h3>Level 2 — The Sweet Spot</h3>
+    <p>A 240V outlet (same as your dryer or oven) with a dedicated charging unit. This is what most EV owners install at home.</p>
+    <ul>
+      <li><strong>Speed:</strong> 25-35 miles of range per hour. A full charge overnight, every night.</li>
+      <li><strong>Installation cost:</strong> $500-$1,500 for the electrician + $300-$600 for the wall unit</li>
+      <li><strong>Monthly cost:</strong> About $40-$60/month for average driving (13,500 miles/year)</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>Pro tip:</strong> Charge during off-peak hours (usually 9pm-6am). Many utilities offer EV-specific rate plans that cut your cost to $0.08-$0.10/kWh — roughly $30/month for most drivers.</p>
+    </div>
+
+    <h2>Public Charging: When You Need It</h2>
+    <p>Public charging is for road trips, errands when you're low, or if you don't have home charging available.</p>
+
+    <h3>Level 2 Public Stations</h3>
+    <p>Found at malls, grocery stores, workplaces, and parking garages. Many are free. Paid ones typically cost $1-$3/hour.</p>
+    <ul>
+      <li><strong>Speed:</strong> Same as home Level 2, about 25 miles/hour</li>
+      <li><strong>Best for:</strong> Topping up while you shop or work</li>
+      <li><strong>Networks:</strong> ChargePoint, Blink, EVgo, and many free ones on the PlugShare app</li>
+    </ul>
+
+    <h3>DC Fast Charging</h3>
+    <p>The gas station equivalent. Pull in, plug in, get 150-200 miles of range in 20-30 minutes.</p>
+    <ul>
+      <li><strong>Cost:</strong> $0.30-$0.50/kWh, or roughly $12-$20 for a typical session</li>
+      <li><strong>Networks:</strong> Tesla Supercharger (now open to most EVs), Electrify America, EVgo</li>
+      <li><strong>Best for:</strong> Road trips and long-distance travel</li>
+    </ul>
+
+    <h2>The Cost Comparison</h2>
+    <table class="comparison-table">
+      <tr><th>Method</th><th>Cost per Mile</th><th>Monthly (13,500 mi/yr)</th></tr>
+      <tr><td><strong>Home Level 2 (off-peak)</strong></td><td>$0.03</td><td><strong>$34</strong></td></tr>
+      <tr><td><strong>Home Level 2 (standard rate)</strong></td><td>$0.05</td><td><strong>$56</strong></td></tr>
+      <tr><td><strong>Public Level 2</strong></td><td>$0.06-$0.10</td><td><strong>$68-$113</strong></td></tr>
+      <tr><td><strong>DC Fast Charging</strong></td><td>$0.10-$0.15</td><td><strong>$113-$169</strong></td></tr>
+      <tr><td><strong>Gas car (30 mpg)</strong></td><td>$0.12</td><td><strong>$135</strong></td></tr>
+    </table>
+
+    <p>Even DC fast charging — the most expensive EV charging option — is roughly the same cost as gas. Home charging is 3-4x cheaper.</p>
+
+    <h2>Do You Need a Home Charger?</h2>
+    <p>If you own or rent a place with a garage or dedicated parking spot — <strong>yes, absolutely.</strong> It's the single best upgrade for EV ownership. You wake up every morning with a full "tank" and never visit a gas station again.</p>
+    <p>If you live in an apartment without dedicated parking, you can still make it work with workplace charging and weekly public charging stops. It's less convenient but very doable.</p>
+
+    <div class="callout">
+      <p><strong>Bottom line:</strong> Home charging is the cheapest, most convenient way to fuel any vehicle — gas or electric. A Level 2 setup pays for itself within the first year through fuel savings alone.</p>
+    </div>
+
+    <p>Questions about charging setup for your situation? <a href="../support.html" style="color:var(--copper);font-weight:600;">Ask our team →</a></p>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="comments-section">
+    <h2>Comments</h2>
+    <div class="comment-form">
+      <label>Name</label>
+      <input type="text" id="commentName" placeholder="Your name" maxlength="50"/>
+      <label>Comment</label>
+      <textarea id="commentText" placeholder="Share your thoughts..." maxlength="1000"></textarea>
+      <button class="btn-comment" id="postComment">Post Comment</button>
+      <div id="commentMsg" class="comment-msg"></div>
+    </div>
+    <div class="comment-list" id="commentList">
+      <p class="no-comments">Loading comments...</p>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../search.js"></script>
+<script>
+const SLUG = 'home-vs-public-charging';
+const sb = getSb();
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getReacted(commentId, type) {
+  try { return JSON.parse(localStorage.getItem('evtime_reactions') || '{}')[commentId + '_' + type] || false; } catch { return false; }
+}
+
+function setReacted(commentId, type) {
+  try {
+    const store = JSON.parse(localStorage.getItem('evtime_reactions') || '{}');
+    store[commentId + '_' + type] = true;
+    localStorage.setItem('evtime_reactions', JSON.stringify(store));
+  } catch {}
+}
+
+function renderComment(c, replies) {
+  const isReply = !!c.parent_id;
+  const likedClass = getReacted(c.id, 'like') ? ' active' : '';
+  const lovedClass = getReacted(c.id, 'love') ? ' active' : '';
+  const childReplies = replies.filter(r => r.parent_id === c.id);
+
+  let html = `
+    <div class="comment-item${isReply ? ' reply' : ''}" data-id="${esc(c.id)}">
+      <div class="comment-header">
+        <span class="comment-author">${esc(c.author_name)}</span>
+        <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      </div>
+      <div class="comment-text">${esc(c.comment)}</div>
+      <div class="comment-actions">
+        <button class="react-btn${likedClass}" onclick="react('${c.id}','like',this)">👍 <span class="count">${c.likes || 0}</span></button>
+        <button class="react-btn${lovedClass}" onclick="react('${c.id}','love',this)">❤️ <span class="count">${c.loves || 0}</span></button>
+        <button class="react-btn" onclick="toggleReply('${c.id}')">💬 Reply</button>
+      </div>
+      <div class="reply-form" id="reply-${c.id}">
+        <input type="text" placeholder="Your name" maxlength="50" id="replyName-${c.id}"/>
+        <textarea placeholder="Write a reply..." maxlength="1000" id="replyText-${c.id}"></textarea>
+        <button class="btn-comment" onclick="postReply('${c.id}')">Post Reply</button>
+      </div>
+  `;
+
+  for (const reply of childReplies) {
+    html += renderComment(reply, replies);
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+async function loadComments() {
+  const list = document.getElementById('commentList');
+  if (!sb) { list.innerHTML = '<p class="no-comments">Comments unavailable.</p>'; return; }
+  const { data, error } = await sb.from('comments').select('*').eq('article_slug', SLUG).order('created_at', { ascending: true });
+  if (error) { list.innerHTML = '<p class="no-comments">Could not load comments.</p>'; return; }
+  if (!data.length) { list.innerHTML = '<p class="no-comments">No comments yet. Be the first!</p>'; return; }
+
+  const topLevel = data.filter(c => !c.parent_id);
+  const replies = data.filter(c => c.parent_id);
+
+  list.innerHTML = topLevel.map(c => renderComment(c, replies)).join('');
+}
+
+async function react(commentId, type, btn) {
+  if (getReacted(commentId, type)) return;
+  const column = type === 'like' ? 'likes' : 'loves';
+  const { data } = await sb.from('comments').select(column).eq('id', commentId).single();
+  if (!data) return;
+  const newVal = (data[column] || 0) + 1;
+  await sb.from('comments').update({ [column]: newVal }).eq('id', commentId);
+  setReacted(commentId, type);
+  btn.classList.add('active');
+  btn.querySelector('.count').textContent = newVal;
+}
+
+function toggleReply(commentId) {
+  const form = document.getElementById('reply-' + commentId);
+  form.classList.toggle('open');
+}
+
+async function postReply(parentId) {
+  const name = document.getElementById('replyName-' + parentId).value.trim();
+  const text = document.getElementById('replyText-' + parentId).value.trim();
+  if (!name || !text) return;
+  await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId }]);
+  document.getElementById('replyName-' + parentId).value = '';
+  document.getElementById('replyText-' + parentId).value = '';
+  document.getElementById('reply-' + parentId).classList.remove('open');
+  await loadComments();
+}
+
+document.getElementById('postComment').addEventListener('click', async () => {
+  const name = document.getElementById('commentName').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  const msg = document.getElementById('commentMsg');
+  if (!name || !text) { msg.textContent = 'Please enter your name and comment.'; msg.className = 'comment-msg error'; return; }
+  if (!sb) { msg.textContent = 'System loading — please refresh.'; msg.className = 'comment-msg error'; return; }
+  const { error } = await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text }]);
+  if (error) { msg.textContent = 'Error posting comment. Try again.'; msg.className = 'comment-msg error'; return; }
+  msg.textContent = 'Comment posted!'; msg.className = 'comment-msg success';
+  document.getElementById('commentName').value = '';
+  document.getElementById('commentText').value = '';
+  await loadComments();
+});
+
+loadComments();
+
+fetch('../header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('../footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
+</script>
+<script src="../app.js"></script>
+</body>
+</html>
