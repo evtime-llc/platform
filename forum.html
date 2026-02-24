@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>EV Forum — E.V.Time</title>
+<title>EV Time Forum — E.V.Time</title>
 <meta name="description" content="Learn about electric vehicles. Real talk about EVs — cost, batteries, charging, buying tips, and more."/>
 <meta name="theme-color" content="#0b0a09"/>
 
-<meta property="og:title" content="EV Forum — E.V.Time"/>
+<meta property="og:title" content="EV Time Forum — E.V.Time"/>
 <meta property="og:description" content="Real talk about EVs — cost, batteries, charging, buying tips, and more."/>
 <meta property="og:image" content="https://itsevtime.com/og-card.png"/>
 <meta property="og:url" content="https://itsevtime.com/forum.html"/>
@@ -20,10 +20,33 @@
 <style>
 #header-placeholder { position: sticky; top: 0; z-index: 100; }
 .wrap { max-width: 960px; margin: 0 auto; padding: 24px; }
-.forum-hero { text-align: center; padding: 48px 20px 32px; }
-.forum-hero h1 { font-size: 36px; font-weight: 900; margin-bottom: 12px; }
-.forum-hero p { font-size: 18px; color: var(--muted); max-width: 520px; margin: 0 auto; }
-.forum-hero .forum-trust { font-size: 14px; margin-top: 10px; color: var(--muted); }
+
+.forum-hero { 
+  text-align: center; 
+  padding: 64px 20px 44px; 
+}
+
+.forum-hero h1 { 
+  font-size: 48px; 
+  font-weight: 900; 
+  margin: 0 0 14px; 
+  letter-spacing: -0.02em;
+}
+
+.forum-hero p { 
+  font-size: 20px; 
+  color: var(--text); 
+  max-width: 640px; 
+  margin: 0 auto 10px; 
+  line-height: 1.6;
+}
+
+.forum-hero .forum-trust { 
+  font-size: 15px; 
+  font-weight: 700; 
+  color: var(--copper-dark); 
+  margin-top: 6px; 
+}
 
 .articles-grid {
   display: grid;
@@ -50,13 +73,9 @@
   border-color: rgba(201,140,91,0.25);
 }
 
-/* Keyboard accessibility polish */
 .article-card:focus-visible {
   outline: 3px solid rgba(201,140,91,0.45);
   outline-offset: 4px;
-  transform: translateY(-3px);
-  box-shadow: 0 12px 36px rgba(0,0,0,0.06);
-  border-color: rgba(201,140,91,0.25);
 }
 
 .article-tag {
@@ -98,7 +117,8 @@
 }
 
 @media (max-width: 768px) {
-  .forum-hero h1 { font-size: 28px; }
+  .forum-hero h1 { font-size: 34px; }
+  .forum-hero p { font-size: 17px; }
   .articles-grid { grid-template-columns: 1fr; }
 }
 </style>
@@ -109,9 +129,9 @@
 
 <div class="wrap">
   <div class="forum-hero">
-    <h1>EV Forum</h1>
-    <p>Real talk about electric vehicles — from cost and charging to what’s actually worth buying.</p>
-    <p class="forum-trust">Straight answers from the EV Time team.</p>
+    <h1>EV Time Forum</h1>
+    <p>Clear, honest guidance on EVs — from cost and charging to what’s actually worth buying.</p>
+    <div class="forum-trust">Straight answers from the EV Time team.</div>
   </div>
 
   <div class="articles-grid">
@@ -175,13 +195,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 <script>
-fetch('./header.html')
-  .then(r => r.text())
-  .then(h => { document.getElementById('header-placeholder').innerHTML = h; });
-
-fetch('./footer.html')
-  .then(r => r.text())
-  .then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
+fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
 </script>
 <script src="/app.js"></script>
 </body>
