@@ -15,90 +15,163 @@
   <style>
     #header-placeholder{position:sticky;top:0;z-index:100}
 
-    /* TRUE EDGE-TO-EDGE (Apple-style gutters only) */
+    :root{
+      /* Calm Trust (light + airy) */
+      --bg: #fbfaf9;
+      --surface: rgba(255,255,255,0.78);
+      --surface-strong: rgba(255,255,255,0.92);
+      --text: #141312;
+      --muted: #4b4743;
+      --hairline: rgba(20,19,18,0.10);
+      --hairline-soft: rgba(20,19,18,0.07);
+
+      /* Warm accent (subtle, not loud) */
+      --accent: #c98c5b;
+      --accent-dark: #9a5e35;
+      --accent-soft: rgba(201,140,91,0.14);
+
+      --radius-xl: 22px;
+      --radius-lg: 18px;
+      --shadow-soft: 0 18px 50px rgba(15, 14, 13, 0.08);
+      --shadow-softer: 0 12px 34px rgba(15, 14, 13, 0.06);
+    }
+
+    /* Apple-like readable center with generous gutters */
     .wrap{
-      width: 100%;
-      margin: 0;
-      padding: 0 80px; /* change to 64 if you want tighter */
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
       box-sizing: border-box;
     }
 
+    /* HERO */
     .hero{
-      background: var(--bg);
+      background:
+        radial-gradient(900px 420px at 10% 10%, rgba(201,140,91,0.10), transparent 55%),
+        radial-gradient(800px 420px at 90% 0%, rgba(20,19,18,0.04), transparent 60%),
+        var(--bg);
       width: 100%;
-      padding: 64px 0 72px;
+      padding: 72px 0 78px;
+      border-bottom: 1px solid var(--hairline-soft);
     }
 
-    /* HERO COPY: FULL WIDTH, NO MAX-WIDTH CAPS */
     .hero-title{
-      font-size: 68px;            /* chosen to avoid the orphan wrap */
+      font-size: 60px;
       font-weight: 900;
-      margin: 0 0 16px;
+      margin: 0 0 14px;
       color: var(--text);
       line-height: 1.02;
-      letter-spacing: -0.03em;
-      max-width: none;            /* IMPORTANT */
-      text-wrap: balance;         /* modern browsers: prevents ugly last-word wrap */
+      letter-spacing: -0.035em;
+      text-wrap: balance;
     }
 
     .hero-subtitle{
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 800;
-      color: var(--copper-dark);
+      color: var(--accent-dark);
       margin: 0 0 18px;
+      letter-spacing: -0.01em;
     }
 
     .hero-text{
       font-size: 18px;
-      line-height: 1.8;
-      color: #292524;
+      line-height: 1.75;
+      color: var(--muted);
       margin: 0 0 12px;
-      max-width: none;            /* IMPORTANT */
+      max-width: 66ch; /* calm, readable */
     }
 
     .hero-punch{
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
-      color: #1f2933;
+      color: #201f1d;
       margin-top: 16px;
+    }
+
+    .cta-row{
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn{
+      appearance: none;
+      border: 1px solid var(--hairline);
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform .08s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+      user-select: none;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .btn-primary{
+      background: #141312;
+      color: #fff;
+      border-color: rgba(20,19,18,0.55);
+      box-shadow: var(--shadow-softer);
+    }
+    .btn-primary:hover{ box-shadow: var(--shadow-soft); }
+
+    .btn-secondary{
+      background: rgba(255,255,255,0.65);
+      color: var(--text);
+      border-color: var(--hairline);
+    }
+    .btn-secondary:hover{ background: rgba(255,255,255,0.82); }
+
+    .btn .dot{
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(201,140,91,0.14);
     }
 
     /* IMAGE (50%) + TRUST (50%) */
     .hero-row{
-      margin-top: 32px;
+      margin-top: 34px;
       width: 100%;
       display: grid;
-      grid-template-columns: 1fr 1fr; /* 50/50 */
-      gap: 56px;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 34px;
       align-items: start;
     }
 
     .hero-image{
-      border-radius: 20px;
+      border-radius: var(--radius-xl);
       overflow: hidden;
-      border: 1px solid rgba(201, 140, 91, 0.18);
-      box-shadow: 0 22px 70px rgba(0,0,0,0.16);
-      background: rgba(255,255,255,0.35);
+      border: 1px solid var(--hairline-soft);
+      box-shadow: var(--shadow-soft);
+      background: rgba(255,255,255,0.50);
     }
     .hero-image img{
       width: 100%;
       height: auto;
       display: block;
+      transform: scale(1.01);
     }
 
     .trust-card{
-      background: rgba(255,255,255,0.60);
-      border: 1px solid rgba(201, 140, 91, 0.16);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 22px 70px rgba(0,0,0,0.12);
-      backdrop-filter: blur(6px);
+      background: var(--surface);
+      border: 1px solid var(--hairline-soft);
+      border-radius: var(--radius-xl);
+      padding: 26px;
+      box-shadow: var(--shadow-softer);
+      backdrop-filter: blur(8px);
     }
 
     .trust-title{
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 900;
-      margin: 0 0 16px;
+      margin: 0 0 14px;
       color: var(--text);
       letter-spacing: -0.01em;
     }
@@ -111,76 +184,105 @@
 
     .trust-item{
       display: grid;
-      grid-template-columns: 26px 1fr;
+      grid-template-columns: 22px 1fr;
       gap: 12px;
       align-items: center;
-      padding: 14px 0;
-      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 12px 0;
+      border-top: 1px solid var(--hairline-soft);
     }
     .trust-item:first-child{ border-top: none; }
 
     .trust-dot{
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 999px;
-      background: var(--copper);
+      background: var(--accent);
       box-shadow: 0 0 0 6px rgba(201,140,91,0.12);
       justify-self: center;
     }
 
     .trust-text{
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1.35;
-      color: #292524;
+      color: #2a2724;
       margin: 0;
       font-weight: 800;
+      letter-spacing: -0.005em;
+    }
+
+    .trust-footnote{
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--hairline-soft);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
     }
 
     /* TESTIMONIALS */
     .testimonials{
       background: var(--bg);
       width: 100%;
-      padding: 76px 0 104px;
+      padding: 78px 0 104px;
     }
 
     .testimonials-title{
-      font-size: 44px;
+      font-size: 36px;
       font-weight: 900;
       color: var(--text);
       text-align: center;
-      margin: 0 0 44px;
-      letter-spacing: -0.01em;
+      margin: 0 0 42px;
+      letter-spacing: -0.02em;
     }
 
     .testimonials-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-      gap:28px;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:18px;
     }
 
     .testimonial-card{
-      background:rgba(255,255,255,0.60);
-      border: 1px solid rgba(201, 140, 91, 0.14);
-      border-radius:18px;
-      padding:28px;
-      box-shadow:0 18px 55px rgba(0,0,0,0.12);
-      backdrop-filter: blur(6px);
+      background: var(--surface-strong);
+      border: 1px solid var(--hairline-soft);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-softer);
+      backdrop-filter: blur(8px);
     }
-    .testimonial-stars{color:var(--copper-dark);font-size:18px;margin-bottom:10px}
-    .testimonial-quote{font-size:18px;line-height:1.65;color:#292524;margin:0 0 14px;font-style:italic}
-    .testimonial-author{font-size:14px;font-weight:900;color:var(--copper-dark)}
+    .testimonial-stars{
+      color: var(--accent-dark);
+      font-size: 16px;
+      margin-bottom: 10px;
+      letter-spacing: 0.08em;
+    }
+    .testimonial-quote{
+      font-size: 16px;
+      line-height: 1.65;
+      color: #2a2724;
+      margin: 0 0 14px;
+      font-style: italic;
+    }
+    .testimonial-author{
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--accent-dark);
+      letter-spacing: -0.01em;
+    }
 
-    /* MOBILE */
+    /* RESPONSIVE */
+    @media (max-width: 1100px){
+      .testimonials-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
     @media (max-width: 900px){
-      .wrap{padding: 0 20px;}
-      .hero{padding: 44px 0 54px}
-      .hero-title{font-size: 40px;}
-      .hero-text{font-size:16px}
-      .hero-punch{font-size:18px}
-      .hero-row{grid-template-columns:1fr; gap: 24px; margin-top: 22px}
-      .testimonials{padding: 56px 0 76px}
-      .testimonials-title{font-size:32px}
-      .testimonials-grid{grid-template-columns:1fr; gap:22px}
+      .wrap{ padding: 0 18px; }
+      .hero{ padding: 48px 0 56px; }
+      .hero-title{ font-size: 40px; }
+      .hero-text{ font-size: 16px; }
+      .hero-row{ grid-template-columns: 1fr; gap: 22px; margin-top: 22px; }
+      .testimonials{ padding: 56px 0 76px; }
+      .testimonials-title{ font-size: 28px; }
+      .testimonials-grid{ grid-template-columns: 1fr; gap: 16px; }
     }
   </style>
 </head>
@@ -192,6 +294,7 @@
     <div class="wrap">
       <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
       <p class="hero-subtitle">Friendly. Honest. Secure.</p>
+
       <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
       <p class="hero-text">
         At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
@@ -199,12 +302,17 @@
       </p>
       <p class="hero-punch">You're in good hands, start to finish.</p>
 
+      <div class="cta-row">
+        <a class="btn btn-primary" href="./sell.html"><span class="dot"></span>Sell your EV</a>
+        <a class="btn btn-secondary" href="./share.html">Browse inventory</a>
+      </div>
+
       <div class="hero-row">
         <div class="hero-image">
           <img src="/hero-trust.png" alt="EV Time team helping a customer">
         </div>
 
-        <aside class="trust-card">
+        <aside class="trust-card" aria-label="Why choose EV Time">
           <h2 class="trust-title">Why Choose EV Time?</h2>
           <ul class="trust-list">
             <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Licensed DMV handling</p></li>
@@ -212,6 +320,10 @@
             <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Verification & paperwork managed</p></li>
             <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Honest, fair offers</p></li>
           </ul>
+
+          <div class="trust-footnote">
+            Anti-scam by design: verified participants, protected identities, and a calm process that keeps bad actors out.
+          </div>
         </aside>
       </div>
     </div>
