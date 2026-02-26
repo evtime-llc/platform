@@ -6,37 +6,47 @@
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>EVTime — A Car Marketplace Built on Trust (TEST)</title>
+  <title>EVTime — Calm Trust A (HOME TEST)</title>
   <meta name="description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers. Professional team handles paperwork start to finish."/>
-  <meta name="theme-color" content="#0b0a09"/>
+  <meta name="theme-color" content="#fbfaf9"/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <link rel="stylesheet" href="./styles.css">
 
   <style>
+    /* -----------------------------------------
+       HOME-TEST ONLY (Option A: Calm Trust)
+       Version stamp: CALM-TRUST-A / v1
+    ------------------------------------------ */
+
     #header-placeholder{position:sticky;top:0;z-index:100}
 
     :root{
-      /* Calm Trust (light + airy) */
       --bg: #fbfaf9;
-      --surface: rgba(255,255,255,0.78);
-      --surface-strong: rgba(255,255,255,0.92);
+      --bg2: #ffffff;
       --text: #141312;
       --muted: #4b4743;
+      --muted2:#6a635d;
+
       --hairline: rgba(20,19,18,0.10);
-      --hairline-soft: rgba(20,19,18,0.07);
+      --hairlineSoft: rgba(20,19,18,0.07);
 
-      /* Warm accent (subtle, not loud) */
       --accent: #c98c5b;
-      --accent-dark: #9a5e35;
-      --accent-soft: rgba(201,140,91,0.14);
+      --accentDark: #9a5e35;
+      --accentSoft: rgba(201,140,91,0.14);
 
-      --radius-xl: 22px;
-      --radius-lg: 18px;
-      --shadow-soft: 0 18px 50px rgba(15, 14, 13, 0.08);
-      --shadow-softer: 0 12px 34px rgba(15, 14, 13, 0.06);
+      --card: rgba(255,255,255,0.86);
+      --cardStrong: rgba(255,255,255,0.94);
+
+      --radiusXL: 24px;
+      --radiusLG: 18px;
+      --radiusMD: 14px;
+
+      --shadow1: 0 18px 50px rgba(15, 14, 13, 0.08);
+      --shadow2: 0 12px 34px rgba(15, 14, 13, 0.06);
     }
 
-    /* Apple-like readable center with generous gutters */
+    body{ background: var(--bg); }
+
     .wrap{
       max-width: 1180px;
       margin: 0 auto;
@@ -44,290 +54,390 @@
       box-sizing: border-box;
     }
 
-    /* HERO */
-    .hero{
+    /* soft page background glow like the Option A mock */
+    .page-bg{
       background:
-        radial-gradient(900px 420px at 10% 10%, rgba(201,140,91,0.10), transparent 55%),
-        radial-gradient(800px 420px at 90% 0%, rgba(20,19,18,0.04), transparent 60%),
+        radial-gradient(900px 420px at 8% 4%, rgba(201,140,91,0.10), transparent 60%),
+        radial-gradient(800px 420px at 92% 0%, rgba(20,19,18,0.035), transparent 62%),
+        linear-gradient(to bottom, rgba(255,255,255,0.55), rgba(255,255,255,0.0) 35%),
         var(--bg);
-      width: 100%;
-      padding: 72px 0 78px;
-      border-bottom: 1px solid var(--hairline-soft);
+    }
+
+    /* tiny version stamp so you can always confirm */
+    .version-stamp{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 9999;
+      background: rgba(20,19,18,0.88);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: -0.01em;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .version-stamp span{
+      display:inline-block;
+      width:8px;height:8px;border-radius:99px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(201,140,91,0.14);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    /* HERO (Option A structure) */
+    .hero{
+      padding: 70px 0 34px;
+      border-bottom: 1px solid var(--hairlineSoft);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--hairlineSoft);
+      background: rgba(255,255,255,0.70);
+      box-shadow: var(--shadow2);
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+    }
+    .badge .dot{
+      width: 9px;height:9px;border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(201,140,91,0.14);
     }
 
     .hero-title{
-      font-size: 60px;
-      font-weight: 900;
-      margin: 0 0 14px;
-      color: var(--text);
+      margin: 18px 0 12px;
+      font-size: 62px;
       line-height: 1.02;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.04em;
+      font-weight: 950;
+      color: var(--text);
       text-wrap: balance;
+      max-width: 18ch;
     }
 
-    .hero-subtitle{
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--accent-dark);
-      margin: 0 0 18px;
-      letter-spacing: -0.01em;
-    }
-
-    .hero-text{
+    .hero-lead{
+      margin: 0;
       font-size: 18px;
       line-height: 1.75;
       color: var(--muted);
-      margin: 0 0 12px;
-      max-width: 66ch; /* calm, readable */
-    }
-
-    .hero-punch{
-      font-size: 18px;
-      font-weight: 800;
-      color: #201f1d;
-      margin-top: 16px;
+      max-width: 70ch;
     }
 
     .cta-row{
-      margin-top: 24px;
-      display: flex;
+      margin-top: 22px;
+      display:flex;
       gap: 12px;
       flex-wrap: wrap;
-      align-items: center;
+      align-items:center;
     }
 
     .btn{
-      appearance: none;
-      border: 1px solid var(--hairline);
+      appearance:none;
       border-radius: 999px;
       padding: 12px 16px;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 14px;
       letter-spacing: -0.01em;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
+      text-decoration:none;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border: 1px solid var(--hairline);
       transition: transform .08s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
-      user-select: none;
+      user-select:none;
     }
     .btn:active{ transform: translateY(1px); }
 
     .btn-primary{
       background: #141312;
-      color: #fff;
+      color:#fff;
       border-color: rgba(20,19,18,0.55);
-      box-shadow: var(--shadow-softer);
+      box-shadow: var(--shadow2);
     }
-    .btn-primary:hover{ box-shadow: var(--shadow-soft); }
+    .btn-primary:hover{ box-shadow: var(--shadow1); }
 
     .btn-secondary{
-      background: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.72);
       color: var(--text);
-      border-color: var(--hairline);
+      border-color: var(--hairlineSoft);
     }
-    .btn-secondary:hover{ background: rgba(255,255,255,0.82); }
+    .btn-secondary:hover{ background: rgba(255,255,255,0.90); }
 
-    .btn .dot{
-      width: 8px; height: 8px; border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(201,140,91,0.14);
+    /* Option A: three feature cards under hero */
+    .feature-row{
+      margin-top: 26px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
     }
 
-    /* IMAGE (50%) + TRUST (50%) */
-    .hero-row{
-      margin-top: 34px;
-      width: 100%;
-      display: grid;
+    .feature-card{
+      background: var(--card);
+      border: 1px solid var(--hairlineSoft);
+      border-radius: var(--radiusLG);
+      padding: 18px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      min-height: 118px;
+    }
+    .feature-kicker{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight: 950;
+      color: var(--text);
+      letter-spacing:-0.01em;
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+    .feature-ic{
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      background: rgba(201,140,91,0.12);
+      border: 1px solid rgba(201,140,91,0.16);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 950;
+      color: var(--accentDark);
+    }
+    .feature-text{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    /* Split section (image + trust checklist) */
+    .split{
+      padding: 40px 0 70px;
+    }
+    .split-grid{
+      display:grid;
       grid-template-columns: 1.05fr 0.95fr;
-      gap: 34px;
+      gap: 18px;
       align-items: start;
     }
 
-    .hero-image{
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      border: 1px solid var(--hairline-soft);
-      box-shadow: var(--shadow-soft);
-      background: rgba(255,255,255,0.50);
+    .image-card{
+      border-radius: var(--radiusXL);
+      overflow:hidden;
+      border: 1px solid var(--hairlineSoft);
+      background: rgba(255,255,255,0.55);
+      box-shadow: var(--shadow1);
     }
-    .hero-image img{
-      width: 100%;
-      height: auto;
-      display: block;
+    .image-card img{
+      width:100%;
+      height:auto;
+      display:block;
       transform: scale(1.01);
     }
 
     .trust-card{
-      background: var(--surface);
-      border: 1px solid var(--hairline-soft);
-      border-radius: var(--radius-xl);
-      padding: 26px;
-      box-shadow: var(--shadow-softer);
-      backdrop-filter: blur(8px);
+      border-radius: var(--radiusXL);
+      background: var(--cardStrong);
+      border: 1px solid var(--hairlineSoft);
+      box-shadow: var(--shadow2);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .trust-title{
+      margin: 2px 0 10px;
       font-size: 18px;
-      font-weight: 900;
-      margin: 0 0 14px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
       color: var(--text);
-      letter-spacing: -0.01em;
     }
 
-    .trust-list{
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .trust-sub{
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
     }
 
+    .trust-list{ list-style:none; padding:0; margin:0; }
     .trust-item{
-      display: grid;
+      display:grid;
       grid-template-columns: 22px 1fr;
       gap: 12px;
-      align-items: center;
+      align-items:start;
       padding: 12px 0;
-      border-top: 1px solid var(--hairline-soft);
+      border-top: 1px solid var(--hairlineSoft);
     }
-    .trust-item:first-child{ border-top: none; }
-
+    .trust-item:first-child{ border-top:none; }
     .trust-dot{
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
+      width: 10px;height:10px;border-radius:999px;
       background: var(--accent);
       box-shadow: 0 0 0 6px rgba(201,140,91,0.12);
-      justify-self: center;
+      margin-top: 4px;
+      justify-self:center;
     }
-
     .trust-text{
-      font-size: 15px;
-      line-height: 1.35;
+      margin:0;
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.45;
       color: #2a2724;
-      margin: 0;
-      font-weight: 800;
-      letter-spacing: -0.005em;
+      letter-spacing: -0.01em;
     }
-
-    .trust-footnote{
+    .trust-note{
       margin-top: 14px;
       padding-top: 14px;
-      border-top: 1px solid var(--hairline-soft);
-      color: var(--muted);
+      border-top: 1px solid var(--hairlineSoft);
+      color: var(--muted2);
       font-size: 13px;
-      line-height: 1.55;
+      line-height: 1.6;
     }
 
-    /* TESTIMONIALS */
+    /* Testimonials (keep clean) */
     .testimonials{
+      padding: 76px 0 104px;
+      border-top: 1px solid var(--hairlineSoft);
       background: var(--bg);
-      width: 100%;
-      padding: 78px 0 104px;
     }
-
     .testimonials-title{
-      font-size: 36px;
-      font-weight: 900;
+      margin: 0 0 38px;
+      text-align:center;
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
       color: var(--text);
-      text-align: center;
-      margin: 0 0 42px;
-      letter-spacing: -0.02em;
     }
-
     .testimonials-grid{
       display:grid;
-      grid-template-columns:repeat(4, minmax(0, 1fr));
-      gap:18px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 14px;
     }
-
     .testimonial-card{
-      background: var(--surface-strong);
-      border: 1px solid var(--hairline-soft);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      box-shadow: var(--shadow-softer);
-      backdrop-filter: blur(8px);
+      background: var(--cardStrong);
+      border: 1px solid var(--hairlineSoft);
+      border-radius: var(--radiusLG);
+      padding: 18px;
+      box-shadow: var(--shadow2);
     }
-    .testimonial-stars{
-      color: var(--accent-dark);
-      font-size: 16px;
+    .stars{
+      color: var(--accentDark);
+      font-size: 14px;
+      letter-spacing: 0.10em;
       margin-bottom: 10px;
-      letter-spacing: 0.08em;
     }
-    .testimonial-quote{
-      font-size: 16px;
+    .quote{
+      margin: 0 0 12px;
+      font-size: 15px;
       line-height: 1.65;
-      color: #2a2724;
-      margin: 0 0 14px;
+      color:#2a2724;
       font-style: italic;
     }
-    .testimonial-author{
+    .author{
       font-size: 13px;
-      font-weight: 900;
-      color: var(--accent-dark);
+      font-weight: 950;
+      color: var(--accentDark);
       letter-spacing: -0.01em;
     }
 
-    /* RESPONSIVE */
+    /* Responsive */
     @media (max-width: 1100px){
-      .testimonials-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feature-row{ grid-template-columns: 1fr; }
+      .testimonials-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .hero-title{ max-width: 22ch; }
     }
 
     @media (max-width: 900px){
       .wrap{ padding: 0 18px; }
-      .hero{ padding: 48px 0 56px; }
+      .hero{ padding: 48px 0 26px; }
       .hero-title{ font-size: 40px; }
-      .hero-text{ font-size: 16px; }
-      .hero-row{ grid-template-columns: 1fr; gap: 22px; margin-top: 22px; }
+      .hero-lead{ font-size: 16px; }
+      .split{ padding: 26px 0 56px; }
+      .split-grid{ grid-template-columns: 1fr; gap: 14px; }
       .testimonials{ padding: 56px 0 76px; }
       .testimonials-title{ font-size: 28px; }
-      .testimonials-grid{ grid-template-columns: 1fr; gap: 16px; }
+      .testimonials-grid{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body data-page="home">
+  <div class="version-stamp"><span></span>CALM TRUST A · v1</div>
+
   <div id="header-placeholder"></div>
 
-  <section class="hero">
-    <div class="wrap">
-      <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
-      <p class="hero-subtitle">Friendly. Honest. Secure.</p>
+  <div class="page-bg">
+    <section class="hero">
+      <div class="wrap">
+        <div class="badge"><span class="dot"></span>Verified. Calm. Professional. Built to keep scams out.</div>
 
-      <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
-      <p class="hero-text">
-        At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
-        using escrow-grade structure to manage documentation, verification, and transfer with precision.
-      </p>
-      <p class="hero-punch">You're in good hands, start to finish.</p>
+        <h1 class="hero-title">A Car Marketplace Built on Trust.</h1>
 
-      <div class="cta-row">
-        <a class="btn btn-primary" href="./sell.html"><span class="dot"></span>Sell your EV</a>
-        <a class="btn btn-secondary" href="./share.html">Browse inventory</a>
-      </div>
+        <p class="hero-lead">
+          Buying or selling a car shouldn’t feel stressful, risky, or chaotic.
+          EV Time is a human-first concierge marketplace — structured, responsive, and protective — so good people can transact with confidence.
+        </p>
 
-      <div class="hero-row">
-        <div class="hero-image">
-          <img src="/hero-trust.png" alt="EV Time team helping a customer">
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./sell.html">Get an offer</a>
+          <a class="btn btn-secondary" href="./share.html">Browse inventory</a>
         </div>
 
-        <aside class="trust-card" aria-label="Why choose EV Time">
-          <h2 class="trust-title">Why Choose EV Time?</h2>
-          <ul class="trust-list">
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Licensed DMV handling</p></li>
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Escrow-grade process</p></li>
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Verification & paperwork managed</p></li>
-            <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Honest, fair offers</p></li>
-          </ul>
-
-          <div class="trust-footnote">
-            Anti-scam by design: verified participants, protected identities, and a calm process that keeps bad actors out.
+        <div class="feature-row">
+          <div class="feature-card">
+            <div class="feature-kicker"><span class="feature-ic">✓</span>Anti-scam by design</div>
+            <p class="feature-text">Verified participants, protected identities, and a calm process that filters out bad actors.</p>
           </div>
-        </aside>
+          <div class="feature-card">
+            <div class="feature-kicker"><span class="feature-ic">DMV</span>Paperwork handled</div>
+            <p class="feature-text">Licensed DMV handling and documentation support — so you don’t have to chase forms or details.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-kicker"><span class="feature-ic">★</span>Concierge-level care</div>
+            <p class="feature-text">We answer phones, step in when things feel off, and keep everything clean and professional.</p>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="split">
+      <div class="wrap">
+        <div class="split-grid">
+          <div class="image-card">
+            <img src="/hero-trust.png" alt="EV Time team helping a customer">
+          </div>
+
+          <aside class="trust-card" aria-label="Trust checklist">
+            <h2 class="trust-title">What you get with EV Time</h2>
+            <p class="trust-sub">A calm, structured process designed to feel like relief — not friction.</p>
+
+            <ul class="trust-list">
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Clear verification and professional communication</p></li>
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Escrow-grade structure where it matters</p></li>
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Documentation and transfer handled with precision</p></li>
+              <li class="trust-item"><span class="trust-dot"></span><p class="trust-text">Honest offers and zero games</p></li>
+            </ul>
+
+            <div class="trust-note">
+              EV Time is built as a refuge: closer to concierge + protection than a hands-off listing site.
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <section class="testimonials">
     <div class="wrap">
@@ -335,27 +445,27 @@
 
       <div class="testimonials-grid">
         <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
-          <div class="testimonial-author">— Sarah M.</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
+          <div class="author">— Sarah M.</div>
         </div>
 
         <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
-          <div class="testimonial-author">— James T.</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Best car buying experience I've had. The process made me feel completely safe."</p>
+          <div class="author">— James T.</div>
         </div>
 
         <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
-          <div class="testimonial-author">— Maria G.</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
+          <div class="author">— Maria G.</div>
         </div>
 
         <div class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
-          <div class="testimonial-author">— David K.</div>
+          <div class="stars">★★★★★</div>
+          <p class="quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
+          <div class="author">— David K.</div>
         </div>
       </div>
     </div>
