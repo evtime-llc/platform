@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EV Incentives, Fees & Hidden Costs: What Buyers Miss — E.V.Time</title>
+<meta name="description" content="Federal credits, insurance, registration fees, charger install costs — what EV buyers don't hear about upfront."/>
+<meta name="theme-color" content="#0b0a09"/>
+
+<meta property="og:title" content="EV Incentives, Fees & Hidden Costs: What Buyers Miss — E.V.Time"/>
+<meta property="og:description" content="Federal credits, insurance, registration fees, charger install costs — what EV buyers don't hear about upfront."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/forum/ev-incentives-fees.html"/>
+<meta property="og:type" content="article"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="../styles.css"/>
+
+<style>
+#header-placeholder { position: sticky; top: 0; z-index: 100; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--copper); text-decoration: none; margin-bottom: 24px; }
+.back-link:hover { text-decoration: underline; }
+.article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--copper); background: rgba(201,140,91,0.1); padding: 4px 10px; border-radius: 6px; margin-bottom: 16px; }
+.article-title { font-size: 36px; font-weight: 900; line-height: 1.15; margin: 0 0 16px; }
+.article-meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.article-body h2 { font-size: 24px; font-weight: 800; margin: 36px 0 12px; }
+.article-body h3 { font-size: 20px; font-weight: 700; margin: 28px 0 10px; }
+.article-body p { font-size: 17px; line-height: 1.8; color: #292524; margin: 0 0 20px; }
+.article-body ul { margin: 0 0 20px; padding-left: 24px; }
+.article-body li { font-size: 17px; line-height: 1.8; color: #292524; margin-bottom: 8px; }
+.article-body strong { color: var(--text); }
+.callout { background: rgba(201,140,91,0.08); border-left: 4px solid var(--copper); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 28px 0; }
+.callout p { margin: 0; font-size: 16px; }
+.comments-section { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.comments-section h2 { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+.comment-form { margin-bottom: 32px; }
+.comment-form input, .comment-form textarea { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; margin: 8px 0; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+.comment-form textarea { min-height: 100px; resize: vertical; }
+.comment-form label { display: block; font-weight: 600; margin-top: 12px; font-size: 14px; }
+.btn-comment { background: var(--copper); color: #fff; padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+.btn-comment:hover { opacity: 0.9; }
+.comment-msg { padding: 10px; border-radius: 8px; margin: 12px 0; font-size: 14px; display: none; }
+.comment-msg.success { background: #d4edda; color: #155724; display: block; }
+.comment-msg.error { background: #f8d7da; color: #721c24; display: block; }
+.comment-list { margin-top: 24px; }
+.comment-item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+.comment-item.reply { margin-left: 32px; border-left: 3px solid rgba(201,140,91,0.2); }
+.comment-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.comment-author { font-weight: 700; font-size: 15px; color: var(--text); }
+.comment-date { font-size: 12px; color: var(--muted); }
+.comment-text { font-size: 15px; line-height: 1.7; color: #292524; margin-top: 8px; }
+.comment-actions { display: flex; gap: 12px; margin-top: 12px; }
+.react-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 20px; background: #fff; font-size: 13px; cursor: pointer; transition: all 0.2s ease; color: var(--muted); }
+.react-btn:hover { border-color: var(--copper); color: var(--copper); }
+.react-btn.active { border-color: var(--copper); color: var(--copper); background: rgba(201,140,91,0.06); }
+.react-btn .count { font-weight: 700; }
+.reply-form { margin-top: 12px; display: none; }
+.reply-form.open { display: block; }
+.reply-form input, .reply-form textarea { width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 8px; margin: 6px 0; font-size: 13px; font-family: inherit; box-sizing: border-box; }
+.reply-form textarea { min-height: 60px; resize: vertical; }
+.reply-form .btn-comment { font-size: 13px; padding: 8px 20px; }
+.no-comments { font-size: 15px; color: var(--muted); font-style: italic; }
+@media (max-width: 768px) {
+  .article-title { font-size: 28px; }
+  .comment-item.reply { margin-left: 16px; }
+}
+</style>
+</head>
+<body data-page="forum">
+
+<div id="header-placeholder"></div>
+
+<div class="wrap">
+  <a href="../forum.html" class="back-link">← Back to Forum</a>
+
+  <div class="article-tag">Costs</div>
+  <h1 class="article-title">EV Incentives, Fees & Hidden Costs: What Buyers Miss</h1>
+  <div class="article-meta">By EV Time Team · 5 min read</div>
+
+  <div class="article-body">
+    <p>Buying an EV is already one of the smartest financial and lifestyle upgrades you can make. But like any car purchase, there are a few "hidden" costs and perks most people don't hear about upfront. The good news? For most owners, the benefits still massively outweigh the extras — and knowing what to expect makes EV ownership even smoother.</p>
+
+    <h2>The Incentives: Still Real, Still Valuable</h2>
+    <p>EV incentives can change year to year, but many buyers still qualify for meaningful savings depending on location, model, and timing.</p>
+    <ul>
+      <li><strong>Federal and state programs</strong> can reduce purchase cost on eligible new EVs.</li>
+      <li><strong>Utility rebates</strong> may help cover part of your home charger installation.</li>
+      <li><strong>Local perks</strong> like HOV lane access, reduced registration fees, and free public charging still exist in some regions.</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>Bottom line:</strong> Incentives are not guaranteed forever, but when available, they meaningfully improve the value of going electric.</p>
+    </div>
+
+    <h2>Insurance: Slightly Higher, Often Worth It</h2>
+    <p>EV insurance can be a bit higher than comparable gas cars — mostly because EVs tend to have higher repair costs after accidents.</p>
+    <p><strong>Why it's usually not a deal-breaker:</strong></p>
+    <ul>
+      <li>Many EV owners offset insurance differences with fuel and maintenance savings</li>
+      <li>Rates drop over time as EV repair networks expand</li>
+      <li>Some insurers now offer EV-specific discounts</li>
+    </ul>
+
+    <div class="callout">
+      <p><strong>Reality check:</strong> Get a quote before you buy. In many cases, the difference is smaller than expected.</p>
+    </div>
+
+    <h2>Registration & Fees</h2>
+    <p>Some states charge EV registration fees to offset lost gas tax revenue.</p>
+    <ul>
+      <li>Typically <strong>$100–$200 per year</strong> depending on state</li>
+      <li>Still far less than what many drivers spend on gas annually</li>
+      <li>Some states reduce other fees or offer perks to balance this out</li>
+    </ul>
+    <p><strong>Perspective:</strong> Even with EV fees, total ownership costs remain lower for most drivers.</p>
+
+    <h2>Home Charger Installation (One-Time Cost)</h2>
+    <p>If you install a Level 2 home charger:</p>
+    <ul>
+      <li><strong>Typical install cost:</strong> $500–$1,500 (varies by home setup)</li>
+      <li>One-time expense that pays for itself quickly</li>
+      <li>Often partially offset by utility rebates or local programs</li>
+    </ul>
+    <p>Once installed, your "fuel station" lives in your garage — which most EV owners consider a game-changer.</p>
+
+    <h2>Repairs: Different, Not Worse</h2>
+    <p>EVs are simpler mechanically, but repairs can cost more if body panels or battery components are damaged.</p>
+    <p><strong>The upside:</strong></p>
+    <ul>
+      <li>Far fewer routine repairs overall</li>
+      <li>No engine, transmission, exhaust, or oil system to worry about</li>
+      <li>Brakes last longer due to regenerative braking</li>
+      <li>Batteries are covered under long warranties</li>
+    </ul>
+    <p><strong>Long-term reality:</strong> EVs trade occasional higher repair costs for far lower everyday maintenance.</p>
+
+    <h2>The Bottom Line</h2>
+    <p>EV ownership comes with a few different costs than gas cars — but the overall experience is overwhelmingly positive. Lower fueling costs, simpler maintenance, smoother driving, and home charging convenience more than make up for the small differences in fees or insurance.</p>
+    <p>Most EV owners don't go back to gas. Once you experience the ease and simplicity of electric driving, it's hard to imagine owning anything else.</p>
+    <p>Have questions about costs in your area? <a href="../support.html" style="color:var(--copper);font-weight:600;">Ask our team →</a></p>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="comments-section">
+    <h2>Comments</h2>
+    <div class="comment-form">
+      <label>Name</label>
+      <input type="text" id="commentName" placeholder="Your name" maxlength="50"/>
+      <label>Comment</label>
+      <textarea id="commentText" placeholder="Share your thoughts..." maxlength="1000"></textarea>
+      <button class="btn-comment" id="postComment">Post Comment</button>
+      <div id="commentMsg" class="comment-msg"></div>
+    </div>
+    <div class="comment-list" id="commentList">
+      <p class="no-comments">Loading comments...</p>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../search.js"></script>
+<script>
+const SLUG = 'ev-incentives-fees';
+const sb = getSb();
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function getReacted(commentId, type) {
+  try { return JSON.parse(localStorage.getItem('evtime_reactions') || '{}')[commentId + '_' + type] || false; } catch { return false; }
+}
+
+function setReacted(commentId, type) {
+  try {
+    const store = JSON.parse(localStorage.getItem('evtime_reactions') || '{}');
+    store[commentId + '_' + type] = true;
+    localStorage.setItem('evtime_reactions', JSON.stringify(store));
+  } catch {}
+}
+
+function renderComment(c, replies) {
+  const isReply = !!c.parent_id;
+  const likedClass = getReacted(c.id, 'like') ? ' active' : '';
+  const lovedClass = getReacted(c.id, 'love') ? ' active' : '';
+  const childReplies = replies.filter(r => r.parent_id === c.id);
+
+  let html = `
+    <div class="comment-item${isReply ? ' reply' : ''}" data-id="${esc(c.id)}">
+      <div class="comment-header">
+        <span class="comment-author">${esc(c.author_name)}</span>
+        <span class="comment-date">${new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+      </div>
+      <div class="comment-text">${esc(c.comment)}</div>
+      <div class="comment-actions">
+        <button class="react-btn${likedClass}" onclick="react('${c.id}','like',this)">👍 <span class="count">${c.likes || 0}</span></button>
+        <button class="react-btn${lovedClass}" onclick="react('${c.id}','love',this)">❤️ <span class="count">${c.loves || 0}</span></button>
+        <button class="react-btn" onclick="toggleReply('${c.id}')">💬 Reply</button>
+      </div>
+      <div class="reply-form" id="reply-${c.id}">
+        <input type="text" placeholder="Your name" maxlength="50" id="replyName-${c.id}"/>
+        <textarea placeholder="Write a reply..." maxlength="1000" id="replyText-${c.id}"></textarea>
+        <button class="btn-comment" onclick="postReply('${c.id}')">Post Reply</button>
+      </div>
+  `;
+
+  for (const reply of childReplies) {
+    html += renderComment(reply, replies);
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+async function loadComments() {
+  const list = document.getElementById('commentList');
+  if (!sb) { list.innerHTML = '<p class="no-comments">Comments unavailable.</p>'; return; }
+  const { data, error } = await sb.from('comments').select('*').eq('article_slug', SLUG).order('created_at', { ascending: true });
+  if (error) { list.innerHTML = '<p class="no-comments">Could not load comments.</p>'; return; }
+  if (!data.length) { list.innerHTML = '<p class="no-comments">No comments yet. Be the first!</p>'; return; }
+
+  const topLevel = data.filter(c => !c.parent_id);
+  const replies = data.filter(c => c.parent_id);
+
+  list.innerHTML = topLevel.map(c => renderComment(c, replies)).join('');
+}
+
+async function react(commentId, type, btn) {
+  if (getReacted(commentId, type)) return;
+  const column = type === 'like' ? 'likes' : 'loves';
+  const { data } = await sb.from('comments').select(column).eq('id', commentId).single();
+  if (!data) return;
+  const newVal = (data[column] || 0) + 1;
+  await sb.from('comments').update({ [column]: newVal }).eq('id', commentId);
+  setReacted(commentId, type);
+  btn.classList.add('active');
+  btn.querySelector('.count').textContent = newVal;
+}
+
+function toggleReply(commentId) {
+  const form = document.getElementById('reply-' + commentId);
+  form.classList.toggle('open');
+}
+
+async function postReply(parentId) {
+  const name = document.getElementById('replyName-' + parentId).value.trim();
+  const text = document.getElementById('replyText-' + parentId).value.trim();
+  if (!name || !text) return;
+  await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId }]);
+  document.getElementById('replyName-' + parentId).value = '';
+  document.getElementById('replyText-' + parentId).value = '';
+  document.getElementById('reply-' + parentId).classList.remove('open');
+  await loadComments();
+}
+
+document.getElementById('postComment').addEventListener('click', async () => {
+  const name = document.getElementById('commentName').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  const msg = document.getElementById('commentMsg');
+  if (!name || !text) { msg.textContent = 'Please enter your name and comment.'; msg.className = 'comment-msg error'; return; }
+  if (!sb) { msg.textContent = 'System loading — please refresh.'; msg.className = 'comment-msg error'; return; }
+  const { error } = await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text }]);
+  if (error) { msg.textContent = 'Error posting comment. Try again.'; msg.className = 'comment-msg error'; return; }
+  msg.textContent = 'Comment posted!'; msg.className = 'comment-msg success';
+  document.getElementById('commentName').value = '';
+  document.getElementById('commentText').value = '';
+  await loadComments();
+});
+
+loadComments();
+
+fetch('../header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
+fetch('../footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
+</script>
+<script src="../app.js"></script>
+</body>
+</html>
