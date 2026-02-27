@@ -28,6 +28,12 @@
       overflow-x: hidden;
     }
 
+    #header-placeholder {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
     /* HERO — true edge-to-edge image */
     .hero {
       position: relative;
@@ -57,20 +63,6 @@
       border-radius: 24px;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.8);
-      border: 1px solid rgba(20,19,18,0.08);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-      margin-bottom: 18px;
     }
 
     .hero h1 {
@@ -227,7 +219,6 @@
   <section class="hero">
     <div class="hero-wrap">
       <div class="hero-content">
-        <div class="badge">Verified. Calm. Professional.</div>
         <h1>Finally, A Car Marketplace Built on Trust.</h1>
         <p>Buying or selling a car shouldn't feel stressful or risky. EV Time combines licensed DMV handling, structured escrow, and concierge-level care — so your transaction feels secure from start to finish.</p>
         <div class="cta-row">
