@@ -28,18 +28,33 @@
       overflow-x: hidden;
     }
 
-    /* HERO — true edge-to-edge */
+    #header-placeholder {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* HERO — true edge-to-edge, no gradient */
     .hero {
       position: relative;
       width: 100%;
       min-height: 720px;
       display: flex;
       align-items: center;
-      background:
-        linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 35%, rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.15) 100%),
-        url("/hero-bg.jpg") center/cover no-repeat;
+      background: url("/hero-bg.jpg") center/cover no-repeat;
       padding: 0;
       margin: 0;
+    }
+
+    /* Text overlay panel */
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 70%, rgba(255,255,255,0) 100%);
+      pointer-events: none;
     }
 
     .hero-wrap {
@@ -48,10 +63,12 @@
       padding: 0 32px;
       width: 100%;
       box-sizing: border-box;
+      position: relative;
+      z-index: 2;
     }
 
     .hero-content {
-      max-width: 620px;
+      max-width: 560px;
       padding: 100px 0;
     }
 
@@ -78,7 +95,7 @@
       color: var(--text);
     }
 
-    .hero > .hero-wrap > .hero-content > p {
+    .hero-content > p {
       font-size: 18px;
       line-height: 1.7;
       color: var(--muted);
@@ -204,7 +221,14 @@
     @media (max-width: 1000px) {
       .hero { min-height: 620px; }
       .hero h1 { font-size: 42px; }
+      .hero-overlay { width: 70%; }
       .trust-grid, .testimonial-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-overlay { width: 100%; }
+      .hero-content { padding: 60px 0; }
+      .hero h1 { font-size: 36px; }
     }
   </style>
 </head>
@@ -215,6 +239,7 @@
 
   <!-- HERO -->
   <section class="hero">
+    <div class="hero-overlay"></div>
     <div class="hero-wrap">
       <div class="hero-content">
         <div class="badge">Verified. Calm. Professional.</div>
@@ -277,12 +302,6 @@
   <script>
     fetch('./header.html').then(r => r.text()).then(html => {
       document.getElementById('header-placeholder').innerHTML = html;
-      // Force header static on homepage
-      var hdr = document.querySelector('.site-header');
-      if (hdr) {
-        hdr.style.position = 'static';
-      }
-      document.getElementById('header-placeholder').style.position = 'static';
     }).catch(err => console.error('Error loading header:', err));
 
     fetch('./footer.html').then(r => r.text()).then(html => {
