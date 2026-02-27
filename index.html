@@ -28,13 +28,7 @@
       overflow-x: hidden;
     }
 
-    #header-placeholder {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    /* HERO — true edge-to-edge, no gradient */
+    /* HERO — true edge-to-edge image */
     .hero {
       position: relative;
       width: 100%;
@@ -44,17 +38,6 @@
       background: url("/hero-bg.jpg") center/cover no-repeat;
       padding: 0;
       margin: 0;
-    }
-
-    /* Text overlay panel */
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 70%, rgba(255,255,255,0) 100%);
-      pointer-events: none;
     }
 
     .hero-wrap {
@@ -69,14 +52,18 @@
 
     .hero-content {
       max-width: 560px;
-      padding: 100px 0;
+      padding: 80px 40px;
+      background: rgba(255,255,255,0.88);
+      border-radius: 24px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.8);
       border: 1px solid rgba(20,19,18,0.08);
       padding: 10px 14px;
       border-radius: 999px;
@@ -87,7 +74,7 @@
     }
 
     .hero h1 {
-      font-size: 58px;
+      font-size: 52px;
       line-height: 1.05;
       letter-spacing: -0.04em;
       margin: 0 0 16px;
@@ -96,7 +83,7 @@
     }
 
     .hero-content > p {
-      font-size: 18px;
+      font-size: 17px;
       line-height: 1.7;
       color: var(--muted);
       margin: 0 0 24px;
@@ -128,9 +115,9 @@
     }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.9);
       color: var(--text);
-      border: 1px solid rgba(20,19,18,0.08);
+      border: 1px solid rgba(20,19,18,0.12);
     }
     .btn-secondary:hover {
       background: #fff;
@@ -221,14 +208,13 @@
     @media (max-width: 1000px) {
       .hero { min-height: 620px; }
       .hero h1 { font-size: 42px; }
-      .hero-overlay { width: 70%; }
+      .hero-content { padding: 48px 28px; }
       .trust-grid, .testimonial-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 600px) {
-      .hero-overlay { width: 100%; }
-      .hero-content { padding: 60px 0; }
-      .hero h1 { font-size: 36px; }
+      .hero-content { max-width: 100%; margin: 0 16px; padding: 40px 24px; }
+      .hero h1 { font-size: 34px; }
     }
   </style>
 </head>
@@ -239,7 +225,6 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-overlay"></div>
     <div class="hero-wrap">
       <div class="hero-content">
         <div class="badge">Verified. Calm. Professional.</div>
