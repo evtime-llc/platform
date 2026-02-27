@@ -41,7 +41,7 @@
     .hero {
       position: relative;
       width: 100%;
-      min-height: 720px;
+      min-height: clamp(500px, 70vh, 720px);
       display: flex;
       align-items: center;
       background: url("/hero-bg.jpg") center/cover no-repeat;
@@ -52,7 +52,7 @@
     .hero-wrap {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 0 32px;
+      padding: 0 clamp(16px, 3vw, 32px);
       width: 100%;
       box-sizing: border-box;
       position: relative;
@@ -60,42 +60,42 @@
     }
 
     .hero-content {
-      max-width: 560px;
-      padding: 80px 40px;
+      max-width: clamp(380px, 42vw, 560px);
+      padding: clamp(40px, 5vw, 80px) clamp(24px, 3vw, 40px);
       background: rgba(255,255,255,0.88);
-      border-radius: 24px;
+      border-radius: clamp(16px, 2vw, 24px);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
 
     .hero h1 {
-      font-size: 52px;
+      font-size: clamp(32px, 4vw, 52px);
       line-height: 1.05;
       letter-spacing: -0.04em;
-      margin: 0 0 16px;
+      margin: 0 0 clamp(10px, 1.2vw, 16px);
       font-weight: 900;
       color: var(--text);
     }
 
     .hero-content > p {
-      font-size: 17px;
+      font-size: clamp(15px, 1.3vw, 17px);
       line-height: 1.7;
       color: var(--muted);
-      margin: 0 0 24px;
+      margin: 0 0 clamp(16px, 2vw, 24px);
     }
 
     .cta-row {
       display: flex;
-      gap: 14px;
+      gap: clamp(10px, 1vw, 14px);
       flex-wrap: wrap;
     }
 
     .btn {
       text-decoration: none;
-      padding: 14px 20px;
+      padding: clamp(10px, 1.2vw, 14px) clamp(16px, 1.5vw, 20px);
       border-radius: 999px;
       font-weight: 800;
-      font-size: 14px;
+      font-size: clamp(13px, 1.1vw, 14px);
       transition: all .2s ease;
       border: 1px solid transparent;
       display: inline-block;
@@ -121,54 +121,54 @@
     /* TRUST STRIP */
     .trust-strip {
       background: #fff;
-      padding: 60px 0;
+      padding: clamp(40px, 5vw, 60px) 0;
       border-top: 1px solid rgba(20,19,18,0.08);
     }
 
     .section-wrap {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 0 32px;
+      padding: 0 clamp(16px, 3vw, 32px);
       box-sizing: border-box;
     }
 
     .trust-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: clamp(16px, 2vw, 24px);
     }
 
     .trust-card {
       background: #fff;
       border: 1px solid rgba(20,19,18,0.08);
-      border-radius: 22px;
-      padding: 24px;
+      border-radius: clamp(16px, 1.5vw, 22px);
+      padding: clamp(18px, 2vw, 24px);
       box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
 
     .trust-card h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
+      margin: 0 0 clamp(6px, 0.8vw, 10px);
+      font-size: clamp(14px, 1.2vw, 16px);
       font-weight: 800;
     }
 
     .trust-card p {
       margin: 0;
-      font-size: 14px;
+      font-size: clamp(13px, 1.1vw, 14px);
       line-height: 1.6;
       color: var(--muted);
     }
 
     /* TESTIMONIALS */
     .testimonials {
-      padding: 80px 0;
+      padding: clamp(50px, 6vw, 80px) 0;
       background: #fbfaf9;
     }
 
     .testimonials h2 {
       text-align: center;
-      font-size: 34px;
-      margin-bottom: 40px;
+      font-size: clamp(26px, 3vw, 34px);
+      margin-bottom: clamp(24px, 3vw, 40px);
       font-weight: 900;
       color: var(--text);
     }
@@ -176,40 +176,36 @@
     .testimonial-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: clamp(16px, 2vw, 24px);
     }
 
     .testimonial-card {
       background: #fff;
-      border-radius: 22px;
-      padding: 24px;
+      border-radius: clamp(16px, 1.5vw, 22px);
+      padding: clamp(18px, 2vw, 24px);
       border: 1px solid rgba(20,19,18,0.08);
       box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
 
     .testimonial-card p {
       font-style: italic;
-      margin: 0 0 12px;
-      font-size: 15px;
+      margin: 0 0 clamp(8px, 1vw, 12px);
+      font-size: clamp(13px, 1.1vw, 15px);
       line-height: 1.6;
     }
 
     .testimonial-author {
-      font-size: 13px;
+      font-size: clamp(12px, 1vw, 13px);
       font-weight: 800;
       color: #9a5e35;
     }
 
     @media (max-width: 1000px) {
-      .hero { min-height: 620px; }
-      .hero h1 { font-size: 42px; }
-      .hero-content { padding: 48px 28px; }
       .trust-grid, .testimonial-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 600px) {
-      .hero-content { max-width: 100%; margin: 0 16px; padding: 40px 24px; }
-      .hero h1 { font-size: 34px; }
+      .hero-content { max-width: 100%; margin: 0 16px; }
     }
   </style>
 </head>
