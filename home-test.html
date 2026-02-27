@@ -2,210 +2,207 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime — A Car Marketplace Built on Trust</title>
   <meta name="description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers. Professional team handles paperwork start to finish."/>
   <meta name="theme-color" content="#fbfaf9"/>
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://itsevtime.com/"/>
+  <meta property="og:title" content="EVTime — A Car Marketplace Built on Trust"/>
+  <meta property="og:description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers."/>
+  <meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css"/>
 
   <style>
-    :root{
-      --text:#141312;
-      --muted:#4b4743;
-      --accent:#c98c5b;
-      --accent-dark:#9a5e35;
-      --white-overlay:rgba(255,255,255,0.88);
-      --hairline:rgba(20,19,18,0.08);
-      --radius:22px;
-      --shadow:0 20px 60px rgba(0,0,0,0.08);
+    /* Force header static on homepage */
+    #header-placeholder { position: static !important; }
+    .site-header { position: static !important; }
+
+    body {
+      margin: 0;
+      background: #fbfaf9;
     }
 
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      color:var(--text);
-      background:#fbfaf9;
-    }
-
-    .wrap{
-      max-width:1180px;
-      margin:0 auto;
-      padding:0 32px;
-      box-sizing:border-box;
-    }
-
-    /* HERO BACKGROUND */
-    .hero{
-      position:relative;
-      width:100%;
-      min-height:720px;
-      display:flex;
-      align-items:center;
+    /* HERO — full edge-to-edge */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 720px;
+      display: flex;
+      align-items: center;
       background:
         linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 35%, rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.15) 100%),
         url("/hero-bg.jpg") center/cover no-repeat;
     }
 
-    .hero-content{
-      max-width:620px;
-      padding:100px 0;
+    .hero-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      background:rgba(255,255,255,0.75);
-      border:1px solid var(--hairline);
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:13px;
-      font-weight:700;
-      color:var(--muted);
-      margin-bottom:18px;
+    .hero-content {
+      max-width: 620px;
+      padding: 100px 0;
     }
 
-    .hero h1{
-      font-size:58px;
-      line-height:1.05;
-      letter-spacing:-0.04em;
-      margin:0 0 16px;
-      font-weight:900;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(20,19,18,0.08);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 18px;
     }
 
-    .hero p{
-      font-size:18px;
-      line-height:1.7;
-      color:var(--muted);
-      margin:0 0 24px;
+    .hero h1 {
+      font-size: 58px;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin: 0 0 16px;
+      font-weight: 900;
+      color: var(--text);
     }
 
-    .cta-row{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
+    .hero p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin: 0 0 24px;
     }
 
-    .btn{
-      text-decoration:none;
-      padding:14px 20px;
-      border-radius:999px;
-      font-weight:800;
-      font-size:14px;
-      transition:all .2s ease;
-      border:1px solid transparent;
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
-    .btn-primary{
-      background:#141312;
-      color:#fff;
+    .btn {
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: all .2s ease;
+      border: 1px solid transparent;
     }
 
-    .btn-primary:hover{
-      background:#000;
+    .btn-primary {
+      background: #141312;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #000;
     }
 
-    .btn-secondary{
-      background:rgba(255,255,255,0.85);
-      color:var(--text);
-      border:1px solid var(--hairline);
+    .btn-secondary {
+      background: rgba(255,255,255,0.85);
+      color: var(--text);
+      border: 1px solid rgba(20,19,18,0.08);
+    }
+    .btn-secondary:hover {
+      background: #fff;
     }
 
-    .btn-secondary:hover{
-      background:#fff;
+    /* TRUST STRIP — full width bg, constrained content */
+    .trust-strip {
+      background: #fff;
+      padding: 60px 0;
+      border-top: 1px solid rgba(20,19,18,0.08);
+      width: 100%;
     }
 
-    /* TRUST STRIP BELOW HERO */
-    .trust-strip{
-      background:#fff;
-      padding:60px 0;
-      border-top:1px solid var(--hairline);
+    .section-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+      box-sizing: border-box;
     }
 
-    .trust-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:24px;
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
     }
 
-    .trust-card{
-      background:#fff;
-      border:1px solid var(--hairline);
-      border-radius:var(--radius);
-      padding:24px;
-      box-shadow:var(--shadow);
+    .trust-card {
+      background: #fff;
+      border: 1px solid rgba(20,19,18,0.08);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
 
-    .trust-card h3{
-      margin:0 0 10px;
-      font-size:16px;
-      font-weight:800;
+    .trust-card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 800;
     }
 
-    .trust-card p{
-      margin:0;
-      font-size:14px;
-      line-height:1.6;
-      color:var(--muted);
+    .trust-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
     }
 
-    /* TESTIMONIALS */
-    .testimonials{
-      padding:80px 0;
-      background:#fbfaf9;
+    /* TESTIMONIALS — full width bg */
+    .testimonials {
+      padding: 80px 0;
+      background: #fbfaf9;
+      width: 100%;
     }
 
-    .testimonials h2{
-      text-align:center;
-      font-size:34px;
-      margin-bottom:40px;
-      font-weight:900;
+    .testimonials h2 {
+      text-align: center;
+      font-size: 34px;
+      margin-bottom: 40px;
+      font-weight: 900;
     }
 
-    .testimonial-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:24px;
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
     }
 
-    .testimonial-card{
-      background:#fff;
-      border-radius:var(--radius);
-      padding:24px;
-      border:1px solid var(--hairline);
-      box-shadow:var(--shadow);
+    .testimonial-card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 24px;
+      border: 1px solid rgba(20,19,18,0.08);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
 
-    .testimonial-card p{
-      font-style:italic;
-      margin:0 0 12px;
-      font-size:15px;
-      line-height:1.6;
+    .testimonial-card p {
+      font-style: italic;
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
-    .testimonial-author{
-      font-size:13px;
-      font-weight:800;
-      color:var(--accent-dark);
+    .testimonial-author {
+      font-size: 13px;
+      font-weight: 800;
+      color: #9a5e35;
     }
 
-    @media(max-width:1000px){
-      .hero{
-        min-height:620px;
-      }
-      .trust-grid,
-      .testimonial-grid{
-        grid-template-columns:1fr;
-      }
-      .hero h1{
-        font-size:42px;
-      }
+    @media (max-width: 1000px) {
+      .hero { min-height: 620px; }
+      .hero h1 { font-size: 42px; }
+      .trust-grid, .testimonial-grid { grid-template-columns: 1fr; }
     }
-
   </style>
 </head>
 
@@ -215,18 +212,11 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="wrap">
+    <div class="hero-wrap">
       <div class="hero-content">
         <div class="badge">Verified. Calm. Professional.</div>
-
         <h1>Finally, A Car Marketplace Built on Trust.</h1>
-
-        <p>
-          Buying or selling a car shouldn’t feel stressful or risky.
-          EV Time combines licensed DMV handling, structured escrow, and concierge-level care —
-          so your transaction feels secure from start to finish.
-        </p>
-
+        <p>Buying or selling a car shouldn't feel stressful or risky. EV Time combines licensed DMV handling, structured escrow, and concierge-level care — so your transaction feels secure from start to finish.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="./sell.html">Get an Offer</a>
           <a class="btn btn-secondary" href="./share.html">Browse Inventory</a>
@@ -237,7 +227,7 @@
 
   <!-- TRUST STRIP -->
   <section class="trust-strip">
-    <div class="wrap">
+    <div class="section-wrap">
       <div class="trust-grid">
         <div class="trust-card">
           <h3>Anti-Scam by Design</h3>
@@ -257,20 +247,17 @@
 
   <!-- TESTIMONIALS -->
   <section class="testimonials">
-    <div class="wrap">
+    <div class="section-wrap">
       <h2>What Our Customers Say</h2>
-
       <div class="testimonial-grid">
         <div class="testimonial-card">
           <p>"Sold my Tesla in 3 days. They handled everything perfectly."</p>
           <div class="testimonial-author">— Sarah M.</div>
         </div>
-
         <div class="testimonial-card">
-          <p>"Best car buying experience I’ve had. Completely professional."</p>
+          <p>"Best car buying experience I've had. Completely professional."</p>
           <div class="testimonial-author">— James T.</div>
         </div>
-
         <div class="testimonial-card">
           <p>"Honest, smooth, and zero stress. Exactly what I hoped for."</p>
           <div class="testimonial-author">— Maria G.</div>
@@ -281,17 +268,13 @@
 
   <div id="footer-placeholder"></div>
 
+  <script src="/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./search.js"></script>
   <script>
-    fetch('./header.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('header-placeholder').innerHTML = html; });
-
-    fetch('./footer.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('footer-placeholder').innerHTML = html; });
+    fetch('./header.html').then(r => r.text()).then(html => { document.getElementById('header-placeholder').innerHTML = html; });
+    fetch('./footer.html').then(r => r.text()).then(html => { document.getElementById('footer-placeholder').innerHTML = html; });
   </script>
-
   <script src="/app.js"></script>
 </body>
 </html>
