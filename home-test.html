@@ -18,32 +18,21 @@
   <link rel="stylesheet" href="./styles.css"/>
 
   <style>
-    /* Force header static and kill all body padding */
-    #header-placeholder,
-    #header-placeholder .site-header,
-    #header-placeholder header {
-      position: static !important;
-      top: auto !important;
-    }
-
-    body,
-    html {
+    body, html {
       margin: 0 !important;
       padding: 0 !important;
       background: #fbfaf9;
       overflow-x: hidden;
     }
 
-    /* HERO — full edge-to-edge */
+    /* HERO — true edge-to-edge */
     .hero {
       position: relative;
       width: 100vw;
+      margin-left: calc(-50vw + 50%);
       min-height: 720px;
       display: flex;
       align-items: center;
-      margin-left: calc(-50vw + 50%) !important;
-      margin-right: calc(-50vw + 50%) !important;
-      padding: 0 !important;
       background:
         linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 35%, rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.15) 100%),
         url("/hero-bg.jpg") center/cover no-repeat;
@@ -125,14 +114,13 @@
       background: #fff;
     }
 
-    /* TRUST STRIP — full width */
+    /* TRUST STRIP */
     .trust-strip {
       background: #fff;
       padding: 60px 0;
       border-top: 1px solid rgba(20,19,18,0.08);
       width: 100vw;
-      margin-left: calc(-50vw + 50%) !important;
-      margin-right: calc(-50vw + 50%) !important;
+      margin-left: calc(-50vw + 50%);
     }
 
     .section-wrap {
@@ -169,13 +157,12 @@
       color: var(--muted);
     }
 
-    /* TESTIMONIALS — full width */
+    /* TESTIMONIALS */
     .testimonials {
       padding: 80px 0;
       background: #fbfaf9;
       width: 100vw;
-      margin-left: calc(-50vw + 50%) !important;
-      margin-right: calc(-50vw + 50%) !important;
+      margin-left: calc(-50vw + 50%);
     }
 
     .testimonials h2 {
@@ -286,7 +273,15 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./search.js"></script>
   <script>
-    fetch('./header.html').then(r => r.text()).then(html => { document.getElementById('header-placeholder').innerHTML = html; });
+    fetch('./header.html').then(r => r.text()).then(html => {
+      document.getElementById('header-placeholder').innerHTML = html;
+      // Force header static after injection
+      var hdr = document.querySelector('.site-header');
+      if (hdr) {
+        hdr.style.setProperty('position', 'static', 'important');
+        hdr.style.setProperty('top', 'auto', 'important');
+      }
+    });
     fetch('./footer.html').then(r => r.text()).then(html => { document.getElementById('footer-placeholder').innerHTML = html; });
   </script>
   <script src="/app.js"></script>
