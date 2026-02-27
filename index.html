@@ -2,16 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>EVTime — A Car Marketplace Built on Trust</title>
   <meta name="description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers. Professional team handles paperwork start to finish."/>
-  <meta name="theme-color" content="#0b0a09"/>
+  <meta name="theme-color" content="#fbfaf9"/>
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 
-  <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website"/>
   <meta property="og:url" content="https://itsevtime.com/"/>
   <meta property="og:title" content="EVTime — A Car Marketplace Built on Trust"/>
@@ -22,131 +18,276 @@
   <meta name="twitter:description" content="Buy and sell electric vehicles with confidence. Licensed DMV services, secure escrow, and honest offers."/>
   <meta name="twitter:image" content="https://itsevtime.com/og-card.png"/>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GGBQKG3B3G"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-GGBQKG3B3G');
-  </script>
-
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css"/>
 
   <style>
-    #header-placeholder{position:sticky;top:0;z-index:100}
-
-    .hero{background:var(--bg);padding:60px 48px 80px;width:100%}
-
-    .hero-card{
-      background:var(--bg-light);
-      border-radius:20px;
-      padding:60px 80px;
-      box-shadow:0 20px 60px rgba(0,0,0,0.4);
-    }
-    .hero-title{font-size:56px;font-weight:900;margin:0 0 16px;color:var(--text);line-height:1.1}
-    .hero-subtitle{font-size:24px;font-weight:700;color:var(--copper);margin:0 0 32px}
-    .hero-text{font-size:20px;line-height:1.7;color:#292524;margin:0 0 20px}
-    .hero-punch{font-size:24px;font-weight:700;color:#1f2933;margin-top:32px}
-
-    .testimonials{background:var(--bg);padding:80px 48px;width:100%}
-    .testimonials-title{
-      font-size:48px;font-weight:900;color:#fff;text-align:center;
-      margin:0 0 60px
-    }
-    .testimonials-grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-      gap:32px
-    }
-    .testimonial-card{
-      background:var(--bg-light);border-radius:16px;padding:32px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.3)
-    }
-    .testimonial-stars{color:var(--copper);font-size:20px;margin-bottom:16px}
-    .testimonial-quote{
-      font-size:18px;line-height:1.6;color:#292524;margin:0 0 20px;
-      font-style:italic
-    }
-    .testimonial-author{
-      font-size:15px;font-weight:700;color:var(--copper-dark)
+    body, html {
+      margin: 0;
+      padding: 0;
+      background: #fbfaf9;
+      overflow-x: hidden;
     }
 
-    @media (max-width: 768px){
-      .hero{padding:40px 24px 60px}
-      .hero-card{padding:32px 24px}
-      .hero-title{font-size:36px}
-      .hero-subtitle{font-size:20px}
-      .hero-text{font-size:17px}
-      .hero-punch{font-size:20px}
-      
-      .testimonials{padding:60px 24px}
-      .testimonials-title{font-size:32px;margin-bottom:40px}
-      .testimonials-grid{grid-template-columns:1fr;gap:24px}
+    /* HERO — true edge-to-edge */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 720px;
+      display: flex;
+      align-items: center;
+      background:
+        linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.82) 35%, rgba(255,255,255,0.55) 60%, rgba(255,255,255,0.15) 100%),
+        url("/hero-bg.jpg") center/cover no-repeat;
+      padding: 0;
+      margin: 0;
+    }
+
+    .hero-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .hero-content {
+      max-width: 620px;
+      padding: 100px 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(20,19,18,0.08);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: 58px;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin: 0 0 16px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .hero > .hero-wrap > .hero-content > p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--muted);
+      margin: 0 0 24px;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: all .2s ease;
+      border: 1px solid transparent;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #141312;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #000;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.85);
+      color: var(--text);
+      border: 1px solid rgba(20,19,18,0.08);
+    }
+    .btn-secondary:hover {
+      background: #fff;
+    }
+
+    /* TRUST STRIP */
+    .trust-strip {
+      background: #fff;
+      padding: 60px 0;
+      border-top: 1px solid rgba(20,19,18,0.08);
+    }
+
+    .section-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+      box-sizing: border-box;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .trust-card {
+      background: #fff;
+      border: 1px solid rgba(20,19,18,0.08);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    .trust-card h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .trust-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    /* TESTIMONIALS */
+    .testimonials {
+      padding: 80px 0;
+      background: #fbfaf9;
+    }
+
+    .testimonials h2 {
+      text-align: center;
+      font-size: 34px;
+      margin-bottom: 40px;
+      font-weight: 900;
+      color: var(--text);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 24px;
+      border: 1px solid rgba(20,19,18,0.08);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    .testimonial-card p {
+      font-style: italic;
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .testimonial-author {
+      font-size: 13px;
+      font-weight: 800;
+      color: #9a5e35;
+    }
+
+    @media (max-width: 1000px) {
+      .hero { min-height: 620px; }
+      .hero h1 { font-size: 42px; }
+      .trust-grid, .testimonial-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
+
 <body data-page="home">
 
   <div id="header-placeholder"></div>
 
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-card">
-      <h1 class="hero-title">Finally, A Car Marketplace Built on Trust</h1>
-      <p class="hero-subtitle">Friendly. Honest. Secure.</p>
-      <p class="hero-text">Buying or selling a car shouldn't feel stressful, confusing, or risky.</p>
-      <p class="hero-text">
-        At E.V.Time, your transaction is handled by a professional team — including licensed DMV personnel —
-        using escrow-grade structure to manage documentation, verification, and transfer with precision.
-      </p>
-      <p class="hero-punch">You're in good hands, start to finish.</p>
+    <div class="hero-wrap">
+      <div class="hero-content">
+        <div class="badge">Verified. Calm. Professional.</div>
+        <h1>Finally, A Car Marketplace Built on Trust.</h1>
+        <p>Buying or selling a car shouldn't feel stressful or risky. EV Time combines licensed DMV handling, structured escrow, and concierge-level care — so your transaction feels secure from start to finish.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./sell.html">Get an Offer</a>
+          <a class="btn btn-secondary" href="./share.html">Browse Inventory</a>
+        </div>
+      </div>
     </div>
   </section>
 
+  <!-- TRUST STRIP -->
+  <section class="trust-strip">
+    <div class="section-wrap">
+      <div class="trust-grid">
+        <div class="trust-card">
+          <h3>Anti-Scam by Design</h3>
+          <p>Verified participants and structured communication keep bad actors out.</p>
+        </div>
+        <div class="trust-card">
+          <h3>Licensed DMV Handling</h3>
+          <p>Paperwork and documentation managed correctly the first time.</p>
+        </div>
+        <div class="trust-card">
+          <h3>Escrow-Grade Structure</h3>
+          <p>Funds and transfer protected so both sides feel safe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
   <section class="testimonials">
-    <h2 class="testimonials-title">What Our Customers Say</h2>
-    <div class="testimonials-grid">
-      
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"Sold my Tesla in 3 days. The DMV paperwork was handled perfectly — I didn't have to do anything."</p>
-        <div class="testimonial-author">— Sarah M.</div>
+    <div class="section-wrap">
+      <h2>What Our Customers Say</h2>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <p>"Sold my Tesla in 3 days. They handled everything perfectly."</p>
+          <div class="testimonial-author">— Sarah M.</div>
+        </div>
+        <div class="testimonial-card">
+          <p>"Best car buying experience I've had. Completely professional."</p>
+          <div class="testimonial-author">— James T.</div>
+        </div>
+        <div class="testimonial-card">
+          <p>"Honest, smooth, and zero stress. Exactly what I hoped for."</p>
+          <div class="testimonial-author">— Maria G.</div>
+        </div>
       </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"Best car buying experience I've had. The escrow process made me feel completely safe."</p>
-        <div class="testimonial-author">— James T.</div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"Fast, honest, and professional. They gave me a fair offer and handled everything smoothly."</p>
-        <div class="testimonial-author">— Maria G.</div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"Finally, a marketplace I can trust. No hidden fees, no games — just straightforward service."</p>
-        <div class="testimonial-author">— David K.</div>
-      </div>
-
     </div>
   </section>
 
   <div id="footer-placeholder"></div>
 
+  <script src="/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./search.js"></script>
-
   <script>
-    fetch('./header.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('header-placeholder').innerHTML = html; })
-      .catch(err => console.error('Error loading header:', err));
+    fetch('./header.html').then(r => r.text()).then(html => {
+      document.getElementById('header-placeholder').innerHTML = html;
+      // Force header static on homepage
+      var hdr = document.querySelector('.site-header');
+      if (hdr) {
+        hdr.style.position = 'static';
+      }
+      document.getElementById('header-placeholder').style.position = 'static';
+    }).catch(err => console.error('Error loading header:', err));
 
-    fetch('./footer.html')
-      .then(r => r.text())
-      .then(html => { document.getElementById('footer-placeholder').innerHTML = html; })
-      .catch(err => console.error('Error loading footer:', err));
+    fetch('./footer.html').then(r => r.text()).then(html => {
+      document.getElementById('footer-placeholder').innerHTML = html;
+    }).catch(err => console.error('Error loading footer:', err));
   </script>
   <script src="/app.js"></script>
 </body>
