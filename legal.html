@@ -7,7 +7,6 @@
 <meta name="description" content="Terms of use, privacy policy, disclaimers, and legal information for E.V.Time car marketplace."/>
 <meta name="theme-color" content="#0b0a09"/>
 
-<!-- Open Graph -->
 <meta property="og:title" content="Legal & Privacy — E.V.Time"/>
 <meta property="og:description" content="Terms of use, privacy policy, disclaimers, and legal information for E.V.Time car marketplace."/>
 <meta property="og:image" content="https://itsevtime.com/og-card.png"/>
@@ -30,6 +29,7 @@ ul { line-height: 1.8; margin: 12px 0; }
 a { color: var(--copper); text-decoration: none; }
 a:hover { text-decoration: underline; }
 .last-updated { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+.full-link { display: inline-block; margin-top: 8px; font-weight: 700; font-size: 15px; }
 @media (max-width: 768px) {
   h1 { font-size: 28px; }
   h2 { font-size: 22px; }
@@ -57,6 +57,7 @@ a:hover { text-decoration: underline; }
       <li>Comply with all applicable local, state, and federal laws</li>
       <li>Accept that E.V.Time may remove listings or accounts that violate these terms</li>
     </ul>
+    <a href="./terms.html" class="full-link">Read Full Terms of Use →</a>
 
     <h2>Marketplace & Forum Rules</h2>
     <ul>
@@ -90,6 +91,7 @@ a:hover { text-decoration: underline; }
 
     <h3>We Do NOT Sell Your Data</h3>
     <p>Your personal information is never sold to third parties. We only share data when required by law or to facilitate services you request (e.g., DMV paperwork).</p>
+    <a href="./privacy.html" class="full-link">Read Full Privacy Policy →</a>
 
     <h2>Intellectual Property</h2>
     <p>All content, branding, and design elements on this site are owned by E.V.Time or used with permission. You may not copy, reproduce, or distribute site content without written consent.</p>
@@ -107,9 +109,10 @@ a:hover { text-decoration: underline; }
 
 <div id="footer-placeholder"></div>
 
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 <script>
-// Load header/footer
 fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
 fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
 </script>
