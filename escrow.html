@@ -4,10 +4,9 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Escrow Services — E.V.Time</title>
-<meta name="description" content="Secure vehicle transactions with professional escrow services. Protect both buyers and sellers with neutral third-party holding."/>
+<meta name="description" content="Secure vehicle transactions with professional escrow services. EV Time coordinates with licensed third-party escrow providers to protect both buyers and sellers."/>
 <meta name="theme-color" content="#0b0a09"/>
 
-<!-- Open Graph -->
 <meta property="og:title" content="Escrow Services — E.V.Time"/>
 <meta property="og:description" content="Secure vehicle transactions with professional escrow services. Protect both buyers and sellers."/>
 <meta property="og:image" content="https://itsevtime.com/og-card.png"/>
@@ -25,10 +24,15 @@
 h1 { font-size: 32px; font-weight: 700; color: var(--text); margin: 16px 0; }
 h2 { font-size: 24px; font-weight: 700; color: var(--text); margin: 16px 0; }
 h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0; }
+p { line-height: 1.7; margin: 12px 0; }
 .hlite { color: var(--copper); font-weight: 600; }
 .hero { text-align: center; padding: 40px 20px; }
 .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
-.hero-subtitle { font-size: 20px; color: var(--text-muted); }
+.hero-subtitle { font-size: 20px; color: var(--text-muted); margin-bottom: 16px; }
+.hero-desc { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 680px; margin: 0 auto; }
+.disclosure { background: rgba(201,140,91,0.08); border-left: 4px solid var(--copper); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 20px 0; }
+.disclosure h3 { margin-top: 0; color: var(--copper-dark); }
+.disclosure p { font-size: 14px; line-height: 1.7; margin: 8px 0 0; }
 .steps { display: grid; gap: 16px; margin: 20px 0; }
 .step { display: flex; gap: 16px; align-items: start; }
 .step-num { flex-shrink: 0; width: 40px; height: 40px; background: var(--copper); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
@@ -53,28 +57,37 @@ h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0; }
 <div class="wrap">
   <div class="card hero">
     <h1 class="hero-title">Escrow Services</h1>
-    <p class="hero-subtitle">Safe transactions, every time</p>
+    <p class="hero-subtitle">Safe transactions, every time.</p>
+    <p class="hero-desc">EV Time coordinates secure vehicle transactions through licensed third-party escrow providers. Our structured process protects both buyers and sellers from fraud, payment disputes, and documentation errors — while keeping the experience smooth and professional.</p>
   </div>
 
   <div class="card">
-    <h2>What is Escrow?</h2>
-    <p>Escrow is a neutral third-party service that holds funds during a vehicle transaction. Money is only released when both buyer and seller have met all agreed-upon conditions.</p>
+    <div class="disclosure">
+      <h3>Important Disclosure</h3>
+      <p>Escrow services are administered by independent, licensed third-party escrow providers. EV Time is not a licensed escrow holder and does not hold buyer or seller funds. All funds are deposited, held, and released by the licensed escrow provider in accordance with agreed transaction terms.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What Is Escrow?</h2>
+    <p>Escrow is a neutral, licensed third-party service that holds funds during a vehicle transaction. Money is released only after agreed-upon conditions — such as inspection, title verification, and documentation — are satisfied.</p>
+    <p>This structure protects both parties and creates a transparent, documented process from start to finish.</p>
   </div>
 
   <div class="card">
     <h2>Why Use Escrow?</h2>
     <div style="margin-top: 16px;">
       <h3><span class="hlite">Buyer Protection</span></h3>
-      <p>Your funds are secure until you verify the vehicle condition, title, and all documentation.</p>
+      <p>Funds are securely held by a licensed escrow provider while vehicle condition, title, and documentation are verified.</p>
       
       <h3 style="margin-top: 20px;"><span class="hlite">Seller Protection</span></h3>
-      <p>Know the buyer has funds available before releasing your vehicle. No bounced checks or payment disputes.</p>
+      <p>Buyer funds are verified and secured before vehicle release. No bounced checks or payment reversals.</p>
       
-      <h3 style="margin-top: 20px;"><span class="hlite">Peace of Mind</span></h3>
-      <p>Both parties are protected by a transparent, documented process.</p>
+      <h3 style="margin-top: 20px;"><span class="hlite">Documented Process</span></h3>
+      <p>All terms, conditions, and timelines are clearly structured and recorded.</p>
       
-      <h3 style="margin-top: 20px;"><span class="hlite">Professional Handling</span></h3>
-      <p>Our team coordinates with DMV services, title transfers, and documentation to ensure a smooth handoff.</p>
+      <h3 style="margin-top: 20px;"><span class="hlite">Professional Coordination</span></h3>
+      <p>EV Time coordinates with licensed DMV partners, escrow providers, and both parties to ensure a clean handoff.</p>
     </div>
   </div>
 
@@ -92,16 +105,16 @@ h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0; }
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-content">
-          <h3>Buyer Deposits Funds</h3>
-          <p>Buyer transfers funds to escrow account. Seller is notified.</p>
+          <h3>Funds Deposited</h3>
+          <p>Buyer deposits funds with the licensed escrow provider.</p>
         </div>
       </div>
       
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-content">
-          <h3>Vehicle Inspection</h3>
-          <p>Buyer inspects vehicle and verifies condition matches description.</p>
+          <h3>Vehicle Inspection & Verification</h3>
+          <p>Vehicle condition and documentation are reviewed according to agreed terms.</p>
         </div>
       </div>
       
@@ -109,7 +122,7 @@ h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0; }
         <div class="step-num">4</div>
         <div class="step-content">
           <h3>Title & Documentation</h3>
-          <p>Our DMV specialist processes title transfer, registration, and all paperwork.</p>
+          <p>Licensed DMV partners process title transfer and required paperwork.</p>
         </div>
       </div>
       
@@ -117,7 +130,7 @@ h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0; }
         <div class="step-num">5</div>
         <div class="step-content">
           <h3>Funds Released</h3>
-          <p>Once buyer approves and title is transferred, funds are released to seller.</p>
+          <p>Once conditions are satisfied, the licensed escrow provider releases funds to the seller.</p>
         </div>
       </div>
     </div>
@@ -126,29 +139,28 @@ h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 12px 0; }
   <div class="card">
     <h2>Pricing</h2>
     <div class="pricing">
-      <h3>Current: Optional Service</h3>
-      <p>Escrow is available as an optional add-on. Fees are quoted based on transaction value and complexity.</p>
-      
-      <h3 style="margin-top: 20px; color: var(--copper);">Coming Soon: All-Inclusive Package</h3>
-      <p><strong style="font-size: 24px; color: var(--copper);">$499</strong> — includes escrow, DMV services, title transfer, and complete documentation support.</p>
+      <p>Escrow coordination is available as an optional service.</p>
+      <p>Fees are based on transaction value and complexity.</p>
+      <p>For current pricing, contact our team for a tailored quote.</p>
     </div>
   </div>
 
   <div class="card">
     <h2>Questions?</h2>
-    <p>Our team is here to walk you through the process and answer any questions.</p>
+    <p>Our team is here to guide you through the process and coordinate every step with our licensed partners.</p>
     <div class="cta-buttons">
-      <a href="./support.html" class="btn btn-primary">Contact Support</a>
-      <a href="./about.html" class="btn btn-secondary">How It Works</a>
+      <a href="/support.html" class="btn btn-primary">Contact Support</a>
+      <a href="/about.html" class="btn btn-secondary">How It Works</a>
     </div>
   </div>
 </div>
 
 <div id="footer-placeholder"></div>
 
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./search.js"></script>
 <script>
-// Load header/footer
 fetch('./header.html').then(r => r.text()).then(h => { document.getElementById('header-placeholder').innerHTML = h; });
 fetch('./footer.html').then(r => r.text()).then(f => { document.getElementById('footer-placeholder').innerHTML = f; });
 </script>
