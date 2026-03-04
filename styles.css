@@ -6,20 +6,16 @@
   --text: #141312;
   --muted: #4b4743;
   --line: rgba(20,19,18,0.10);
-
   /* Warm accent (subtle) */
   --copper: #c98c5b;
   --copper-dark: #9a5e35;
   --copper-light: #d4a574;
   --copper-soft: rgba(201,140,91,0.14);
-
   /* Soft elevation */
   --shadow-soft: 0 18px 50px rgba(15, 14, 13, 0.08);
   --shadow-softer: 0 12px 34px rgba(15, 14, 13, 0.06);
 }
-
 *{ box-sizing:border-box; }
-
 body{
   margin:0;
   background: var(--bg);
@@ -27,21 +23,16 @@ body{
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
 }
-
 /* Header */
 .site-header{
   position: sticky;
   top: 0;
   z-index: 100;
-
-  /* Calm Trust header: light, glassy, Apple-like */
   background: rgba(255,255,255,0.82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
   border-bottom: 1px solid rgba(20,19,18,0.10);
 }
-
 .header-inner{
   max-width: 1180px;
   margin: 0 auto;
@@ -52,7 +43,6 @@ body{
   height: 56px;
   padding: 0 24px;
 }
-
 .logo-link{
   position: relative;
   overflow: hidden;
@@ -60,7 +50,6 @@ body{
   flex-shrink: 0;
   border-radius: 12px;
 }
-
 /* Subtle logo glow (kept, but softened) */
 .logo-link::after{
   content:"";
@@ -73,25 +62,21 @@ body{
   pointer-events:none;
   mix-blend-mode: normal;
 }
-
 @keyframes logoGlow{
   0%{ transform: translate(-6%, -6%) rotate(0deg); }
   50%{ transform: translate(6%, 6%) rotate(180deg); }
   100%{ transform: translate(-6%, -6%) rotate(360deg); }
 }
-
 #site-logo{
   height: 46px;
   display:block;
 }
-
 /* Nav */
 .nav{
   display:flex;
   gap: 26px;
   align-items:center;
 }
-
 .nav-btn{
   color: var(--text);
   text-decoration:none;
@@ -99,39 +84,38 @@ body{
   font-weight: 600;
   white-space:nowrap;
   letter-spacing: -0.01em;
-  transition: color .15s ease, transform .12s ease;
+  transition: color .15s ease, transform .12s ease, font-size .15s ease;
 }
-
 .nav-btn:hover{
   color: var(--copper-dark);
   transform: translateY(-1px);
 }
-
 .search-icon{
   color: var(--text);
   cursor:pointer;
   transition: transform .15s ease, color .15s ease;
 }
-
 .search-icon:hover{
   color: var(--copper-dark);
   transform: scale(1.06);
 }
-
 /* Active page highlighting */
-body[data-page="sell"] .nav-btn[href="./sell.html"],
-body[data-page="share"] .nav-btn[href="./share.html"],
-body[data-page="about"] .nav-btn[href="./about.html"],
-body[data-page="escrow"] .nav-btn[href="./escrow.html"],
-body[data-page="dmv"] .nav-btn[href="./dmv.html"],
-body[data-page="support"] .nav-btn[href="./support.html"],
-body[data-page="legal"] .nav-btn[href="./legal.html"],
-body[data-page="listing"] .nav-btn[href="./listing.html"],
+body[data-page="sell"] .nav-btn[href="/sell.html"],
+body[data-page="share"] .nav-btn[href="/share.html"],
+body[data-page="forum"] .nav-btn[href="/forum.html"],
+body[data-page="resources"] .nav-btn[href="/resources.html"],
+body[data-page="about"] .nav-btn[href="/about.html"],
+body[data-page="escrow"] .nav-btn[href="/escrow.html"],
+body[data-page="dmv"] .nav-btn[href="/dmv.html"],
+body[data-page="support"] .nav-btn[href="/support.html"],
+body[data-page="legal"] .nav-btn[href="/legal.html"],
+body[data-page="listing"] .nav-btn[href="/listing.html"],
 body[data-page="home"] .nav-btn[href="/"],
 body[data-page="index"] .nav-btn[href="/"]{
   color: var(--copper-dark);
+  font-size: 15px;
+  font-weight: 800;
 }
-
 /* Mobile */
 @media (max-width: 768px){
   .header-inner{
@@ -139,20 +123,31 @@ body[data-page="index"] .nav-btn[href="/"]{
     padding: 0 16px;
     gap: 14px;
   }
-
   #site-logo{ height: 38px; }
-
   .nav{
     flex-wrap: wrap;
     gap: 10px;
     justify-content: flex-end;
   }
-
   .nav-btn{
     font-size: 11px;
     font-weight: 700;
   }
-
+  body[data-page="sell"] .nav-btn[href="/sell.html"],
+  body[data-page="share"] .nav-btn[href="/share.html"],
+  body[data-page="forum"] .nav-btn[href="/forum.html"],
+  body[data-page="resources"] .nav-btn[href="/resources.html"],
+  body[data-page="about"] .nav-btn[href="/about.html"],
+  body[data-page="escrow"] .nav-btn[href="/escrow.html"],
+  body[data-page="dmv"] .nav-btn[href="/dmv.html"],
+  body[data-page="support"] .nav-btn[href="/support.html"],
+  body[data-page="legal"] .nav-btn[href="/legal.html"],
+  body[data-page="listing"] .nav-btn[href="/listing.html"],
+  body[data-page="home"] .nav-btn[href="/"],
+  body[data-page="index"] .nav-btn[href="/"]{
+    font-size: 13px;
+    font-weight: 800;
+  }
   .search-icon{
     width: 16px;
     height: 16px;
