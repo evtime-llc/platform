@@ -111,7 +111,7 @@ label { display: block; font-weight: 600; margin-top: 12px; }
         <!-- Phone/SMS buttons removed — will be restored when 800 number + AI answering service is ready -->
         <button class="contact-btn contact-email" id="copyEmail">📧 Email Concierge</button>
         <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
-          Email: welcome.evtime@gmail.com<br/>
+          Email: Support@itsEVTime.com<br/>
           <button id="copyMessage" style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">Copy Message Template</button>
         </p>
       </div>
@@ -325,7 +325,7 @@ if (!id) {
     
     // Copy email
     document.getElementById('copyEmail').addEventListener('click', () => {
-      navigator.clipboard.writeText('welcome.evtime@gmail.com');
+      navigator.clipboard.writeText('Support@itsEVTime.com');
       alert('Email copied!');
     });
     
@@ -382,7 +382,7 @@ if (!id) {
           overlay.classList.remove('open');
         }, 2000);
       } catch (err) {
-        showMsg('Error sending message. Please email welcome.evtime@gmail.com', 'error');
+        showMsg('Error sending message. Please email Support@itsEVTime.com', 'error');
       }
     });
     
