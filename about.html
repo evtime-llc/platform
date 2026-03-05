@@ -30,13 +30,47 @@ p{margin:6px 0 8px}
 .list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
 .check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
 .check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
-.ph{width:100%;aspect-ratio:16/9;border-radius:12px;border:1px dashed #d6d3d1;background:#f8f7f6;display:flex;align-items:center;justify-content:center;color:#9a948f;font-size:14px}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;font-weight:800}
-.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;box-shadow:0 3px 10px rgba(201,140,91,.28)}
-.btn.primary:hover{background:var(--copper-dark);color:#fff}
+
+.heroimg{
+width:100%;
+aspect-ratio:16/9;
+border-radius:12px;
+object-fit:cover;
+border:1px solid var(--line);
+}
+
+.btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+height:44px;
+padding:0 18px;
+border-radius:999px;
+font-weight:700;
+cursor:pointer;
+text-decoration:none;
+font-family:inherit;
+}
+
+.btn.primary{
+background:#0b0a09;
+color:#fff;
+border:none;
+}
+
+.btn.secondary{
+background:#fff;
+color:#0b0a09;
+border:1px solid var(--line);
+}
+
 a.link{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 a.link:hover{border-bottom-style:solid}
-@media(max-width:768px){h1{font-size:20px}h2{font-size:16px}}
+
+@media(max-width:768px){
+h1{font-size:20px}
+h2{font-size:16px}
+}
 </style>
 </head>
 <body data-page="about">
@@ -46,25 +80,25 @@ a.link:hover{border-bottom-style:solid}
 <div class="wrap hero">
   <div class="card hlite">
     <h1>How it works / Why E.V.Time</h1>
-    <p class="muted">Friendly, straightforward car selling — with real people and fair offers.</p>
-    <div class="ph">Hero photo placeholder</div>
+    <p class="muted">Friendly, straightforward car selling — handled by real specialists.</p>
+    <img src="./hero-trust.png" class="heroimg" alt="EVTime customer transaction"/>
   </div>
 
   <div class="card">
     <h2>How it works</h2>
     <ul class="list">
       <li><span class="check"></span><div><b>Tell us about your car.</b> Scan or enter your VIN, mileage, and notes.</div></li>
-      <li><span class="check"></span><div><b>We review and text you a number.</b> A real specialist looks at your info and replies quickly.</div></li>
-      <li><span class="check"></span><div><b>Simple handoff.</b> If you like it, we schedule a quick look and complete paperwork via our licensed partner, Waltons Auto Sales.</div></li>
+      <li><span class="check"></span><div><b>We review and text you a number.</b> A real specialist evaluates your vehicle and responds quickly.</div></li>
+      <li><span class="check"></span><div><b>Simple handoff.</b> If you like the offer, we schedule a quick look and complete paperwork through our licensed partner, Waltons Auto Sales.</div></li>
     </ul>
   </div>
 
   <div class="card">
     <h2>Why E.V.Time</h2>
     <ul class="list">
-      <li><span class="check"></span><div><b>Honest offers.</b> We don't blast out computer guesses — we actually evaluate your car.</div></li>
-      <li><span class="check"></span><div><b>Low overhead, better numbers.</b> We keep it lean so we can be competitive.</div></li>
-      <li><span class="check"></span><div><b>Privacy first.</b> Your info is only used to evaluate and contact you — never sold or shared.</div></li>
+      <li><span class="check"></span><div><b>Real evaluations.</b> We don’t blast out automated guesses — we actually look at your car.</div></li>
+      <li><span class="check"></span><div><b>Lean structure.</b> Lower overhead means we can offer more competitive numbers.</div></li>
+      <li><span class="check"></span><div><b>Privacy first.</b> Your information is used only to evaluate and contact you — never sold or shared.</div></li>
     </ul>
   </div>
 
@@ -74,8 +108,8 @@ a.link:hover{border-bottom-style:solid}
   </div>
 
   <div class="card" style="display:flex;gap:10px;flex-wrap:wrap">
-    <a class="btn" href="./share.html">Browse inventory</a>
-    <a class="btn primary" href="./sell.html">Sell your car</a>
+    <a class="btn primary" href="./sell.html">Sell Your Car</a>
+    <a class="btn secondary" href="./share.html">Browse Inventory</a>
   </div>
 </div>
 
