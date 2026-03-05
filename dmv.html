@@ -45,12 +45,14 @@ p { line-height: 1.7; margin: 12px 0; }
 .btn-secondary { background: var(--bg-light); color: var(--text); border: 2px solid var(--line); }
 .btn:hover { opacity: 0.9; }
 ul { line-height: 1.8; }
+ul li { white-space: nowrap; }
 .fine-print p { font-size: 13px; color: var(--text-muted); }
 @media (max-width: 768px) {
   .hero-title { font-size: 28px; }
   .grid { grid-template-columns: 1fr; }
   .cta-buttons { flex-direction: column; }
   .btn { width: 100%; }
+  ul li { white-space: normal; }
 }
 </style>
 </head>
@@ -62,7 +64,7 @@ ul { line-height: 1.8; }
   <div class="card hero">
     <h1 class="hero-title">DMV Services</h1>
     <p class="hero-subtitle">Skip the line. We handle every DMV detail from start to finish.</p>
-    <p class="hero-desc">Buying or selling a vehicle requires proper handling of title history verification, legal ownership confirmation, lien verification, and ownership transfer processing. EV Time makes sure the DMV side of the transaction is handled correctly.</p>
+    <p class="hero-desc">Buying or selling a vehicle requires proper handling of title history verification, legal ownership confirmation, lien verification, and ownership transfer processing. EV Time helps ensure the DMV side of the transaction is handled correctly.</p>
   </div>
 
   <div class="card">
@@ -70,7 +72,7 @@ ul { line-height: 1.8; }
     <ul>
       <li><strong>Verification of Title History & Ownership</strong> — Confirming title status and legal ownership before transfer</li>
       <li><strong>Transferability Verification</strong> — Ensuring the vehicle is legally transferable</li>
-      <li><strong>Title Transfers</strong> — Ownership transfers for purchased vehicles</li>
+      <li><strong>Title Transfers</strong> — Ownership transfer processing</li>
       <li><strong>Release of Liability</strong> — Proper filing when a vehicle is sold</li>
       <li><strong>Registration & Plate Transfers</strong> — New registrations and documentation updates</li>
       <li><strong>Lien Releases & Payoffs</strong> — Documentation coordination for financed vehicles</li>
