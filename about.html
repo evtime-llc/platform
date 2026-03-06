@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>How EV Time Works | Buy, Sell & Transact Cars Safely</title>
-<meta name="description" content="EV Time helps buyers and sellers transact vehicles with real evaluations, structured handling, and trusted partners for DMV, financing, and insurance."/>
+<meta name="description" content="EV Time helps people buy and sell vehicles safely with structured handling, real evaluations, and trusted documentation support."/>
 <meta name="theme-color" content="#0b0a09"/>
 <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
 
@@ -20,59 +20,45 @@
 #header-placeholder{position:sticky;top:0;z-index:100}
 .wrap{max-width:880px;margin:0 auto;padding:12px}
 .hero{padding:16px 12px}
-.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0}
+.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:18px;margin:12px 0;font-family:inherit;font-size:15px;line-height:1.6}
 .hlite{background:linear-gradient(0deg, rgba(201,140,91,.08), rgba(201,140,91,.08));border:1px solid rgba(201,140,91,.55);box-shadow:0 6px 22px rgba(201,140,91,.25)}
-h1{margin:6px 0 8px;font-size:24px;color:var(--text)}
-h2{margin:4px 0 8px;font-size:18px;color:var(--text)}
-p{margin:6px 0 8px}
+h1{margin:6px 0 8px;font-size:28px;font-weight:900;color:var(--text);font-family:inherit}
+h2{margin:4px 0 8px;font-size:18px;font-weight:800;color:var(--text);font-family:inherit}
+p{margin:6px 0 8px;font-family:inherit;font-size:15px;line-height:1.6}
 .muted{color:#78716c}
 .list{list-style:none;padding:0;margin:8px 0}
-.list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+.list li{display:flex;gap:10px;margin:8px 0;align-items:flex-start;font-size:15px}
 .check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
 .check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
-
-.heroimg{
-width:100%;
-aspect-ratio:16/9;
-border-radius:12px;
-object-fit:cover;
-border:1px solid var(--line);
-}
-
+.heroimg{width:100%;aspect-ratio:16/9;border-radius:12px;object-fit:cover;border:1px solid var(--line)}
 .btn{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-height:44px;
-padding:0 18px;
-border-radius:999px;
-font-weight:700;
-cursor:pointer;
-text-decoration:none;
-font-family:inherit;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:44px;
+  padding:0 24px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:14px;
+  letter-spacing:0.02em;
+  cursor:pointer;
+  text-decoration:none;
+  font-family:inherit;
+  transition:all .2s ease;
 }
-
-.btn.primary{
-background:#0b0a09;
-color:#fff;
-border:none;
-}
-
-.btn.secondary{
-background:#fff;
-color:#0b0a09;
-border:1px solid var(--line);
-}
-
+.btn.primary{background:#141312;color:#fff;border:none}
+.btn.primary:hover{background:#000}
+.btn.secondary{background:#fff;color:#141312;border:1px solid rgba(20,19,18,0.12)}
+.btn.secondary:hover{background:#f5f5f5}
 .hero-center{text-align:center}
-.hero-subline{font-size:16px;line-height:1.5;margin:8px 0 12px}
-
+.hero-subline{font-size:16px;line-height:1.6;margin:8px 0 12px;font-family:inherit}
+.fine-print{font-size:13px;color:#78716c;margin-top:10px;line-height:1.6}
 a.link{color:var(--copper);text-decoration:none;border-bottom:1px dotted var(--copper)}
 a.link:hover{border-bottom-style:solid}
 @media(max-width:768px){
-h1{font-size:20px}
-h2{font-size:16px}
-.hero-subline{font-size:15px}
+  h1{font-size:24px}
+  h2{font-size:16px}
+  .hero-subline{font-size:15px}
 }
 </style>
 </head>
@@ -104,7 +90,7 @@ h2{font-size:16px}
   </div>
 
   <div class="card">
-    <h2>Why E.V.Time</h2>
+    <h2>Why EV Time</h2>
     <ul class="list">
       <li><span class="check"></span><div><b>Real human evaluation.</b> Your car is reviewed by experienced professionals — not automated price bots.</div></li>
       <li><span class="check"></span><div><b>Transparent transactions.</b> Clear communication, verified participants, and structured handling from start to finish.</div></li>
@@ -118,8 +104,9 @@ h2{font-size:16px}
   </div>
 
   <div class="card">
-    <h2>Trust & privacy</h2>
+    <h2>Trust & Privacy</h2>
     <p class="muted">We respect your time and your data. Read our <a class="link" href="./legal.html">Legal & Disclosures</a> for full details.</p>
+    <p class="fine-print">EV Time helps people buy and sell vehicles safely with structured handling, real evaluations, and trusted documentation support.</p>
   </div>
 
   <div class="card">
@@ -132,7 +119,6 @@ h2{font-size:16px}
 <div id="footer-placeholder"></div>
 
 <script src="./search.js"></script>
-
 <script>
 fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
 fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
