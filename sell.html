@@ -30,6 +30,7 @@ h1{margin:6px 0 8px;font-size:22px;color:var(--text)}
 button,.btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s;font-size:14px;font-weight:600}
 button.primary,.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;font-weight:800;box-shadow:0 3px 10px rgba(201,140,91,.28)}
 button.primary:hover,.btn.primary:hover{background:var(--copper-dark);color:#fff}
+button.primary:disabled,.btn.primary:disabled{opacity:.7;cursor:not-allowed}
 .btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
 .btn.ghost:hover{background:var(--copper-soft)}
 input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text)}
@@ -142,6 +143,8 @@ video{width:100%;border-radius:8px}
 fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
 fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
 
+const EVTIME_PUBLIC_API_URL = 'https://evtime-public-api.vahehr.workers.dev';
+
 function normalizeVIN(r){if(!r)return '';var s=r.toUpperCase().replace(/[^A-Z0-9]/g,'');s=s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');var m=s.match(/[A-HJ-NPR-Z0-9]{17,25}/);if(m)s=m[0];if(s.length>17)s=s.substring(0,17);return s}
 function isVIN17(s){return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||'')}
 function setStatus(m,o){var e=document.getElementById('vinStatus');e.textContent=m||'';e.className='small '+(o?'success':m?'error':'')}
@@ -200,34 +203,48 @@ submitBtn.addEventListener('click',async function(){
     formMsg.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
+
   if(!name || !phone || !email){
     formMsg.textContent = 'Please fill in Name, Phone, and Email.';
     formMsg.className = 'small error';
     formMsg.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
-  
-  var sb = getSb();
-  if(!sb){
-    formMsg.textContent = 'Submission system loading — please wait a moment and try again.';
-    formMsg.className = 'small error';
-    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
-    return;
-  }
-  
-  var msg = '[SELL CAR]\nVIN: ' + v + '\nMileage: ' + (miles||'n/a') + '\nCondition: ' + (cond||'n/a') + '\nNotes: ' + (notes||'none');
-  
-  var result = await sb.from('leads').insert(
-    { listing_id: null, name: name, phone: phone, email: email, message: msg },
-    { returning: 'minimal' }
-  );
-  
-  if(result.error){
-    formMsg.textContent = 'Could not submit. Please email us at Support@itsEVTime.com';
-    formMsg.className = 'small error';
-  } else {
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending...';
+  formMsg.textContent = '';
+  formMsg.className = 'small';
+
+  try {
+    var response = await fetch(EVTIME_PUBLIC_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        vin: v,
+        name: name,
+        phone: phone,
+        email: email,
+        miles: miles || null,
+        cond: cond || null,
+        notes: notes || null
+      })
+    });
+
+    var data = null;
+    try {
+      data = await response.json();
+    } catch (e) {
+      data = null;
+    }
+
+    if (!response.ok || !data || !data.ok) {
+      throw new Error('submit_failed');
+    }
+
     formMsg.textContent = 'Received — One of our specialists will reach out shortly.';
     formMsg.className = 'small success';
+
     document.getElementById('vin').value = '';
     document.getElementById('name').value = '';
     document.getElementById('phone').value = '';
@@ -236,8 +253,14 @@ submitBtn.addEventListener('click',async function(){
     document.getElementById('cond').value = '';
     document.getElementById('notes').value = '';
     setStatus('');
+  } catch (err) {
+    formMsg.textContent = 'Could not submit. Please email us at Support@itsEVTime.com';
+    formMsg.className = 'small error';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send for Offer';
+    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
   }
-  formMsg.scrollIntoView({behavior:'smooth',block:'center'});
 });
 </script>
 <script src="/app.js"></script>
