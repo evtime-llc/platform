@@ -163,6 +163,7 @@
     <div class="comment-form">
       <label>Name</label>
       <input type="text" id="commentName" placeholder="Your name" maxlength="50"/>
+      <input type="text" id="commentHP" name="website" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;"/>
       <label>Comment</label>
       <textarea id="commentText" placeholder="Share your thoughts..." maxlength="1000"></textarea>
       <button class="btn-comment" id="postComment">Post Comment</button>
@@ -272,6 +273,7 @@ async function postReply(parentId) {
 }
 
 document.getElementById('postComment').addEventListener('click', async () => {
+  const hp = document.getElementById('commentHP').value; if (hp) return;
   const name = document.getElementById('commentName').value.trim();
   const text = document.getElementById('commentText').value.trim();
   const msg = document.getElementById('commentMsg');
