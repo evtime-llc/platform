@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>EV vs Gas: The Real Cost of Ownership — E.V.Time</title>
 <meta name="description" content="Forget the sticker price. Here’s how to think about the real 5-year cost of an EV versus a gas car — in a way that stays true over time."/>
@@ -160,7 +161,7 @@
 <div id="footer-placeholder"></div>
 
 <script src="../config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.2/dist/umd/supabase.min.js" integrity="sha384-zETTH+6IXxKQ6zbGcT6H6EDdnGaae9uhI8uO7doTJoNEmPGeTKVOe5S6/XybS9JH" crossorigin="anonymous"></script>
 <script src="../search.js"></script>
 <script>
 const SLUG = 'ev-vs-gas';

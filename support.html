@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Support — E.V.Time</title>
 <meta name="description" content="Get help with buying, selling, escrow, DMV services, and account questions. 24/7 chat available. Email response within 24 hours."/>
@@ -173,7 +174,7 @@ label { display: block; font-weight: 600; margin-top: 16px; }
 <div id="footer-placeholder"></div>
 
 <script src="/config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.2/dist/umd/supabase.min.js" integrity="sha384-zETTH+6IXxKQ6zbGcT6H6EDdnGaae9uhI8uO7doTJoNEmPGeTKVOe5S6/XybS9JH" crossorigin="anonymous"></script>
 <script src="./search.js"></script>
 <script>
 const sb = getSb();
