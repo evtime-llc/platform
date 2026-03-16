@@ -232,14 +232,12 @@ async function loadComments() {
 
 async function react(commentId, type, btn) {
   if (getReacted(commentId, type)) return;
-  const column = type === 'like' ? 'likes' : 'loves';
-  const { data } = await sb.from('comments').select(column).eq('id', commentId).single();
-  if (!data) return;
-  const newVal = (data[column] || 0) + 1;
-  await sb.from('comments').update({ [column]: newVal }).eq('id', commentId);
+  const { error } = await sb.rpc('increment_reaction', { comment_id: commentId, reaction_type: type });
+  if (error) return;
   setReacted(commentId, type);
   btn.classList.add('active');
-  btn.querySelector('.count').textContent = newVal;
+  const countEl = btn.querySelector('.count');
+  countEl.textContent = parseInt(countEl.textContent || '0') + 1;
 }
 
 function toggleReply(commentId) {
