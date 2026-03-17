@@ -164,7 +164,7 @@
       if (error) diag(`<span class="err">getSession error: ${esc(error.message)}</span>`);
       if (session) {
         const email = session.user?.email || "";
-        if (email.toLowerCase() !== "vahehr@gmail.com") {
+        if (email.toLowerCase() !== "admin@itsevtime.com") {
           $("sessionInfo").innerHTML = `<span class="err">Access denied for ${esc(email)}</span>`;
           await sbClient.auth.signOut();
           $("signinBox").style.display = "block";
