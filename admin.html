@@ -336,7 +336,7 @@
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        flowType: 'pkce',
+        flowType: 'implicit',
         storageKey: 'evtime-auth'
       }
     });
@@ -616,10 +616,7 @@
     };
 
     (async () => {
-      const qs = window.location.search;
-      if (qs && qs.includes("code=")) {
-        const { error } = await sbClient.auth.exchangeCodeForSession(window.location.href);
-        if (error) diag(`<span class="err">Auth exchange error: ${esc(error.message)}</span>`);
+      if (window.location.hash && window.location.hash.includes('access_token')) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')
