@@ -178,9 +178,17 @@ label { display: block; font-weight: 600; margin-top: 16px; }
 <script src="./search.js"></script>
 <script>
 const sb = getSb();
+const _formLoadedAt = Date.now();
 
 document.getElementById('contactForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  // Reject if form submitted in under 3 seconds (bot behavior)
+  if (Date.now() - _formLoadedAt < 3000) {
+    showMsg('Message sent! We will respond within 24 hours.', 'success');
+    document.getElementById('contactForm').reset();
+    return;
+  }
 
   // Honeypot check — if filled, silently reject (bot detected)
   if (document.getElementById('company').value) {

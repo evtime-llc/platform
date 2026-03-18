@@ -146,6 +146,7 @@ fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('heade
 fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
 
 const EVTIME_PUBLIC_API_URL = 'https://evtime-public-api.vahehr.workers.dev';
+const _sellFormLoadedAt = Date.now();
 
 function normalizeVIN(r){if(!r)return '';var s=r.toUpperCase().replace(/[^A-Z0-9]/g,'');s=s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');var m=s.match(/[A-HJ-NPR-Z0-9]{17,25}/);if(m)s=m[0];if(s.length>17)s=s.substring(0,17);return s}
 function isVIN17(s){return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||'')}
@@ -191,6 +192,7 @@ submitBtn.addEventListener('click',async function(){
     return;
   }
 
+  if (Date.now() - _sellFormLoadedAt < 3000) return;
   var v = vinEl.value.trim().toUpperCase();
   var name = document.getElementById('name').value.trim();
   if (document.getElementById('sellHP').value) return;

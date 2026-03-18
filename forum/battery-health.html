@@ -163,6 +163,7 @@
 <script>
 const SLUG = 'battery-health';
 const sb = getSb();
+const _commentFormLoadedAt = Date.now();
 
 function esc(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -254,6 +255,7 @@ async function postReply(parentId) {
 
 document.getElementById('postComment').addEventListener('click', async () => {
   const hp = document.getElementById('commentHP').value; if (hp) return;
+  if (Date.now() - _commentFormLoadedAt < 3000) return;
   const name = document.getElementById('commentName').value.trim();
   const text = document.getElementById('commentText').value.trim();
   const msg = document.getElementById('commentMsg');
