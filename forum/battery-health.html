@@ -164,6 +164,12 @@
 const SLUG = 'battery-health';
 const sb = getSb();
 const _commentFormLoadedAt = Date.now();
+const _postCommentURL = window.SUPABASE_URL + '/functions/v1/post-comment';
+async function postCommentViaEdge(payload) {
+  const res = await fetch(_postCommentURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error || 'Failed to post comment'); }
+  return res.json();
+}
 
 function esc(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -246,7 +252,7 @@ async function postReply(parentId) {
   const name = document.getElementById('replyName-' + parentId).value.trim();
   const text = document.getElementById('replyText-' + parentId).value.trim();
   if (!name || !text) return;
-  await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId }]);
+  await postCommentViaEdge({ article_slug: SLUG, author_name: name, comment: text, parent_id: parentId });
   document.getElementById('replyName-' + parentId).value = '';
   document.getElementById('replyText-' + parentId).value = '';
   document.getElementById('reply-' + parentId).classList.remove('open');
@@ -261,7 +267,7 @@ document.getElementById('postComment').addEventListener('click', async () => {
   const msg = document.getElementById('commentMsg');
   if (!name || !text) { msg.textContent = 'Please enter your name and comment.'; msg.className = 'comment-msg error'; return; }
   if (!sb) { msg.textContent = 'System loading — please refresh.'; msg.className = 'comment-msg error'; return; }
-  const { error } = await sb.from('comments').insert([{ article_slug: SLUG, author_name: name, comment: text }]);
+  const { error } = await postCommentViaEdge({ article_slug: SLUG, author_name: name, comment: text }).then(() => ({})).catch(e => ({ error: e }));
   if (error) { msg.textContent = 'Error posting comment. Try again.'; msg.className = 'comment-msg error'; return; }
   msg.textContent = 'Comment posted!'; msg.className = 'comment-msg success';
   document.getElementById('commentName').value = '';
