@@ -617,6 +617,9 @@
 
     (async () => {
       if (window.location.hash && window.location.hash.includes('access_token')) {
+        diag('Token detected in URL hash — waiting for Supabase to process...');
+        const { data, error } = await sbClient.auth.getSession();
+        if (error) diag(`<span class="err">Hash auth error: ${esc(error.message)}</span>`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       const hasLocal = !!localStorage.getItem('sb-' + SUPABASE_URL.replace(/^https:\/\/|\.supabase\.co$/g,'') + '-auth-token')

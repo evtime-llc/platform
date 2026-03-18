@@ -280,6 +280,9 @@
 
     (async () => {
       if (window.location.hash && window.location.hash.includes('access_token')) {
+        diag('Token detected in URL hash — waiting for Supabase to process...');
+        const { data, error } = await supabase.auth.getSession();
+        if (error) diag(`<span class="err">Hash auth error: ${esc(error.message)}</span>`);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       await setSessionUI();
