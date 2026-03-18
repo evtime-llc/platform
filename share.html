@@ -129,7 +129,7 @@ const fetchOrdered = async (statusVal) => {
     .order('position', { ascending: false })
     .order('updated_at', { ascending: false })
     .limit(1000);
-  if (error) { console.error(error); return []; }
+  if (error) { console.error('Failed to load listings'); return []; }
   return data || [];
 };
 

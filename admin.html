@@ -429,7 +429,7 @@
     async function refreshListings(){
       const [liveRes, soldRes] = await Promise.all([fetchOrdered('live'), fetchOrdered('sold')]);
       if (liveRes.error || soldRes.error){
-        diag(`<span class="err">Load error: ${esc((liveRes.error || soldRes.error).message)}</span>`);
+        diag(`<span class="err">Failed to load listings</span>`);
         $("tbl").innerHTML = "";
         $("cardList").innerHTML = "";
         $("emptyMsg").style.display = "block";
@@ -678,7 +678,7 @@
         await refreshListings();
       } catch (e) {
         $("createMsg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
-        diag(`<span class="err">${esc(e.stack || e)}</span>`);
+        diag(`<span class="err">Create failed: ${esc(e.message)}</span>`);
       } finally {
         lock($("create"), false);
       }
@@ -745,7 +745,7 @@
         diag(`<span class="ok">AI analysis started for ${id}</span>`);
         await refreshListings();
       }catch(e){
-        diag(`<span class="err">AI analysis failed: ${esc(e.message)}</span>`);
+        diag(`<span class="err">AI analysis failed</span>`);
       }
     }
 
@@ -757,11 +757,11 @@
       
       try{
         const { data: files, error: listErr } = await sbClient.storage.from('images').list(id, { limit: 1000 });
-        if (listErr) diag(`<span class="err">List files error: ${esc(listErr.message)}</span>`);
+        if (listErr) diag(`<span class="err">Failed to list files</span>`);
         if (files?.length){
           const paths = files.map(f => `${id}/${f.name}`);
           const { error: delErr } = await sbClient.storage.from('images').remove(paths);
-          if (delErr) diag(`<span class="err">Remove files error: ${esc(delErr.message)}</span>`);
+          if (delErr) diag(`<span class="err">Failed to remove files</span>`);
         }
         const { data: vfiles } = await sbClient.storage.from('videos').list(id, { limit: 100 });
         if (vfiles?.length){
@@ -772,7 +772,7 @@
         const { error } = await sbClient.from('listing').delete().eq('id', id);
         if (error) throw error;
       } catch(e){
-        diag(`<span class="err">Delete failed: ${esc(e.message)}</span>`);
+        diag(`<span class="err">Delete failed</span>`);
       }
       await refreshListings();
     }
@@ -894,7 +894,7 @@
 
     async function openEdit(id){
       const { data, error } = await sbClient.from('listing').select('*').eq('id', id).single();
-      if (error){ diag(`<span class="err">Load row error: ${esc(error.message)}</span>`); return; }
+      if (error){ diag(`<span class="err">Failed to load listing</span>`); return; }
       const body = $("editBody");
       body.innerHTML = editFormHTML(data);
       editModal.classList.add('open');

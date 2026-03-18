@@ -223,7 +223,7 @@
         .limit(100);
 
       if (error){
-        diag(`<span class="err">Gateway load error: ${esc(error.message)}</span>`);
+        diag(`<span class="err">Failed to load gateway tasks</span>`);
         $("gwTbl").innerHTML = "";
         $("gwEmpty").style.display = "block";
         return;

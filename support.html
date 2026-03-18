@@ -222,7 +222,7 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
     showMsg('Message sent! We will respond within 24 hours.', 'success');
     document.getElementById('contactForm').reset();
   } catch (err) {
-    console.error(err);
+    console.error('Submission error');
     showMsg('Error sending message. Please email Support@itsEVTime.com', 'error');
   }
 });

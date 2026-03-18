@@ -176,7 +176,7 @@
         .limit(500);
 
       if (error){
-        diag(`<span class="err">Leads load error: ${esc(error.message)}</span>`);
+        diag(`<span class="err">Failed to load leads</span>`);
         $("leadsTbl").innerHTML = "";
         $("leadsEmpty").style.display = "block";
         return;
