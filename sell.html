@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co *.workers.dev www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Sell Your Car - its E.V.Time</title>
 <meta name="description" content="Get cash offers for your car in 24 hours. Scan VIN, submit details, get personalized offer. No computer quotes, real specialists review every car."/>
@@ -102,7 +102,7 @@ video{width:100%;border-radius:8px}
     </div>
     <label for="notes">Notes (optional)</label>
     <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
-    <input type="text" id="sellHP" name="company" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;"/>
+
     <div class="row" style="margin-top:12px">
       <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
       <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
@@ -195,7 +195,6 @@ submitBtn.addEventListener('click',async function(){
   if (Date.now() - _sellFormLoadedAt < 3000) return;
   var v = vinEl.value.trim().toUpperCase();
   var name = document.getElementById('name').value.trim();
-  if (document.getElementById('sellHP').value) return;
   var phone = document.getElementById('phone').value.trim();
   var email = document.getElementById('email').value.trim();
   var miles = document.getElementById('miles').value.trim();
