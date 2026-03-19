@@ -19,34 +19,112 @@
 
 <style>
 #header-placeholder{position:sticky;top:0;z-index:100}
-.wrap{max-width:880px;margin:0 auto;padding:12px}
-.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:14px}
-h1{margin:6px 0 8px;font-size:22px;color:var(--text)}
-.muted{color:#78716c;font-size:13px}
-.bullets{margin:8px 0 12px;padding-left:0;list-style:none}
-.bullets li{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
-.check{width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid var(--copper);position:relative;margin-top:2px}
-.check::after{content:"";position:absolute;left:4px;top:1px;width:6px;height:10px;border-right:2px solid var(--copper);border-bottom:2px solid var(--copper);transform:rotate(40deg)}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-button,.btn{height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s;font-size:14px;font-weight:600}
-button.primary,.btn.primary{background:var(--copper);color:#0b0a09;border:1px solid transparent;font-weight:800;box-shadow:0 3px 10px rgba(201,140,91,.28)}
-button.primary:hover,.btn.primary:hover{background:var(--copper-dark);color:#fff}
-button.primary:disabled,.btn.primary:disabled{opacity:.7;cursor:not-allowed}
-.btn.ghost{background:transparent;border:1px solid var(--copper);color:var(--copper)}
-.btn.ghost:hover{background:var(--copper-soft)}
-input[type="text"],input[type="number"],textarea{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text)}
-textarea{min-height:90px;padding:10px 12px}
-label{display:block;font-size:13px;color:#44403c;margin:10px 0 4px}
-.sheet{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:14px}
-.small{font-size:12px;color:#6b7280}
-.success{color:#16a34a;font-weight:600}
-.error{color:#b91c1c}
+.wrap{max-width:880px;margin:0 auto;padding:24px}
+.card{background:#fff;border:1px solid rgba(20,19,18,0.08);border-radius:22px;padding:32px;margin:12px 0;box-shadow:0 20px 60px rgba(0,0,0,0.08)}
+h1{margin:0 0 16px;font-size:clamp(24px,3vw,32px);font-weight:900;color:#141312;letter-spacing:-0.02em;line-height:1.1}
+.muted{color:#78716c;font-size:14px}
+.bullets{margin:0 0 20px;padding-left:0;list-style:none}
+.bullets li{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:15px;color:#44403c}
+.check{width:20px;height:20px;flex:0 0 20px;border-radius:50%;border:2px solid #141312;position:relative;margin-top:2px}
+.check::after{content:"";position:absolute;left:5px;top:2px;width:6px;height:10px;border-right:2px solid #141312;border-bottom:2px solid #141312;transform:rotate(40deg)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+
+/* Buttons — match index.html dark pill style */
+.btn, button {
+  text-decoration:none;
+  padding: clamp(10px,1.2vw,14px) clamp(18px,1.8vw,24px);
+  border-radius:999px;
+  font-weight:600;
+  font-size:clamp(13px,1.1vw,15px);
+  letter-spacing:0.02em;
+  transition:all .2s ease;
+  border:1px solid transparent;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  font-family:inherit;
+}
+.btn-primary, button.primary {
+  background:#141312;
+  color:#fff;
+  border-color:transparent;
+}
+.btn-primary:hover, button.primary:hover {background:#000}
+.btn-primary:disabled, button.primary:disabled {opacity:.7;cursor:not-allowed}
+.btn-secondary, button.secondary {
+  background:#fff;
+  color:#141312;
+  border:1px solid rgba(20,19,18,0.12);
+}
+.btn-secondary:hover, button.secondary:hover {background:#f5f5f5}
+.btn-ghost {
+  background:transparent;
+  color:#141312;
+  border:1px solid rgba(20,19,18,0.2);
+}
+.btn-ghost:hover{background:rgba(20,19,18,0.04)}
+
+/* Submit button states */
+#submitBtn {width:100%;height:52px;font-size:16px;font-weight:700;position:relative;overflow:hidden}
+#submitBtn.loading {background:#333;pointer-events:none}
+#submitBtn.success {background:#16a34a;border-color:#16a34a}
+#submitBtn.success:hover {background:#15803d}
+
+/* Spinner */
+.spinner {
+  width:18px;height:18px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Checkmark animation */
+.checkmark {
+  width:20px;height:20px;flex-shrink:0;
+  stroke:#fff;stroke-width:3;fill:none;
+  stroke-dasharray:20;stroke-dashoffset:20;
+  animation:draw .4s ease forwards;
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+input[type="text"],input[type="number"],textarea{
+  width:100%;height:48px;
+  border:1px solid rgba(20,19,18,0.15);
+  border-radius:12px;padding:0 14px;
+  font-size:15px;background:#fafaf9;
+  color:#141312;
+  box-sizing:border-box;
+  transition:border-color .15s;
+  font-family:inherit;
+}
+input[type="text"]:focus,input[type="number"]:focus,textarea:focus{
+  outline:none;border-color:#141312;background:#fff;
+}
+textarea{min-height:90px;padding:12px 14px;height:auto}
+label{display:block;font-size:13px;font-weight:600;color:#44403c;margin:14px 0 5px}
+.small{font-size:13px;color:#6b7280;line-height:1.5}
+.success-msg{color:#16a34a;font-weight:600;font-size:14px}
+.error-msg{color:#b91c1c;font-size:14px}
+
 #camWrap{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center;flex-direction:column}
 #camViewport{position:relative;width:100%;max-width:720px}
 video{width:100%;border-radius:8px}
 .scanBox{position:absolute;left:8%;right:8%;top:28%;bottom:36%;border:2px dashed rgba(255,255,255,.8);border-radius:10px}
 .camBtns{display:flex;gap:8px;margin-top:10px}
-.camBtns button{background:#fff}
+
+.about-card{background:#fafaf9;border:1px solid rgba(20,19,18,0.08);border-radius:22px;padding:28px;margin-top:16px}
+.about-card h2{margin:0 0 10px;font-size:20px;font-weight:800;color:#141312}
+.about-card p{font-size:14px;color:#44403c;line-height:1.7;margin:0}
+
+@media(max-width:600px){
+  .wrap{padding:16px}
+  .card{padding:20px}
+}
 </style>
 </head>
 <body data-page="sell">
@@ -62,34 +140,35 @@ video{width:100%;border-radius:8px}
       <li><span class="check"></span><div>Scan the VIN or barcode on your door-jamb or enter VIN number manually.</div></li>
     </ul>
     <div class="row">
-      <a class="btn ghost" href="#about">How it works / Why E.V.Time</a>
+      <a class="btn btn-ghost" href="#about">How it works / Why E.V.Time</a>
     </div>
-    <div class="row" style="margin-top:4px">
+    <div class="row" style="margin-top:8px">
       <button id="scanBtn" class="primary">Scan VIN</button>
-      <label for="vinPhoto" class="btn" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+      <label for="vinPhoto" class="btn btn-secondary" style="cursor:pointer">
         <input id="vinPhoto" type="file" accept="image/*" capture="environment" style="display:none">
         Upload VIN photo
       </label>
     </div>
+
     <label for="vin">VIN</label>
     <input id="vin" type="text" placeholder="17 characters" inputmode="latin" maxlength="23" autocomplete="off" spellcheck="false">
     <div id="vinStatus" class="small" style="margin-top:6px"></div>
-    
+
     <label for="name">Name *</label>
     <input id="name" type="text" placeholder="Your name" required>
 
-    <!-- Honeypot: hidden from real users, bots fill this in -->
+    <!-- Honeypot -->
     <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
       <label>Company</label>
       <input id="company" type="text" name="company" tabindex="-1" autocomplete="off">
     </div>
-    
+
     <label for="phone">Phone *</label>
     <input id="phone" type="text" placeholder="Your phone number" required>
-    
+
     <label for="email">Email *</label>
     <input id="email" type="text" placeholder="Your email" required>
-    
+
     <div class="row">
       <div style="flex:1">
         <label for="miles">Mileage</label>
@@ -100,23 +179,24 @@ video{width:100%;border-radius:8px}
         <input id="cond" type="text" placeholder="Excellent / Good / Fair">
       </div>
     </div>
+
     <label for="notes">Notes (optional)</label>
     <textarea id="notes" rows="3" placeholder="Any upgrades, damage, or details we should know?"></textarea>
 
-    <div class="row" style="margin-top:12px">
-      <button id="submitBtn" class="primary" style="flex:1">Send for Offer</button>
-      <a class="btn" href="./share.html" style="display:inline-flex;align-items:center">Back to cars</a>
+    <div style="margin-top:20px">
+      <button id="submitBtn" class="primary">Send for Offer</button>
     </div>
-    <div id="formMsg" class="small" style="margin-top:8px"></div>
-    <div class="small" style="margin-top:8px">
-      Privacy: We only use your info to evaluate your car and contact you. We do not sell personal information.
-    </div>
-  </div>
-  <div id="about" class="sheet" style="margin-top:12px">
-    <h2 style="margin:4px 0 6px;font-size:18px">How it works / Why E.V.Time</h2>
-    <p class="small" style="font-size:13px;color:#44403c">
-      We're a small, friendly buyer focused on fair trade-in offers with low overhead. Submit your VIN and details; a real person reviews the car and texts you a number. If you like it, we schedule a quick look and handle the paperwork through our licensed partner, Waltons Auto Sales.
+
+    <div id="formMsg" class="small" style="margin-top:10px"></div>
+
+    <p class="small" style="margin-top:12px;color:#9ca3af">
+      Your information is used only to evaluate your car and contact you. We do not sell or share personal information — ever.
     </p>
+  </div>
+
+  <div id="about" class="about-card">
+    <h2>How it works / Why E.V.Time</h2>
+    <p>We're a small, friendly buyer focused on fair trade-in offers with low overhead. Submit your VIN and details; a real person reviews the car and texts you a number. If you like it, we schedule a quick look and handle the paperwork through our licensed partner, Waltons Auto Sales.</p>
   </div>
 </main>
 
@@ -127,7 +207,7 @@ video{width:100%;border-radius:8px}
   </div>
   <div class="camBtns">
     <button id="captureBtn" class="primary">Scan frame</button>
-    <button id="closeCamBtn">Close</button>
+    <button id="closeCamBtn" class="secondary">Close</button>
   </div>
   <div id="camHint" class="small" style="color:#e5e7eb;margin-top:6px;text-align:center">
     Tip: Fill the dashed box with the VIN line. Avoid glare; use even light.
@@ -136,7 +216,7 @@ video{width:100%;border-radius:8px}
 
 <div id="footer-placeholder"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js" integrity="sha384-1zP4ZOtlk2FXAOiUArpMuWf7INJJKe/ROfYFAVSeUa11DEfXdKWGiPI3dVma2Gt0" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js" integrity="sha384-1zP4ZOtlk2FXAOiUArpMuWf7INJJKe/ROfYFAVSeUa11DEfXdKWGiPI3dVga2Gt0" crossorigin="anonymous"></script>
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.2/dist/umd/supabase.min.js" integrity="sha384-zETTH+6IXxKQ6zbGcT6H6EDdnGaae9uhI8uO7doTJoNEmPGeTKVOe5S6/XybS9JH" crossorigin="anonymous"></script>
 <script src="./search.js"></script>
@@ -150,13 +230,13 @@ const _sellFormLoadedAt = Date.now();
 
 function normalizeVIN(r){if(!r)return '';var s=r.toUpperCase().replace(/[^A-Z0-9]/g,'');s=s.replace(/O/g,'0').replace(/I/g,'1').replace(/Q/g,'0');var m=s.match(/[A-HJ-NPR-Z0-9]{17,25}/);if(m)s=m[0];if(s.length>17)s=s.substring(0,17);return s}
 function isVIN17(s){return /^[A-HJ-NPR-Z0-9]{17}$/.test(s||'')}
-function setStatus(m,o){var e=document.getElementById('vinStatus');e.textContent=m||'';e.className='small '+(o?'success':m?'error':'')}
+function setStatus(m,o){var e=document.getElementById('vinStatus');e.textContent=m||'';e.className='small '+(o?'success-msg':m?'error-msg':'')}
 
 var vinEl=document.getElementById('vin'),scanBtn=document.getElementById('scanBtn'),vinPhoto=document.getElementById('vinPhoto'),submitBtn=document.getElementById('submitBtn'),camWrap=document.getElementById('camWrap'),video=document.getElementById('video'),captureBtn=document.getElementById('captureBtn'),closeCamBtn=document.getElementById('closeCamBtn'),stream=null;
 
 vinEl.addEventListener('input',function(){var v=normalizeVIN(vinEl.value);vinEl.value=v;if(v.length===17&&isVIN17(v))setStatus('Looks like a valid VIN.',true);else if(v.length>0)setStatus('VIN must be 17 characters (A-Z, 0-9; no I, O, Q).');else setStatus('')});
 
-/* ── Camera scan ── */
+/* Camera scan */
 scanBtn.addEventListener('click',function(){
   camWrap.style.display='flex';
   navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}}}).then(function(s){stream=s;video.srcObject=s}).catch(function(){setStatus('Camera not available. Upload a photo instead.');camWrap.style.display='none'})
@@ -170,7 +250,7 @@ captureBtn.addEventListener('click',function(){
   }).catch(function(){setStatus('OCR failed. Try uploading a photo instead.')})
 });
 
-/* ── Photo upload OCR ── */
+/* Photo upload OCR */
 vinPhoto.addEventListener('change',function(){
   var f=this.files[0];if(!f)return;setStatus('Reading VIN from photo…');
   var img=new Image();img.onload=function(){
@@ -181,88 +261,90 @@ vinPhoto.addEventListener('change',function(){
   };img.onerror=function(){setStatus('Bad image file. Try another photo.')};img.src=URL.createObjectURL(f)
 });
 
-/* ── Submit form ── */
+/* Submit */
 submitBtn.addEventListener('click',async function(){
-  var formMsg = document.getElementById('formMsg');
+  var formMsg=document.getElementById('formMsg');
 
-  // Honeypot check
-  if (document.getElementById('company').value) {
-    formMsg.textContent = 'Received — One of our specialists will reach out shortly.';
-    formMsg.className = 'small success';
+  // Honeypot
+  if(document.getElementById('company').value){
+    submitBtn.classList.add('success');
+    submitBtn.innerHTML='<svg class="checkmark" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Sent!';
+    formMsg.textContent='Received — One of our specialists will reach out shortly.';
+    formMsg.className='small success-msg';
     return;
   }
 
-  if (Date.now() - _sellFormLoadedAt < 3000) return;
-  var v = vinEl.value.trim().toUpperCase();
-  var name = document.getElementById('name').value.trim();
-  var phone = document.getElementById('phone').value.trim();
-  var email = document.getElementById('email').value.trim();
-  var miles = document.getElementById('miles').value.trim();
-  var cond = document.getElementById('cond').value.trim();
-  var notes = document.getElementById('notes').value.trim();
-  
+  if(Date.now()-_sellFormLoadedAt<3000) return;
+
+  var v=vinEl.value.trim().toUpperCase();
+  var name=document.getElementById('name').value.trim();
+  var phone=document.getElementById('phone').value.trim();
+  var email=document.getElementById('email').value.trim();
+  var miles=document.getElementById('miles').value.trim();
+  var cond=document.getElementById('cond').value.trim();
+  var notes=document.getElementById('notes').value.trim();
+
   if(!isVIN17(v)){
-    formMsg.textContent = 'Please enter a valid 17-character VIN.';
-    formMsg.className = 'small error';
+    formMsg.textContent='Please enter a valid 17-character VIN.';
+    formMsg.className='small error-msg';
+    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(!name||!phone||!email){
+    formMsg.textContent='Please fill in Name, Phone, and Email.';
+    formMsg.className='small error-msg';
     formMsg.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
 
-  if(!name || !phone || !email){
-    formMsg.textContent = 'Please fill in Name, Phone, and Email.';
-    formMsg.className = 'small error';
-    formMsg.scrollIntoView({behavior:'smooth',block:'center'});
-    return;
-  }
+  // Loading state
+  submitBtn.disabled=true;
+  submitBtn.classList.add('loading');
+  submitBtn.innerHTML='<span class="spinner"></span> Sending...';
+  formMsg.textContent='';
+  formMsg.className='small';
 
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Sending...';
-  formMsg.textContent = '';
-  formMsg.className = 'small';
-
-  try {
-    var response = await fetch(EVTIME_PUBLIC_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        vin: v,
-        name: name,
-        phone: phone,
-        email: email,
-        miles: miles || null,
-        cond: cond || null,
-        notes: notes || null
-      })
+  try{
+    var response=await fetch(EVTIME_PUBLIC_API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({vin:v,name:name,phone:phone,email:email,miles:miles||null,cond:cond||null,notes:notes||null})
     });
+    var data=null;
+    try{data=await response.json()}catch(e){data=null}
+    if(!response.ok||!data||!data.ok) throw new Error('submit_failed');
 
-    var data = null;
-    try {
-      data = await response.json();
-    } catch (e) {
-      data = null;
-    }
+    // Success state
+    submitBtn.classList.remove('loading');
+    submitBtn.classList.add('success');
+    submitBtn.innerHTML='<svg class="checkmark" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Sent!';
+    submitBtn.disabled=false;
 
-    if (!response.ok || !data || !data.ok) {
-      throw new Error('submit_failed');
-    }
+    formMsg.textContent='Received — One of our specialists will reach out shortly.';
+    formMsg.className='small success-msg';
 
-    formMsg.textContent = 'Received — One of our specialists will reach out shortly.';
-    formMsg.className = 'small success';
-
-    document.getElementById('vin').value = '';
-    document.getElementById('name').value = '';
-    document.getElementById('phone').value = '';
-    document.getElementById('email').value = '';
-    document.getElementById('miles').value = '';
-    document.getElementById('cond').value = '';
-    document.getElementById('notes').value = '';
+    document.getElementById('vin').value='';
+    document.getElementById('name').value='';
+    document.getElementById('phone').value='';
+    document.getElementById('email').value='';
+    document.getElementById('miles').value='';
+    document.getElementById('cond').value='';
+    document.getElementById('notes').value='';
     setStatus('');
-  } catch (err) {
-    formMsg.textContent = 'Could not submit. Please email us at Support@itsEVTime.com';
-    formMsg.className = 'small error';
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Send for Offer';
+
+    // Reset button after 4 seconds
+    setTimeout(function(){
+      submitBtn.classList.remove('success');
+      submitBtn.innerHTML='Send for Offer';
+    },4000);
+
+  }catch(err){
+    submitBtn.classList.remove('loading');
+    submitBtn.innerHTML='Send for Offer';
+    submitBtn.disabled=false;
+    formMsg.textContent='Could not submit. Please email us at Support@itsEVTime.com';
+    formMsg.className='small error-msg';
+  }finally{
     formMsg.scrollIntoView({behavior:'smooth',block:'center'});
   }
 });
