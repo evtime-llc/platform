@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Settings — E.V.Time</title>
+<meta name="description" content="Manage your EVTime account settings, password, notifications, and payment methods."/>
+<meta name="theme-color" content="#0b0a09"/>
+<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+
+<meta property="og:title" content="Settings — E.V.Time"/>
+<meta property="og:description" content="Manage your EVTime account settings."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/settings.html"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="stylesheet" href="./styles.css"/>
+
+<style>
+#header-placeholder{position:sticky;top:0;z-index:100}
+.settings-wrap{max-width:640px;margin:0 auto;padding:48px 16px 64px}
+.back-link{display:inline-block;margin-bottom:20px;font-size:14px;color:var(--copper);text-decoration:none;font-weight:600}
+.back-link:hover{text-decoration:underline}
+.settings-wrap h1{margin:0 0 24px;font-size:28px;font-weight:900;color:var(--text);letter-spacing:-0.02em}
+.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:28px;margin-bottom:16px}
+.card h2{margin:0 0 16px;font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.01em}
+.card-loading{text-align:center;padding:48px 0;color:#78716c;font-size:14px}
+.card-error{text-align:center;padding:24px 0;color:#b91c1c;font-size:14px;font-weight:600}
+
+/* Inputs */
+label{display:block;font-size:13px;color:#44403c;margin:12px 0 4px;font-weight:600}
+label:first-of-type{margin-top:0}
+input[type="password"],input[type="text"]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text);box-sizing:border-box}
+input[type="password"]:focus,input[type="text"]:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(201,140,91,0.15)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:48px}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:13px;color:var(--copper);font-weight:700;padding:0}
+.pw-toggle:hover{color:var(--copper-dark)}
+
+/* Primary button */
+.btn-primary{width:100%;height:48px;padding:0;border-radius:12px;border:1px solid transparent;background:var(--copper);color:#0b0a09;font-size:16px;font-weight:800;cursor:pointer;transition:.15s;box-shadow:0 3px 10px rgba(201,140,91,.28);margin-top:20px}
+.btn-primary:hover{background:var(--copper-dark);color:#fff}
+.btn-primary:disabled{opacity:.7;cursor:not-allowed}
+
+/* Secondary button */
+.btn-secondary{width:100%;height:44px;padding:0;border-radius:12px;border:1px solid var(--line);background:#fff;color:#44403c;font-size:15px;font-weight:600;cursor:pointer;transition:.15s;margin-top:16px}
+.btn-secondary:hover{border-color:var(--copper);color:var(--copper)}
+.btn-secondary:disabled{opacity:.7;cursor:not-allowed}
+
+/* Messages */
+.msg{font-size:13px;margin-top:12px;min-height:20px}
+.msg.error{color:#b91c1c;font-weight:600}
+.msg.success{color:#16a34a;font-weight:600}
+
+/* Checkboxes */
+.pref-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.pref-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--copper);cursor:pointer;margin-top:1px;flex-shrink:0}
+.pref-row label{margin:0;font-size:14px;font-weight:400;color:#44403c;cursor:pointer;line-height:1.5}
+
+/* Payment methods */
+.pm-list{display:flex;flex-direction:column;gap:0}
+.pm-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.pm-item:last-child{border-bottom:none}
+.pm-brand{width:48px;height:32px;border-radius:6px;background:#f5f5f4;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#44403c;text-transform:uppercase;flex-shrink:0}
+.pm-details{flex:1;min-width:0}
+.pm-number{font-size:14px;font-weight:600;color:var(--text);margin:0}
+.pm-default{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:rgba(201,140,91,0.15);color:var(--copper-dark)}
+.pm-empty{font-size:14px;color:#78716c;padding:8px 0}
+.pm-coming{font-size:12px;color:#a8a29e;margin-top:8px}
+
+/* Danger zone */
+.card.danger{border-color:#fecaca}
+.card.danger h2{color:#b91c1c}
+.btn-delete{width:100%;height:48px;padding:0;border-radius:12px;border:2px solid #ef4444;background:#fff;color:#ef4444;font-size:16px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-delete:hover{background:#ef4444;color:#fff}
+.confirm-box{margin-top:16px;padding:16px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px}
+.confirm-box p{margin:0 0 14px;font-size:14px;color:#b91c1c;font-weight:600;line-height:1.5}
+.confirm-box .confirm-actions{display:flex;gap:8px}
+.btn-confirm-delete{flex:1;height:44px;padding:0;border-radius:12px;border:none;background:#ef4444;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-confirm-delete:hover{background:#dc2626}
+.btn-confirm-cancel{flex:1;height:44px;padding:0;border-radius:12px;border:1px solid var(--line);background:#fff;color:#44403c;font-size:15px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-confirm-cancel:hover{border-color:var(--copper);color:var(--copper)}
+.contact-msg{margin-top:14px;font-size:14px;color:#b91c1c;font-weight:600;line-height:1.5}
+.contact-msg a{color:#b91c1c;font-weight:800;text-decoration:underline}
+</style>
+</head>
+<body data-page="settings">
+
+<div id="header-placeholder"></div>
+
+<div class="settings-wrap">
+  <a href="/account.html" class="back-link">&larr; Back to Account</a>
+  <h1>Settings</h1>
+
+  <!-- Loading state -->
+  <div id="loadingView" class="card">
+    <div class="card-loading">Loading settings...</div>
+  </div>
+
+  <!-- Error state -->
+  <div id="errorView" style="display:none;">
+    <div class="card">
+      <div class="card-error" id="errorMsg">Something went wrong. Please refresh the page.</div>
+    </div>
+  </div>
+
+  <!-- Main content (hidden until data loads) -->
+  <div id="mainContent" style="display:none;">
+
+    <!-- Change Password Card -->
+    <div class="card">
+      <h2>Change Password</h2>
+
+      <form id="passwordForm" autocomplete="off">
+        <label for="newPassword">New password</label>
+        <div class="pw-wrap">
+          <input id="newPassword" type="password" placeholder="Min 8 characters" required autocomplete="new-password" minlength="8"/>
+          <button type="button" class="pw-toggle" id="pwToggle1">Show</button>
+        </div>
+
+        <label for="confirmPassword">Confirm new password</label>
+        <div class="pw-wrap">
+          <input id="confirmPassword" type="password" placeholder="Re-enter your password" required autocomplete="new-password"/>
+          <button type="button" class="pw-toggle" id="pwToggle2">Show</button>
+        </div>
+
+        <button type="submit" class="btn-primary" id="pwSubmitBtn">Update Password</button>
+        <div id="pwMsg" class="msg"></div>
+      </form>
+    </div>
+
+    <!-- Notifications Card -->
+    <div class="card">
+      <h2>Notifications</h2>
+
+      <div class="pref-row">
+        <input type="checkbox" id="prefListings" checked/>
+        <label for="prefListings">Email me about new listings matching my interests</label>
+      </div>
+
+      <div class="pref-row">
+        <input type="checkbox" id="prefNewsletter"/>
+        <label for="prefNewsletter">Email me about promotions and updates</label>
+      </div>
+
+      <button class="btn-secondary" id="prefSaveBtn">Save Preferences</button>
+      <div id="prefMsg" class="msg"></div>
+    </div>
+
+    <!-- Payment Methods Card -->
+    <div class="card">
+      <h2>Payment Methods</h2>
+      <div id="pmList"></div>
+      <button class="btn-secondary" id="addPmBtn" disabled>Add Payment Method</button>
+      <p class="pm-coming">Coming soon — Stripe integration</p>
+    </div>
+
+    <!-- Danger Zone Card -->
+    <div class="card danger">
+      <h2>Danger Zone</h2>
+      <button class="btn-delete" id="deleteBtn">Delete Account</button>
+
+      <div id="confirmBox" class="confirm-box" style="display:none;">
+        <p>Are you sure? This action is permanent and cannot be undone.</p>
+        <div class="confirm-actions">
+          <button class="btn-confirm-delete" id="confirmDeleteBtn">Yes, delete my account</button>
+          <button class="btn-confirm-cancel" id="confirmCancelBtn">Cancel</button>
+        </div>
+      </div>
+
+      <div id="contactMsg" class="contact-msg" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.2/dist/umd/supabase.min.js" integrity="sha384-zETTH+6IXxKQ6zbGcT6H6EDdnGaae9uhI8uO7doTJoNEmPGeTKVOe5S6/XybS9JH" crossorigin="anonymous"></script>
+<script src="./search.js"></script>
+<script>
+fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
+fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
+
+const sb = getSb();
+
+// Auth guard + auth state listener
+if (sb) {
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+  });
+}
+
+let currentUser = null;
+let currentProfile = null;
+
+// ── Bootstrap ──
+(async () => {
+  if (!sb) {
+    showError('System loading — please refresh.');
+    return;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  currentUser = session.user;
+
+  try {
+    // Fetch profile and payment methods in parallel
+    const [profileRes, pmRes] = await Promise.all([
+      sb.from('profiles').select('*').eq('id', currentUser.id).single(),
+      sb.from('payment_methods').select('*').eq('user_id', currentUser.id).order('is_default', { ascending: false })
+    ]);
+
+    if (profileRes.error && profileRes.error.code !== 'PGRST116') throw profileRes.error;
+    if (pmRes.error && pmRes.error.code !== 'PGRST116') throw pmRes.error;
+
+    currentProfile = profileRes.data || {};
+
+    renderNotifications();
+    renderPaymentMethods(pmRes.data || []);
+
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  } catch (err) {
+    console.error('Settings load error:', err);
+    showError('Failed to load settings. Please try again.');
+  }
+})();
+
+function showError(message) {
+  document.getElementById('loadingView').style.display = 'none';
+  document.getElementById('errorMsg').textContent = message;
+  document.getElementById('errorView').style.display = 'block';
+}
+
+// ── Change Password ──
+document.getElementById('pwToggle1').addEventListener('click', function() {
+  const pw = document.getElementById('newPassword');
+  const isHidden = pw.type === 'password';
+  pw.type = isHidden ? 'text' : 'password';
+  this.textContent = isHidden ? 'Hide' : 'Show';
+});
+document.getElementById('pwToggle2').addEventListener('click', function() {
+  const pw = document.getElementById('confirmPassword');
+  const isHidden = pw.type === 'password';
+  pw.type = isHidden ? 'text' : 'password';
+  this.textContent = isHidden ? 'Hide' : 'Show';
+});
+
+document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('pwMsg');
+  const btn = document.getElementById('pwSubmitBtn');
+
+  const newPassword = document.getElementById('newPassword').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (!newPassword || !confirmPassword) {
+    msg.textContent = 'Please fill in both password fields.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    msg.textContent = 'Password must be at least 8 characters.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    msg.textContent = 'Passwords do not match.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Updating...';
+  msg.textContent = '';
+  msg.className = 'msg';
+
+  const { error } = await sb.auth.updateUser({ password: newPassword });
+
+  if (error) {
+    msg.textContent = error.message || 'Failed to update password. Please try again.';
+    msg.className = 'msg error';
+    btn.disabled = false;
+    btn.textContent = 'Update Password';
+    return;
+  }
+
+  msg.textContent = 'Password updated successfully!';
+  msg.className = 'msg success';
+  btn.disabled = false;
+  btn.textContent = 'Update Password';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('confirmPassword').value = '';
+});
+
+// ── Notifications ──
+function renderNotifications() {
+  const newsletter = currentProfile.newsletter_opt_in;
+  document.getElementById('prefNewsletter').checked = !!newsletter;
+}
+
+document.getElementById('prefSaveBtn').addEventListener('click', async () => {
+  const msg = document.getElementById('prefMsg');
+  const btn = document.getElementById('prefSaveBtn');
+  const newsletterOptIn = document.getElementById('prefNewsletter').checked;
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  msg.textContent = '';
+  msg.className = 'msg';
+
+  const { error } = await sb.from('profiles').update({
+    newsletter_opt_in: newsletterOptIn
+  }).eq('id', currentUser.id);
+
+  if (error) {
+    msg.textContent = 'Failed to save preferences. Please try again.';
+    msg.className = 'msg error';
+    btn.disabled = false;
+    btn.textContent = 'Save Preferences';
+    return;
+  }
+
+  currentProfile.newsletter_opt_in = newsletterOptIn;
+  msg.textContent = 'Preferences saved!';
+  msg.className = 'msg success';
+  btn.disabled = false;
+  btn.textContent = 'Save Preferences';
+});
+
+// ── Payment Methods ──
+function renderPaymentMethods(methods) {
+  const container = document.getElementById('pmList');
+  container.innerHTML = '';
+
+  if (!methods || methods.length === 0) {
+    container.innerHTML = '<p class="pm-empty">No payment methods saved.</p>';
+    return;
+  }
+
+  const list = document.createElement('div');
+  list.className = 'pm-list';
+
+  methods.forEach(pm => {
+    const item = document.createElement('div');
+    item.className = 'pm-item';
+
+    const brand = document.createElement('div');
+    brand.className = 'pm-brand';
+    brand.textContent = pm.card_brand || 'Card';
+
+    const details = document.createElement('div');
+    details.className = 'pm-details';
+
+    const number = document.createElement('p');
+    number.className = 'pm-number';
+    number.textContent = '\u2022\u2022\u2022\u2022 ' + (pm.card_last4 || '****');
+
+    if (pm.is_default) {
+      const badge = document.createElement('span');
+      badge.className = 'pm-default';
+      badge.textContent = 'Default';
+      number.appendChild(badge);
+    }
+
+    details.appendChild(number);
+    item.appendChild(brand);
+    item.appendChild(details);
+    list.appendChild(item);
+  });
+
+  container.appendChild(list);
+}
+
+// ── Danger Zone ──
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  document.getElementById('confirmBox').style.display = 'block';
+  document.getElementById('deleteBtn').style.display = 'none';
+});
+
+document.getElementById('confirmCancelBtn').addEventListener('click', () => {
+  document.getElementById('confirmBox').style.display = 'none';
+  document.getElementById('deleteBtn').style.display = '';
+});
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+  document.getElementById('confirmBox').style.display = 'none';
+  const contactMsg = document.getElementById('contactMsg');
+  contactMsg.innerHTML = 'Please contact <a href="mailto:support@itsevtime.com">support@itsevtime.com</a> to delete your account.';
+  contactMsg.style.display = 'block';
+});
+</script>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Sign In — E.V.Time</title>
+<meta name="description" content="Sign in to your EVTime account to manage listings, track offers, and access your dashboard."/>
+<meta name="theme-color" content="#0b0a09"/>
+<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+
+<meta property="og:title" content="Sign In — E.V.Time"/>
+<meta property="og:description" content="Sign in to your EVTime account."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/login.html"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="stylesheet" href="./styles.css"/>
+
+<style>
+#header-placeholder{position:sticky;top:0;z-index:100}
+.login-wrap{max-width:440px;margin:0 auto;padding:48px 16px 64px}
+.login-card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:32px 28px}
+.login-card h1{margin:0 0 6px;font-size:24px;font-weight:900;color:var(--text);letter-spacing:-0.02em}
+.login-card .subtitle{font-size:14px;color:#78716c;margin:0 0 24px}
+label{display:block;font-size:13px;color:#44403c;margin:12px 0 4px;font-weight:600}
+label:first-of-type{margin-top:0}
+input[type="email"],input[type="password"],input[type="text"]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text);box-sizing:border-box}
+input[type="email"]:focus,input[type="password"]:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(201,140,91,0.15)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:48px}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:13px;color:var(--copper);font-weight:700;padding:0}
+.pw-toggle:hover{color:var(--copper-dark)}
+.remember-row{display:flex;align-items:center;gap:8px;margin:16px 0 20px}
+.remember-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--copper);cursor:pointer}
+.remember-row label{margin:0;font-size:13px;font-weight:400;color:#44403c;cursor:pointer}
+.btn-signin{width:100%;height:48px;padding:0;border-radius:12px;border:1px solid transparent;background:var(--copper);color:#0b0a09;font-size:16px;font-weight:800;cursor:pointer;transition:.15s;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+.btn-signin:hover{background:var(--copper-dark);color:#fff}
+.btn-signin:disabled{opacity:.7;cursor:not-allowed}
+.msg{font-size:13px;margin-top:12px;min-height:20px}
+.msg.error{color:#b91c1c;font-weight:600}
+.msg.success{color:#16a34a;font-weight:600}
+.forgot{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--copper);text-decoration:none;font-weight:600}
+.forgot:hover{text-decoration:underline}
+.signup-link{display:block;text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:#78716c}
+.signup-link a{color:var(--copper);text-decoration:none;font-weight:700}
+.signup-link a:hover{text-decoration:underline}
+</style>
+</head>
+<body data-page="login">
+
+<div id="header-placeholder"></div>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>Welcome back</h1>
+    <p class="subtitle">Sign in to your EVTime account</p>
+
+    <form id="loginForm" autocomplete="on">
+      <!-- Honeypot: hidden from real users, bots fill this in -->
+      <div style="position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden;" aria-hidden="true">
+        <label>Company</label>
+        <input id="company" type="text" name="company" tabindex="-1" autocomplete="off">
+      </div>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@example.com" required autocomplete="email"/>
+
+      <label for="password">Password</label>
+      <div class="pw-wrap">
+        <input id="password" type="password" placeholder="Your password" required autocomplete="current-password"/>
+        <button type="button" class="pw-toggle" id="pwToggle">Show</button>
+      </div>
+
+      <div class="remember-row">
+        <input type="checkbox" id="remember" checked/>
+        <label for="remember">Remember me</label>
+      </div>
+
+      <button type="submit" class="btn-signin" id="submitBtn">Sign In</button>
+      <div id="formMsg" class="msg"></div>
+    </form>
+
+    <a href="/forgot-password.html" class="forgot">Forgot password?</a>
+    <div class="signup-link">Don't have an account? <a href="/signup.html">Sign up</a></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.2/dist/umd/supabase.min.js" integrity="sha384-zETTH+6IXxKQ6zbGcT6H6EDdnGaae9uhI8uO7doTJoNEmPGeTKVOe5S6/XybS9JH" crossorigin="anonymous"></script>
+<script src="./search.js"></script>
+<script>
+fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
+fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
+
+const sb = getSb();
+
+// Redirect if already logged in
+(async () => {
+  if (!sb) return;
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) window.location.href = '/account.html';
+})();
+
+// Password show/hide toggle
+document.getElementById('pwToggle').addEventListener('click', function() {
+  const pw = document.getElementById('password');
+  const isHidden = pw.type === 'password';
+  pw.type = isHidden ? 'text' : 'password';
+  this.textContent = isHidden ? 'Hide' : 'Show';
+});
+
+// Form submit
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('formMsg');
+  const btn = document.getElementById('submitBtn');
+
+  // Honeypot check
+  if (document.getElementById('company').value) {
+    msg.textContent = 'Signed in successfully!';
+    msg.className = 'msg success';
+    return;
+  }
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    msg.textContent = 'Please enter your email and password.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  if (!sb) {
+    msg.textContent = 'System loading — please refresh.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+  msg.textContent = '';
+  msg.className = 'msg';
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    msg.textContent = error.message === 'Invalid login credentials'
+      ? 'Invalid email or password.'
+      : 'Sign in failed. Please try again.';
+    msg.className = 'msg error';
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+    return;
+  }
+
+  msg.textContent = 'Signed in successfully!';
+  msg.className = 'msg success';
+  window.location.href = '/account.html';
+});
+</script>
+<script src="/app.js"></script>
+</body>
+</html>

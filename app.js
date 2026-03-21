@@ -127,3 +127,26 @@
     }
   };
 })();
+
+// Auth link: swap between Sign In / Account
+(function() {
+  var link = document.getElementById('authLink');
+  if (!link) return;
+  var sb = typeof getSb === 'function' ? getSb() : null;
+  if (!sb) return;
+  sb.auth.getSession().then(function(res) {
+    if (res.data && res.data.session) {
+      link.textContent = 'Account';
+      link.href = '/account.html';
+    }
+  });
+  sb.auth.onAuthStateChange(function(event) {
+    if (event === 'SIGNED_IN') {
+      link.textContent = 'Account';
+      link.href = '/account.html';
+    } else if (event === 'SIGNED_OUT') {
+      link.textContent = 'Sign In';
+      link.href = '/login.html';
+    }
+  });
+})();

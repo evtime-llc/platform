@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net www.googletagmanager.com www.clarity.ms client.crisp.chat; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: *.supabase.co www.googletagmanager.com; connect-src 'self' *.supabase.co www.google-analytics.com region1.google-analytics.com *.clarity.ms client.crisp.chat wss://client.relay.crisp.chat; font-src 'self' client.crisp.chat; frame-src 'none';"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>My Account — E.V.Time</title>
+<meta name="description" content="Manage your EVTime account, profile, and subscription."/>
+<meta name="theme-color" content="#0b0a09"/>
+<link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+
+<meta property="og:title" content="My Account — E.V.Time"/>
+<meta property="og:description" content="Manage your EVTime account, profile, and subscription."/>
+<meta property="og:image" content="https://itsevtime.com/og-card.png"/>
+<meta property="og:url" content="https://itsevtime.com/account.html"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<link rel="stylesheet" href="./styles.css"/>
+
+<style>
+#header-placeholder{position:sticky;top:0;z-index:100}
+.account-wrap{max-width:640px;margin:0 auto;padding:48px 16px 64px}
+.account-wrap h1{margin:0 0 24px;font-size:28px;font-weight:900;color:var(--text);letter-spacing:-0.02em}
+.card{background:var(--bg-light);border:1px solid var(--line);border-radius:14px;padding:28px;margin-bottom:16px}
+.card h2{margin:0 0 16px;font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.01em}
+.card-loading{text-align:center;padding:48px 0;color:#78716c;font-size:14px}
+.card-error{text-align:center;padding:24px 0;color:#b91c1c;font-size:14px;font-weight:600}
+
+/* Profile */
+.profile-display{display:flex;align-items:center;gap:20px}
+.avatar{width:72px;height:72px;border-radius:50%;background:var(--copper);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#0b0a09;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:18px;font-weight:700;color:var(--text);margin:0 0 2px}
+.profile-email{font-size:14px;color:#78716c;margin:0 0 8px;overflow:hidden;text-overflow:ellipsis}
+.role-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(201,140,91,0.15);color:var(--copper-dark);text-transform:capitalize}
+.btn-edit{margin-top:16px;height:40px;padding:0 20px;border-radius:12px;border:1px solid var(--line);background:#fff;color:#44403c;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-edit:hover{border-color:var(--copper);color:var(--copper)}
+
+/* Edit mode */
+.profile-edit{display:none}
+.profile-edit.active{display:block}
+.profile-display.hidden{display:none}
+label{display:block;font-size:13px;color:#44403c;margin:12px 0 4px;font-weight:600}
+label:first-of-type{margin-top:0}
+input[type="text"],input[type="tel"]{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font-size:16px;background:#fff;color:var(--text);box-sizing:border-box}
+input[type="text"]:focus,input[type="tel"]:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(201,140,91,0.15)}
+.role-label{margin:16px 0 8px}
+.role-pills{display:flex;gap:8px}
+.role-pill{flex:1;height:40px;border-radius:12px;border:1px solid var(--line);background:#fff;color:#44403c;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+.role-pill:hover{border-color:var(--copper);color:var(--copper)}
+.role-pill.active{background:var(--copper);color:#0b0a09;border-color:transparent;font-weight:800;box-shadow:0 2px 8px rgba(201,140,91,.25)}
+.edit-actions{display:flex;gap:8px;margin-top:20px}
+.btn-save{flex:1;height:44px;padding:0;border-radius:12px;border:1px solid transparent;background:var(--copper);color:#0b0a09;font-size:15px;font-weight:800;cursor:pointer;transition:.15s;box-shadow:0 3px 10px rgba(201,140,91,.28)}
+.btn-save:hover{background:var(--copper-dark);color:#fff}
+.btn-save:disabled{opacity:.7;cursor:not-allowed}
+.btn-cancel{flex:1;height:44px;padding:0;border-radius:12px;border:1px solid var(--line);background:#fff;color:#44403c;font-size:15px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-cancel:hover{border-color:var(--copper);color:var(--copper)}
+.msg{font-size:13px;margin-top:12px;min-height:20px}
+.msg.error{color:#b91c1c;font-weight:600}
+.msg.success{color:#16a34a;font-weight:600}
+
+/* Subscription */
+.sub-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.plan-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700}
+.plan-badge.free{background:#f5f5f4;color:#78716c}
+.plan-badge.pro{background:rgba(201,140,91,0.15);color:var(--copper-dark)}
+.plan-badge.dealer{background:#0b0a09;color:var(--copper)}
+.status-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600}
+.status-badge.active{background:#dcfce7;color:#16a34a}
+.status-badge.trialing{background:#dbeafe;color:#2563eb}
+.status-badge.past_due{background:#fef9c3;color:#a16207}
+.status-badge.canceled{background:#fee2e2;color:#b91c1c}
+.sub-detail{font-size:13px;color:#78716c;margin:0 0 4px}
+.btn-upgrade{margin-top:8px;height:44px;padding:0 28px;border-radius:12px;border:1px solid transparent;background:var(--copper);color:#0b0a09;font-size:15px;font-weight:800;cursor:pointer;transition:.15s;box-shadow:0 3px 10px rgba(201,140,91,.28);text-decoration:none;display:inline-flex;align-items:center}
+.btn-upgrade:hover{background:var(--copper-dark);color:#fff}
+
+/* Quick links */
+.quick-links{display:flex;flex-direction:column;gap:0}
+.quick-link{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--text);font-size:15px;font-weight:600;transition:.15s}
+.quick-link:last-child{border-bottom:none}
+.quick-link:hover{color:var(--copper)}
+.quick-link-arrow{font-size:18px;color:#a8a29e;transition:.15s}
+.quick-link:hover .quick-link-arrow{color:var(--copper)}
+
+/* Sign out */
+.btn-signout{width:100%;height:48px;padding:0;border-radius:12px;border:1px solid var(--line);background:#fff;color:#78716c;font-size:16px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-signout:hover{border-color:#ef4444;color:#ef4444}
+.btn-signout:disabled{opacity:.7;cursor:not-allowed}
+</style>
+</head>
+<body data-page="account">
+
+<div id="header-placeholder"></div>
+
+<div class="account-wrap">
+  <h1>My Account</h1>
+
+  <!-- Loading state -->
+  <div id="loadingView" class="card">
+    <div class="card-loading">Loading your account...</div>
+  </div>
+
+  <!-- Error state -->
+  <div id="errorView" style="display:none;">
+    <div class="card">
+      <div class="card-error" id="errorMsg">Something went wrong. Please refresh the page.</div>
+    </div>
+  </div>
+
+  <!-- Main content (hidden until data loads) -->
+  <div id="mainContent" style="display:none;">
+
+    <!-- Profile Card -->
+    <div class="card">
+      <h2>Profile</h2>
+
+      <div class="profile-display" id="profileDisplay">
+        <div class="avatar" id="avatarDisplay"></div>
+        <div class="profile-info">
+          <p class="profile-name" id="nameDisplay"></p>
+          <p class="profile-email" id="emailDisplay"></p>
+          <span class="role-badge" id="roleDisplay"></span>
+        </div>
+      </div>
+      <button class="btn-edit" id="editBtn">Edit Profile</button>
+
+      <div class="profile-edit" id="profileEdit">
+        <label for="editName">Full name</label>
+        <input id="editName" type="text" placeholder="Your full name"/>
+
+        <label for="editPhone">Phone</label>
+        <input id="editPhone" type="tel" placeholder="(optional)"/>
+
+        <label class="role-label">I want to...</label>
+        <div class="role-pills" id="editRolePills">
+          <button type="button" class="role-pill" data-role="buyer">Buy a vehicle</button>
+          <button type="button" class="role-pill" data-role="seller">Sell a vehicle</button>
+        </div>
+
+        <div class="edit-actions">
+          <button class="btn-save" id="saveBtn">Save</button>
+          <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        </div>
+        <div id="profileMsg" class="msg"></div>
+      </div>
+    </div>
+
+    <!-- Subscription Card -->
+    <div class="card">
+      <h2>Subscription</h2>
+      <div class="sub-row">
+        <span class="plan-badge" id="planBadge"></span>
+        <span class="status-badge" id="statusBadge"></span>
+      </div>
+      <div id="subDetails"></div>
+      <div id="subAction"></div>
+    </div>
+
+    <!-- Quick Links Card -->
+    <div class="card" id="quickLinksCard">
+      <h2>Quick Links</h2>
+      <div class="quick-links" id="quickLinks"></div>
+    </div>
+
+    <!-- Sign Out -->
+    <button class="btn-signout" id="signoutBtn">Sign Out</button>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.99.2/dist/umd/supabase.min.js" integrity="sha384-zETTH+6IXxKQ6zbGcT6H6EDdnGaae9uhI8uO7doTJoNEmPGeTKVOe5S6/XybS9JH" crossorigin="anonymous"></script>
+<script src="./search.js"></script>
+<script>
+fetch('./header.html').then(r=>r.text()).then(h=>{document.getElementById('header-placeholder').innerHTML=h});
+fetch('./footer.html').then(r=>r.text()).then(h=>{document.getElementById('footer-placeholder').innerHTML=h});
+
+const sb = getSb();
+
+// Auth guard + auth state listener
+if (sb) {
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') window.location.href = '/login.html';
+  });
+}
+
+let currentUser = null;
+let currentProfile = null;
+let currentSub = null;
+
+// ── Bootstrap ──
+(async () => {
+  if (!sb) {
+    showError('System loading — please refresh.');
+    return;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    window.location.href = '/login.html';
+    return;
+  }
+
+  currentUser = session.user;
+
+  try {
+    // Fetch profile and subscription in parallel
+    const [profileRes, subRes] = await Promise.all([
+      sb.from('profiles').select('*').eq('id', currentUser.id).single(),
+      sb.from('subscriptions').select('*').eq('user_id', currentUser.id).single()
+    ]);
+
+    if (profileRes.error && profileRes.error.code !== 'PGRST116') throw profileRes.error;
+    if (subRes.error && subRes.error.code !== 'PGRST116') throw subRes.error;
+
+    currentProfile = profileRes.data || {};
+    currentSub = subRes.data || null;
+
+    renderProfile();
+    renderSubscription();
+    renderQuickLinks();
+
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  } catch (err) {
+    console.error('Account load error:', err);
+    showError('Failed to load account data. Please try again.');
+  }
+})();
+
+function showError(message) {
+  document.getElementById('loadingView').style.display = 'none';
+  document.getElementById('errorMsg').textContent = message;
+  document.getElementById('errorView').style.display = 'block';
+}
+
+// ── Profile ──
+function getInitial() {
+  const name = currentProfile.full_name || currentUser.user_metadata?.full_name || currentUser.email || '';
+  return (name.charAt(0) || '?').toUpperCase();
+}
+
+function getRoleLabel(role) {
+  if (role === 'both') return 'Buyer & Seller';
+  if (role === 'seller') return 'Seller';
+  return 'Buyer';
+}
+
+function renderProfile() {
+  const name = currentProfile.full_name || currentUser.user_metadata?.full_name || 'No name set';
+  const email = currentUser.email;
+  const role = currentProfile.role || currentUser.user_metadata?.role || 'buyer';
+  const avatarUrl = currentProfile.avatar_url || currentUser.user_metadata?.avatar_url;
+
+  // Avatar
+  const avatarEl = document.getElementById('avatarDisplay');
+  if (avatarUrl) {
+    avatarEl.innerHTML = '<img src="' + avatarUrl + '" alt="Avatar"/>';
+  } else {
+    avatarEl.textContent = getInitial();
+  }
+
+  document.getElementById('nameDisplay').textContent = name;
+  document.getElementById('emailDisplay').textContent = email;
+  document.getElementById('roleDisplay').textContent = getRoleLabel(role);
+}
+
+// Edit mode
+document.getElementById('editBtn').addEventListener('click', () => {
+  const name = currentProfile.full_name || currentUser.user_metadata?.full_name || '';
+  const phone = currentProfile.phone || '';
+  const role = currentProfile.role || currentUser.user_metadata?.role || 'buyer';
+
+  document.getElementById('editName').value = name;
+  document.getElementById('editPhone').value = phone;
+
+  // Set role pills
+  const pills = document.querySelectorAll('#editRolePills .role-pill');
+  pills.forEach(p => {
+    if (role === 'both') {
+      p.classList.add('active');
+    } else if (p.dataset.role === role) {
+      p.classList.add('active');
+    } else {
+      p.classList.remove('active');
+    }
+  });
+
+  document.getElementById('profileDisplay').classList.add('hidden');
+  document.getElementById('editBtn').style.display = 'none';
+  document.getElementById('profileEdit').classList.add('active');
+  document.getElementById('profileMsg').textContent = '';
+  document.getElementById('profileMsg').className = 'msg';
+});
+
+document.getElementById('cancelBtn').addEventListener('click', () => {
+  document.getElementById('profileEdit').classList.remove('active');
+  document.getElementById('profileDisplay').classList.remove('hidden');
+  document.getElementById('editBtn').style.display = '';
+});
+
+// Role pill selection (edit mode)
+document.querySelectorAll('#editRolePills .role-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    this.classList.toggle('active');
+    const anyActive = document.querySelector('#editRolePills .role-pill.active');
+    if (!anyActive) this.classList.add('active');
+  });
+});
+
+function getEditRole() {
+  const active = document.querySelectorAll('#editRolePills .role-pill.active');
+  if (active.length === 2) return 'both';
+  return active[0]?.dataset.role || 'buyer';
+}
+
+// Save profile
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const msg = document.getElementById('profileMsg');
+  const btn = document.getElementById('saveBtn');
+  const fullName = document.getElementById('editName').value.trim();
+  const phone = document.getElementById('editPhone').value.trim();
+  const role = getEditRole();
+
+  if (!fullName) {
+    msg.textContent = 'Name is required.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  msg.textContent = '';
+  msg.className = 'msg';
+
+  const { error } = await sb.from('profiles').update({
+    full_name: fullName,
+    phone: phone,
+    role: role
+  }).eq('id', currentUser.id);
+
+  if (error) {
+    msg.textContent = 'Failed to save. Please try again.';
+    msg.className = 'msg error';
+    btn.disabled = false;
+    btn.textContent = 'Save';
+    return;
+  }
+
+  // Update local state
+  currentProfile.full_name = fullName;
+  currentProfile.phone = phone;
+  currentProfile.role = role;
+
+  renderProfile();
+  renderQuickLinks();
+
+  document.getElementById('profileEdit').classList.remove('active');
+  document.getElementById('profileDisplay').classList.remove('hidden');
+  document.getElementById('editBtn').style.display = '';
+  btn.disabled = false;
+  btn.textContent = 'Save';
+});
+
+// ── Subscription ──
+function renderSubscription() {
+  const plan = currentSub?.plan || 'free';
+  const status = currentSub?.status || 'active';
+  const periodEnd = currentSub?.current_period_end;
+  const cancelAtEnd = currentSub?.cancel_at_period_end;
+
+  // Plan badge
+  const planBadge = document.getElementById('planBadge');
+  planBadge.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+  planBadge.className = 'plan-badge ' + plan;
+
+  // Status badge
+  const statusBadge = document.getElementById('statusBadge');
+  const statusLabels = { active: 'Active', trialing: 'Trialing', past_due: 'Past Due', canceled: 'Canceled' };
+  statusBadge.textContent = statusLabels[status] || status;
+  statusBadge.className = 'status-badge ' + status;
+
+  // Details
+  const details = document.getElementById('subDetails');
+  details.innerHTML = '';
+
+  if (plan !== 'free' && periodEnd) {
+    const endDate = new Date(periodEnd).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const label = cancelAtEnd ? 'Cancels on' : 'Renews on';
+    const p = document.createElement('p');
+    p.className = 'sub-detail';
+    p.textContent = label + ' ' + endDate;
+    details.appendChild(p);
+  }
+
+  if (cancelAtEnd) {
+    const p = document.createElement('p');
+    p.className = 'sub-detail';
+    p.style.color = '#b91c1c';
+    p.textContent = 'Your subscription will not renew.';
+    details.appendChild(p);
+  }
+
+  // Action
+  const action = document.getElementById('subAction');
+  action.innerHTML = '';
+
+  if (plan === 'free') {
+    const a = document.createElement('a');
+    a.href = '/pricing.html';
+    a.className = 'btn-upgrade';
+    a.textContent = 'Upgrade to Pro';
+    action.appendChild(a);
+  }
+}
+
+// ── Quick Links ──
+function renderQuickLinks() {
+  const role = currentProfile.role || currentUser.user_metadata?.role || 'buyer';
+  const links = [
+    { label: 'Settings', href: '/settings.html' },
+  ];
+
+  if (role === 'seller' || role === 'both') {
+    links.push({ label: 'My Listings', href: '/my-listings.html' });
+  }
+
+  links.push({ label: 'Browse Inventory', href: '/share.html' });
+  links.push({ label: 'Support', href: '/support.html' });
+
+  const container = document.getElementById('quickLinks');
+  container.innerHTML = '';
+
+  links.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.href;
+    a.className = 'quick-link';
+    a.innerHTML = '<span>' + link.label + '</span><span class="quick-link-arrow">&rsaquo;</span>';
+    container.appendChild(a);
+  });
+}
+
+// ── Sign Out ──
+document.getElementById('signoutBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('signoutBtn');
+  btn.disabled = true;
+  btn.textContent = 'Signing out...';
+
+  if (sb) {
+    await sb.auth.signOut();
+  }
+
+  window.location.href = '/login.html';
+});
+</script>
+<script src="/app.js"></script>
+</body>
+</html>
